@@ -41,12 +41,7 @@ export default class StepForm extends PureComponent {
             </Steps>
             <Switch>
               {getRoutes(match.path, routerData).map(item => (
-                <Route
-                  key={item.key}
-                  path={item.path}
-                  component={item.component}
-                  exact={item.exact}
-                />
+                <Route key={item.key} path={item.path} component={item.component} exact={item.exact} />
               ))}
               <Redirect exact from="/form/step-form" to="/form/step-form/info" />
               <Route render={NotFound} />

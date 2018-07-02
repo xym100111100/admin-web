@@ -221,9 +221,7 @@ export default class Pie extends Component {
               <div className={styles.total}>
                 {subTitle && <h4 className="pie-sub-title">{subTitle}</h4>}
                 {/* eslint-disable-next-line */}
-                {total && (
-                  <div className="pie-stat">{typeof total === 'function' ? total() : total}</div>
-                )}
+                {total && <div className="pie-stat">{typeof total === 'function' ? total() : total}</div>}
               </div>
             )}
           </div>

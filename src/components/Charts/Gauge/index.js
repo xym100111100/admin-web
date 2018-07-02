@@ -153,14 +153,7 @@ export default class Gauge extends React.Component {
             }}
           />
         </Guide>
-        <Geom
-          line={false}
-          type="point"
-          position="value*1"
-          shape="pointer"
-          color={color}
-          active={false}
-        />
+        <Geom line={false} type="point" position="value*1" shape="pointer" color={color} active={false} />
       </Chart>
     );
   }

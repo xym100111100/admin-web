@@ -55,14 +55,7 @@ class Bar extends Component {
   };
 
   render() {
-    const {
-      height,
-      title,
-      forceFit = true,
-      data,
-      color = 'rgba(24, 144, 255, 0.85)',
-      padding,
-    } = this.props;
+    const { height, title, forceFit = true, data, color = 'rgba(24, 144, 255, 0.85)', padding } = this.props;
 
     const { autoHideXLabels } = this.state;
 
@@ -94,12 +87,7 @@ class Bar extends Component {
             data={data}
             padding={padding || 'auto'}
           >
-            <Axis
-              name="x"
-              title={false}
-              label={autoHideXLabels ? false : {}}
-              tickLine={autoHideXLabels ? false : {}}
-            />
+            <Axis name="x" title={false} label={autoHideXLabels ? false : {}} tickLine={autoHideXLabels ? false : {}} />
             <Axis name="y" min={0} />
             <Tooltip showTitle={false} crosshairs={false} />
             <Geom type="interval" position="x*y" color={color} tooltip={tooltip} />

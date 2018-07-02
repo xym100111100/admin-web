@@ -27,7 +27,7 @@ const links = [
 
 const copyright = (
   <Fragment>
-    Copyright <Icon type="copyright" /> 2018 蚂蚁金服体验技术部出品
+    Copyright <Icon type="copyright" /> 2018 浏阳市大卖网络科技有限公司
   </Fragment>
 );
 
@@ -37,7 +37,7 @@ class UserLayout extends React.PureComponent {
     const { pathname } = location;
     let title = 'Ant Design Pro';
     if (routerData[pathname] && routerData[pathname].name) {
-      title = `${routerData[pathname].name} - Ant Design Pro`;
+      title = `${routerData[pathname].name} - 大卖网络`;
     }
     return title;
   }
@@ -51,19 +51,14 @@ class UserLayout extends React.PureComponent {
               <div className={styles.header}>
                 <Link to="/">
                   <img alt="logo" className={styles.logo} src={logo} />
-                  <span className={styles.title}>Ant Design</span>
+                  <span className={styles.title}>大卖网-后台管理</span>
                 </Link>
               </div>
-              <div className={styles.desc}>Ant Design 是西湖区最具影响力的 Web 设计规范</div>
+              <div className={styles.desc}>大卖网主要以微信公众号为载体实现了线上服务，线下体验的新零售模式</div>
             </div>
             <Switch>
               {getRoutes(match.path, routerData).map(item => (
-                <Route
-                  key={item.key}
-                  path={item.path}
-                  component={item.component}
-                  exact={item.exact}
-                />
+                <Route key={item.key} path={item.path} component={item.component} exact={item.exact} />
               ))}
               <Redirect exact from="/user" to="/user/login" />
             </Switch>

@@ -180,15 +180,7 @@ class BasicLayout extends React.PureComponent {
     }
   };
   render() {
-    const {
-      currentUser,
-      collapsed,
-      fetchingNotices,
-      notices,
-      routerData,
-      match,
-      location,
-    } = this.props;
+    const { currentUser, collapsed, fetchingNotices, notices, routerData, match, location } = this.props;
     const bashRedirect = this.getBaseRedirect();
     const layout = (
       <Layout>
@@ -221,9 +213,7 @@ class BasicLayout extends React.PureComponent {
           </Header>
           <Content style={{ margin: '24px 24px 0', height: '100%' }}>
             <Switch>
-              {redirectData.map(item => (
-                <Redirect key={item.from} exact from={item.from} to={item.to} />
-              ))}
+              {redirectData.map(item => <Redirect key={item.from} exact from={item.from} to={item.to} />)}
               {getRoutes(match.path, routerData).map(item => (
                 <AuthorizedRoute
                   key={item.key}
@@ -240,29 +230,29 @@ class BasicLayout extends React.PureComponent {
           </Content>
           <Footer style={{ padding: 0 }}>
             <GlobalFooter
-              links={[
-                {
-                  key: 'Pro 首页',
-                  title: 'Pro 首页',
-                  href: 'http://pro.ant.design',
-                  blankTarget: true,
-                },
-                {
-                  key: 'github',
-                  title: <Icon type="github" />,
-                  href: 'https://github.com/ant-design/ant-design-pro',
-                  blankTarget: true,
-                },
-                {
-                  key: 'Ant Design',
-                  title: 'Ant Design',
-                  href: 'http://ant.design',
-                  blankTarget: true,
-                },
-              ]}
+              // links={[
+              //   {
+              //     key: 'Pro 首页',
+              //     title: 'Pro 首页',
+              //     href: 'http://pro.ant.design',
+              //     blankTarget: true,
+              //   },
+              //   {
+              //     key: 'github',
+              //     title: <Icon type="github" />,
+              //     href: 'https://github.com/ant-design/ant-design-pro',
+              //     blankTarget: true,
+              //   },
+              //   {
+              //     key: 'Ant Design',
+              //     title: 'Ant Design',
+              //     href: 'http://ant.design',
+              //     blankTarget: true,
+              //   },
+              // ]}
               copyright={
                 <Fragment>
-                  Copyright <Icon type="copyright" /> 2018 蚂蚁金服体验技术部出品
+                  Copyright <Icon type="copyright" /> 2018 浏阳市大卖网络科技有限公司
                 </Fragment>
               }
             />
@@ -273,9 +263,7 @@ class BasicLayout extends React.PureComponent {
 
     return (
       <DocumentTitle title={this.getPageTitle()}>
-        <ContainerQuery query={query}>
-          {params => <div className={classNames(params)}>{layout}</div>}
-        </ContainerQuery>
+        <ContainerQuery query={query}>{params => <div className={classNames(params)}>{layout}</div>}</ContainerQuery>
       </DocumentTitle>
     );
   }

@@ -1,4 +1,14 @@
 import mockjs from 'mockjs';
+import { pfmsysList, pfmsysGetById, pfmsysAdd, pfmsysModify, pfmsysDel } from './mock/pfmsys';
+import {
+  pfmmenuList,
+  pfmmenuGetById,
+  pfmmenuAdd,
+  pfmmenuModify,
+  pfmmenuSort,
+  pfmmenuDel,
+  pfmmenuEnable,
+} from './mock/pfmmenu';
 import { getRule, postRule } from './mock/rule';
 import { getActivities, getNotice, getFakeList } from './mock/api';
 import { getFakeChartData } from './mock/chart';
@@ -6,12 +16,39 @@ import { getProfileBasicData } from './mock/profile';
 import { getProfileAdvancedData } from './mock/profile';
 import { getNotices } from './mock/notices';
 import { format, delay } from 'roadhog-api-doc';
+import { S_IRWXG } from 'constants';
 
 // 是否禁用代理
 const noProxy = process.env.NO_PROXY === 'true';
 
 // 代码中会兼容本地 service mock 以及部署站点的静态数据
 const proxy = {
+  'GET /pfm-svr/pfm/sys': pfmsysList,
+  'GET /pfm-svr/pfm/sys/getbyid': pfmsysGetById,
+  'POST /pfm-svr/pfm/sys': pfmsysAdd,
+  'PUT /pfm-svr/pfm/sys': pfmsysModify,
+  'DELETE /pfm-svr/pfm/sys': pfmsysDel,
+  'GET /pfm-svr/pfm/menu': pfmmenuList,
+  'GET /pfm-svr/pfm/menu/getbyid': pfmmenuGetById,
+  'POST /pfm-svr/pfm/menu': pfmmenuAdd,
+  'PUT /pfm-svr/pfm/menu': pfmmenuModify,
+  'PUT /pfm-svr/pfm/menu/sort': pfmmenuSort,
+  'DELETE /pfm-svr/pfm/menu': pfmmenuDel,
+  'PUT /pfm-svr/pfm/menu/enable': pfmmenuEnable,
+  'POST /suc-svr/user/login/by/user/name': (req, res) => {
+    const { loginPswd, userName, type } = req.body;
+    if (loginPswd === '21218cca77804d2ba1922c33e0151105' && userName === 'admin') {
+      res.send({
+        result: 1,
+        msg: '登录成功',
+      });
+      return;
+    }
+    res.send({
+      result: -1,
+      msg: '账号或密码不正确',
+    });
+  },
   // 支持值为 Object 和 Array
   'GET /api/currentUser': {
     $desc: '获取当前用户接口',
@@ -71,30 +108,6 @@ const proxy = {
   'GET /api/fake_chart_data': getFakeChartData,
   'GET /api/profile/basic': getProfileBasicData,
   'GET /api/profile/advanced': getProfileAdvancedData,
-  'POST /api/login/account': (req, res) => {
-    const { password, userName, type } = req.body;
-    if (password === '888888' && userName === 'admin') {
-      res.send({
-        status: 'ok',
-        type,
-        currentAuthority: 'admin',
-      });
-      return;
-    }
-    if (password === '123456' && userName === 'user') {
-      res.send({
-        status: 'ok',
-        type,
-        currentAuthority: 'user',
-      });
-      return;
-    }
-    res.send({
-      status: 'error',
-      type,
-      currentAuthority: 'guest',
-    });
-  },
   'POST /api/register': (req, res) => {
     res.send({ status: 'ok', currentAuthority: 'user' });
   },

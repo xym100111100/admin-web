@@ -2,6 +2,23 @@ import { isUrl } from '../utils/utils';
 
 const menuData = [
   {
+    name: '系统配置',
+    icon: 'setting',
+    path: 'pfm',
+    children: [
+      {
+        name: '系统',
+        icon: 'global',
+        path: 'sys-list',
+      },
+      {
+        name: '菜单',
+        icon: 'bars',
+        path: 'menu-list',
+      },
+    ],
+  },
+  {
     name: 'dashboard',
     icon: 'dashboard',
     path: 'dashboard',

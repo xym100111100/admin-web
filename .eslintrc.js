@@ -10,6 +10,8 @@ module.exports = {
     jasmine: true,
   },
   rules: {
+    // 关闭i++,i--之类的报错
+    'no-plusplus': 'off',
     'generator-star-spacing': [0],
     'consistent-return': [0],
     'react/forbid-prop-types': [0],

@@ -19,17 +19,7 @@ const renderTotal = total => {
   return totalDom;
 };
 
-const ChartCard = ({
-  loading = false,
-  contentHeight,
-  title,
-  avatar,
-  action,
-  total,
-  footer,
-  children,
-  ...rest
-}) => {
+const ChartCard = ({ loading = false, contentHeight, title, avatar, action, total, footer, children, ...rest }) => {
   const content = (
     <div className={styles.chartCard}>
       <div

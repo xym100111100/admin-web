@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Link } from 'dva/router';
-import { Checkbox, Alert, Icon } from 'antd';
+import CryptoJS from 'crypto-js';
+import { Checkbox, Alert } from 'antd';
 import Login from 'components/Login';
 import styles from './Login.less';
 
-const { Tab, UserName, Password, Mobile, Captcha, Submit } = Login;
+const { Tab, UserName, Password, Submit } = Login;
 
 @connect(({ login, loading }) => ({
   login,
@@ -23,11 +23,13 @@ export default class LoginPage extends Component {
 
   handleSubmit = (err, values) => {
     const { type } = this.state;
+    const tempValues = values;
     if (!err) {
+      tempValues.loginPswd = CryptoJS.MD5(values.loginPswd).toString();
       this.props.dispatch({
         type: 'login/login',
         payload: {
-          ...values,
+          ...tempValues,
           type,
         },
       });
@@ -47,24 +49,30 @@ export default class LoginPage extends Component {
   render() {
     const { login, submitting } = this.props;
     const { type } = this.state;
+    const userNameRules = {
+      rules: [
+        {
+          required: true,
+          message: '请输入email/手机号/登录名称!',
+        },
+      ],
+    };
+    const loginPswdRules = {
+      rules: [
+        {
+          required: true,
+          message: '请输入登录密码!',
+        },
+      ],
+    };
     return (
       <div className={styles.main}>
         <Login defaultActiveKey={type} onTabChange={this.onTabChange} onSubmit={this.handleSubmit}>
           <Tab key="account" tab="账户密码登录">
-            {login.status === 'error' &&
-              login.type === 'account' &&
-              !submitting &&
-              this.renderMessage('账户或密码错误（admin/888888）')}
-            <UserName name="userName" placeholder="admin/user" />
-            <Password name="password" placeholder="888888/123456" />
-          </Tab>
-          <Tab key="mobile" tab="手机号登录">
-            {login.status === 'error' &&
-              login.type === 'mobile' &&
-              !submitting &&
-              this.renderMessage('验证码错误')}
-            <Mobile name="mobile" />
-            <Captcha name="captcha" />
+            {login.status === -1 && !submitting && this.renderMessage(login.msg)}
+            <UserName name="userName" placeholder="email/手机号/登录名称" {...userNameRules} />
+            <Password name="loginPswd" placeholder="登录密码" {...loginPswdRules} />
+            <input name="appId" type="hidden" />
           </Tab>
           <div>
             <Checkbox checked={this.state.autoLogin} onChange={this.changeAutoLogin}>
@@ -75,15 +83,6 @@ export default class LoginPage extends Component {
             </a>
           </div>
           <Submit loading={submitting}>登录</Submit>
-          <div className={styles.other}>
-            其他登录方式
-            <Icon className={styles.icon} type="alipay-circle" />
-            <Icon className={styles.icon} type="taobao-circle" />
-            <Icon className={styles.icon} type="weibo-circle" />
-            <Link className={styles.register} to="/user/register">
-              注册账户
-            </Link>
-          </div>
         </Login>
       </div>
     );
