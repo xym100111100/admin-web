@@ -125,7 +125,7 @@ export default class RoleMng extends SimpleMng {
         <Card bordered={false} loading={pfmsysloading}>
           <div className={styles.tableList}>
             <div className={styles.tableListOperator}>
-              <Tabs onChange={this.switchSys}>{pfmsys.map(sys => <TabPane tab={sys.sysName} key={sys.id} />)}</Tabs>
+              <Tabs onChange={this.switchSys}>{pfmsys.map(sys => <TabPane tab={sys.name} key={sys.id} />)}</Tabs>
               <Button icon="plus" type="primary" disabled={isDrag} onClick={() => this.showAddEditor()}>
                 添加
               </Button>

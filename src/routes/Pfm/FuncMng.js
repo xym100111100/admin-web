@@ -2,27 +2,30 @@ import React, { Fragment } from 'react';
 import { Button, Card, Divider, Popconfirm, Switch, Table, Tabs, Tooltip } from 'antd';
 import { connect } from 'dva';
 import DragSortTable from 'components/Rebue/DragSortTable';
+import SimpleMng from 'components/Rebue/SimpleMng';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import FuncForm from './FuncForm';
+import ActiForm from './ActiForm';
 import styles from './FuncMng.less';
 
 const { TabPane } = Tabs;
 
-@connect(({ pfmsys, pfmfunc, loading }) => ({
+@connect(({ pfmsys, pfmfunc, pfmacti, loading }) => ({
   pfmsys,
   pfmfunc,
-  loading: loading.models.pfmfunc,
+  pfmacti,
+  loading: loading.models.pfmfunc || loading.models.pfmacti,
   pfmsysloading: loading.models.pfmsys,
 }))
-export default class FuncMng extends React.PureComponent {
+export default class FuncMng extends SimpleMng {
   constructor() {
     super();
     this.moduleCode = 'pfmfunc';
-    this.moduleName = '功能';
-    this.state = {
-      sysId: undefined,
+    Object.assign(this.state, {
+      options: {},
       expandedRowKeys: [],
       isDrag: false,
-    };
+    });
   }
 
   componentDidMount() {
@@ -36,16 +39,6 @@ export default class FuncMng extends React.PureComponent {
     });
   }
 
-  getList() {
-    const { pfmfunc: { pfmfunc } } = this.props;
-    return pfmfunc;
-  }
-
-  cloneList() {
-    const { pfmfunc: { pfmfunc } } = this.props;
-    return Object.assign(pfmfunc);
-  }
-
   // 切换系统
   switchSys = activeKey => {
     this.handleReload({ sysId: activeKey });
@@ -56,20 +49,6 @@ export default class FuncMng extends React.PureComponent {
     const { isDrag } = this.state;
     this.setState({ isDrag: !isDrag });
   };
-
-  // 刷新
-  handleReload(params) {
-    if (params) {
-      this.state.options = params;
-    }
-    const payload = this.state.options;
-
-    // 刷新
-    this.props.dispatch({
-      type: `${this.moduleCode}/refresh`,
-      payload,
-    });
-  }
 
   // 展开/收起菜单的子节点
   handleExpand(expanded, record) {
@@ -87,10 +66,21 @@ export default class FuncMng extends React.PureComponent {
     }
     this.setState({ expandedRowKeys: temp });
   }
+  // 鉴权/忽略功能
+  handleAuth(record) {
+    this.props.dispatch({
+      type: 'pfmacti/auth',
+      payload: { id: record.id, isAuth: !record.isAuth },
+      callback: () => {
+        this.handleReload();
+      },
+    });
+  }
   // 启用/禁用功能
   handleEnable(record) {
+    const moduleCode = record.type === 'func' ? 'pfmfunc' : 'pfmacti';
     this.props.dispatch({
-      type: 'pfmfunc/enable',
+      type: `${moduleCode}/enable`,
       payload: { id: record.id, isEnabled: !record.isEnabled },
       callback: () => {
         this.handleReload();
@@ -134,7 +124,8 @@ export default class FuncMng extends React.PureComponent {
 
   render() {
     const { pfmsys: { pfmsys }, pfmfunc: { pfmfunc }, loading, pfmsysloading } = this.props;
-    const { expandedRowKeys, isDrag } = this.state;
+    const { expandedRowKeys, isDrag, editForm, editFormType, editFormTitle, editFormRecord } = this.state;
+    const { sysId } = this.state.options;
 
     const columns = [
       {
@@ -159,7 +150,7 @@ export default class FuncMng extends React.PureComponent {
                 unCheckedChildren="忽略"
                 checked={record.isAuth}
                 loading={loading}
-                onChange={() => this.handleEnable(record)}
+                onChange={() => this.handleAuth(record)}
               />
             </Tooltip>
           );
@@ -191,8 +182,15 @@ export default class FuncMng extends React.PureComponent {
             <Fragment>
               {record.type === 'func' && (
                 <Fragment>
-                  <a onClick={() => this.showEditForm(record.id)}>添加动作</a>
+                  <a onClick={() => this.showAddForm('actiForm', '添加新动作', { funcId: record.id, sysId })}>
+                    添加新动作
+                  </a>
                   <Divider type="vertical" />
+                  <a onClick={() => this.showEditForm(record.id, this.moduleCode, 'funcForm', '编辑功能信息')}>编辑</a>
+                  <Divider type="vertical" />
+                  <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record, this.moduleCode)}>
+                    <a>删除</a>
+                  </Popconfirm>
                 </Fragment>
               )}
               {record.type === 'acti' && (
@@ -201,13 +199,13 @@ export default class FuncMng extends React.PureComponent {
                   <Divider type="vertical" />
                   <a onClick={() => this.showEditForm(record.id)}>链接</a>
                   <Divider type="vertical" />
+                  <a onClick={() => this.showEditForm(record.id, 'pfmacti', 'actiForm', '编辑动作信息')}>编辑</a>
+                  <Divider type="vertical" />
+                  <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record, 'pfmacti')}>
+                    <a>删除</a>
+                  </Popconfirm>
                 </Fragment>
               )}
-              <a onClick={() => this.showEditForm(record.id)}>编辑</a>
-              <Divider type="vertical" />
-              <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record.id)}>
-                <a>删除</a>
-              </Popconfirm>
             </Fragment>
           );
         },
@@ -219,9 +217,14 @@ export default class FuncMng extends React.PureComponent {
         <Card bordered={false} loading={pfmsysloading}>
           <div className={styles.tableList}>
             <div className={styles.tableListOperator}>
-              <Tabs onChange={this.switchSys}>{pfmsys.map(sys => <TabPane tab={sys.sysName} key={sys.id} />)}</Tabs>
-              <Button icon="plus" type="primary" disabled={isDrag} onClick={::this.showFuncAddForm}>
-                添加功能
+              <Tabs onChange={this.switchSys}>{pfmsys.map(sys => <TabPane tab={sys.name} key={sys.id} />)}</Tabs>
+              <Button
+                icon="plus"
+                type="primary"
+                disabled={isDrag}
+                onClick={() => this.showAddForm('funcForm', '添加新功能', { sysId })}
+              >
+                添加新功能
               </Button>
               <Divider type="vertical" />
               拖拽排序:&nbsp;&nbsp;
@@ -256,6 +259,26 @@ export default class FuncMng extends React.PureComponent {
             </DragWrapper>
           </div>
         </Card>
+        {editForm === 'funcForm' && (
+          <FuncForm
+            visible
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            handleSave={fields => this.handleSave(fields, this.moduleCode)}
+          />
+        )}
+        {editForm === 'actiForm' && (
+          <ActiForm
+            visible
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            handleSave={fields => this.handleSave(fields, 'pfmacti')}
+          />
+        )}
       </PageHeaderLayout>
     );
   }

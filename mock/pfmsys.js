@@ -4,23 +4,23 @@ import { parse } from 'url';
 const tableListDataSource = [
   {
     id: 'pfm-admin',
-    sysName: '平台后台管理',
-    sysDesc: '平台后台管理系统',
+    name: '平台后台管理',
+    remark: '平台后台管理系统',
   },
   {
     id: 'kdi-admin',
-    sysName: '快递管理',
-    sysDesc: '快递管理系统',
+    name: '快递管理',
+    remark: '快递管理系统',
   },
   {
     id: 'damai-admin',
-    sysName: '大卖网后台管理',
-    sysDesc: '大卖网后台管理系统',
+    name: '大卖网后台管理',
+    remark: '大卖网后台管理系统',
   },
   {
     id: 'wbl-admin',
-    sysName: '微薄利后台管理',
-    sysDesc: '微薄利后台管理系统',
+    name: '微薄利后台管理',
+    remark: '微薄利后台管理系统',
   },
 ];
 

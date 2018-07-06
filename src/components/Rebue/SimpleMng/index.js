@@ -29,19 +29,20 @@ export default class SimpleMng extends PureComponent {
   }
 
   // 显示新建表单
-  showAddForm(editForm, editFormTitle) {
+  showAddForm(editForm, editFormTitle, editFormRecord) {
+    if (!editFormRecord) editFormRecord = {};
     this.setState({
       editForm,
       editFormType: 'add',
-      editFormRecord: {},
+      editFormRecord,
       editFormTitle,
     });
   }
 
   // 显示编辑表单
-  showEditForm(id, editForm, editFormTitle) {
+  showEditForm(id, moduleCode, editForm, editFormTitle) {
     this.props.dispatch({
-      type: `${this.moduleCode}/getById`,
+      type: `${moduleCode}/getById`,
       payload: { id },
       callback: data => {
         this.setState({
@@ -55,8 +56,10 @@ export default class SimpleMng extends PureComponent {
   }
 
   // 请求保存(添加或修改)
-  handleSave(fields, moduleCode) {
-    this.setState({ editFormRecord: fields });
+  handleSave(fields, moduleCode, record) {
+    if (!record) record = {};
+    Object.assign(record, fields);
+    this.setState({ editFormRecord: record });
     let dispatchType;
     if (this.state.editFormType === 'add') {
       dispatchType = `${moduleCode}/add`;
@@ -65,7 +68,7 @@ export default class SimpleMng extends PureComponent {
     }
     this.props.dispatch({
       type: dispatchType,
-      payload: { ...fields },
+      payload: { ...record },
       callback: () => {
         this.handleReload();
         // 关闭窗口

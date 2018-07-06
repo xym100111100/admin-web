@@ -1,60 +1,94 @@
 import { parse } from 'url';
-import { getList } from './pfmacti';
 
 // mock tableListDataSource
 const tableListDataSource = [
   {
     id: 1,
     sysId: 'pfm-admin',
-    name: '功能',
+    funcId: 1,
+    name: '查看',
     isEnabled: true,
-    remark: '功能基础信息',
+    isAuth: false,
+    remark: '查看功能的基础信息',
     orderNo: 1,
   },
   {
     id: 2,
     sysId: 'pfm-admin',
-    name: '功能',
+    funcId: 1,
+    name: '管理',
     isEnabled: true,
-    remark: '功能基础信息',
+    isAuth: true,
+    remark: '管理功能的基础信息',
     orderNo: 2,
   },
   {
     id: 3,
     sysId: 'pfm-admin',
-    name: '功能',
+    funcId: 2,
+    name: '查看',
     isEnabled: true,
-    remark: '功能及其动作的基础信息',
-    orderNo: 3,
+    isAuth: false,
+    remark: '查看功能的基础信息',
+    orderNo: 1,
   },
   {
     id: 4,
     sysId: 'pfm-admin',
-    name: '角色',
+    funcId: 2,
+    name: '管理',
     isEnabled: true,
-    remark: '角色基础信息',
-    orderNo: 4,
+    isAuth: true,
+    remark: '管理功能的基础信息',
+    orderNo: 2,
+  },
+  {
+    id: 5,
+    sysId: 'pfm-admin',
+    funcId: 3,
+    name: '查看',
+    isEnabled: true,
+    isAuth: false,
+    remark: '查看功能及其动作的基础信息',
+    orderNo: 1,
+  },
+  {
+    id: 6,
+    sysId: 'pfm-admin',
+    funcId: 3,
+    name: '管理',
+    isEnabled: true,
+    isAuth: true,
+    remark: '管理功能及其动作的基础信息',
+    orderNo: 2,
+  },
+  {
+    id: 7,
+    sysId: 'pfm-admin',
+    funcId: 4,
+    name: '查看',
+    isEnabled: true,
+    isAuth: false,
+    remark: '查看角色的基础信息',
+    orderNo: 1,
+  },
+  {
+    id: 8,
+    sysId: 'pfm-admin',
+    funcId: 4,
+    name: '管理',
+    isEnabled: true,
+    isAuth: true,
+    remark: '管理角色的基础信息',
+    orderNo: 2,
   },
 ];
 
-export function pfmfuncList(req, res, u) {
-  let url = u;
-  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
-    url = req.url; // eslint-disable-line
-  }
-  const params = parse(url, true).query;
-  const funcList = [];
-  for (const item of tableListDataSource) {
-    if (item.sysId === params.sysId) funcList.push(item);
-  }
-  const actiList = [];
-  for (const item of getList()) {
-    if (item.sysId === params.sysId) actiList.push(item);
-  }
-  res.json({ funcs: funcList, actis: actiList });
+export function getList() {
+  return tableListDataSource;
 }
 
-export function pfmfuncGetById(req, res, u) {
+export function pfmactiGetById(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -76,7 +110,7 @@ export function pfmfuncGetById(req, res, u) {
   }
 }
 
-export function pfmfuncAdd(req, res, u, b) {
+export function pfmactiAdd(req, res, u, b) {
   const record = (b && b.body) || req.body;
   if (Math.random() >= 0.495) {
     record.id = new Date().getTime();
@@ -95,7 +129,7 @@ export function pfmfuncAdd(req, res, u, b) {
   }
 }
 
-export function pfmfuncModify(req, res, u, b) {
+export function pfmactiModify(req, res, u, b) {
   const body = (b && b.body) || req.body;
   const replacedIndex = tableListDataSource.findIndex(item => item.id === body.id);
   if (replacedIndex !== -1) {
@@ -112,7 +146,7 @@ export function pfmfuncModify(req, res, u, b) {
   }
 }
 
-export function pfmfuncSort(req, res, u, b) {
+export function pfmactiSort(req, res, u, b) {
   const body = (b && b.body) || req.body;
   const { dragCode, dropCode } = body;
   const dragParentCode = dragCode.substring(0, dragCode.length - 2);
@@ -182,14 +216,14 @@ function codeSub1BySelf(itemCode, referenceCode) {
   return prefix + middle + suffix;
 }
 
-export function pfmfuncDel(req, res, u, b) {
+export function pfmactiDel(req, res, u, b) {
   const body = (b && b.body) || req.body;
   const removedIndex = tableListDataSource.findIndex(item => item.id === body.id);
   if (removedIndex >= 0) {
     tableListDataSource.splice(removedIndex, 1);
     for (let index = 0; index < tableListDataSource.length; index++) {
-      const func = tableListDataSource[index];
-      func.orderNo = index;
+      const acti = tableListDataSource[index];
+      acti.orderNo = index;
     }
     return res.json({
       result: 1,
@@ -203,10 +237,32 @@ export function pfmfuncDel(req, res, u, b) {
   }
 }
 
-export function pfmfuncEnable(req, res, u, b) {
+export function pfmactiAuth(req, res, u, b) {
   const body = (b && b.body) || req.body;
   let success;
-  let code;
+  for (const item of tableListDataSource) {
+    if (item.id === body.id) {
+      item.isAuth = body.isAuth;
+      success = true;
+      break;
+    }
+  }
+  if (success) {
+    return res.json({
+      result: 1,
+      msg: '设置鉴权/忽略成功',
+    });
+  } else {
+    return res.json({
+      result: -1,
+      msg: '设置鉴权/忽略失败，找不到要鉴权/忽略的记录',
+    });
+  }
+}
+
+export function pfmactiEnable(req, res, u, b) {
+  const body = (b && b.body) || req.body;
+  let success;
   for (const item of tableListDataSource) {
     if (item.id === body.id) {
       item.isEnabled = body.isEnabled;
@@ -228,9 +284,9 @@ export function pfmfuncEnable(req, res, u, b) {
 }
 
 // export default {
-//   pfmfuncList,
-//   pfmfuncGetById,
-//   pfmfuncAdd,
-//   pfmfuncModify,
-//   pfmfuncDel,
+//   getList,
+//   pfmactiGetById,
+//   pfmactiAdd,
+//   pfmactiModify,
+//   pfmactiDel,
 // };

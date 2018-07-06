@@ -19,6 +19,15 @@ import {
   pfmfuncEnable,
 } from './mock/pfmfunc';
 import {
+  pfmactiGetById,
+  pfmactiAdd,
+  pfmactiModify,
+  pfmactiSort,
+  pfmactiDel,
+  pfmactiAuth,
+  pfmactiEnable,
+} from './mock/pfmacti';
+import {
   pfmroleList,
   pfmroleGetById,
   pfmroleAdd,
@@ -60,6 +69,13 @@ const proxy = {
   'PUT /pfm-svr/pfm/func/sort': pfmfuncSort,
   'DELETE /pfm-svr/pfm/func': pfmfuncDel,
   'PUT /pfm-svr/pfm/func/enable': pfmfuncEnable,
+  'GET /pfm-svr/pfm/acti/getbyid': pfmactiGetById,
+  'POST /pfm-svr/pfm/acti': pfmactiAdd,
+  'PUT /pfm-svr/pfm/acti': pfmactiModify,
+  'PUT /pfm-svr/pfm/acti/sort': pfmactiSort,
+  'DELETE /pfm-svr/pfm/acti': pfmactiDel,
+  'PUT /pfm-svr/pfm/acti/auth': pfmactiAuth,
+  'PUT /pfm-svr/pfm/acti/enable': pfmactiEnable,
   'GET /pfm-svr/pfm/role': pfmroleList,
   'GET /pfm-svr/pfm/role/getbyid': pfmroleGetById,
   'POST /pfm-svr/pfm/role': pfmroleAdd,

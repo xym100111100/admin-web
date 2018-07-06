@@ -3,7 +3,7 @@ import React, { Fragment } from 'react';
 import { connect } from 'dva';
 import { Button, Card, Divider, Popconfirm, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import SysInfo from './SysInfo';
+import SysForm from './SysForm';
 import styles from './SysMng.less';
 
 @connect(({ pfmsys, loading }) => ({ pfmsys, loading: loading.models.pfmsys }))
@@ -11,7 +11,6 @@ export default class SysMng extends SimpleMng {
   constructor() {
     super();
     this.moduleCode = 'pfmsys';
-    this.moduleName = '系统';
   }
   render() {
     const { pfmsys: { pfmsys }, loading } = this.props;
@@ -24,17 +23,17 @@ export default class SysMng extends SimpleMng {
       },
       {
         title: '名称',
-        dataIndex: 'sysName',
+        dataIndex: 'name',
       },
       {
         title: '描述',
-        dataIndex: 'sysDesc',
+        dataIndex: 'remark',
       },
       {
         title: '操作',
         render: (text, record) => (
           <Fragment>
-            <a onClick={() => this.showEditForm(record.id, 'sysInfo', '编辑系统信息')}>编辑</a>
+            <a onClick={() => this.showEditForm(record.id, this.moduleCode, 'sysForm', '编辑系统信息')}>编辑</a>
             <Divider type="vertical" />
             <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record, this.moduleCode)}>
               <a>删除</a>
@@ -44,14 +43,12 @@ export default class SysMng extends SimpleMng {
       },
     ];
 
-    console.log(editForm);
-
     return (
       <PageHeaderLayout title="系统信息管理">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" onClick={() => this.showAddForm('sysInfo', '添加新系统')}>
+              <Button icon="plus" type="primary" onClick={() => this.showAddForm('sysForm', '添加新系统')}>
                 添加
               </Button>
               <Divider type="vertical" />
@@ -62,8 +59,8 @@ export default class SysMng extends SimpleMng {
             <Table rowKey="id" pagination={false} loading={loading} dataSource={pfmsys} columns={columns} />
           </div>
         </Card>
-        {editForm === 'sysInfo' && (
-          <SysInfo
+        {editForm === 'sysForm' && (
+          <SysForm
             visible
             title={editFormTitle}
             editFormType={editFormType}

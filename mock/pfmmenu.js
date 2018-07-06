@@ -281,7 +281,7 @@ export function pfmmenuEnable(req, res, u, b) {
   if (success) {
     return res.json({
       result: 1,
-      msg: '启用/禁用成功',
+      msg: '设置启用/禁用成功',
     });
   } else {
     return res.json({

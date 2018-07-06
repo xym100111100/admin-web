@@ -17,7 +17,7 @@ const { TabPane } = Tabs;
 }))
 export default class MenuMng extends EditMng {
   state = {
-    sysId: undefined,
+    options: {},
     expandedRowKeys: [],
     isDrag: false,
   };
@@ -345,7 +345,7 @@ export default class MenuMng extends EditMng {
         <Card bordered={false} loading={pfmsysloading}>
           <div className={styles.tableList}>
             <div className={styles.tableListOperator}>
-              <Tabs onChange={this.switchSys}>{pfmsys.map(sys => <TabPane tab={sys.sysName} key={sys.id} />)}</Tabs>
+              <Tabs onChange={this.switchSys}>{pfmsys.map(sys => <TabPane tab={sys.name} key={sys.id} />)}</Tabs>
               <Button
                 icon="plus"
                 type="primary"

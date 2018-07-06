@@ -1,11 +1,11 @@
 import { message } from 'antd';
-import { list, getById, add, modify, sort, del, auth, enable } from '../services/pfmfunc';
+import { list, getById, add, modify, sort, del, auth, enable } from '../services/pfmacti';
 
 export default {
-  namespace: 'pfmfunc',
+  namespace: 'pfmacti',
 
   state: {
-    pfmfunc: [],
+    pfmacti: [],
   },
 
   effects: {
@@ -62,6 +62,15 @@ export default {
         message.error(response.msg);
       }
     },
+    *auth({ payload, callback }, { call }) {
+      const response = yield call(auth, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
     *enable({ payload, callback }, { call }) {
       const response = yield call(enable, payload);
       if (response.result === 1) {
@@ -75,23 +84,23 @@ export default {
 
   reducers: {
     changeList(state, action) {
-      const { funcs, actis } = action.payload;
-      funcs.sort((item1, item2) => item1.orderNo > item2.orderNo);
+      const { actis } = action.payload;
+      actis.sort((item1, item2) => item1.orderNo > item2.orderNo);
       actis.sort((item1, item2) => item1.orderNo > item2.orderNo);
       const tree = [];
-      for (const func of funcs) {
-        func.children = [];
+      for (const acti of actis) {
+        acti.children = [];
         for (const acti of actis) {
-          if (acti.funcId === func.id) {
+          if (acti.actiId === acti.id) {
             acti.type = 'acti';
-            func.children.push(acti);
+            acti.children.push(acti);
           }
         }
-        func.type = 'func';
-        tree.push(func);
+        acti.type = 'acti';
+        tree.push(acti);
       }
       return {
-        pfmfunc: tree,
+        pfmacti: tree,
       };
     },
   },
