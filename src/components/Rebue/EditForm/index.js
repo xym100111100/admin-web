@@ -19,7 +19,7 @@ const EditForm = DivInfo => {
   })
   class extends PureComponent {
     render() {
-      const { title, visible, handleSave, closeModal, submitting, form, editFormType } = this.props;
+      const { title, visible, handleSave, closeModal, submitting, form, ...restProps } = this.props;
       const handleOk = () => {
         form.validateFieldsAndScroll((err, fieldsValue) => {
           if (err) return;
@@ -40,7 +40,7 @@ const EditForm = DivInfo => {
             </Button>,
           ]}
         >
-          <DivInfo form={form} editFormType={editFormType} />
+          <DivInfo form={form} {...restProps} />
         </Modal>
       );
     }

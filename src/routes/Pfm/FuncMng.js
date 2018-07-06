@@ -6,14 +6,16 @@ import SimpleMng from 'components/Rebue/SimpleMng';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import FuncForm from './FuncForm';
 import ActiForm from './ActiForm';
+import ActiMenuForm from './ActiMenuForm';
 import styles from './FuncMng.less';
 
 const { TabPane } = Tabs;
 
-@connect(({ pfmsys, pfmfunc, pfmacti, loading }) => ({
+@connect(({ pfmsys, pfmfunc, pfmacti, pfmmenu, loading }) => ({
   pfmsys,
   pfmfunc,
   pfmacti,
+  pfmmenu,
   loading: loading.models.pfmfunc || loading.models.pfmacti,
   pfmsysloading: loading.models.pfmsys,
 }))
@@ -29,12 +31,21 @@ export default class FuncMng extends SimpleMng {
   }
 
   componentDidMount() {
-    // 刷新
+    // 刷新系统
     this.props.dispatch({
       type: `pfmsys/refresh`,
       callback: () => {
         const { pfmsys: { pfmsys } } = this.props;
         this.handleReload({ sysId: pfmsys[0].id });
+        // 刷新菜单
+        this.props.dispatch({
+          type: 'pfmmenu/refresh',
+          payload: { sysId: pfmsys[0].id },
+          callback: () => {
+            const { pfmmenu: { pfmmenu } } = this.props;
+            console.log(pfmmenu);
+          },
+        });
       },
     });
   }
@@ -123,7 +134,7 @@ export default class FuncMng extends SimpleMng {
   };
 
   render() {
-    const { pfmsys: { pfmsys }, pfmfunc: { pfmfunc }, loading, pfmsysloading } = this.props;
+    const { pfmsys: { pfmsys }, pfmfunc: { pfmfunc }, pfmmenu: { pfmmenu }, loading, pfmsysloading } = this.props;
     const { expandedRowKeys, isDrag, editForm, editFormType, editFormTitle, editFormRecord } = this.state;
     const { sysId } = this.state.options;
 
@@ -195,7 +206,7 @@ export default class FuncMng extends SimpleMng {
               )}
               {record.type === 'acti' && (
                 <Fragment>
-                  <a onClick={() => this.showEditForm(record.id)}>菜单</a>
+                  <a onClick={() => this.showEditForm(record.id, 'pfmacti', 'actiMenuForm', '设置动作的菜单')}>菜单</a>
                   <Divider type="vertical" />
                   <a onClick={() => this.showEditForm(record.id)}>链接</a>
                   <Divider type="vertical" />
@@ -277,6 +288,18 @@ export default class FuncMng extends SimpleMng {
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
             handleSave={fields => this.handleSave(fields, 'pfmacti')}
+          />
+        )}
+        {editForm === 'actiMenuForm' && (
+          <ActiMenuForm
+            // pfmmenu={pfmmenu}
+            sysId={sysId}
+            visible
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            handleSave={fields => this.handleSave(fields, 'pfmactimenu')}
           />
         )}
       </PageHeaderLayout>

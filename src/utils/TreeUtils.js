@@ -1,6 +1,27 @@
+import React from 'react';
+import { Tree } from 'antd';
 import ArrayUtils from './ArrayUtils';
 
+const { TreeNode } = Tree;
+
 export default class TreeUtils {
+  // 渲染AntDesign的Tree控件的节点
+  static renderTreeNodes(data) {
+    if (data.length > 0) {
+      return data.map(item => {
+        if (item.children) {
+          return (
+            <TreeNode title={item.title} key={item.key} dataRef={item}>
+              {this.renderTreeNodes(item.children)}
+            </TreeNode>
+          );
+        }
+        return <TreeNode {...item} />;
+      });
+    }
+  }
+
+  // 通过ID查找元素
   static findById(treeList, findId) {
     for (const item of treeList) {
       if (item.id && item.id === findId) return item;
@@ -12,6 +33,7 @@ export default class TreeUtils {
     return undefined;
   }
 
+  // 通过ID删除元素
   static delById(treeList, findId) {
     const result = delById1(treeList, findId);
     if (result) {

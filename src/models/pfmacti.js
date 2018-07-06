@@ -9,14 +9,6 @@ export default {
   },
 
   effects: {
-    *refresh({ payload, callback }, { call, put }) {
-      const response = yield call(list, payload);
-      yield put({
-        type: 'changeList',
-        payload: response,
-      });
-      if (callback) callback(response);
-    },
     *getById({ payload, callback }, { call }) {
       const response = yield call(getById, payload);
       if (response.result === 1) {
@@ -82,26 +74,5 @@ export default {
     },
   },
 
-  reducers: {
-    changeList(state, action) {
-      const { actis } = action.payload;
-      actis.sort((item1, item2) => item1.orderNo > item2.orderNo);
-      actis.sort((item1, item2) => item1.orderNo > item2.orderNo);
-      const tree = [];
-      for (const acti of actis) {
-        acti.children = [];
-        for (const acti of actis) {
-          if (acti.actiId === acti.id) {
-            acti.type = 'acti';
-            acti.children.push(acti);
-          }
-        }
-        acti.type = 'acti';
-        tree.push(acti);
-      }
-      return {
-        pfmacti: tree,
-      };
-    },
-  },
+  reducers: {},
 };
