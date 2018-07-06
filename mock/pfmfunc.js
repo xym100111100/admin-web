@@ -1,113 +1,142 @@
 import { parse } from 'url';
 
 // mock tableListDataSource
-const tableListDataSource = [
+const funcs = [
   {
     id: 1,
     sysId: 'pfm-admin',
-    path: 'pfm',
-    code: '00',
-    name: '系统配置',
-    remark: '配置基础的系统信息',
-    icon: 'setting',
+    name: '系统',
     isEnabled: true,
+    remark: '系统基础信息',
+    orderNo: 1,
   },
   {
     id: 2,
     sysId: 'pfm-admin',
-    path: 'sys-mng',
-    code: '0000',
-    name: '系统',
-    remark: '管理平台的各系统信息',
-    // icon: 'global',
+    name: '菜单',
     isEnabled: true,
+    remark: '菜单基础信息',
+    orderNo: 2,
   },
   {
     id: 3,
     sysId: 'pfm-admin',
-    path: 'menu-mng',
-    code: '0001',
-    name: '菜单',
-    remark: '管理系统的菜单',
-    // icon: 'bars',
+    name: '功能',
     isEnabled: true,
+    remark: '功能及其动作的基础信息',
+    orderNo: 3,
   },
   {
     id: 4,
     sysId: 'pfm-admin',
-    path: 'func-mng',
-    code: '0002',
-    name: '功能',
-    remark: '管理系统的功能',
-    // icon: 'role',
+    name: '角色',
     isEnabled: true,
+    remark: '角色基础信息',
+    orderNo: 4,
+  },
+];
+
+const actis = [
+  {
+    id: 1,
+    sysId: 'pfm-admin',
+    funcId: 1,
+    name: '查看',
+    isEnabled: true,
+    isAuth: false,
+    remark: '查看系统的基础信息',
+    orderNo: 1,
+  },
+  {
+    id: 2,
+    sysId: 'pfm-admin',
+    funcId: 1,
+    name: '管理',
+    isEnabled: true,
+    isAuth: true,
+    remark: '管理系统的基础信息',
+    orderNo: 2,
+  },
+  {
+    id: 3,
+    sysId: 'pfm-admin',
+    funcId: 2,
+    name: '查看',
+    isEnabled: true,
+    isAuth: false,
+    remark: '查看菜单的基础信息',
+    orderNo: 1,
+  },
+  {
+    id: 4,
+    sysId: 'pfm-admin',
+    funcId: 2,
+    name: '管理',
+    isEnabled: true,
+    isAuth: true,
+    remark: '管理菜单的基础信息',
+    orderNo: 2,
   },
   {
     id: 5,
     sysId: 'pfm-admin',
-    path: 'role-mng',
-    code: '0003',
-    name: '角色',
-    remark: '管理系统的角色',
-    // icon: 'role',
+    funcId: 3,
+    name: '查看',
     isEnabled: true,
+    isAuth: false,
+    remark: '查看功能及其动作的基础信息',
+    orderNo: 1,
   },
   {
     id: 6,
     sysId: 'pfm-admin',
-    path: 'menu-list',
-    code: '000100',
-    name: '菜单测试1',
-    remark: '管理系统的菜单测试',
-    icon: 'bars',
+    funcId: 3,
+    name: '管理',
     isEnabled: true,
+    isAuth: true,
+    remark: '管理功能及其动作的基础信息',
+    orderNo: 2,
   },
   {
     id: 7,
     sysId: 'pfm-admin',
-    path: 'menu-list',
-    code: '00010000',
-    name: '菜单测试12',
-    remark: '管理系统的菜单测试',
-    icon: 'bars',
+    funcId: 4,
+    name: '查看',
     isEnabled: true,
+    isAuth: false,
+    remark: '查看角色的基础信息',
+    orderNo: 1,
   },
   {
     id: 8,
     sysId: 'pfm-admin',
-    path: 'menu-list',
-    code: '000101',
-    name: '菜单测试13',
-    remark: '管理系统的菜单测试',
-    icon: 'bars',
+    funcId: 4,
+    name: '管理',
     isEnabled: true,
-  },
-  {
-    id: 9,
-    sysId: 'pfm-admin',
-    path: 'menu-list',
-    code: '0001000000',
-    name: '菜单测试14',
-    remark: '管理系统的菜单测试',
-    icon: 'bars',
-    isEnabled: true,
+    isAuth: true,
+    remark: '管理角色的基础信息',
+    orderNo: 2,
   },
 ];
 
-export function pfmmenuList(req, res, u) {
+export function pfmfuncList(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
   }
   const params = parse(url, true).query;
-  const list = [];
-  for (const item of tableListDataSource) {
-    if (item.sysId === params.sysId) list.push(item);
+  const funcList = [];
+  for (const item of funcs) {
+    if (item.sysId === params.sysId) funcList.push(item);
   }
-  res.json(list);
+  const actiList = [];
+  for (const item of actis) {
+    if (item.sysId === params.sysId) actiList.push(item);
+  }
+  res.json({ funcs: funcList, actis: actiList });
 }
 
-export function pfmmenuGetById(req, res, u) {
+export function pfmfuncGetById(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -129,7 +158,7 @@ export function pfmmenuGetById(req, res, u) {
   }
 }
 
-export function pfmmenuAdd(req, res, u, b) {
+export function pfmfuncAdd(req, res, u, b) {
   const body = (b && b.body) || req.body;
   if (Math.random() >= 0.495) {
     tableListDataSource.push(body);
@@ -146,7 +175,7 @@ export function pfmmenuAdd(req, res, u, b) {
   }
 }
 
-export function pfmmenuModify(req, res, u, b) {
+export function pfmfuncModify(req, res, u, b) {
   const body = (b && b.body) || req.body;
   const replacedIndex = tableListDataSource.findIndex(item => item.id === body.id);
   if (replacedIndex !== -1) {
@@ -163,7 +192,7 @@ export function pfmmenuModify(req, res, u, b) {
   }
 }
 
-export function pfmmenuSort(req, res, u, b) {
+export function pfmfuncSort(req, res, u, b) {
   const body = (b && b.body) || req.body;
   const { dragCode, dropCode } = body;
   const dragParentCode = dragCode.substring(0, dragCode.length - 2);
@@ -233,7 +262,7 @@ function codeSub1BySelf(itemCode, referenceCode) {
   return prefix + middle + suffix;
 }
 
-export function pfmmenuDel(req, res, u, b) {
+export function pfmfuncDel(req, res, u, b) {
   const body = (b && b.body) || req.body;
   const removedIndex = tableListDataSource.findIndex(item => item.id === body.id);
   const { code } = tableListDataSource[removedIndex];
@@ -257,7 +286,7 @@ export function pfmmenuDel(req, res, u, b) {
   }
 }
 
-export function pfmmenuEnable(req, res, u, b) {
+export function pfmfuncEnable(req, res, u, b) {
   const body = (b && b.body) || req.body;
   let success;
   let code;
@@ -292,9 +321,9 @@ export function pfmmenuEnable(req, res, u, b) {
 }
 
 export default {
-  pfmmenuList,
-  pfmmenuGetById,
-  pfmmenuAdd,
-  pfmmenuModify,
-  pfmmenuDel,
+  pfmfuncList,
+  pfmfuncGetById,
+  pfmfuncAdd,
+  pfmfuncModify,
+  pfmfuncDel,
 };

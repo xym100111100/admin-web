@@ -3,24 +3,24 @@ import { parse } from 'url';
 // mock tableListDataSource
 const tableListDataSource = [
   {
+    id: 'pfm-admin',
+    sysName: '平台后台管理',
+    sysDesc: '平台后台管理系统',
+  },
+  {
+    id: 'kdi-admin',
+    sysName: '快递管理',
+    sysDesc: '快递管理系统',
+  },
+  {
     id: 'damai-admin',
     sysName: '大卖网后台管理',
     sysDesc: '大卖网后台管理系统',
   },
   {
-    id: 'damai-wx',
-    sysName: '大卖网微信端',
-    sysDesc: '大卖网微信端系统',
-  },
-  {
     id: 'wbl-admin',
     sysName: '微薄利后台管理',
     sysDesc: '微薄利后台管理系统',
-  },
-  {
-    id: 'wbl-wx',
-    sysName: '微薄利微信端',
-    sysDesc: '微薄利微信端系统',
   },
 ];
 

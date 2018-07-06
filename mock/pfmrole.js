@@ -5,96 +5,38 @@ const tableListDataSource = [
   {
     id: 1,
     sysId: 'pfm-admin',
-    path: 'pfm',
     code: '00',
-    name: '系统配置',
-    remark: '配置基础的系统信息',
-    icon: 'setting',
+    name: '平台管理员',
     isEnabled: true,
+    remark: '管理平台的人员，主要负责平台基础信息维护，拥有最高权限',
   },
   {
     id: 2,
     sysId: 'pfm-admin',
-    path: 'sys-mng',
-    code: '0000',
-    name: '系统',
-    remark: '管理平台的各系统信息',
-    // icon: 'global',
+    code: '01',
+    name: '系统权限管理员',
     isEnabled: true,
+    remark: '管理系统权限的人员，主要负责维护角色和用户的相关信息',
   },
   {
     id: 3,
-    sysId: 'pfm-admin',
-    path: 'menu-mng',
-    code: '0001',
-    name: '菜单',
-    remark: '管理系统的菜单',
-    // icon: 'bars',
+    sysId: 'kdi-admin',
+    code: '00',
+    name: '快递管理员',
     isEnabled: true,
+    remark: '管理快递相关信息的人员',
   },
   {
     id: 4,
-    sysId: 'pfm-admin',
-    path: 'func-mng',
-    code: '0002',
-    name: '功能',
-    remark: '管理系统的功能',
-    // icon: 'role',
+    sysId: 'damai-admin',
+    code: '00',
+    name: '大卖后台管理员',
     isEnabled: true,
-  },
-  {
-    id: 5,
-    sysId: 'pfm-admin',
-    path: 'role-mng',
-    code: '0003',
-    name: '角色',
-    remark: '管理系统的角色',
-    // icon: 'role',
-    isEnabled: true,
-  },
-  {
-    id: 6,
-    sysId: 'pfm-admin',
-    path: 'menu-list',
-    code: '000100',
-    name: '菜单测试1',
-    remark: '管理系统的菜单测试',
-    icon: 'bars',
-    isEnabled: true,
-  },
-  {
-    id: 7,
-    sysId: 'pfm-admin',
-    path: 'menu-list',
-    code: '00010000',
-    name: '菜单测试12',
-    remark: '管理系统的菜单测试',
-    icon: 'bars',
-    isEnabled: true,
-  },
-  {
-    id: 8,
-    sysId: 'pfm-admin',
-    path: 'menu-list',
-    code: '000101',
-    name: '菜单测试13',
-    remark: '管理系统的菜单测试',
-    icon: 'bars',
-    isEnabled: true,
-  },
-  {
-    id: 9,
-    sysId: 'pfm-admin',
-    path: 'menu-list',
-    code: '0001000000',
-    name: '菜单测试14',
-    remark: '管理系统的菜单测试',
-    icon: 'bars',
-    isEnabled: true,
+    remark: '管理大卖相关信息的人员',
   },
 ];
 
-export function pfmmenuList(req, res, u) {
+export function pfmroleList(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -107,7 +49,7 @@ export function pfmmenuList(req, res, u) {
   res.json(list);
 }
 
-export function pfmmenuGetById(req, res, u) {
+export function pfmroleGetById(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -129,7 +71,7 @@ export function pfmmenuGetById(req, res, u) {
   }
 }
 
-export function pfmmenuAdd(req, res, u, b) {
+export function pfmroleAdd(req, res, u, b) {
   const body = (b && b.body) || req.body;
   if (Math.random() >= 0.495) {
     tableListDataSource.push(body);
@@ -146,7 +88,7 @@ export function pfmmenuAdd(req, res, u, b) {
   }
 }
 
-export function pfmmenuModify(req, res, u, b) {
+export function pfmroleModify(req, res, u, b) {
   const body = (b && b.body) || req.body;
   const replacedIndex = tableListDataSource.findIndex(item => item.id === body.id);
   if (replacedIndex !== -1) {
@@ -163,7 +105,7 @@ export function pfmmenuModify(req, res, u, b) {
   }
 }
 
-export function pfmmenuSort(req, res, u, b) {
+export function pfmroleSort(req, res, u, b) {
   const body = (b && b.body) || req.body;
   const { dragCode, dropCode } = body;
   const dragParentCode = dragCode.substring(0, dragCode.length - 2);
@@ -233,7 +175,7 @@ function codeSub1BySelf(itemCode, referenceCode) {
   return prefix + middle + suffix;
 }
 
-export function pfmmenuDel(req, res, u, b) {
+export function pfmroleDel(req, res, u, b) {
   const body = (b && b.body) || req.body;
   const removedIndex = tableListDataSource.findIndex(item => item.id === body.id);
   const { code } = tableListDataSource[removedIndex];
@@ -257,7 +199,7 @@ export function pfmmenuDel(req, res, u, b) {
   }
 }
 
-export function pfmmenuEnable(req, res, u, b) {
+export function pfmroleEnable(req, res, u, b) {
   const body = (b && b.body) || req.body;
   let success;
   let code;
@@ -292,9 +234,9 @@ export function pfmmenuEnable(req, res, u, b) {
 }
 
 export default {
-  pfmmenuList,
-  pfmmenuGetById,
-  pfmmenuAdd,
-  pfmmenuModify,
-  pfmmenuDel,
+  pfmroleList,
+  pfmroleGetById,
+  pfmroleAdd,
+  pfmroleModify,
+  pfmroleDel,
 };

@@ -68,11 +68,17 @@ function getFlatMenuData(menus) {
 
 export const getRouterData = app => {
   const routerConfig = {
-    '/pfm/sys-list': {
+    '/pfm/sys-mng': {
       component: dynamicWrapper(app, ['pfmsys'], () => import('../routes/Pfm/SysMng')),
     },
-    '/pfm/menu-list': {
+    '/pfm/menu-mng': {
       component: dynamicWrapper(app, ['pfmsys', 'pfmmenu'], () => import('../routes/Pfm/MenuMng')),
+    },
+    '/pfm/func-mng': {
+      component: dynamicWrapper(app, ['pfmsys', 'pfmfunc'], () => import('../routes/Pfm/FuncMng')),
+    },
+    '/pfm/role-mng': {
+      component: dynamicWrapper(app, ['pfmsys', 'pfmrole'], () => import('../routes/Pfm/RoleMng')),
     },
     '/': {
       component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),

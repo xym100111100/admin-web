@@ -24,6 +24,7 @@ export default class TreeUtils {
   }
 }
 
+// 递归删除的内部函数
 function delById1(treeList, findId) {
   for (const item of treeList) {
     if (item.id && item.id === findId) {

@@ -4,9 +4,9 @@ import { PureComponent } from 'react';
 // 可编辑的管理页面
 export default class SimpleMng extends PureComponent {
   state = {
+    editForm: undefined,
     editFormType: undefined,
     editFormTitle: undefined,
-    editFormVisable: false,
     editFormRecord: {},
   };
 
@@ -14,6 +14,7 @@ export default class SimpleMng extends PureComponent {
     this.handleReload();
   }
 
+  // 刷新
   handleReload(params) {
     if (params) {
       this.state.options = params;
@@ -28,39 +29,39 @@ export default class SimpleMng extends PureComponent {
   }
 
   // 显示新建表单
-  showAddForm() {
+  showAddForm(editForm, editFormTitle) {
     this.setState({
+      editForm,
       editFormType: 'add',
       editFormRecord: {},
-      editFormTitle: `添加新${this.moduleName}`,
-      editFormVisable: true,
+      editFormTitle,
     });
   }
 
   // 显示编辑表单
-  showEditForm(id) {
+  showEditForm(id, editForm, editFormTitle) {
     this.props.dispatch({
       type: `${this.moduleCode}/getById`,
       payload: { id },
       callback: data => {
         this.setState({
+          editForm,
           editFormType: 'edit',
+          editFormTitle,
           editFormRecord: data.record,
-          editFormTitle: `编辑${this.moduleName}信息`,
-          editFormVisable: true,
         });
       },
     });
   }
 
   // 请求保存(添加或修改)
-  handleSave(fields) {
+  handleSave(fields, moduleCode) {
     this.setState({ editFormRecord: fields });
     let dispatchType;
     if (this.state.editFormType === 'add') {
-      dispatchType = `${this.moduleCode}/add`;
+      dispatchType = `${moduleCode}/add`;
     } else {
-      dispatchType = `${this.moduleCode}/modify`;
+      dispatchType = `${moduleCode}/modify`;
     }
     this.props.dispatch({
       type: dispatchType,
@@ -68,20 +69,18 @@ export default class SimpleMng extends PureComponent {
       callback: () => {
         this.handleReload();
         // 关闭窗口
-        this.setState({ editFormVisable: false });
+        this.setState({ editForm: undefined });
       },
     });
   }
 
   // 删除
-  handleDel(id) {
+  handleDel(record, moduleCode) {
     this.props.dispatch({
-      type: `${this.moduleCode}/del`,
-      payload: { id },
+      type: `${moduleCode}/del`,
+      payload: { id: record.id },
       callback: () => {
         this.handleReload();
-        // 关闭窗口
-        this.setState({ editFormVisable: false });
       },
     });
   }

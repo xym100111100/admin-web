@@ -65,10 +65,11 @@ export default class MenuMng extends EditMng {
     const { expandedRowKeys } = this.state;
     const temp = [];
     Object.assign(temp, expandedRowKeys);
+    const key = record.id;
     if (expanded) {
-      temp.push(record.id);
+      temp.push(key);
     } else {
-      const removedIndex = temp.findIndex(item => item === record.id);
+      const removedIndex = temp.findIndex(item => item === key);
       if (removedIndex !== -1) {
         temp.splice(removedIndex, 1);
       }
@@ -175,6 +176,11 @@ export default class MenuMng extends EditMng {
     this.handleExpand(false, dragRecord);
   };
 
+  // 比较drag和drop记录的大小
+  compareDragRecordAndDropRecord = (dragRecord, hoverRecord) => {
+    return dragRecord.code > hoverRecord.code;
+  };
+
   // 判断能否drop到此节点
   canDrop = (dragRecord, hoverRecord) => {
     if (hoverRecord.code.indexOf(`${dragRecord.code}`) === 0) {
@@ -185,7 +191,7 @@ export default class MenuMng extends EditMng {
   };
 
   // 移动行
-  moveRow = (dragRecord, dropRecord) => {
+  handleDrop = (dragRecord, dropRecord) => {
     this.props.dispatch({
       type: 'pfmmenu/sort',
       payload: { dragCode: dragRecord.code, dropCode: dropRecord.code },
@@ -282,7 +288,13 @@ export default class MenuMng extends EditMng {
           if (editType !== 'none' || isDrag) return null;
           return (
             <Fragment>
-              <Switch checked={record.isEnabled} loading={loading} onChange={() => this.handleEnable(record)} />
+              <Switch
+                checkedChildren="启用"
+                unCheckedChildren="禁止"
+                checked={record.isEnabled}
+                loading={loading}
+                onChange={() => this.handleEnable(record)}
+              />
             </Fragment>
           );
         },
@@ -290,7 +302,7 @@ export default class MenuMng extends EditMng {
       {
         title: '操作',
         width: '20%',
-        render: record => {
+        render: (text, record) => {
           const { editRecord } = this.state;
           if (isDrag) return null;
           if (editType === 'none')
@@ -356,7 +368,13 @@ export default class MenuMng extends EditMng {
                 刷新
               </Button>
             </div>
-            <DragWrapper isDrag={isDrag}>
+            <DragWrapper
+              isDrag={isDrag}
+              beginDrag={::this.beginDrag}
+              compare={::this.compareDragRecordAndDropRecord}
+              canDrop={::this.canDrop}
+              onDrop={::this.handleDrop}
+            >
               <Table
                 rowKey="id"
                 pagination={false}
@@ -365,9 +383,6 @@ export default class MenuMng extends EditMng {
                 columns={columns}
                 onExpand={::this.handleExpand}
                 expandedRowKeys={expandedRowKeys}
-                beginDrag={::this.beginDrag}
-                canDrop={::this.canDrop}
-                moveRow={::this.moveRow}
               />
             </DragWrapper>
           </div>
@@ -378,9 +393,9 @@ export default class MenuMng extends EditMng {
 }
 
 function DragWrapper(props) {
-  const { children, isDrag } = props;
+  const { children, isDrag, ...restProps } = props;
   if (isDrag) {
-    return <DragSortTable>{children}</DragSortTable>;
+    return <DragSortTable {...restProps}>{children}</DragSortTable>;
   } else {
     return children;
   }

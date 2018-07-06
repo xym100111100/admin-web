@@ -8,13 +8,19 @@ const menuData = [
     children: [
       {
         name: '系统',
-        icon: 'global',
-        path: 'sys-list',
+        path: 'sys-mng',
       },
       {
         name: '菜单',
-        icon: 'bars',
-        path: 'menu-list',
+        path: 'menu-mng',
+      },
+      {
+        name: '功能',
+        path: 'func-mng',
+      },
+      {
+        name: '角色',
+        path: 'role-mng',
       },
     ],
   },

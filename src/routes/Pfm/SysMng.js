@@ -15,7 +15,7 @@ export default class SysMng extends SimpleMng {
   }
   render() {
     const { pfmsys: { pfmsys }, loading } = this.props;
-    const { editFormType, editFormTitle, editFormVisable, editFormRecord } = this.state;
+    const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
 
     const columns = [
       {
@@ -34,9 +34,9 @@ export default class SysMng extends SimpleMng {
         title: '操作',
         render: (text, record) => (
           <Fragment>
-            <a onClick={() => this.showEditForm(record.id)}>编辑</a>
+            <a onClick={() => this.showEditForm(record.id, 'sysInfo', '编辑系统信息')}>编辑</a>
             <Divider type="vertical" />
-            <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record.id)}>
+            <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record, this.moduleCode)}>
               <a>删除</a>
             </Popconfirm>
           </Fragment>
@@ -44,12 +44,14 @@ export default class SysMng extends SimpleMng {
       },
     ];
 
+    console.log(editForm);
+
     return (
       <PageHeaderLayout title="系统信息管理">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" onClick={::this.showAddForm}>
+              <Button icon="plus" type="primary" onClick={() => this.showAddForm('sysInfo', '添加新系统')}>
                 添加
               </Button>
               <Divider type="vertical" />
@@ -60,14 +62,16 @@ export default class SysMng extends SimpleMng {
             <Table rowKey="id" pagination={false} loading={loading} dataSource={pfmsys} columns={columns} />
           </div>
         </Card>
-        <SysInfo
-          title={editFormTitle}
-          visible={editFormVisable}
-          editFormType={editFormType}
-          record={editFormRecord}
-          closeModal={() => this.setState({ editFormVisable: false })}
-          handleSave={::this.handleSave}
-        />
+        {editForm === 'sysInfo' && (
+          <SysInfo
+            visible
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            handleSave={fields => this.handleSave(fields, this.moduleCode)}
+          />
+        )}
       </PageHeaderLayout>
     );
   }

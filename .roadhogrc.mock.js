@@ -9,6 +9,24 @@ import {
   pfmmenuDel,
   pfmmenuEnable,
 } from './mock/pfmmenu';
+import {
+  pfmfuncList,
+  pfmfuncGetById,
+  pfmfuncAdd,
+  pfmfuncModify,
+  pfmfuncSort,
+  pfmfuncDel,
+  pfmfuncEnable,
+} from './mock/pfmfunc';
+import {
+  pfmroleList,
+  pfmroleGetById,
+  pfmroleAdd,
+  pfmroleModify,
+  pfmroleSort,
+  pfmroleDel,
+  pfmroleEnable,
+} from './mock/pfmrole';
 import { getRule, postRule } from './mock/rule';
 import { getActivities, getNotice, getFakeList } from './mock/api';
 import { getFakeChartData } from './mock/chart';
@@ -35,6 +53,20 @@ const proxy = {
   'PUT /pfm-svr/pfm/menu/sort': pfmmenuSort,
   'DELETE /pfm-svr/pfm/menu': pfmmenuDel,
   'PUT /pfm-svr/pfm/menu/enable': pfmmenuEnable,
+  'GET /pfm-svr/pfm/func': pfmfuncList,
+  'GET /pfm-svr/pfm/func/getbyid': pfmfuncGetById,
+  'POST /pfm-svr/pfm/func': pfmfuncAdd,
+  'PUT /pfm-svr/pfm/func': pfmfuncModify,
+  'PUT /pfm-svr/pfm/func/sort': pfmfuncSort,
+  'DELETE /pfm-svr/pfm/func': pfmfuncDel,
+  'PUT /pfm-svr/pfm/func/enable': pfmfuncEnable,
+  'GET /pfm-svr/pfm/role': pfmroleList,
+  'GET /pfm-svr/pfm/role/getbyid': pfmroleGetById,
+  'POST /pfm-svr/pfm/role': pfmroleAdd,
+  'PUT /pfm-svr/pfm/role': pfmroleModify,
+  'PUT /pfm-svr/pfm/role/sort': pfmroleSort,
+  'DELETE /pfm-svr/pfm/role': pfmroleDel,
+  'PUT /pfm-svr/pfm/role/enable': pfmroleEnable,
   'POST /suc-svr/user/login/by/user/name': (req, res) => {
     const { loginPswd, userName, type } = req.body;
     if (loginPswd === '21218cca77804d2ba1922c33e0151105' && userName === 'admin') {
