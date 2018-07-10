@@ -19,7 +19,7 @@ const EditForm = DivInfo => {
   })
   class extends PureComponent {
     render() {
-      const { title, visible, handleSave, closeModal, submitting, form, ...restProps } = this.props;
+      const { title, visible, width = 520, handleSave, closeModal, submitting, form, ...restProps } = this.props;
       const handleOk = () => {
         form.validateFieldsAndScroll((err, fieldsValue) => {
           if (err) return;
@@ -28,9 +28,11 @@ const EditForm = DivInfo => {
       };
       return (
         <Modal
-          title={title}
           visible={visible}
+          title={title}
           closable={false}
+          bodyStyle={{ overflow: 'scroll' }}
+          width={width}
           footer={[
             <Button key="back" type="ghost" size="large" onClick={closeModal}>
               返 回

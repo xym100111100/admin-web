@@ -23,7 +23,7 @@ export default class SimpleMng extends PureComponent {
 
     // 刷新
     this.props.dispatch({
-      type: `${this.moduleCode}/refresh`,
+      type: `${this.moduleCode}/list`,
       payload,
     });
   }
@@ -56,8 +56,7 @@ export default class SimpleMng extends PureComponent {
   }
 
   // 请求保存(添加或修改)
-  handleSave(fields, moduleCode, record) {
-    if (!record) record = {};
+  handleSave(fields, moduleCode = this.moduleCode, record = {}) {
     Object.assign(record, fields);
     this.setState({ editFormRecord: record });
     let dispatchType;

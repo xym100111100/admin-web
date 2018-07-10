@@ -1,15 +1,16 @@
-import React, { Fragment, PureComponent } from 'react';
-import { Form, Input, Tree } from 'antd';
-import { connect } from 'dva';
+import { Card, Input, Tree } from 'antd';
 import EditForm from 'components/Rebue/EditForm';
+import { connect } from 'dva';
+import React, { Fragment, PureComponent } from 'react';
 import TreeUtils from '../../utils/TreeUtils';
-
-const FormItem = Form.Item;
+import styles from './ActiMenuForm.less';
 
 // 添加与编辑的表单
-@connect(({ pfmmenu, loading }) => ({
+@connect(({ pfmactimenu, pfmmenu, loading }) => ({
+  pfmactimenu,
   pfmmenu,
-  loading: loading.models.pfmacti || loading.models.pfmactimenu,
+  loading: loading.models.pfmacti || loading.effects['pfmactimenu/list'] || loading.models.pfmmenu,
+  submitting: loading.effects['pfmactimenu/modify'],
 }))
 @EditForm
 export default class ActiMenuForm extends PureComponent {
@@ -17,6 +18,7 @@ export default class ActiMenuForm extends PureComponent {
     super();
     this.state = {
       treeData: [],
+      checkedIds: [],
     };
   }
 
@@ -24,23 +26,56 @@ export default class ActiMenuForm extends PureComponent {
     const { sysId } = this.props;
     // 刷新
     this.props.dispatch({
-      type: 'pfmmenu/refresh',
+      type: 'pfmmenu/list',
       payload: { sysId },
       callback: () => {
-        console.log(this.props);
-        const { pfmmenu: { pfmmenu } } = this.props;
-        this.setState({ treeData: pfmmenu });
+        const { pfmmenu: { pfmmenu }, actiId } = this.props;
+        // 刷新
+        this.props.dispatch({
+          type: 'pfmactimenu/list',
+          payload: { actiId },
+          callback: () => {
+            const { form, pfmactimenu: { pfmactimenu } } = this.props;
+            const checkedIds = [];
+            form.setFieldsInitialValue({ actiId, menuIds: pfmactimenu });
+            for (const item of pfmactimenu) {
+              checkedIds.push(`${item.menuId}`);
+            }
+            this.setState({ checkedIds, treeData: pfmmenu });
+          },
+        });
       },
     });
   }
 
-  render() {
+  onCheck = checkedKeys => {
     const { form } = this.props;
-    const { treeData } = this.state;
+    let menuIds = checkedKeys.checked ? checkedKeys.checked : [];
+    menuIds = checkedKeys.halfChecked ? menuIds.concat(checkedKeys.halfChecked) : [];
+    menuIds = menuIds.map(Number);
+    form.setFieldsValue({ menuIds });
+  };
+
+  render() {
+    const { form, loading } = this.props;
+    const { treeData, checkedIds } = this.state;
+
     return (
       <Fragment>
-        <FormItem>{form.getFieldDecorator('id')(<Input type="hidden" />)}</FormItem>
-        <Tree>{TreeUtils.renderTreeNodes(treeData)}</Tree>
+        <Card className={styles.body} loading={loading} bordered={false}>
+          {form.getFieldDecorator('actiId')(<Input type="hidden" />)}
+          {form.getFieldDecorator('menuIds')(<Input type="hidden" />)}
+          <Tree
+            defaultCheckedKeys={checkedIds}
+            checkable
+            checkStrictly
+            defaultExpandAll
+            multiple
+            onCheck={this.onCheck}
+          >
+            {TreeUtils.renderTreeNodes(treeData)}
+          </Tree>
+        </Card>
       </Fragment>
     );
   }

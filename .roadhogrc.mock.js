@@ -27,6 +27,8 @@ import {
   pfmactiAuth,
   pfmactiEnable,
 } from './mock/pfmacti';
+import { pfmactimenuList, pfmactimenuModify } from './mock/pfmactimenu';
+import { pfmactiurnList, pfmactiurnModify } from './mock/pfmactiurn';
 import {
   pfmroleList,
   pfmroleGetById,
@@ -50,11 +52,13 @@ const noProxy = process.env.NO_PROXY === 'true';
 
 // 代码中会兼容本地 service mock 以及部署站点的静态数据
 const proxy = {
+  // pfmsys
   'GET /pfm-svr/pfm/sys': pfmsysList,
   'GET /pfm-svr/pfm/sys/getbyid': pfmsysGetById,
   'POST /pfm-svr/pfm/sys': pfmsysAdd,
   'PUT /pfm-svr/pfm/sys': pfmsysModify,
   'DELETE /pfm-svr/pfm/sys': pfmsysDel,
+  // pfmmenu
   'GET /pfm-svr/pfm/menu': pfmmenuList,
   'GET /pfm-svr/pfm/menu/getbyid': pfmmenuGetById,
   'POST /pfm-svr/pfm/menu': pfmmenuAdd,
@@ -62,6 +66,7 @@ const proxy = {
   'PUT /pfm-svr/pfm/menu/sort': pfmmenuSort,
   'DELETE /pfm-svr/pfm/menu': pfmmenuDel,
   'PUT /pfm-svr/pfm/menu/enable': pfmmenuEnable,
+  // pfmfunc
   'GET /pfm-svr/pfm/func': pfmfuncList,
   'GET /pfm-svr/pfm/func/getbyid': pfmfuncGetById,
   'POST /pfm-svr/pfm/func': pfmfuncAdd,
@@ -69,6 +74,7 @@ const proxy = {
   'PUT /pfm-svr/pfm/func/sort': pfmfuncSort,
   'DELETE /pfm-svr/pfm/func': pfmfuncDel,
   'PUT /pfm-svr/pfm/func/enable': pfmfuncEnable,
+  // pfmacti
   'GET /pfm-svr/pfm/acti/getbyid': pfmactiGetById,
   'POST /pfm-svr/pfm/acti': pfmactiAdd,
   'PUT /pfm-svr/pfm/acti': pfmactiModify,
@@ -76,6 +82,13 @@ const proxy = {
   'DELETE /pfm-svr/pfm/acti': pfmactiDel,
   'PUT /pfm-svr/pfm/acti/auth': pfmactiAuth,
   'PUT /pfm-svr/pfm/acti/enable': pfmactiEnable,
+  // pfmactimenu
+  'GET /pfm-svr/pfm/actimenu': pfmactimenuList,
+  'PUT /pfm-svr/pfm/actimenu': pfmactimenuModify,
+  // pfmactiurn
+  'GET /pfm-svr/pfm/actiurn': pfmactiurnList,
+  'PUT /pfm-svr/pfm/actiurn': pfmactiurnModify,
+  // pfmrole
   'GET /pfm-svr/pfm/role': pfmroleList,
   'GET /pfm-svr/pfm/role/getbyid': pfmroleGetById,
   'POST /pfm-svr/pfm/role': pfmroleAdd,
@@ -83,6 +96,7 @@ const proxy = {
   'PUT /pfm-svr/pfm/role/sort': pfmroleSort,
   'DELETE /pfm-svr/pfm/role': pfmroleDel,
   'PUT /pfm-svr/pfm/role/enable': pfmroleEnable,
+  // pfmsuc
   'POST /suc-svr/user/login/by/user/name': (req, res) => {
     const { loginPswd, userName, type } = req.body;
     if (loginPswd === '21218cca77804d2ba1922c33e0151105' && userName === 'admin') {

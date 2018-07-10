@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { list, getById, add, modify, sort, del, auth, enable } from '../services/pfmfunc';
+import { list, getById, add, modify, sort, del, enable } from '../services/pfmfunc';
 
 export default {
   namespace: 'pfmfunc',
@@ -9,7 +9,7 @@ export default {
   },
 
   effects: {
-    *refresh({ payload, callback }, { call, put }) {
+    *list({ payload, callback }, { call, put }) {
       const response = yield call(list, payload);
       yield put({
         type: 'changeList',

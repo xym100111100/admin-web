@@ -75,7 +75,7 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['pfmsys', 'pfmmenu'], () => import('../routes/Pfm/MenuMng')),
     },
     '/pfm/func-mng': {
-      component: dynamicWrapper(app, ['pfmsys', 'pfmfunc', 'pfmacti', 'pfmmenu'], () =>
+      component: dynamicWrapper(app, ['pfmsys', 'pfmfunc', 'pfmacti', 'pfmactimenu', 'pfmactiurn', 'pfmmenu'], () =>
         import('../routes/Pfm/FuncMng')
       ),
     },

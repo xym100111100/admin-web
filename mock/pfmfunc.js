@@ -6,17 +6,17 @@ const tableListDataSource = [
   {
     id: 1,
     sysId: 'pfm-admin',
-    name: '功能',
+    name: '系统',
     isEnabled: true,
-    remark: '功能基础信息',
+    remark: '系统基础信息',
     orderNo: 1,
   },
   {
     id: 2,
     sysId: 'pfm-admin',
-    name: '功能',
+    name: '菜单',
     isEnabled: true,
-    remark: '功能基础信息',
+    remark: '菜单基础信息',
     orderNo: 2,
   },
   {

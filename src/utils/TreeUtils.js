@@ -6,17 +6,17 @@ const { TreeNode } = Tree;
 
 export default class TreeUtils {
   // 渲染AntDesign的Tree控件的节点
-  static renderTreeNodes(data) {
-    if (data.length > 0) {
-      return data.map(item => {
+  static renderTreeNodes(treeData) {
+    if (treeData.length > 0) {
+      return treeData.map(item => {
         if (item.children) {
           return (
-            <TreeNode title={item.title} key={item.key} dataRef={item}>
+            <TreeNode key={item.id} title={item.name} dataRef={item}>
               {this.renderTreeNodes(item.children)}
             </TreeNode>
           );
         }
-        return <TreeNode {...item} />;
+        return <TreeNode key={item.id} title={item.name} dataRef={item} />;
       });
     }
   }

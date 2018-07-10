@@ -15,8 +15,8 @@ export default class FuncForm extends PureComponent {
     const { form } = this.props;
     return (
       <Fragment>
-        <FormItem>{form.getFieldDecorator('id')(<Input type="hidden" />)}</FormItem>
-        <FormItem>{form.getFieldDecorator('sysId')(<Input type="hidden" />)}</FormItem>
+        {form.getFieldDecorator('id')(<Input type="hidden" />)}
+        {form.getFieldDecorator('sysId')(<Input type="hidden" />)}
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="名称">
           {form.getFieldDecorator('name', {
             rules: [{ required: true, message: '请输入功能的名称' }],

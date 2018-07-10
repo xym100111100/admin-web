@@ -101,11 +101,3 @@ export function pfmsysDel(req, res, u, b) {
     });
   }
 }
-
-export default {
-  pfmsysList,
-  pfmsysGetById,
-  pfmsysAdd,
-  pfmsysModify,
-  pfmsysDel,
-};

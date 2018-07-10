@@ -9,7 +9,7 @@ const tableListDataSource = [
     name: '查看',
     isEnabled: true,
     isAuth: false,
-    remark: '查看功能的基础信息',
+    remark: '查看系统的基础信息',
     orderNo: 1,
   },
   {
@@ -19,7 +19,7 @@ const tableListDataSource = [
     name: '管理',
     isEnabled: true,
     isAuth: true,
-    remark: '管理功能的基础信息',
+    remark: '管理系统的基础信息',
     orderNo: 2,
   },
   {
@@ -29,7 +29,7 @@ const tableListDataSource = [
     name: '查看',
     isEnabled: true,
     isAuth: false,
-    remark: '查看功能的基础信息',
+    remark: '查看菜单的基础信息',
     orderNo: 1,
   },
   {
@@ -39,7 +39,7 @@ const tableListDataSource = [
     name: '管理',
     isEnabled: true,
     isAuth: true,
-    remark: '管理功能的基础信息',
+    remark: '管理菜单的基础信息',
     orderNo: 2,
   },
   {

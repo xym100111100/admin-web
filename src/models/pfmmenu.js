@@ -9,7 +9,7 @@ export default {
   },
 
   effects: {
-    *refresh({ payload, callback }, { call, put }) {
+    *list({ payload, callback }, { call, put }) {
       const response = yield call(list, payload);
       yield put({
         type: 'changeList',

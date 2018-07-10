@@ -21,7 +21,7 @@ export default class EditMng extends PureComponent {
 
     // 刷新
     this.props.dispatch({
-      type: `${this.moduleCode}/refresh`,
+      type: `${this.moduleCode}/list`,
       payload,
     });
   }

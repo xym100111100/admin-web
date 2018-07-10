@@ -30,7 +30,7 @@ export default class RoleMng extends SimpleMng {
   componentDidMount() {
     // 刷新
     this.props.dispatch({
-      type: `pfmsys/refresh`,
+      type: `pfmsys/list`,
       callback: () => {
         const { pfmsys: { pfmsys } } = this.props;
         this.handleReload({ sysId: pfmsys[0].id });
