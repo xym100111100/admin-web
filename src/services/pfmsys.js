@@ -1,4 +1,3 @@
-import { stringify } from 'qs';
 import request from '../utils/request';
 
 export async function list() {
@@ -6,7 +5,7 @@ export async function list() {
 }
 
 export async function getById(params) {
-  return request(`/pfm-svr/pfm/sys/getbyid?${stringify(params)}`);
+  return request(`/pfm-svr/pfm/sys/${params.id}`);
 }
 
 export async function add(params) {
