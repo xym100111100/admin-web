@@ -4,7 +4,6 @@ import { connect } from 'dva';
 import SimpleMng from 'components/Rebue/SimpleMng';
 import DragSortTable from 'components/Rebue/DragSortTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import TreeUtils from '../../utils/TreeUtils';
 import styles from './RoleMng.less';
 
 const { TabPane } = Tabs;

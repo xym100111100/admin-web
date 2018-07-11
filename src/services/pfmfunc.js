@@ -6,7 +6,7 @@ export async function list(params) {
 }
 
 export async function getById(params) {
-  return request(`/pfm-svr/pfm/func/getbyid?${stringify(params)}`);
+  return request(`/pfm-svr/pfm/func/${params.id}`);
 }
 
 export async function add(params) {
