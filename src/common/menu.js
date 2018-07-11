@@ -8,7 +8,7 @@ const menuData = [
     children: [
       {
         name: '快递下单',
-        path: 'kdi-order',
+        path: 'kdi-eorder',
       },
       {
         name: '快递单管理',
@@ -17,6 +17,16 @@ const menuData = [
       {
         name: '快递配置',
         path: 'kdi-cfg',
+        children: [
+          {
+            name: '快递面单配置',
+            path: 'kdi-eorder-cfg',
+          },
+          {
+            name: '快递公司配置',
+            path: 'kdi-company-cfg',
+          },
+        ],
       },
     ],
   },
