@@ -1,12 +1,10 @@
 import React, { Fragment } from 'react';
-import { Button, Card, Layout, Tree, Col, Divider, Input, message, Popconfirm, Row, Switch, Table, Tabs } from 'antd';
+import { Button, Card, Divider, Popconfirm, Switch, Table, Tabs } from 'antd';
 import { connect } from 'dva';
 import SimpleMng from 'components/Rebue/SimpleMng';
 import DragSortTable from 'components/Rebue/DragSortTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './RoleMng.less';
-
-const { Sider, Content } = Layout;
 
 const { TabPane } = Tabs;
 
@@ -17,19 +15,17 @@ const { TabPane } = Tabs;
   pfmsysloading: loading.models.pfmsys,
 }))
 export default class RoleMng extends SimpleMng {
-  state = {
-    sysId: undefined,
-    isDrag: false,
-  };
-
   constructor() {
     super();
     this.moduleCode = 'pfmrole';
-    this.moduleName = '角色';
+    Object.assign(this.state, {
+      options: {},
+      isDrag: false,
+    });
   }
 
   componentDidMount() {
-    // 刷新
+    // 刷新系统
     this.props.dispatch({
       type: `pfmsys/list`,
       callback: () => {
@@ -37,16 +33,6 @@ export default class RoleMng extends SimpleMng {
         this.handleReload({ sysId: pfmsys[0].id });
       },
     });
-  }
-
-  getList() {
-    const { pfmrole: { pfmrole } } = this.props;
-    return pfmrole;
-  }
-
-  cloneList() {
-    const { pfmrole: { pfmrole } } = this.props;
-    return Object.assign(pfmrole);
   }
 
   // 切换系统
@@ -63,7 +49,7 @@ export default class RoleMng extends SimpleMng {
   // 启用/禁用角色
   handleEnable(record) {
     this.props.dispatch({
-      type: 'pfmrole/enable',
+      type: `${this.moduleCode}/enable`,
       payload: { id: record.id, isEnabled: !record.isEnabled },
       callback: () => {
         this.handleReload();
@@ -71,11 +57,17 @@ export default class RoleMng extends SimpleMng {
     });
   }
 
+  // 比较drag和drop记录的大小
+  compareDragRecordAndDropRecord = (dragRecord, hoverRecord) => {
+    console.log(dragRecord, hoverRecord);
+    return dragRecord.orderNo > hoverRecord.orderNo;
+  };
+
   // 移动行
-  moveRow = (dragRecord, dropRecord) => {
+  handleDrop = (dragRecord, dropRecord) => {
     this.props.dispatch({
       type: 'pfmrole/sort',
-      payload: { dragCode: dragRecord.code, dropCode: dropRecord.code },
+      payload: { dragCode: dragRecord.id, dropCode: dropRecord.id },
       callback: () => {
         this.handleReload();
       },
@@ -84,7 +76,8 @@ export default class RoleMng extends SimpleMng {
 
   render() {
     const { pfmsys: { pfmsys }, pfmrole: { pfmrole }, loading, pfmsysloading } = this.props;
-    const { isDrag } = this.state;
+    const { isDrag, editForm, editFormType, editFormTitle, editFormRecord, options } = this.state;
+    const { sysId } = options;
 
     const columns = [
       {
@@ -131,7 +124,7 @@ export default class RoleMng extends SimpleMng {
                 添加
               </Button>
               <Divider type="vertical" />
-              拖拽排序:{' '}
+              拖拽排序:&nbsp;&nbsp;
               <Switch
                 checked={isDrag}
                 checkedChildren="开启"
@@ -144,15 +137,8 @@ export default class RoleMng extends SimpleMng {
                 刷新
               </Button>
             </div>
-            <DragWrapper isDrag={isDrag}>
-              <Table
-                rowKey="id"
-                pagination={false}
-                loading={loading}
-                dataSource={pfmrole}
-                columns={columns}
-                moveRow={::this.moveRow}
-              />
+            <DragWrapper isDrag={isDrag} compare={::this.compareDragRecordAndDropRecord} onDrop={::this.handleDrop}>
+              <Table rowKey="id" pagination={false} loading={loading} dataSource={pfmrole} columns={columns} />
             </DragWrapper>
           </div>
         </Card>
@@ -162,9 +148,9 @@ export default class RoleMng extends SimpleMng {
 }
 
 function DragWrapper(props) {
-  const { children, isDrag } = props;
+  const { children, isDrag, ...restProps } = props;
   if (isDrag) {
-    return <DragSortTable>{children}</DragSortTable>;
+    return <DragSortTable {...restProps}>{children}</DragSortTable>;
   } else {
     return children;
   }

@@ -11,10 +11,7 @@ export default class DragSortTable extends React.PureComponent {
     this.state = { dragRecord: undefined, hoverRecord: undefined };
   }
   onHover = (dragRecord, hoverRecord) => {
-    const { canDrop } = this.props;
-    if (canDrop) {
-      this.setState({ dragRecord, hoverRecord });
-    }
+    this.setState({ dragRecord, hoverRecord });
   };
   endDrag = () => {
     this.setState({ dragRecord: undefined, hoverRecord: undefined });
@@ -42,17 +39,25 @@ export default class DragSortTable extends React.PureComponent {
         };
       },
       rowClassName: record => {
-        if (canDrop && dragRecord) {
+        // 如果是在dragging状态
+        if (dragRecord) {
+          // 如果当前行是drag行
           if (dragRecord === record) {
-            if (!canDrop(dragRecord, hoverRecord)) {
-              return style.noDrop;
-            }
+            if (canDrop) {
+              if (!canDrop(dragRecord, hoverRecord)) {
+                return style.noDrop;
+              }
+            } else if (dragRecord === hoverRecord) return style.noDrop;
+            // 如果当前行是hover行（上面已经排除不是drag行）
           } else if (hoverRecord === record) {
-            if (canDrop(dragRecord, hoverRecord)) {
-              return compare(dragRecord, hoverRecord) ? style.dropOverUpward : style.dropOverDownward;
-            }
+            if (canDrop) {
+              if (canDrop(dragRecord, hoverRecord)) {
+                return compare(dragRecord, hoverRecord) ? style.dropOverUpward : style.dropOverDownward;
+              }
+            } else return compare(dragRecord, hoverRecord) ? style.dropOverUpward : style.dropOverDownward;
           }
         }
+        // 不是在dragging状态，正常时候尚未开始drag
         return style.move;
       },
     });

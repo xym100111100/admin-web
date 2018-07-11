@@ -23,7 +23,7 @@ const rowTarget = {
     const { dragRecord } = monitor.getItem();
     const { record: hoverRecord } = props;
     if (props.canDrop) return props.canDrop(dragRecord, hoverRecord);
-    else return true;
+    else return dragRecord !== hoverRecord;
   },
   hover(props, monitor) {
     const { dragRecord } = monitor.getItem();

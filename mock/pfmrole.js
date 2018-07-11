@@ -9,6 +9,7 @@ const tableListDataSource = [
     name: '平台管理员',
     isEnabled: true,
     remark: '管理平台的人员，主要负责平台基础信息维护，拥有最高权限',
+    orderNo: 1,
   },
   {
     id: 2,
@@ -17,6 +18,7 @@ const tableListDataSource = [
     name: '系统权限管理员',
     isEnabled: true,
     remark: '管理系统权限的人员，主要负责维护角色和用户的相关信息',
+    orderNo: 2,
   },
   {
     id: 3,
@@ -25,6 +27,7 @@ const tableListDataSource = [
     name: '快递管理员',
     isEnabled: true,
     remark: '管理快递相关信息的人员',
+    orderNo: 1,
   },
   {
     id: 4,
@@ -33,6 +36,7 @@ const tableListDataSource = [
     name: '大卖后台管理员',
     isEnabled: true,
     remark: '管理大卖相关信息的人员',
+    orderNo: 1,
   },
 ];
 

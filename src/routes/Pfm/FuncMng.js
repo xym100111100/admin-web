@@ -126,7 +126,7 @@ export default class FuncMng extends SimpleMng {
   handleDrop = (dragRecord, dropRecord) => {
     this.props.dispatch({
       type: 'pfmfunc/sort',
-      payload: { dragCode: dragRecord.code, dropCode: dropRecord.code },
+      payload: { dragCode: dragRecord.id, dropCode: dropRecord.id },
       callback: () => {
         this.handleReload();
       },
@@ -135,8 +135,8 @@ export default class FuncMng extends SimpleMng {
 
   render() {
     const { pfmsys: { pfmsys }, pfmfunc: { pfmfunc }, loading, pfmsysloading } = this.props;
-    const { expandedRowKeys, isDrag, editForm, editFormType, editFormTitle, editFormRecord } = this.state;
-    const { sysId } = this.state.options;
+    const { expandedRowKeys, isDrag, editForm, editFormType, editFormTitle, editFormRecord, options } = this.state;
+    const { sysId } = options;
 
     const columns = [
       {
