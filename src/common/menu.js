@@ -2,6 +2,25 @@ import { isUrl } from '../utils/utils';
 
 const menuData = [
   {
+    name: '快递管理',
+    icon: 'profile',
+    path: 'kdi',
+    children: [
+      {
+        name: '快递下单',
+        path: 'kdi-order',
+      },
+      {
+        name: '快递单管理',
+        path: 'kdi-mng',
+      },
+      {
+        name: '快递配置',
+        path: 'kdi-cfg',
+      },
+    ],
+  },
+  {
     name: '系统配置',
     icon: 'setting',
     path: 'pfm',
@@ -24,6 +43,7 @@ const menuData = [
       },
     ],
   },
+
   {
     name: 'dashboard',
     icon: 'dashboard',
