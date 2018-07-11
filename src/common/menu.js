@@ -11,6 +11,10 @@ const menuData = [
         path: 'kdi-eorder',
       },
       {
+        name: '快递单录入',
+        path: 'kdi-entry',
+      },
+      {
         name: '快递单管理',
         path: 'kdi-mng',
       },
