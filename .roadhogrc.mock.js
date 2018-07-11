@@ -215,9 +215,11 @@ const proxy = {
 // 响应请求延迟1秒
 // export default (noProxy ? {} : delay(proxy, 1000));
 // 响应请求不延迟
-export default (noProxy ? {
-  'GET /pfm-svr/(.*)': 'http://192.168.1.24:20182/',
-  'POST /pfm-svr/(.*)': 'http://192.168.1.24:20182/',
-  'PUT /pfm-svr/(.*)': 'http://192.168.1.24:20182/',
-  'DELETE /pfm-svr/(.*)': 'http://192.168.1.24:20182/',
-} : proxy);
+export default (noProxy
+  ? {
+      'GET /pfm-svr/(.*)': 'http://192.168.1.24:20182/',
+      'POST /pfm-svr/(.*)': 'http://192.168.1.24:20182/',
+      'PUT /pfm-svr/(.*)': 'http://192.168.1.24:20182/',
+      'DELETE /pfm-svr/(.*)': 'http://192.168.1.24:20182/',
+    }
+  : delay(proxy));

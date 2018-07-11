@@ -6,7 +6,7 @@ export async function list(params) {
 }
 
 export async function getById(params) {
-  return request(`/pfm-svr/pfm/menu/${params.id}`);
+  return request(`/pfm-svr/pfm/menu/getbyid?${stringify(params)}`);
 }
 
 export async function add(params) {
@@ -37,11 +37,8 @@ export async function sort(params) {
 }
 
 export async function del(params) {
-  return request('/pfm-svr/pfm/menu', {
+  return request(`/pfm-svr/pfm/menu?${stringify(params)}`, {
     method: 'DELETE',
-    body: {
-      ...params,
-    },
   });
 }
 

@@ -1,10 +1,12 @@
 import React, { Fragment } from 'react';
-import { Button, Card, Col, Divider, Input, message, Popconfirm, Row, Switch, Table, Tabs } from 'antd';
+import { Button, Card, Layout, Tree, Col, Divider, Input, message, Popconfirm, Row, Switch, Table, Tabs } from 'antd';
 import { connect } from 'dva';
 import SimpleMng from 'components/Rebue/SimpleMng';
 import DragSortTable from 'components/Rebue/DragSortTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './RoleMng.less';
+
+const { Sider, Content } = Layout;
 
 const { TabPane } = Tabs;
 
