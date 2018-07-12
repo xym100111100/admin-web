@@ -72,10 +72,10 @@ export default class EditMng extends PureComponent {
   }
 
   // 删除
-  handleDel(id) {
+  handleDel(record, moduleCode = this.moduleCode) {
     this.props.dispatch({
-      type: `${this.moduleCode}/del`,
-      payload: { id },
+      type: `${moduleCode}/del`,
+      payload: { id: record.id },
       callback: () => {
         this.handleReload();
       },

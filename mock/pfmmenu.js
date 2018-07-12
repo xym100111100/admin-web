@@ -239,7 +239,7 @@ export function pfmmenuDel(req, res, u) {
     url = req.url; // eslint-disable-line
   }
   const params = parse(url, true).query;
-  const removedIndex = tableListDataSource.findIndex(item => item.id === params.id);
+  const removedIndex = tableListDataSource.findIndex(item => item.id === params.id - 0);
   const { code } = tableListDataSource[removedIndex];
   for (let i = tableListDataSource.length - 1; i >= 0; i--) {
     const tempCode = tableListDataSource[i].code;

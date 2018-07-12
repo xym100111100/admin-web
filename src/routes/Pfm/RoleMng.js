@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import SimpleMng from 'components/Rebue/SimpleMng';
 import DragSortTable from 'components/Rebue/DragSortTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import RoleForm from './RoleForm';
 import styles from './RoleMng.less';
 
 const { TabPane } = Tabs;
@@ -127,7 +128,7 @@ export default class RoleMng extends SimpleMng {
                 编辑
               </a>
               <Divider type="vertical" />
-              <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record.id)}>
+              <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record)}>
                 <a>删除</a>
               </Popconfirm>
             </Fragment>
@@ -146,7 +147,9 @@ export default class RoleMng extends SimpleMng {
                 icon="plus"
                 type="primary"
                 disabled={isDrag}
-                onClick={() => this.showAddForm({ editForm: 'roleForm', editFormTitle: '添加新角色' })}
+                onClick={() =>
+                  this.showAddForm({ editForm: 'roleForm', editFormTitle: '添加新角色', editFormRecord: { sysId } })
+                }
               >
                 添加
               </Button>

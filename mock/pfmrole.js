@@ -5,7 +5,6 @@ const tableListDataSource = [
   {
     id: 1,
     sysId: 'pfm-admin',
-    code: '00',
     name: '平台管理员',
     isEnabled: true,
     remark: '管理平台的人员，主要负责平台基础信息维护，拥有最高权限',
@@ -14,7 +13,6 @@ const tableListDataSource = [
   {
     id: 2,
     sysId: 'pfm-admin',
-    code: '01',
     name: '系统权限管理员',
     isEnabled: true,
     remark: '管理系统权限的人员，主要负责维护角色和用户的相关信息',
@@ -23,7 +21,6 @@ const tableListDataSource = [
   {
     id: 3,
     sysId: 'kdi-admin',
-    code: '00',
     name: '快递管理员',
     isEnabled: true,
     remark: '管理快递相关信息的人员',
@@ -32,7 +29,6 @@ const tableListDataSource = [
   {
     id: 4,
     sysId: 'damai-admin',
-    code: '00',
     name: '大卖后台管理员',
     isEnabled: true,
     remark: '管理大卖相关信息的人员',
@@ -76,10 +72,12 @@ export function pfmroleGetById(req, res, u) {
 }
 
 export function pfmroleAdd(req, res, u, b) {
-  const body = (b && b.body) || req.body;
+  const record = (b && b.body) || req.body;
   if (Math.random() >= 0.495) {
-    tableListDataSource.push(body);
-    tableListDataSource.sort((item1, item2) => item1.code > item2.code);
+    record.id = new Date().getTime();
+    record.orderNo = tableListDataSource.length + 1;
+    tableListDataSource.push(record);
+    tableListDataSource.sort((item1, item2) => item1.orderNo > item2.orderNo);
     return res.json({
       result: 1,
       msg: '添加成功',
@@ -87,7 +85,7 @@ export function pfmroleAdd(req, res, u, b) {
   } else {
     return res.json({
       result: -1,
-      msg: '添加失败，系统名称已存在',
+      msg: '添加失败，角色名称已存在',
     });
   }
 }
@@ -185,15 +183,9 @@ export function pfmroleDel(req, res, u) {
     url = req.url; // eslint-disable-line
   }
   const params = parse(url, true).query;
-  const removedIndex = tableListDataSource.findIndex(item => item.id === params.id);
-  const { code } = tableListDataSource[removedIndex];
-  for (let i = tableListDataSource.length - 1; i >= 0; i--) {
-    const tempCode = tableListDataSource[i].code;
-    if (tempCode.indexOf(`${code}`) === 0) {
-      tableListDataSource.splice(i, 1);
-    }
-  }
+  const removedIndex = tableListDataSource.findIndex(item => item.id === params.id - 0);
   if (removedIndex >= 0) {
+    tableListDataSource.splice(removedIndex, 1);
     tableListDataSource.sort((item1, item2) => item1.code > item2.code);
     return res.json({
       result: 1,

@@ -321,7 +321,7 @@ export default class MenuMng extends EditMng {
                   <Divider type="vertical" />
                 </Col>
                 <Col xs={24} xxl={5}>
-                  <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record.id)}>
+                  <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record)}>
                     <a>删除</a>
                   </Popconfirm>
                 </Col>
