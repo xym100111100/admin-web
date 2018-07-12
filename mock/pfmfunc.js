@@ -182,9 +182,13 @@ function codeSub1BySelf(itemCode, referenceCode) {
   return prefix + middle + suffix;
 }
 
-export function pfmfuncDel(req, res, u, b) {
-  const body = (b && b.body) || req.body;
-  const removedIndex = tableListDataSource.findIndex(item => item.id === body.id);
+export function pfmfuncDel(req, res, u) {
+  let url = u;
+  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
+    url = req.url; // eslint-disable-line
+  }
+  const params = parse(url, true).query;
+  const removedIndex = tableListDataSource.findIndex(item => item.id === params.id);
   if (removedIndex >= 0) {
     tableListDataSource.splice(removedIndex, 1);
     for (let index = 0; index < tableListDataSource.length; index++) {

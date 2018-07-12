@@ -29,36 +29,49 @@ export default class SimpleMng extends PureComponent {
   }
 
   // 显示新建表单
-  showAddForm(editForm, editFormTitle, editFormRecord) {
-    if (!editFormRecord) editFormRecord = {};
-    this.setState({
-      editForm,
+  showAddForm(params) {
+    const defaultParams = {
       editFormType: 'add',
-      editFormRecord,
-      editFormTitle,
-    });
+      editForm: undefined,
+      editFormTitle: undefined,
+      editFormRecord: {},
+    };
+    this.setState(Object.assign(defaultParams, params));
   }
 
   // 显示编辑表单
-  showEditForm(id, moduleCode, editForm, editFormTitle) {
+  showEditForm(params) {
+    const defaultParams = {
+      id: undefined,
+      moduleCode: this.moduleCode,
+      editFormType: 'edit',
+      editForm: undefined,
+      editFormTitle: undefined,
+    };
+    const { id, moduleCode, ...state } = Object.assign(defaultParams, params);
+
+    console.log(id);
+
     this.props.dispatch({
       type: `${moduleCode}/getById`,
       payload: { id },
       callback: data => {
-        this.setState({
-          editForm,
-          editFormType: 'edit',
-          editFormTitle,
-          editFormRecord: data.record,
-        });
+        state.editFormRecord = data.record;
+        this.setState(state);
       },
     });
   }
 
   // 请求保存(添加或修改)
-  handleSave(fields, moduleCode = this.moduleCode, record = {}) {
-    Object.assign(record, fields);
-    this.setState({ editFormRecord: record });
+  handleSave(params) {
+    const defaultParams = {
+      fields: undefined,
+      moduleCode: this.moduleCode,
+    };
+
+    const { moduleCode, fields } = Object.assign(defaultParams, params);
+
+    this.setState({ editFormRecord: fields });
     let dispatchType;
     if (this.state.editFormType === 'add') {
       dispatchType = `${moduleCode}/add`;
@@ -67,7 +80,7 @@ export default class SimpleMng extends PureComponent {
     }
     this.props.dispatch({
       type: dispatchType,
-      payload: { ...record },
+      payload: { ...fields },
       callback: () => {
         this.handleReload();
         // 关闭窗口
@@ -77,7 +90,7 @@ export default class SimpleMng extends PureComponent {
   }
 
   // 删除
-  handleDel(record, moduleCode) {
+  handleDel(record, moduleCode = this.moduleCode) {
     this.props.dispatch({
       type: `${moduleCode}/del`,
       payload: { id: record.id },

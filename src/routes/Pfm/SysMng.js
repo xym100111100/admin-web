@@ -33,9 +33,11 @@ export default class SysMng extends SimpleMng {
         title: '操作',
         render: (text, record) => (
           <Fragment>
-            <a onClick={() => this.showEditForm(record.id, this.moduleCode, 'sysForm', '编辑系统信息')}>编辑</a>
+            <a onClick={() => this.showEditForm({ id: record.id, editForm: 'sysForm', editFormTitle: '编辑系统信息' })}>
+              编辑
+            </a>
             <Divider type="vertical" />
-            <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record, this.moduleCode)}>
+            <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record)}>
               <a>删除</a>
             </Popconfirm>
           </Fragment>
@@ -48,7 +50,11 @@ export default class SysMng extends SimpleMng {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" onClick={() => this.showAddForm('sysForm', '添加新系统')}>
+              <Button
+                icon="plus"
+                type="primary"
+                onClick={() => this.showAddForm({ editForm: 'sysForm', editFormTitle: '添加新系统' })}
+              >
                 添加
               </Button>
               <Divider type="vertical" />
@@ -66,7 +72,7 @@ export default class SysMng extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields => this.handleSave(fields)}
+            handleSave={fields => this.handleSave({ fields })}
           />
         )}
       </PageHeaderLayout>

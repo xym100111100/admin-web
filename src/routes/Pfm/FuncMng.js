@@ -191,24 +191,71 @@ export default class FuncMng extends SimpleMng {
             <Fragment>
               {record.type === 'func' && (
                 <Fragment>
-                  <a onClick={() => this.showAddForm('actiForm', '添加新动作', { funcId: record.id, sysId })}>
+                  <a
+                    onClick={() =>
+                      this.showAddForm({
+                        editForm: 'actiForm',
+                        editFormTitle: '添加新动作',
+                        editFormRecord: { funcId: record.id, sysId },
+                      })
+                    }
+                  >
                     添加新动作
                   </a>
                   <Divider type="vertical" />
-                  <a onClick={() => this.showEditForm(record.id, this.moduleCode, 'funcForm', '编辑功能信息')}>编辑</a>
+                  <a
+                    onClick={() =>
+                      this.showEditForm({ id: record.id, editForm: 'funcForm', editFormTitle: '编辑功能信息' })
+                    }
+                  >
+                    编辑
+                  </a>
                   <Divider type="vertical" />
-                  <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record, this.moduleCode)}>
+                  <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record)}>
                     <a>删除</a>
                   </Popconfirm>
                 </Fragment>
               )}
               {record.type === 'acti' && (
                 <Fragment>
-                  <a onClick={() => this.showEditForm(record.id, 'pfmacti', 'actiMenuForm', '设置动作的菜单')}>菜单</a>
+                  <a
+                    onClick={() =>
+                      this.showEditForm({
+                        id: record.id,
+                        moduleCode: 'pfmacti',
+                        editForm: 'actiMenuForm',
+                        editFormTitle: '设置动作的菜单',
+                      })
+                    }
+                  >
+                    菜单
+                  </a>
                   <Divider type="vertical" />
-                  <a onClick={() => this.showEditForm(record.id, 'pfmacti', 'actiUrnForm', '设置动作的链接')}>链接</a>
+                  <a
+                    onClick={() =>
+                      this.showEditForm({
+                        id: record.id,
+                        moduleCode: 'pfmacti',
+                        editForm: 'actiUrnForm',
+                        editFormTitle: '设置动作的链接',
+                      })
+                    }
+                  >
+                    链接
+                  </a>
                   <Divider type="vertical" />
-                  <a onClick={() => this.showEditForm(record.id, 'pfmacti', 'actiForm', '编辑动作信息')}>编辑</a>
+                  <a
+                    onClick={() =>
+                      this.showEditForm({
+                        id: record.id,
+                        moduleCode: 'pfmacti',
+                        editForm: 'actiForm',
+                        editFormTitle: '编辑动作信息',
+                      })
+                    }
+                  >
+                    编辑
+                  </a>
                   <Divider type="vertical" />
                   <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record, 'pfmacti')}>
                     <a>删除</a>
@@ -231,7 +278,9 @@ export default class FuncMng extends SimpleMng {
                 icon="plus"
                 type="primary"
                 disabled={isDrag}
-                onClick={() => this.showAddForm('funcForm', '添加新功能', { sysId })}
+                onClick={() =>
+                  this.showAddForm({ editForm: 'funcForm', editFormTitle: '添加新功能', editFormRecord: { sysId } })
+                }
               >
                 添加新功能
               </Button>
@@ -276,7 +325,7 @@ export default class FuncMng extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields => this.handleSave(fields)}
+            handleSave={fields => this.handleSave({ fields })}
           />
         )}
         {editForm === 'actiForm' && (
@@ -287,7 +336,7 @@ export default class FuncMng extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields => this.handleSave(fields, 'pfmacti')}
+            handleSave={fields => this.handleSave({ fields, moduleCode: 'pfmacti' })}
           />
         )}
         {editForm === 'actiMenuForm' && (
@@ -300,7 +349,7 @@ export default class FuncMng extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields => this.handleSave(fields, 'pfmactimenu')}
+            handleSave={fields => this.handleSave({ fields, moduleCode: 'pfmactimenu' })}
           />
         )}
         {editForm === 'actiUrnForm' && (
@@ -313,7 +362,7 @@ export default class FuncMng extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields => this.handleSave(fields, 'pfmactiurn')}
+            handleSave={fields => this.handleSave({ fields, moduleCode: 'pfmactiurn' })}
           />
         )}
       </PageHeaderLayout>

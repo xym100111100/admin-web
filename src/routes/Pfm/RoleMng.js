@@ -102,15 +102,37 @@ export default class RoleMng extends SimpleMng {
       },
       {
         title: '操作',
-        render: (text, record) => (
-          <Fragment>
-            <a onClick={() => this.showEditForm(record.id)}>编辑</a>
-            <Divider type="vertical" />
-            <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record.id)}>
-              <a>删除</a>
-            </Popconfirm>
-          </Fragment>
-        ),
+        render: (text, record) => {
+          if (isDrag) return null;
+          return (
+            <Fragment>
+              <a
+                onClick={() =>
+                  this.showEditForm({
+                    id: record.id,
+                    moduleCode: 'pfmrole',
+                    editForm: 'roleFuncForm',
+                    editFormTitle: '设置角色的功能',
+                  })
+                }
+              >
+                功能
+              </a>
+              <Divider type="vertical" />
+              <a
+                onClick={() =>
+                  this.showEditForm({ id: record.id, editForm: 'roleForm', editFormTitle: '编辑角色信息' })
+                }
+              >
+                编辑
+              </a>
+              <Divider type="vertical" />
+              <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record.id)}>
+                <a>删除</a>
+              </Popconfirm>
+            </Fragment>
+          );
+        },
       },
     ];
 
@@ -120,7 +142,12 @@ export default class RoleMng extends SimpleMng {
           <div className={styles.tableList}>
             <div className={styles.tableListOperator}>
               <Tabs onChange={this.switchSys}>{pfmsys.map(sys => <TabPane tab={sys.name} key={sys.id} />)}</Tabs>
-              <Button icon="plus" type="primary" disabled={isDrag} onClick={() => this.showAddEditor()}>
+              <Button
+                icon="plus"
+                type="primary"
+                disabled={isDrag}
+                onClick={() => this.showAddForm({ editForm: 'roleForm', editFormTitle: '添加新角色' })}
+              >
                 添加
               </Button>
               <Divider type="vertical" />
@@ -142,6 +169,16 @@ export default class RoleMng extends SimpleMng {
             </DragWrapper>
           </div>
         </Card>
+        {editForm === 'roleForm' && (
+          <RoleForm
+            visible
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            handleSave={fields => this.handleSave({ fields })}
+          />
+        )}
       </PageHeaderLayout>
     );
   }

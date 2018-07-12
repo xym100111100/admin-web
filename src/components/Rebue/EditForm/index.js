@@ -21,9 +21,9 @@ const EditForm = DivInfo => {
     render() {
       const { title, visible, width = 520, handleSave, closeModal, submitting, form, ...restProps } = this.props;
       const handleOk = () => {
-        form.validateFieldsAndScroll((err, fieldsValue) => {
+        form.validateFieldsAndScroll((err, fields) => {
           if (err) return;
-          handleSave(fieldsValue);
+          handleSave(fields);
         });
       };
       return (

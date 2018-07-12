@@ -85,9 +85,13 @@ export function pfmsysModify(req, res, u, b) {
   }
 }
 
-export function pfmsysDel(req, res, u, b) {
-  const body = (b && b.body) || req.body;
-  const removedIndex = tableListDataSource.findIndex(item => item.id === body.id);
+export function pfmsysDel(req, res, u) {
+  let url = u;
+  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
+    url = req.url; // eslint-disable-line
+  }
+  const params = parse(url, true).query;
+  const removedIndex = tableListDataSource.findIndex(item => item.id === params.id);
   if (removedIndex !== -1) {
     tableListDataSource.splice(removedIndex, 1);
     return res.json({
