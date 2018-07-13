@@ -1,6 +1,13 @@
 import mockjs from 'mockjs';
 import { pfmsysList, pfmsysGetById, pfmsysAdd, pfmsysModify, pfmsysDel } from './mock/pfmsys';
 import {
+  kdilogisticList,
+  kdilogisticGetById,
+  kdilogisticAdd,
+  kdilogisticModify,
+  kdilogisticDel,
+} from './mock/kdilogistic';
+import {
   pfmmenuList,
   pfmmenuGetById,
   pfmmenuAdd,
@@ -52,6 +59,12 @@ const noProxy = process.env.NO_PROXY === 'true';
 
 // 代码中会兼容本地 service mock 以及部署站点的静态数据
 const proxy = {
+  //kdilogitic
+  'GET /kdi-svr/kdi/logistic': kdilogisticList,
+  'GET /kdi-svr/kdi/logistic/getbyid': kdilogisticGetById,
+  'POST /kdi-svr/kdi/logistic': kdilogisticAdd,
+  'PUT /kdi-svr/kdi/logistic': kdilogisticModify,
+  'DELETE /kdi-svr/kdi/logistic': kdilogisticDel,
   // pfmsys
   'GET /pfm-svr/pfm/sys': pfmsysList,
   'GET /pfm-svr/pfm/sys/getbyid': pfmsysGetById,
