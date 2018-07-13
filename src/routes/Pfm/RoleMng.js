@@ -5,13 +5,16 @@ import SimpleMng from 'components/Rebue/SimpleMng';
 import DragSortTable from 'components/Rebue/DragSortTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import RoleForm from './RoleForm';
+import RoleActiForm from './RoleActiForm';
 import styles from './RoleMng.less';
 
 const { TabPane } = Tabs;
 
-@connect(({ pfmsys, pfmrole, loading }) => ({
+@connect(({ pfmsys, pfmrole, pfmroleacti, pfmfunc, loading }) => ({
   pfmsys,
   pfmrole,
+  pfmroleacti,
+  pfmfunc,
   loading: loading.models.pfmrole,
   pfmsysloading: loading.models.pfmsys,
 }))
@@ -60,7 +63,6 @@ export default class RoleMng extends SimpleMng {
 
   // 比较drag和drop记录的大小
   compareDragRecordAndDropRecord = (dragRecord, hoverRecord) => {
-    console.log(dragRecord, hoverRecord);
     return dragRecord.orderNo > hoverRecord.orderNo;
   };
 
@@ -112,8 +114,8 @@ export default class RoleMng extends SimpleMng {
                   this.showEditForm({
                     id: record.id,
                     moduleCode: 'pfmrole',
-                    editForm: 'roleFuncForm',
-                    editFormTitle: '设置角色的功能',
+                    editForm: 'roleActiForm',
+                    editFormTitle: '设置角色的功能动作',
                   })
                 }
               >
@@ -180,6 +182,19 @@ export default class RoleMng extends SimpleMng {
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
             handleSave={fields => this.handleSave({ fields })}
+          />
+        )}
+        {editForm === 'roleActiForm' && (
+          <RoleActiForm
+            loading={loading}
+            sysId={sysId}
+            roleId={editFormRecord.id}
+            visible
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            handleSave={fields => this.handleSave({ fields, moduleCode: 'pfmroleacti' })}
           />
         )}
       </PageHeaderLayout>

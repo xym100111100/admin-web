@@ -9,7 +9,7 @@ import styles from './ActiMenuForm.less';
 @connect(({ pfmactimenu, pfmmenu, loading }) => ({
   pfmactimenu,
   pfmmenu,
-  loading: loading.models.pfmacti || loading.effects['pfmactimenu/list'] || loading.models.pfmmenu,
+  loading: loading.effects['pfmactimenu/list'] || loading.effects['pfmmenu/list'],
   submitting: loading.effects['pfmactimenu/modify'],
 }))
 @EditForm
@@ -37,10 +37,10 @@ export default class ActiMenuForm extends PureComponent {
           callback: () => {
             const { form, pfmactimenu: { pfmactimenu } } = this.props;
             const checkedIds = [];
-            form.setFieldsInitialValue({ actiId, menuIds: pfmactimenu });
             for (const item of pfmactimenu) {
-              checkedIds.push(`${item.menuId}`);
+              checkedIds.push(item.menuId);
             }
+            form.setFieldsInitialValue({ actiId, menuIds: checkedIds });
             this.setState({ checkedIds, treeData: pfmmenu });
           },
         });
@@ -52,7 +52,6 @@ export default class ActiMenuForm extends PureComponent {
     const { form } = this.props;
     let menuIds = checkedKeys.checked ? checkedKeys.checked : [];
     menuIds = checkedKeys.halfChecked ? menuIds.concat(checkedKeys.halfChecked) : [];
-    menuIds = menuIds.map(Number);
     form.setFieldsValue({ menuIds });
   };
 
@@ -66,7 +65,7 @@ export default class ActiMenuForm extends PureComponent {
           {form.getFieldDecorator('actiId')(<Input type="hidden" />)}
           {form.getFieldDecorator('menuIds')(<Input type="hidden" />)}
           <Tree
-            defaultCheckedKeys={checkedIds}
+            defaultCheckedKeys={checkedIds.map(String)}
             checkable
             checkStrictly
             defaultExpandAll

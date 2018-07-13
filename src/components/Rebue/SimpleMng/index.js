@@ -50,8 +50,6 @@ export default class SimpleMng extends PureComponent {
     };
     const { id, moduleCode, ...state } = Object.assign(defaultParams, params);
 
-    console.log(id);
-
     this.props.dispatch({
       type: `${moduleCode}/getById`,
       payload: { id },

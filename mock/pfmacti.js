@@ -8,7 +8,7 @@ const tableListDataSource = [
     funcId: 1,
     name: '查看',
     isEnabled: true,
-    isAuth: false,
+    isAuth: true,
     remark: '查看系统的基础信息',
     orderNo: 1,
   },

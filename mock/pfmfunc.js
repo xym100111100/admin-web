@@ -49,7 +49,10 @@ export function pfmfuncList(req, res, u) {
   }
   const actiList = [];
   for (const item of getList()) {
-    if (item.sysId === params.sysId) actiList.push(item);
+    if (item.sysId === params.sysId) {
+      if (params.isAuth === undefined) actiList.push(item);
+      else if (params.isAuth && item.isAuth) actiList.push(item);
+    }
   }
   res.json({ funcs: funcList, actis: actiList });
 }
@@ -210,7 +213,6 @@ export function pfmfuncDel(req, res, u) {
 export function pfmfuncEnable(req, res, u, b) {
   const body = (b && b.body) || req.body;
   let success;
-  let code;
   for (const item of tableListDataSource) {
     if (item.id === body.id) {
       item.isEnabled = body.isEnabled;

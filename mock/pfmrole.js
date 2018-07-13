@@ -202,22 +202,11 @@ export function pfmroleDel(req, res, u) {
 export function pfmroleEnable(req, res, u, b) {
   const body = (b && b.body) || req.body;
   let success;
-  let code;
   for (const item of tableListDataSource) {
     if (item.id === body.id) {
       item.isEnabled = body.isEnabled;
       success = true;
-      code = item.code;
-      if (body.isEnabled) {
-        for (const item2 of tableListDataSource) {
-          if (code.indexOf(item2.code) === 0) {
-            item2.isEnabled = true;
-          }
-        }
-        break;
-      }
-    } else if (code && !body.isEnabled && item.code.substring(0, code.length) === code) {
-      item.isEnabled = false;
+      break;
     }
   }
   if (success) {
@@ -228,7 +217,7 @@ export function pfmroleEnable(req, res, u, b) {
   } else {
     return res.json({
       result: -1,
-      msg: '启用/禁用菜单失败，找不到要启用/禁用的记录',
+      msg: '设置启用/禁用失败，找不到要启用/禁用的记录',
     });
   }
 }

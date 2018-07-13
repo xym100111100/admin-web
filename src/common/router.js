@@ -83,7 +83,9 @@ export const getRouterData = app => {
       ),
     },
     '/pfm/role-mng': {
-      component: dynamicWrapper(app, ['pfmsys', 'pfmrole'], () => import('../routes/Pfm/RoleMng')),
+      component: dynamicWrapper(app, ['pfmsys', 'pfmrole', 'pfmroleacti', 'pfmfunc'], () =>
+        import('../routes/Pfm/RoleMng')
+      ),
     },
     '/': {
       component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),

@@ -45,6 +45,7 @@ import {
   pfmroleDel,
   pfmroleEnable,
 } from './mock/pfmrole';
+import { pfmroleactiList, pfmroleactiModify } from './mock/pfmroleacti';
 import { getRule, postRule } from './mock/rule';
 import { getActivities, getNotice, getFakeList } from './mock/api';
 import { getFakeChartData } from './mock/chart';
@@ -109,6 +110,9 @@ const proxy = {
   'PUT /pfm-svr/pfm/role/sort': pfmroleSort,
   'DELETE /pfm-svr/pfm/role': pfmroleDel,
   'PUT /pfm-svr/pfm/role/enable': pfmroleEnable,
+  // pfmroleacti
+  'GET /pfm-svr/pfm/roleacti': pfmroleactiList,
+  'PUT /pfm-svr/pfm/roleacti': pfmroleactiModify,
   // pfmsuc
   'POST /suc-svr/user/login/by/user/name': (req, res) => {
     const { loginPswd, userName, type } = req.body;
@@ -230,9 +234,10 @@ const proxy = {
 // 响应请求不延迟
 export default (noProxy
   ? {
-      'GET /pfm-svr/(.*)': 'http://192.168.1.24:20182/',
-      'POST /pfm-svr/(.*)': 'http://192.168.1.24:20182/',
-      'PUT /pfm-svr/(.*)': 'http://192.168.1.24:20182/',
-      'DELETE /pfm-svr/(.*)': 'http://192.168.1.24:20182/',
+      'GET /pfm-svr/(.*)': 'http://192.168.1.201/pfm-svr/',
+      'POST /pfm-svr/(.*)': 'http://192.168.1.201/pfm-svr/',
+      'PUT /pfm-svr/(.*)': 'http://192.168.1.201/pfm-svr/',
+      'DELETE /pfm-svr/(.*)': 'http://192.168.1.201/pfm-svr/',
     }
   : delay(proxy));
+//  : delay(proxy, 1000));

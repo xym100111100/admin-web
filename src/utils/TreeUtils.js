@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tree } from 'antd';
+import { Tree, Tooltip } from 'antd';
 import ArrayUtils from './ArrayUtils';
 
 const { TreeNode } = Tree;
@@ -8,15 +8,31 @@ export default class TreeUtils {
   // 渲染AntDesign的Tree控件的节点
   static renderTreeNodes(treeData) {
     if (treeData.length > 0) {
+      let treeNode;
       return treeData.map(item => {
-        if (item.children) {
-          return (
-            <TreeNode key={item.id} title={item.name} dataRef={item}>
-              {this.renderTreeNodes(item.children)}
-            </TreeNode>
+        // 节点标题
+        const nodeTitle =
+          item.tip || item.remark ? (
+            <Tooltip title={item.tip || item.remark} placement="right">
+              {item.name}
+            </Tooltip>
+          ) : (
+            item.name
           );
+        // 节点属性
+        const nodeProps = {
+          key: item.key ? item.key : item.id,
+          title: nodeTitle,
+          dataRef: item,
+        };
+        // 如果有子节点，递归渲染子节点
+        if (item.children) {
+          treeNode = <TreeNode {...nodeProps}>{this.renderTreeNodes(item.children)}</TreeNode>;
+        } else {
+          // 如果没有子节点，只渲染本级节点
+          treeNode = <TreeNode {...nodeProps} />;
         }
-        return <TreeNode key={item.id} title={item.name} dataRef={item} />;
+        return treeNode;
       });
     }
   }

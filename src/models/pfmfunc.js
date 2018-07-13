@@ -83,10 +83,12 @@ export default {
         func.children = [];
         for (const acti of actis) {
           if (acti.funcId === func.id) {
+            acti.key = `acti${acti.id}`;
             acti.type = 'acti';
             func.children.push(acti);
           }
         }
+        func.key = `func${func.id}`;
         func.type = 'func';
         tree.push(func);
       }
