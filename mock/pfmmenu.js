@@ -294,11 +294,3 @@ export function pfmmenuEnable(req, res, u, b) {
     });
   }
 }
-
-export default {
-  pfmmenuList,
-  pfmmenuGetById,
-  pfmmenuAdd,
-  pfmmenuModify,
-  pfmmenuDel,
-};

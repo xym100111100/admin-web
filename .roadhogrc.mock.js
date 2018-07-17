@@ -234,10 +234,10 @@ const proxy = {
 // 响应请求不延迟
 export default (noProxy
   ? {
-      'GET /pfm-svr/(.*)': 'http://192.168.1.201/pfm-svr/',
-      'POST /pfm-svr/(.*)': 'http://192.168.1.201/pfm-svr/',
-      'PUT /pfm-svr/(.*)': 'http://192.168.1.201/pfm-svr/',
-      'DELETE /pfm-svr/(.*)': 'http://192.168.1.201/pfm-svr/',
+      'GET /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
+      'POST /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
+      'PUT /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
+      'DELETE /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
     }
   : delay(proxy));
 //  : delay(proxy, 1000));
