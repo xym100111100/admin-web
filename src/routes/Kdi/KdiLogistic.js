@@ -1,11 +1,12 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Input, Select, Button, Table, DatePicker, Option } from 'antd';
+import { Row, Col, Card, Form, Input, Select, Button, Table, DatePicker } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import SysForm from './SysForm';
 import styles from './SysMng.less';
 
+const { Option } = Select;
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 @connect(({ kdilogistic, loading }) => ({ kdilogistic, loading: loading.models.kdilogistic }))
@@ -31,10 +32,11 @@ export default class KdiLogistic extends SimpleMng {
               {getFieldDecorator('status')(
                 <Select placeholder="状态" style={{ width: '100%' }}>
                   {/* <Option value="0">全部</Option> */}
-                  <Option value="2">无轨迹</Option>
-                  <Option value="3">已揽收</Option>
-                  <Option value="4">在途中</Option>
-                  <Option value="5">已签收</Option>
+                  <Option value="0">无轨迹</Option>
+                  <Option value="1">已揽收</Option>
+                  <Option value="2">在途中</Option>
+                  <Option value="3">已签收</Option>
+                  <Option value="-1">作废</Option>
                 </Select>
               )}
             </FormItem>
