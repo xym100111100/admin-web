@@ -18,7 +18,6 @@ export default class KdiLogistic extends SimpleMng {
   }
 
   renderSearchForm() {
-    console.info(this.props);
     const { getFieldDecorator } = this.props.form;
 
     return (
@@ -32,10 +31,10 @@ export default class KdiLogistic extends SimpleMng {
               {getFieldDecorator('status')(
                 <Select placeholder="状态" style={{ width: '100%' }}>
                   {/* <Option value="0">全部</Option> */}
-                  <Option value="0">无轨迹</Option>
                   <Option value="1">已揽收</Option>
                   <Option value="2">在途中</Option>
                   <Option value="3">已签收</Option>
+                  <Option value="0">无轨迹</Option>
                   <Option value="-1">作废</Option>
                 </Select>
               )}

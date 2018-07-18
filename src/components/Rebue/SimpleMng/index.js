@@ -28,6 +28,18 @@ export default class SimpleMng extends PureComponent {
     });
   }
 
+  // 查询
+  handleSearch = e => {
+    e.preventDefault();
+
+    const { form } = this.props;
+
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      this.handleReload({ ...fieldsValue });
+    });
+  };
+
   // 显示新建表单
   showAddForm(params) {
     const defaultParams = {
