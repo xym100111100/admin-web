@@ -7,13 +7,13 @@ import {
   kdilogisticModify,
   kdilogisticDel,
 } from './mock/kdilogistic';
-//import {
-//rnarealnameList,
-//rnarealnameGetById,
-//rnarealnameAdd,
-//rnarealnameModify,
-//rnarealnameDel,
-//} from './mock/rnarealname';
+import {
+  rnarealnameList,
+  rnarealnameGetById,
+  rnarealnameAdd,
+  rnarealnameModify,
+  rnarealnameDel,
+} from './mock/rnarealname';
 import {
   pfmmenuList,
   pfmmenuGetById,
@@ -85,11 +85,11 @@ const proxy = {
   'PUT /kdi-svr/kdi/logistic': kdilogisticModify,
   'DELETE /kdi-svr/kdi/logistic': kdilogisticDel,
   //rnarealname
-  //'GET /rna-svr/rna/realname': rnarealnameList,
-  //'GET /rna-svr/rna/realname/getbyid': rnarealnameGetById,
-  // 'POST /rna-svr/rna/realname': rnarealnameAdd,
-  // 'PUT /rna-svr/rna/realname': rnarealnameModify,
-  // 'DELETE /rna-svr/rna/realname': rnarealnameDel,
+  'GET /rna-svr/rna/realname': rnarealnameList,
+  'GET /rna-svr/rna/realname/getbyid': rnarealnameGetById,
+  'POST /rna-svr/rna/realname': rnarealnameAdd,
+  'PUT /rna-svr/rna/realname': rnarealnameModify,
+  'DELETE /rna-svr/rna/realname': rnarealnameDel,
   // pfmsys
   'GET /pfm-svr/pfm/sys': pfmsysList,
   'GET /pfm-svr/pfm/sys/getbyid': pfmsysGetById,
