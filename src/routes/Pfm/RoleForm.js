@@ -13,7 +13,7 @@ const { TextArea } = Input;
 @EditForm
 export default class RoleForm extends PureComponent {
   render() {
-    const { form, editFormType } = this.props;
+    const { form } = this.props;
     return (
       <Fragment>
         {form.getFieldDecorator('id')(<Input type="hidden" />)}

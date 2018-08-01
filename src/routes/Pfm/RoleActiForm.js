@@ -50,9 +50,7 @@ export default class RoleActiForm extends PureComponent {
 
   onCheck = checkedKeys => {
     const { form } = this.props;
-    const actiIds = checkedKeys
-      ? checkedKeys.filter(key => key.substr(0, 4) === 'acti').map(key => Number(key.substr(4)))
-      : [];
+    const actiIds = checkedKeys ? checkedKeys.filter(key => key.substr(0, 4) === 'acti').map(key => key.substr(4)) : [];
     form.setFieldsValue({ actiIds });
   };
 

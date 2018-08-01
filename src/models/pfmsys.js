@@ -13,7 +13,7 @@ export default {
       const response = yield call(list, payload);
       yield put({
         type: 'changeList',
-        payload: Array.isArray(response) ? response : [],
+        payload: response,
       });
       if (callback) callback(response);
     },

@@ -35,6 +35,17 @@ const menuData = [
     ],
   },
   {
+    name: '实名认证',
+    icon: 'hdd',
+    path: 'rna',
+    children: [
+      {
+        name: '认证用户信息',
+        path: 'rna-realname',
+      },
+    ],
+  },
+  {
     name: '系统配置',
     icon: 'setting',
     path: 'pfm',
@@ -54,6 +65,17 @@ const menuData = [
       {
         name: '角色',
         path: 'role-mng',
+      },
+    ],
+  },
+  {
+    name: '用户管理',
+    icon: 'user',
+    path: 'suc',
+    children: [
+      {
+        name: '用户信息',
+        path: 'user-mng',
       },
     ],
   },

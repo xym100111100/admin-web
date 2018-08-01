@@ -87,6 +87,9 @@ export const getRouterData = app => {
         import('../routes/Pfm/RoleMng')
       ),
     },
+    '/suc/user-mng': {
+      component: dynamicWrapper(app, ['sucuser'], () => import('../routes/Suc/UserMng')),
+    },
     '/': {
       component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),
     },

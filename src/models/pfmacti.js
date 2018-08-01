@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { list, getById, add, modify, sort, del, auth, enable } from '../services/pfmacti';
+import { getById, add, modify, sort, del, auth, enable } from '../services/pfmacti';
 
 export default {
   namespace: 'pfmacti',

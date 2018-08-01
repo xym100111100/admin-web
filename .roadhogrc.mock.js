@@ -7,6 +7,13 @@ import {
   kdilogisticModify,
   kdilogisticDel,
 } from './mock/kdilogistic';
+//import {
+//rnarealnameList,
+//rnarealnameGetById,
+//rnarealnameAdd,
+//rnarealnameModify,
+//rnarealnameDel,
+//} from './mock/rnarealname';
 import {
   pfmmenuList,
   pfmmenuGetById,
@@ -54,6 +61,17 @@ import { getProfileAdvancedData } from './mock/profile';
 import { getNotices } from './mock/notices';
 import { format, delay } from 'roadhog-api-doc';
 import { S_IRWXG } from 'constants';
+import {
+  sucUserList,
+  sucUserGetById,
+  sucUserAdd,
+  sucUserModify,
+  sucuserEnable,
+  removeLoginPassWord,
+  removePayPassWord,
+  unbindWeChat,
+  unbindQQ,
+} from './mock/sucuser';
 
 // 是否禁用代理
 const noProxy = process.env.NO_PROXY === 'true';
@@ -66,6 +84,12 @@ const proxy = {
   'POST /kdi-svr/kdi/logistic': kdilogisticAdd,
   'PUT /kdi-svr/kdi/logistic': kdilogisticModify,
   'DELETE /kdi-svr/kdi/logistic': kdilogisticDel,
+  //rnarealname
+  //'GET /rna-svr/rna/realname': rnarealnameList,
+  //'GET /rna-svr/rna/realname/getbyid': rnarealnameGetById,
+  // 'POST /rna-svr/rna/realname': rnarealnameAdd,
+  // 'PUT /rna-svr/rna/realname': rnarealnameModify,
+  // 'DELETE /rna-svr/rna/realname': rnarealnameDel,
   // pfmsys
   'GET /pfm-svr/pfm/sys': pfmsysList,
   'GET /pfm-svr/pfm/sys/getbyid': pfmsysGetById,
@@ -113,6 +137,16 @@ const proxy = {
   // pfmroleacti
   'GET /pfm-svr/pfm/roleacti': pfmroleactiList,
   'PUT /pfm-svr/pfm/roleacti': pfmroleactiModify,
+  // sucuser
+  'GET /suc-svr/suc/user': sucUserList,
+  'GET /suc-svr/suc/user/getbyid': sucUserGetById,
+  'POST /suc-svr/suc/user': sucUserAdd,
+  'PUT /suc-svr/suc/user': sucUserModify,
+  'PUT /suc-svr/suc/user/enable': sucuserEnable,
+  'PUT /suc-svr/suc/user/del/loginpassword': removeLoginPassWord,
+  'PUT /suc-svr/suc/user/del/paypassword': removePayPassWord,
+  'PUT /suc-svr/suc/user/unbindwechat': unbindWeChat,
+  'PUT /suc-svr/suc/user/unbindqq': unbindQQ,
   // pfmsuc
   'POST /suc-svr/user/login/by/user/name': (req, res) => {
     const { loginPswd, userName, type } = req.body;
@@ -229,6 +263,8 @@ const proxy = {
   },
 };
 
+console.log('aaa');
+
 // 响应请求延迟1秒
 // export default (noProxy ? {} : delay(proxy, 1000));
 // 响应请求不延迟
@@ -238,6 +274,14 @@ export default (noProxy
       'POST /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
       'PUT /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
       'DELETE /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
+      'GET /rna-svr/(.*)': 'http://127.0.0.1:20088/',
+      'POST /rna-svr/(.*)': 'http://127.0.0.1:20088/',
+      'PUT /rna-svr/(.*)': 'http://127.0.0.1:20088/',
+      'DELETE /rna-svr/(.*)': 'http://127.0.0.1:20088/',
+      'GET /suc-svr/(.*)': 'http://127.0.0.1:9100/',
+      'POST /suc-svr/(.*)': 'http://127.0.0.1:9100/',
+      'PUT /suc-svr/(.*)': 'http://127.0.0.1:9100/',
+      'DELETE /suc-svr/(.*)': 'http://127.0.0.1:9100/',
     }
   : delay(proxy));
 //  : delay(proxy, 1000));

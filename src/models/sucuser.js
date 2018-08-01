@@ -1,11 +1,21 @@
 import { message } from 'antd';
-import { list, getById, add, modify, sort, del, enable } from '../services/pfmmenu';
+import {
+  list,
+  getById,
+  add,
+  modify,
+  enable,
+  removeLoginPassWord,
+  removePayPassWord,
+  unbindWeChat,
+  unbindQQ,
+} from '../services/sucuser';
 
 export default {
-  namespace: 'pfmmenu',
+  namespace: 'sucuser',
 
   state: {
-    pfmmenu: [],
+    sucuser: [],
   },
 
   effects: {
@@ -44,26 +54,44 @@ export default {
         message.error(response.msg);
       }
     },
-    *sort({ payload, callback }, { call }) {
-      const response = yield call(sort, payload);
-      if (response.result === 1) {
-        message.success(response.msg);
-        if (callback) callback(response);
-      } else {
-        message.error(response.msg);
-      }
-    },
-    *del({ payload, callback }, { call }) {
-      const response = yield call(del, payload);
-      if (response.result === 1) {
-        message.success(response.msg);
-        if (callback) callback(response);
-      } else {
-        message.error(response.msg);
-      }
-    },
     *enable({ payload, callback }, { call }) {
       const response = yield call(enable, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *removeLoginPassWord({ payload, callback }, { call }) {
+      const response = yield call(removeLoginPassWord, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *removePayPassWord({ payload, callback }, { call }) {
+      const response = yield call(removePayPassWord, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *unbindWeChat({ payload, callback }, { call }) {
+      const response = yield call(unbindWeChat, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *unbindQQ({ payload, callback }, { call }) {
+      const response = yield call(unbindQQ, payload);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);
@@ -75,39 +103,8 @@ export default {
 
   reducers: {
     changeList(state, action) {
-      const data = action.payload;
-      data.sort((item1, item2) => item1.code > item2.code);
-      const tree = [];
-      for (const item of data) {
-        const { code } = item;
-        const level = code.length / 2;
-        if (level === 1) {
-          tree.push(item);
-        } else {
-          const code1 = code.substring(0, 2) - 0;
-          if (level === 2) {
-            if (!tree[code1].children) tree[code1].children = [];
-            tree[code1].children.push(item);
-          } else {
-            const code2 = code.substring(2, 4) - 0;
-            if (level === 3) {
-              if (!tree[code1].children[code2].children) tree[code1].children[code2].children = [];
-              tree[code1].children[code2].children.push(item);
-            } else {
-              const code3 = code.substring(4, 6) - 0;
-              if (level === 4) {
-                if (!tree[code1].children[code2].children[code3].children)
-                  tree[code1].children[code2].children[code3].children = [];
-                tree[code1].children[code2].children[code3].children.push(item);
-              } else {
-                message.error('菜单最多只支持4级');
-              }
-            }
-          }
-        }
-      }
       return {
-        pfmmenu: tree,
+        sucuser: action.payload,
       };
     },
   },

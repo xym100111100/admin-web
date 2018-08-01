@@ -17,7 +17,7 @@ export default class SimpleMng extends PureComponent {
   // 刷新
   handleReload(params) {
     if (params) {
-      this.state.options = params;
+      Object.assign(this.state.options, params);
     }
     const payload = this.state.options;
 
