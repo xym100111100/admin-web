@@ -1,21 +1,21 @@
 import { message } from 'antd';
-import { getByCondition, list, getById, add, modify, del } from '../services/kdilogistic';
+import { list, getById, add, modify, del } from '../services/kdireceiver';
 
 export default {
-  namespace: 'kdilogistic',
+  namespace: 'kdireceiver',
 
   state: {
-    kdilogistic: [],
+    kdireceiver: [],
   },
 
   effects: {
     *list({ payload, callback }, { call, put }) {
       const response = yield call(list, payload);
-      console.info(response);
       yield put({
         type: 'changeList',
-        payload: Array.isArray(response) ? response : [],
+        payload: response,
       });
+      console.info(response);
       if (callback) callback(response);
     },
     *getById({ payload, callback }, { call }) {
@@ -59,7 +59,7 @@ export default {
   reducers: {
     changeList(state, action) {
       return {
-        kdilogistic: action.payload,
+        kdireceiver: action.payload,
       };
     },
   },

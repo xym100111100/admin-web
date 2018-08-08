@@ -1,50 +1,9 @@
 import { parse } from 'url';
 
 // mock tableListDataSource
-const tableListDataSource = [
-  {
-    id: 154631651464,
-    shipper_id: '482812906476535809',
-    shipper_name: '邮政快递',
-    logistic_code: '1234567891234567891',
-    receive_name: '测试1',
-    sender_name: '测试1',
-    goods_info: '大台农',
-    order_time: '2018-06-15',
-  },
-  {
-    id: 15463165235,
-    shipper_id: '482812906476535809',
-    shipper_name: '邮政快递',
-    logistic_code: '1234567891234567891',
-    receive_name: '测试2',
-    sender_name: '测试2',
-    goods_info: '大台农',
-    order_time: '2018-06-15',
-  },
-  {
-    id: 154646451464,
-    shipper_id: '482812906476535809',
-    shipper_name: '邮政快递',
-    logistic_code: '1234567891234567891',
-    receive_name: '测试3',
-    sender_name: '测试3',
-    goods_info: '大台农',
-    order_time: '2018-06-15',
-  },
-  {
-    id: 154658751464,
-    shipper_id: '482812906476535809',
-    shipper_name: '邮政快递',
-    logistic_code: '1234567891234567891',
-    receive_name: '测试4',
-    sender_name: '测试4',
-    goods_info: '大台农',
-    order_time: '2018-06-15',
-  },
-];
+const tableListDataSource = [];
 
-export function kdilogisticList(req, res, u) {
+export function kdieorderList(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -62,7 +21,7 @@ export function kdilogisticList(req, res, u) {
   return res.json(result);
 }
 
-export function kdilogisticGetById(req, res, u) {
+export function kdieorderGetById(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -84,7 +43,7 @@ export function kdilogisticGetById(req, res, u) {
   }
 }
 
-export function kdilogisticAdd(req, res, u, b) {
+export function kdieorderAdd(req, res, u, b) {
   const body = (b && b.body) || req.body;
 
   if (Math.random() >= 0.495) {
@@ -102,7 +61,7 @@ export function kdilogisticAdd(req, res, u, b) {
   }
 }
 
-export function kdilogisticModify(req, res, u, b) {
+export function kdieorderModify(req, res, u, b) {
   const body = (b && b.body) || req.body;
   const replacedIndex = tableListDataSource.findIndex(item => item.id === body.id);
   if (replacedIndex !== -1) {
@@ -119,7 +78,7 @@ export function kdilogisticModify(req, res, u, b) {
   }
 }
 
-export function kdilogisticDel(req, res, u) {
+export function kdieorderDel(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line

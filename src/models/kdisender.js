@@ -1,21 +1,21 @@
 import { message } from 'antd';
-import { getByCondition, list, getById, add, modify, del } from '../services/kdilogistic';
+import { list, getById, add, modify, del, setDefaultSender } from '../services/kdisender';
 
 export default {
-  namespace: 'kdilogistic',
+  namespace: 'kdisender',
 
   state: {
-    kdilogistic: [],
+    kdisender: [],
   },
 
   effects: {
     *list({ payload, callback }, { call, put }) {
       const response = yield call(list, payload);
-      console.info(response);
       yield put({
         type: 'changeList',
-        payload: Array.isArray(response) ? response : [],
+        payload: response,
       });
+      console.info(response);
       if (callback) callback(response);
     },
     *getById({ payload, callback }, { call }) {
@@ -54,12 +54,23 @@ export default {
         message.error(response.msg);
       }
     },
+
+    *setDefaultSender({ payload, callback }, { call }) {
+      console.info('999');
+      const response = yield call(setDefaultSender, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
   },
 
   reducers: {
     changeList(state, action) {
       return {
-        kdilogistic: action.payload,
+        kdisender: action.payload,
       };
     },
   },

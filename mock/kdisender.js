@@ -3,66 +3,39 @@ import { parse } from 'url';
 // mock tableListDataSource
 const tableListDataSource = [
   {
-    id: 154631651464,
-    shipper_id: '482812906476535809',
-    shipper_name: '邮政快递',
-    logistic_code: '1234567891234567891',
-    receive_name: '测试1',
-    sender_name: '测试1',
-    goods_info: '大台农',
-    order_time: '2018-06-15',
-  },
-  {
-    id: 15463165235,
-    shipper_id: '482812906476535809',
-    shipper_name: '邮政快递',
-    logistic_code: '1234567891234567891',
-    receive_name: '测试2',
-    sender_name: '测试2',
-    goods_info: '大台农',
-    order_time: '2018-06-15',
-  },
-  {
-    id: 154646451464,
-    shipper_id: '482812906476535809',
-    shipper_name: '邮政快递',
-    logistic_code: '1234567891234567891',
-    receive_name: '测试3',
-    sender_name: '测试3',
-    goods_info: '大台农',
-    order_time: '2018-06-15',
-  },
-  {
-    id: 154658751464,
-    shipper_id: '482812906476535809',
-    shipper_name: '邮政快递',
-    logistic_code: '1234567891234567891',
-    receive_name: '测试4',
-    sender_name: '测试4',
-    goods_info: '大台农',
-    order_time: '2018-06-15',
+    id: '1234556',
+    senderName: '微薄利',
+    senderTel: '124563254',
+    senderMobile: '4516135846',
+    senderPostCode: '530000',
+    senderaddr: ['广西壮族自治区', '南宁市', '西乡塘区'],
+    senderAddress: '华尔街工谷',
   },
 ];
 
-export function kdilogisticList(req, res, u) {
-  let url = u;
-  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
-    url = req.url; // eslint-disable-line
-  }
-  const params = parse(url, true).query;
-  if (params.receiver_info === undefined || params.receiver_info === '') {
-    return res.json(tableListDataSource);
-  }
-  const result = [];
-  for (let i = 0; i < tableListDataSource.length; i++) {
-    if (tableListDataSource[i].receive_name === params.receiver_info) {
-      result.push(tableListDataSource[i]);
-    }
-  }
-  return res.json(result);
+export function kdisenderList(req, res) {
+  res.json(tableListDataSource);
 }
 
-export function kdilogisticGetById(req, res, u) {
+export function modifyDefaultSender(req, res, u, b) {
+  const body = (b && b.body) || req.body;
+  console.info(body);
+  const replacedIndex = tableListDataSource.findIndex(item => item.id === body.id);
+  if (replacedIndex !== -1) {
+    tableListDataSource.splice(replacedIndex, 1, body);
+    return res.json({
+      result: 1,
+      msg: '修改成功',
+    });
+  } else {
+    return res.json({
+      result: -1,
+      msg: '修改失败，找不到要修改的记录',
+    });
+  }
+}
+
+export function kdisenderGetById(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -84,7 +57,7 @@ export function kdilogisticGetById(req, res, u) {
   }
 }
 
-export function kdilogisticAdd(req, res, u, b) {
+export function kdisenderAdd(req, res, u, b) {
   const body = (b && b.body) || req.body;
 
   if (Math.random() >= 0.495) {
@@ -102,7 +75,7 @@ export function kdilogisticAdd(req, res, u, b) {
   }
 }
 
-export function kdilogisticModify(req, res, u, b) {
+export function kdisenderModify(req, res, u, b) {
   const body = (b && b.body) || req.body;
   const replacedIndex = tableListDataSource.findIndex(item => item.id === body.id);
   if (replacedIndex !== -1) {
@@ -119,7 +92,7 @@ export function kdilogisticModify(req, res, u, b) {
   }
 }
 
-export function kdilogisticDel(req, res, u) {
+export function kdisenderDel(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
