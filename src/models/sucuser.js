@@ -1,4 +1,6 @@
 import { message } from 'antd';
+import CryptoJS from 'crypto-js';
+
 import {
   list,
   getById,
@@ -37,7 +39,18 @@ export default {
       }
     },
     *add({ payload, callback }, { call }) {
-      const response = yield call(add, payload);
+      let payloads = [];
+      payloads.push({
+        loginName: payload.loginName,
+        loginPswd: CryptoJS.MD5(payload.loginPswd).toString(),
+        email: payload.email,
+        idcard: payload.idcard,
+        mobile: payload.mobile,
+        nickname: payload.nickname,
+        realname: payload.realname,
+        appId: 12,
+      });
+      const response = yield call(add, payloads[0]);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);

@@ -10,7 +10,7 @@ export async function getById(params) {
 }
 
 export async function add(params) {
-  return request('/suc-svr/suc/user', {
+  return request('/suc-svr/user/reg/by/login/name', {
     method: 'POST',
     body: {
       ...params,

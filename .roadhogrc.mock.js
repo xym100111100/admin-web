@@ -263,8 +263,6 @@ const proxy = {
   },
 };
 
-console.log('aaa');
-
 // 响应请求延迟1秒
 // export default (noProxy ? {} : delay(proxy, 1000));
 // 响应请求不延迟

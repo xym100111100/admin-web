@@ -21,10 +21,16 @@ import DescriptionList from 'components/DescriptionList';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import UserForm from './UserForm';
 import styles from './UserMng.less';
+import UserRoleForm from './UserRoleForm';
+import UserRegForm from './UserRegForm';
 
 const FormItem = Form.Item;
 const { Description } = DescriptionList;
-@connect(({ sucuser, loading }) => ({ sucuser, loading: loading.models.sucuser }))
+@connect(({ sucuser, userrole, loading }) => ({
+  sucuser,
+  userrole,
+  loading: loading.models.sucuser,
+}))
 @Form.create()
 export default class UserMng extends SimpleMng {
   constructor() {
@@ -44,6 +50,11 @@ export default class UserMng extends SimpleMng {
         pageSize: pagination.pageSize,
       });
     });
+  };
+
+  // 重置from
+  handleFormReset = () => {
+    this.props.form.resetFields();
   };
 
   // 锁定/解锁用户
@@ -128,7 +139,7 @@ export default class UserMng extends SimpleMng {
   }
 
   render() {
-    const { sucuser: { sucuser }, loading } = this.props;
+    const { sucuser: { sucuser }, userrole: { userrole }, loading } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
     const columns = [
       {
@@ -175,11 +186,22 @@ export default class UserMng extends SimpleMng {
                   actions={[
                     <a
                       onClick={() =>
+                        this.showAddForm({
+                          editForm: 'userRoleForm',
+                          editFormTitle: '添加角色',
+                          editFormRecord: { userId: record.id },
+                        })
+                      }
+                    >
+                      添加角色
+                    </a>,
+                    <a
+                      onClick={() =>
                         this.showEditForm({
                           id: record.id,
                           moduleCode: 'sucuser',
                           editForm: 'userForm',
-                          editFormTitle: '编辑动作信息',
+                          editFormTitle: '编辑角色信息',
                         })
                       }
                     >
@@ -245,6 +267,19 @@ export default class UserMng extends SimpleMng {
         <Card bordered={false}>
           <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
           <div className={styles.tableList}>
+            <div className={styles.tableListOperator}>
+              <Button
+                icon="plus"
+                type="primary"
+                onClick={() => this.showAddForm({ editForm: 'userRegForm', editFormTitle: '添加新用户' })}
+              >
+                添加
+              </Button>
+              <Divider type="vertical" />
+              <Button icon="reload" onClick={() => this.handleReload()}>
+                刷新
+              </Button>
+            </div>
             <Table
               rowKey="id"
               pagination={paginationProps}
@@ -262,7 +297,6 @@ export default class UserMng extends SimpleMng {
                         unCheckedChildren="未验证"
                         checked={record.isVerifiedRealname}
                         loading={loading}
-                        // onChange={() => this.handleEnable(record)}
                       />
                     </Fragment>
                   </Description>
@@ -274,7 +308,6 @@ export default class UserMng extends SimpleMng {
                         unCheckedChildren="未验证"
                         checked={record.isVerifiedIdcard}
                         loading={loading}
-                        // onChange={() => this.handleEnable(record)}
                       />
                     </Fragment>
                   </Description>
@@ -286,7 +319,6 @@ export default class UserMng extends SimpleMng {
                         unCheckedChildren="未验证"
                         checked={record.isVerifiedEmail}
                         loading={loading}
-                        // onChange={() => this.handleEnable(record)}
                       />
                     </Fragment>
                   </Description>
@@ -298,7 +330,6 @@ export default class UserMng extends SimpleMng {
                         unCheckedChildren="未验证"
                         checked={record.isVerifiedMobile}
                         loading={loading}
-                        // onChange={() => this.handleEnable(record)}
                       />
                     </Fragment>
                   </Description>
@@ -307,6 +338,16 @@ export default class UserMng extends SimpleMng {
             />
           </div>
         </Card>
+        {editForm === 'userRegForm' && (
+          <UserRegForm
+            visible
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            handleSave={fields => this.handleSave({ fields, moduleCode: 'sucuser' })}
+          />
+        )}
         {editForm === 'userForm' && (
           <UserForm
             loading={loading}
@@ -317,6 +358,29 @@ export default class UserMng extends SimpleMng {
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
             handleSave={fields => this.handleSave({ fields, moduleCode: 'sucuser' })}
+          />
+        )}
+        {editForm === 'userRoleForm' && (
+          <UserRoleForm
+            visible
+            loading={loading}
+            id={editFormRecord.userId}
+            title={editFormTitle}
+            width={715}
+            moduleCode={'userrole'}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            handleSave={fields =>
+              this.handleSave({
+                fields: {
+                  sysId: userrole.dataSource[0].sysId,
+                  userId: editFormRecord.userId,
+                  roleIds: userrole.targetKeys,
+                },
+                moduleCode: 'userrole',
+              })
+            }
           />
         )}
       </PageHeaderLayout>
