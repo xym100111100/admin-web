@@ -14,7 +14,7 @@ export default {
       if (payload.applyState === undefined) {
         payload.applyState = 1;
       }
-      if (payload.startApplyTime !== undefined && payload.startApplyTime !== '') {
+      if (payload.startApplyTime !== undefined && payload.startApplyTime !== '' && payload.startApplyTime.length >= 1) {
         payload.endApplyTime = payload.startApplyTime[1].format('YYYY-MM-DD HH:mm:ss');
         payload.startApplyTime = payload.startApplyTime[0].format('YYYY-MM-DD HH:mm:ss');
       }

@@ -302,6 +302,8 @@ export default (noProxy
       'POST /suc-svr/(.*)': 'http://127.0.0.1:9100/',
       'PUT /suc-svr/(.*)': 'http://127.0.0.1:9100/',
       'DELETE /suc-svr/(.*)': 'http://127.0.0.1:9100/',
+      'GET /kdi-svr/(.*)': 'http://127.0.0.1:20080/',
+      'POST /kdi-svr/(.*)': 'http://127.0.0.1:20080/',
     }
   : delay(proxy));
 //  : delay(proxy, 1000));

@@ -71,6 +71,9 @@ export const getRouterData = app => {
     '/rna/rna-realname': {
       component: dynamicWrapper(app, ['rnarealname'], () => import('../routes/Rna/RnaRealname')),
     },
+    '/kdi/kdi-entry': {
+      component: dynamicWrapper(app, ['kdientry'], () => import('../routes/Kdi/KdiEntry')),
+    },
     '/kdi/kdi-mng': {
       component: dynamicWrapper(app, ['kdilogistic'], () => import('../routes/Kdi/KdiLogistic')),
     },
