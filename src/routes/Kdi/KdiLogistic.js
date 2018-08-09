@@ -17,6 +17,18 @@ export default class KdiLogistic extends SimpleMng {
     this.moduleCode = 'kdilogistic';
   }
 
+  handleFormReset = () => {
+    const { form, dispatch } = this.props;
+    form.resetFields();
+    this.setState({
+      formValues: {},
+    });
+    dispatch({
+      type: 'rule/fetch',
+      payload: {},
+    });
+  };
+
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
 
@@ -24,11 +36,13 @@ export default class KdiLogistic extends SimpleMng {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
           <Col md={6} sm={24}>
-            <FormItem label="">{getFieldDecorator('no')(<Input placeholder="收件人姓名/电话/快递单号" />)}</FormItem>
+            <FormItem label="">
+              {getFieldDecorator('receiver_info')(<Input placeholder="收件人姓名/电话/快递单号" />)}
+            </FormItem>
           </Col>
           <Col md={5} sm={24}>
             <FormItem label="">
-              {getFieldDecorator('status')(
+              {getFieldDecorator('logistic_status')(
                 <Select placeholder="状态" style={{ width: '100%' }}>
                   {/* <Option value="0">全部</Option> */}
                   <Option value="1">已揽收</Option>
@@ -42,7 +56,7 @@ export default class KdiLogistic extends SimpleMng {
           </Col>
           <Col md={7} sm={24}>
             <FormItem label="">
-              {getFieldDecorator('date')(
+              {getFieldDecorator('order_time')(
                 <RangePicker style={{ width: '100%' }} placeholder={['开始日期', '结束日期']} />
               )}
             </FormItem>

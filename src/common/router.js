@@ -68,8 +68,16 @@ function getFlatMenuData(menus) {
 
 export const getRouterData = app => {
   const routerConfig = {
+    '/rna/rna-realname': {
+      component: dynamicWrapper(app, ['rnarealname'], () => import('../routes/Rna/RnaRealname')),
+    },
     '/kdi/kdi-mng': {
       component: dynamicWrapper(app, ['kdilogistic'], () => import('../routes/Kdi/KdiLogistic')),
+    },
+    '/kdi/kdi-eorder': {
+      component: dynamicWrapper(app, ['kdieorder', 'kdisender', 'kdireceiver'], () =>
+        import('../routes/Kdi/KdiEorder')
+      ),
     },
     '/pfm/sys-mng': {
       component: dynamicWrapper(app, ['pfmsys'], () => import('../routes/Pfm/SysMng')),

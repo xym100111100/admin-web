@@ -7,13 +7,22 @@ import {
   kdilogisticModify,
   kdilogisticDel,
 } from './mock/kdilogistic';
-//import {
-//rnarealnameList,
-//rnarealnameGetById,
-//rnarealnameAdd,
-//rnarealnameModify,
-//rnarealnameDel,
-//} from './mock/rnarealname';
+import {
+  rnarealnameList,
+  rnarealnameGetById,
+  rnarealnameAdd,
+  rnarealnameModify,
+  rnarealnameDel,
+} from './mock/rnarealname';
+import { kdieorderList, kdieorderGetById, kdieorderAdd, kdieorderModify, kdieorderDel } from './mock/kdieorder';
+import {
+  kdisenderList,
+  kdisenderGetById,
+  kdisenderAdd,
+  kdisenderModify,
+  kdisenderDel,
+  modifyDefaultSender,
+} from './mock/kdisender';
 import {
   pfmmenuList,
   pfmmenuGetById,
@@ -78,6 +87,13 @@ const noProxy = process.env.NO_PROXY === 'true';
 
 // 代码中会兼容本地 service mock 以及部署站点的静态数据
 const proxy = {
+  //kdisender
+  'GET /kdi-svr/kdi/sender': kdisenderList,
+  'GET /kdi-svr/kdi/sender/getbyid': kdisenderGetById,
+  'POST /kdi-svr/kdi/sender': kdisenderAdd,
+  'PUT /kdi-svr/kdi/sender': kdisenderModify,
+  'PUT /kdi-svr/kdi/sender/default': modifyDefaultSender,
+  'DELETE /kdi-svr/kdi/sender': kdisenderDel,
   //kdilogitic
   'GET /kdi-svr/kdi/logistic': kdilogisticList,
   'GET /kdi-svr/kdi/logistic/getbyid': kdilogisticGetById,
@@ -85,11 +101,17 @@ const proxy = {
   'PUT /kdi-svr/kdi/logistic': kdilogisticModify,
   'DELETE /kdi-svr/kdi/logistic': kdilogisticDel,
   //rnarealname
-  //'GET /rna-svr/rna/realname': rnarealnameList,
-  //'GET /rna-svr/rna/realname/getbyid': rnarealnameGetById,
-  // 'POST /rna-svr/rna/realname': rnarealnameAdd,
-  // 'PUT /rna-svr/rna/realname': rnarealnameModify,
-  // 'DELETE /rna-svr/rna/realname': rnarealnameDel,
+  'GET /rna-svr/rna/realname': rnarealnameList,
+  'GET /rna-svr/rna/realname/getbyid': rnarealnameGetById,
+  'POST /rna-svr/rna/realname': rnarealnameAdd,
+  'PUT /rna-svr/rna/realname': rnarealnameModify,
+  'DELETE /rna-svr/rna/realname': rnarealnameDel,
+  //kdieorder
+  'GET /kdi-svr/kdi/eorder': kdieorderList,
+  'GET /kdi-svr/kdi/eorder/getbyid': kdieorderGetById,
+  'POST /kdi-svr/kdi/eorder': kdieorderAdd,
+  'PUT /kdi-svr/kdi/eorder': kdieorderModify,
+  'DELETE /kdi-svr/kdi/eorder': kdieorderDel,
   // pfmsys
   'GET /pfm-svr/pfm/sys': pfmsysList,
   'GET /pfm-svr/pfm/sys/getbyid': pfmsysGetById,

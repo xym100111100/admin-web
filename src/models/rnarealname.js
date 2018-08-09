@@ -1,20 +1,27 @@
 import { message } from 'antd';
-import { getByCondition, list, getById, add, modify, del } from '../services/kdilogistic';
+import { list, getById, add, modify, del } from '../services/rnarealname';
 
 export default {
-  namespace: 'kdilogistic',
+  namespace: 'rnarealname',
 
   state: {
-    kdilogistic: [],
+    rnarealname: [],
   },
 
   effects: {
     *list({ payload, callback }, { call, put }) {
+      //默认查询待审核的。
+      if (payload.applyState === undefined) {
+        payload.applyState = 1;
+      }
+      if (payload.startApplyTime !== undefined && payload.startApplyTime !== '') {
+        payload.endApplyTime = payload.startApplyTime[1].format('YYYY-MM-DD HH:mm:ss');
+        payload.startApplyTime = payload.startApplyTime[0].format('YYYY-MM-DD HH:mm:ss');
+      }
       const response = yield call(list, payload);
-      console.info(response);
       yield put({
         type: 'changeList',
-        payload: Array.isArray(response) ? response : [],
+        payload: response,
       });
       if (callback) callback(response);
     },
@@ -59,7 +66,7 @@ export default {
   reducers: {
     changeList(state, action) {
       return {
-        kdilogistic: action.payload,
+        rnarealname: action.payload,
       };
     },
   },

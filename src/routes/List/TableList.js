@@ -43,12 +43,7 @@ const CreateForm = Form.create()(props => {
     });
   };
   return (
-    <Modal
-      title="新建规则"
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => handleModalVisible()}
-    >
+    <Modal title="新建规则" visible={modalVisible} onOk={okHandle} onCancel={() => handleModalVisible()}>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="描述">
         {form.getFieldDecorator('desc', {
           rules: [{ required: true, message: 'Please input some description...' }],
@@ -199,13 +194,12 @@ export default class TableList extends PureComponent {
 
   renderSimpleForm() {
     const { getFieldDecorator } = this.props.form;
+    console.info(this.props);
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="规则编号">
-              {getFieldDecorator('no')(<Input placeholder="请输入" />)}
-            </FormItem>
+            <FormItem label="规则编号">{getFieldDecorator('no')(<Input placeholder="请输入" />)}</FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="使用状态">
@@ -241,9 +235,7 @@ export default class TableList extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="规则编号">
-              {getFieldDecorator('no')(<Input placeholder="请输入" />)}
-            </FormItem>
+            <FormItem label="规则编号">{getFieldDecorator('no')(<Input placeholder="请输入" />)}</FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="使用状态">
@@ -264,9 +256,7 @@ export default class TableList extends PureComponent {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
             <FormItem label="更新日期">
-              {getFieldDecorator('date')(
-                <DatePicker style={{ width: '100%' }} placeholder="请输入更新日期" />
-              )}
+              {getFieldDecorator('date')(<DatePicker style={{ width: '100%' }} placeholder="请输入更新日期" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
@@ -314,7 +304,7 @@ export default class TableList extends PureComponent {
   render() {
     const { rule: { data }, loading } = this.props;
     const { selectedRows, modalVisible } = this.state;
-
+    console.info(this.state);
     const columns = [
       {
         title: '规则编号',
@@ -355,6 +345,7 @@ export default class TableList extends PureComponent {
           },
         ],
         onFilter: (value, record) => record.status.toString() === value,
+
         render(val) {
           return <Badge status={statusMap[val]} text={status[val]} />;
         },

@@ -1,8 +1,8 @@
 import { message } from 'antd';
-import { getByCondition, list, getById, add, modify, del } from '../services/kdilogistic';
+import { getByCondition, list, getById, add, modify, del } from '../services/kdieorder';
 
 export default {
-  namespace: 'kdilogistic',
+  namespace: 'kdieorder',
 
   state: {
     kdilogistic: [],
