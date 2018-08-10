@@ -86,41 +86,11 @@ export default class KdiEntry extends SimpleMng {
     if (Address === undefined || Address === null || Address.trim() === '') {
       return;
     }
-
     let pattern = new RegExp("[`~!@#$^&*()=|{} ':;'/\\/,/[\\].<>/?~！@#￥……&*（ ）——|{}【】‘；：”“'。，、？]", 'g');
     //去除特殊符号后的详细地址
     let before = Address.replace(pattern, '');
-    //先确定是不是自治区
-    if (before.indexOf('广西省') !== -1) {
-      before = before.replace('广西省', '广西壮族自治区');
-    } else if (before.indexOf('广西') !== -1) {
-      before = before.replace('广西', '广西壮族自治区');
-    }
-    //确定省
-    let index = before.indexOf('省');
-    if (index === -1) {
-      index = before.indexOf('自治区') + 2;
-    }
-    let str = before.substring(0, index + 1);
-    //确定市
-    let index2 = before.indexOf('市');
-    let str2 = before.substring(index + 1, index2 + 1);
-
-    //确定区或县，鉴于可能有（小区）的字符串与区混淆，所以县优先
-    let index3 = before.indexOf('区');
-    let index4 = before.indexOf('县');
-    //可能是县级市,应该从上面的市的位置开始
-    let index5 = before.indexOf('市', index2 + 1);
-    index4 === -1 ? (index3 = index3) : (index3 = index4);
-    if (index4 === -1 && index3 == -1) {
-      index3 = index5;
-    } else {
-    }
-    let str3 = before.substring(index2 + 1, index3 + 1);
-    //截取地址，手机号码，姓名
+    //手机号码，姓名
     if (where === 2) {
-      //在截取地址的同时，截取收发件人姓名和电话号码
-      form.setFieldsValue({ receiverProvince: [str, str2, str3] });
       //截取手机号码和收件人姓名
       let reg = /[0-9]{11}/g;
       if (before.match(reg) !== null) {
@@ -141,8 +111,6 @@ export default class KdiEntry extends SimpleMng {
         form.setFieldsValue({ receiverMobile: '' });
       }
     } else {
-      //在截取地址的同时，截取发发件人姓名和电话号码
-      form.setFieldsValue({ senderProvince: [str, str2, str3] });
       //截取手机号码和发件人姓名
       let reg = /[0-9]{11}/g;
       if (before.match(reg) !== null) {
@@ -170,7 +138,25 @@ export default class KdiEntry extends SimpleMng {
     const { kdientry: { kdientry }, loading } = this.props;
 
     if (kdientry === undefined || kdientry.length === 0) {
-      return;
+      return (
+        <FormItem label="快递公司" style={{ paddingLeft: 15 }}>
+          {getFieldDecorator('shipperName', {
+            rules: [
+              {
+                required: true,
+                message: '请选择快递公司',
+              },
+            ],
+          })(
+            <Select placeholder="请选择快递公司">
+              <Option value="123456/京东/JD">京东快递</Option>
+              <Option value="987654/顺丰/SF">顺丰快递</Option>
+              <Option value="456321/申通/ST">申通快递</Option>
+              <Option value="741258/中通/ZT">中通快递</Option>
+            </Select>
+          )}
+        </FormItem>
+      );
     }
     const listItems = kdientry.map(items => (
       <Option value={items.id + '/' + items.companyName + '/' + items.companyCode} key={items.id.toString()}>
@@ -203,23 +189,30 @@ export default class KdiEntry extends SimpleMng {
       fieldsValue.shipperCode = shipperInfo[2];
       //这里是处理上传的收件人详细地址
       let pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\]. <>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]", 'g');
-      let before = fieldsValue.receiverAddress.replace(pattern, '');
-      fieldsValue.receiverAddress = before;
+      let before;
+      if (fieldsValue.receiverAddress !== undefined) {
+        before = fieldsValue.receiverAddress.replace(pattern, '');
+        fieldsValue.receiverAddress = before;
+      }
       //这里是处理上传的发件人详细地址
-      before = fieldsValue.senderAddress.replace(pattern, '');
-      fieldsValue.senderAddress = before;
-      //这里其实传上来的senderProvince中已经包含了senderCity和senderExpArea，且用/隔开，所有这里要处理数据。
+      if (fieldsValue.senderAddress !== undefined) {
+        before = fieldsValue.senderAddress.replace(pattern, '');
+        fieldsValue.senderAddress = before;
+      }
+      //这里其实传上来的senderProvince中已经包含了senderCity和senderExpArea，是个数组，所有这里要处理数据。
       let senderProvinceInfo = fieldsValue.senderProvince;
-      fieldsValue.senderProvince = senderProvinceInfo[0];
-      fieldsValue.senderCity = senderProvinceInfo[1];
-      fieldsValue.senderExpArea = senderProvinceInfo[2];
-
-      //这里其实传上来的receiverProvince中已经包含了receiverCity和receiverExpArea，且用/隔开，所有这里要处理数据。
+      if (senderProvinceInfo !== undefined) {
+        fieldsValue.senderProvince = senderProvinceInfo[0];
+        fieldsValue.senderCity = senderProvinceInfo[1];
+        fieldsValue.senderExpArea = senderProvinceInfo[2];
+      }
+      //这里其实传上来的receiverProvince中已经包含了receiverCity和receiverExpArea，是个数组，所有这里要处理数据。
       let receiverProvinceInfo = fieldsValue.receiverProvince;
-      fieldsValue.receiverProvince = receiverProvinceInfo[0];
-      fieldsValue.receiverCity = receiverProvinceInfo[1];
-      fieldsValue.receiverExpArea = receiverProvinceInfo[2];
-
+      if (receiverProvinceInfo !== undefined) {
+        fieldsValue.receiverProvince = receiverProvinceInfo[0];
+        fieldsValue.receiverCity = receiverProvinceInfo[1];
+        fieldsValue.receiverExpArea = receiverProvinceInfo[2];
+      }
       console.log(fieldsValue);
 
       this.props.dispatch({
