@@ -147,14 +147,7 @@ export default class KdiEntry extends SimpleMng {
                 message: '请选择快递公司',
               },
             ],
-          })(
-            <Select placeholder="请选择快递公司">
-              <Option value="123456/京东/JD">京东快递</Option>
-              <Option value="987654/顺丰/SF">顺丰快递</Option>
-              <Option value="456321/申通/ST">申通快递</Option>
-              <Option value="741258/中通/ZT">中通快递</Option>
-            </Select>
-          )}
+          })(<Select placeholder="请选择快递公司" />)}
         </FormItem>
       );
     }
