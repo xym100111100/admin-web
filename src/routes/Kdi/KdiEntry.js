@@ -5,7 +5,7 @@ import { Form, Input, Select, Button, Row, Col, Card } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './KdiEntry.less';
 import AddrCascader from 'components/Rebue/AddrCascader';
-
+import KdiCompany from 'components/Rebue/KdiCompany';
 const surname =
   '赵钱孙李周吴郑王冯陈褚卫' +
   '蒋沈韩杨朱秦尤许何吕施张' +
@@ -52,13 +52,7 @@ export default class KdiEntry extends SimpleMng {
     this.moduleCode = 'kdientry';
   }
 
-  componentDidMount() {
-    //初始化的时候加载快递公司
-    this.props.dispatch({
-      type: `${this.moduleCode}/companynameandcode`,
-      payload: {},
-    });
-  }
+  componentDidMount() {}
 
   handleReset = () => {
     this.props.form.resetFields();
@@ -133,43 +127,6 @@ export default class KdiEntry extends SimpleMng {
     }
   }
 
-  companyName() {
-    const { getFieldDecorator } = this.props.form;
-    const { kdientry: { kdientry }, loading } = this.props;
-
-    if (kdientry === undefined || kdientry.length === 0) {
-      return (
-        <FormItem label="快递公司" style={{ paddingLeft: 15 }}>
-          {getFieldDecorator('shipperName', {
-            rules: [
-              {
-                required: true,
-                message: '请选择快递公司',
-              },
-            ],
-          })(<Select placeholder="请选择快递公司" />)}
-        </FormItem>
-      );
-    }
-    const listItems = kdientry.map(items => (
-      <Option value={items.id + '/' + items.companyName + '/' + items.companyCode} key={items.id.toString()}>
-        {items.companyName}
-      </Option>
-    ));
-    return (
-      <FormItem label="快递公司" style={{ paddingLeft: 15 }}>
-        {getFieldDecorator('shipperName', {
-          rules: [
-            {
-              required: true,
-              message: '请选择快递公司',
-            },
-          ],
-        })(<Select placeholder="请选择快递公司">{listItems}</Select>)}
-      </FormItem>
-    );
-  }
-
   entry = () => {
     const { form } = this.props;
 
@@ -180,18 +137,6 @@ export default class KdiEntry extends SimpleMng {
       fieldsValue.shipperId = shipperInfo[0];
       fieldsValue.shipperName = shipperInfo[1];
       fieldsValue.shipperCode = shipperInfo[2];
-      //这里是处理上传的收件人详细地址
-      let pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\]. <>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]", 'g');
-      let before;
-      if (fieldsValue.receiverAddress !== undefined) {
-        before = fieldsValue.receiverAddress.replace(pattern, '');
-        fieldsValue.receiverAddress = before;
-      }
-      //这里是处理上传的发件人详细地址
-      if (fieldsValue.senderAddress !== undefined) {
-        before = fieldsValue.senderAddress.replace(pattern, '');
-        fieldsValue.senderAddress = before;
-      }
       //这里其实传上来的senderProvince中已经包含了senderCity和senderExpArea，是个数组，所有这里要处理数据。
       let senderProvinceInfo = fieldsValue.senderProvince;
       if (senderProvinceInfo !== undefined) {
@@ -206,7 +151,7 @@ export default class KdiEntry extends SimpleMng {
         fieldsValue.receiverCity = receiverProvinceInfo[1];
         fieldsValue.receiverExpArea = receiverProvinceInfo[2];
       }
-      console.log(fieldsValue);
+      //  console.log(fieldsValue);
 
       this.props.dispatch({
         type: `${this.moduleCode}/add`,
@@ -220,6 +165,7 @@ export default class KdiEntry extends SimpleMng {
 
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
+    const { form } = this.props;
     const { kdientry: { kdientry }, loading } = this.props;
     return (
       <Form onSubmit={this.entry} layout="inline">
@@ -368,7 +314,16 @@ export default class KdiEntry extends SimpleMng {
                   />
                 )}
               </FormItem>
-              {this.companyName()}
+              <FormItem label="快递公司" style={{ paddingLeft: 15 }}>
+                {getFieldDecorator('shipperName', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '请输入快递公司',
+                    },
+                  ],
+                })(<KdiCompany />)}
+              </FormItem>
               <FormItem>
                 <Button style={{ marginLeft: 26 }} type="primary" htmlType="submit">
                   录入
@@ -386,6 +341,7 @@ export default class KdiEntry extends SimpleMng {
 
   render() {
     const { kdientry: { kdientry }, loading } = this.props;
+    const { form } = this.props;
     return (
       <PageHeaderLayout title="快递单录入">
         <div className={styles.tableListForm}>{this.renderSearchForm()}</div>

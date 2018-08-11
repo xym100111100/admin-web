@@ -8,7 +8,3 @@ export async function add(params) {
     },
   });
 }
-
-export async function companynameandcode() {
-  return request(`/kdi-svr/kdi/company/companynameandcode`);
-}

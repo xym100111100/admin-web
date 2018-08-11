@@ -72,7 +72,7 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['rnarealname'], () => import('../routes/Rna/RnaRealname')),
     },
     '/kdi/kdi-entry': {
-      component: dynamicWrapper(app, ['kdientry'], () => import('../routes/Kdi/KdiEntry')),
+      component: dynamicWrapper(app, ['kdientry', 'kdicompany'], () => import('../routes/Kdi/KdiEntry')),
     },
     '/kdi/kdi-mng': {
       component: dynamicWrapper(app, ['kdilogistic'], () => import('../routes/Kdi/KdiLogistic')),
@@ -81,6 +81,9 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['kdieorder', 'kdisender', 'kdireceiver'], () =>
         import('../routes/Kdi/KdiEorder')
       ),
+    },
+    '/kdi/kdi-cfg/kdi-company-cfg': {
+      component: dynamicWrapper(app, ['kdicompany'], () => import('../routes/Kdi/KdiCompany')),
     },
     '/pfm/sys-mng': {
       component: dynamicWrapper(app, ['pfmsys'], () => import('../routes/Pfm/SysMng')),
