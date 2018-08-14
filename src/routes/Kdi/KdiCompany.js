@@ -6,16 +6,22 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import CompanyForm from './CompanyForm';
 import styles from './KdiCompany.less';
 
-@connect(({ kdicompany, loading }) => ({ kdicompany, loading: loading.models.kdicompany }))
+@connect(({ kdicompany, user, loading }) => ({
+  kdicompany,
+  user,
+  loading: loading.models.kdicompany || loading.models.kdicompany,
+}))
 export default class KdiCompany extends SimpleMng {
   constructor() {
     super();
     this.moduleCode = 'kdicompany';
   }
   render() {
-    const { kdicompany: { kdicompany }, loading } = this.props;
+    const { kdicompany: { kdicompany }, loading, user } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
-
+    //  const organizeId=user.currentUser.organizeId; 不是连调的时候应该把这里放开获取动态的organizeId
+    const organizeId = 253274870;
+    editFormRecord.organizeId = organizeId;
     const columns = [
       {
         title: '名称',
@@ -75,7 +81,9 @@ export default class KdiCompany extends SimpleMng {
               <Button
                 icon="plus"
                 type="primary"
-                onClick={() => this.showAddForm({ editForm: 'kdiCompany', editFormTitle: '添加新快递公司' })}
+                onClick={() =>
+                  this.showAddForm({ organizeId: organizeId, editForm: 'kdiCompany', editFormTitle: '添加新快递公司' })
+                }
               >
                 添加
               </Button>
@@ -90,6 +98,7 @@ export default class KdiCompany extends SimpleMng {
         {editForm === 'kdiCompany' && (
           <CompanyForm
             visible
+            organizeId={organizeId}
             title={editFormTitle}
             editFormType={editFormType}
             record={editFormRecord}

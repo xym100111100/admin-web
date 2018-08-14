@@ -1,7 +1,7 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React from 'react';
 import { connect } from 'dva';
-import { Form, Input, Select, Button, Row, Col, Card } from 'antd';
+import { Form, Input, Button, Row, Col, Card } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './KdiEntry.less';
 import AddrCascader from 'components/Rebue/AddrCascader';
@@ -42,9 +42,8 @@ const surname =
   '曾毋沙乜养鞠须丰巢关蒯相' +
   '查后荆红游竺权逮盍益桓公兰';
 
-const { Option } = Select;
 const FormItem = Form.Item;
-@connect(({ kdientry, loading }) => ({ kdientry, loading: loading.models.kdientry }))
+@connect(({ kdientry, user, loading }) => ({ kdientry, user, loading: loading.models.kdientry || loading.models.user }))
 @Form.create()
 export default class KdiEntry extends SimpleMng {
   constructor() {
@@ -129,9 +128,11 @@ export default class KdiEntry extends SimpleMng {
 
   entry = () => {
     const { form } = this.props;
-
+    //  const organizeId=user.currentUser.organizeId; 不是连调的时候应该把这里放开获取动态的organizeId(在上面的获取属性里面加user)
     form.validateFields((err, fieldsValue) => {
       if (err) return;
+      //添加组织ID
+      fieldsValue.organizeId = 253274870;
       //这里其实传上来的shipperName中已经包含了shipperId和shipperCode，且用/隔开，所有这里要处理数据。
       let shipperInfo = fieldsValue.shipperName.split('/');
       fieldsValue.shipperId = shipperInfo[0];

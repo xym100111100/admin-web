@@ -13,10 +13,12 @@ const { Option } = Select;
 @EditForm
 export default class CompanyForm extends PureComponent {
   render() {
-    const { form, editFormType } = this.props;
+    const { form } = this.props;
+
     return (
       <Fragment>
         {form.getFieldDecorator('id')(<Input type="hidden" />)}
+        {form.getFieldDecorator('organizeId')(<Input type="hidden" />)}
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="名称">
           {form.getFieldDecorator('companyName', {
             rules: [{ required: true, message: '请输入快递公司名称' }],
@@ -39,7 +41,7 @@ export default class CompanyForm extends PureComponent {
         </FormItem>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="支付方式">
           {form.getFieldDecorator('payType', {
-            rules: [{ required: true, pattern: /^[1-4]{1}$/, message: '请输入支付方式' }],
+            rules: [{ required: true, message: '请选择支付方式' }],
           })(
             <Select placeholder="请选择支付类型" style={{ width: '100%' }}>
               <Option value="1">现付</Option>

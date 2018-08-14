@@ -50,6 +50,20 @@ export default {
       }
     },
     *modify({ payload, callback }, { call }) {
+      switch (payload.payType) {
+        case '现付':
+          payload.payType = 1;
+          break;
+        case '到付':
+          payload.payType = 2;
+          break;
+        case '月结':
+          payload.payType = 3;
+          break;
+        case '第三方付':
+          payload.payType = 4;
+          break;
+      }
       const response = yield call(modify, payload);
       if (response.result === 1) {
         message.success(response.msg);
