@@ -61,7 +61,6 @@ export default class SimpleMng extends PureComponent {
       editFormTitle: undefined,
     };
     const { id, moduleCode, ...state } = Object.assign(defaultParams, params);
-    console.info(state);
     this.props.dispatch({
       type: `${moduleCode}/getById`,
       payload: { id },

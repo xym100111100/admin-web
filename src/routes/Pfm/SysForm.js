@@ -13,6 +13,7 @@ const FormItem = Form.Item;
 export default class SysForm extends PureComponent {
   render() {
     const { form, editFormType } = this.props;
+    console.log(form);
     return (
       <Fragment>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="代号">

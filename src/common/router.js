@@ -99,7 +99,12 @@ export const getRouterData = app => {
       ),
     },
     '/suc/user-mng': {
-      component: dynamicWrapper(app, ['sucuser', 'pfmsys', 'userrole'], () => import('../routes/Suc/UserMng')),
+      component: dynamicWrapper(app, ['sucuser', 'pfmsys', 'userrole', 'sucorg', 'sucuserorg'], () =>
+        import('../routes/Suc/UserMng')
+      ),
+    },
+    '/suc/org-mng': {
+      component: dynamicWrapper(app, ['sucuser', 'sucorg', 'sucuserorg'], () => import('../routes/Suc/OrgMng')),
     },
     '/': {
       component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),

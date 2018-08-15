@@ -77,6 +77,10 @@ const menuData = [
         name: '用户信息',
         path: 'user-mng',
       },
+      {
+        name: '组织信息',
+        path: 'org-mng',
+      },
     ],
   },
   {

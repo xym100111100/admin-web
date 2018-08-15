@@ -81,6 +81,7 @@ import {
   unbindWeChat,
   unbindQQ,
 } from './mock/sucuser';
+import { sucUserOrgList, sucUserOrgGetById, sucUserOrgAdd, sucUserOrgModify } from './mock/sucuserorg';
 
 // 是否禁用代理
 const noProxy = process.env.NO_PROXY === 'true';
@@ -169,6 +170,11 @@ const proxy = {
   'PUT /suc-svr/suc/user/del/paypassword': removePayPassWord,
   'PUT /suc-svr/suc/user/unbindwechat': unbindWeChat,
   'PUT /suc-svr/suc/user/unbindqq': unbindQQ,
+  // sucuserorg
+  'GET /suc-svr/suc/org': sucUserOrgList,
+  'GET /suc-svr/suc/org/getbyid': sucUserOrgGetById,
+  'POST /suc-svr/suc/org': sucUserOrgAdd,
+  'PUT /suc-svr/suc/org': sucUserOrgModify,
   // pfmsuc
   'POST /suc-svr/user/login/by/user/name': (req, res) => {
     const { loginPswd, userName, type } = req.body;

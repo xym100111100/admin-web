@@ -4,6 +4,7 @@ import CryptoJS from 'crypto-js';
 import {
   list,
   getById,
+  getByOrgId,
   add,
   modify,
   enable,
@@ -37,6 +38,14 @@ export default {
       } else {
         message.error(response.msg);
       }
+    },
+    *getByOrgId({ payload, callback }, { call, put }) {
+      const response = yield call(getByOrgId, payload);
+      yield put({
+        type: 'changeList',
+        payload: response,
+      });
+      if (callback) callback(response);
     },
     *add({ payload, callback }, { call }) {
       let payloads = [];

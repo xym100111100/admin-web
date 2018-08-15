@@ -9,6 +9,10 @@ export async function getById(params) {
   return request(`/suc-svr/suc/user/getbyid?${stringify(params)}`);
 }
 
+export async function getByOrgId(params) {
+  return request(`/suc-svr/suc/user/listbyorgid?${stringify(params)}`);
+}
+
 export async function add(params) {
   return request('/suc-svr/user/reg/by/login/name', {
     method: 'POST',

@@ -132,42 +132,7 @@ export default class RoleMng extends SimpleMng {
     });
   }
 
-  // 用户搜索
-  renderSearchForm() {
-    const { selectedRows } = this.state;
-    if (selectedRows === undefined) {
-      return;
-    }
-    return (
-      <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
-          <Col md={6} sm={24}>
-            <Button
-              icon="plus"
-              type="primary"
-              onClick={() =>
-                this.showAddForm({
-                  id: selectedRows[0].id,
-                  sysId: selectedRows[0].sysId,
-                  moduleCode: 'sucuser',
-                  editForm: 'roleUserForm',
-                  editFormTitle: '添加用户',
-                })
-              }
-            >
-              添加
-            </Button>
-          </Col>
-          <Col md={6} sm={24} />
-          <Col md={6} sm={24} />
-          <Col md={6} sm={24} />
-        </Row>
-      </Form>
-    );
-  }
-
   render() {
-    console.log(1212);
     const { pfmsys: { pfmsys }, pfmrole: { pfmrole }, loading, pfmsysloading, userrole: { userrole } } = this.props;
     const { isDrag, editForm, editFormType, editFormTitle, editFormRecord, options, selectedRows } = this.state;
     const { sysId } = options;
@@ -178,7 +143,7 @@ export default class RoleMng extends SimpleMng {
         render: (text, record) => {
           return (
             <Tooltip placement="topLeft" title={record.remark}>
-              <Button>{record.name}</Button>
+              {record.name}
             </Tooltip>
           );
         },
@@ -201,6 +166,23 @@ export default class RoleMng extends SimpleMng {
           if (isDrag) return null;
           return (
             <Fragment>
+              <a
+                icon="plus"
+                type="primary"
+                onClick={() =>
+                  this.showAddForm({
+                    id: record.id,
+                    sysId: record.sysId,
+                    moduleCode: 'sucuser',
+                    editForm: 'roleUserForm',
+                    editFormTitle: '添加用户',
+                    editFormRecord: record,
+                  })
+                }
+              >
+                添加用户
+              </a>
+              <Divider type="vertical" />
               <a
                 onClick={() =>
                   this.showEditForm({
@@ -274,16 +256,6 @@ export default class RoleMng extends SimpleMng {
       type: 'radio',
     };
 
-    const gridStyle = {
-      width: '40%',
-      textAlign: 'left',
-    };
-
-    const userGridStyle = {
-      width: '60%',
-      textAlign: 'left',
-    };
-
     // 分页
     const paginationProps = {
       showSizeChanger: true,
@@ -294,7 +266,7 @@ export default class RoleMng extends SimpleMng {
 
     return (
       <PageHeaderLayout title="角色信息管理">
-        <Card bordered={false} loading={pfmsysloading}>
+        <Card loading={pfmsysloading}>
           <div className={styles.tableList}>
             <div className={styles.tableListOperator}>
               <Tabs onChange={this.switchSys}>{pfmsys.map(sys => <TabPane tab={sys.name} key={sys.id} />)}</Tabs>
@@ -323,32 +295,36 @@ export default class RoleMng extends SimpleMng {
               </Button>
             </div>
             <DragWrapper isDrag={isDrag} compare={::this.compareDragRecordAndDropRecord} onDrop={::this.handleDrop}>
-              <Card>
-                <Card.Grid style={gridStyle}>
-                  {
-                    <Table
-                      rowKey="id"
-                      pagination={false}
-                      loading={loading}
-                      dataSource={pfmrole}
-                      rowSelection={rowSelection}
-                      columns={columns}
-                    />
-                  }
-                </Card.Grid>
-                <Card.Grid style={userGridStyle}>
-                  <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
-                  {
-                    <Table
-                      rowKey="id"
-                      pagination={paginationProps}
-                      onChange={this.handleTableChange}
-                      dataSource={userrole.list}
-                      columns={userColumns}
-                    />
-                  }
-                </Card.Grid>
-              </Card>
+              <Row gutter={16}>
+                {
+                  <Col span={9}>
+                    <Card title="角色">
+                      <Table
+                        showHeader={false}
+                        rowKey="id"
+                        pagination={false}
+                        loading={loading}
+                        dataSource={pfmrole}
+                        rowSelection={rowSelection}
+                        columns={columns}
+                      />
+                    </Card>
+                  </Col>
+                }
+                <Col span={15}>
+                  <Card title="用户">
+                    {
+                      <Table
+                        rowKey="id"
+                        pagination={paginationProps}
+                        onChange={this.handleTableChange}
+                        dataSource={userrole.list}
+                        columns={userColumns}
+                      />
+                    }
+                  </Card>
+                </Col>
+              </Row>
             </DragWrapper>
           </div>
         </Card>
@@ -380,7 +356,7 @@ export default class RoleMng extends SimpleMng {
             visible
             title={editFormTitle}
             editFormType={editFormType}
-            record={selectedRows}
+            record={editFormRecord}
             width={1200}
             closeModal={() => this.setState({ editForm: undefined })}
             handleSave={fields => this.handleSave({ fields, moduleCode: 'pfmroleacti' })}

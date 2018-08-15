@@ -2,18 +2,17 @@ import React, { Fragment, PureComponent } from 'react';
 import { Form, Input, Row, Col, Table, Button, Popconfirm } from 'antd';
 import { connect } from 'dva';
 import SearchForm from 'components/Rebue/SearchForm';
-import styles from './RoleMng.less';
+import styles from './OrgUserForm.less';
 
 const FormItem = Form.Item;
 
 // 添加与编辑的表单
-@connect(({ userrole, sucuser, loading }) => ({
-  userrole: userrole,
+@connect(({ sucuser, sucuserorg }) => ({
   sucuser: sucuser,
-  submitting: loading.models.pfmsys,
+  sucuserorg,
 }))
 @SearchForm
-export default class RoleUserForm extends PureComponent {
+export default class OrgUserForm extends PureComponent {
   state = {
     options: {},
   };
@@ -97,8 +96,8 @@ export default class RoleUserForm extends PureComponent {
   handleAdd(userRecord) {
     const { record } = this.props;
     this.props.dispatch({
-      type: `userrole/addEx`,
-      payload: { userId: userRecord.id, roleId: record.id, sysId: record.sysId },
+      type: `sucuserorg/add`,
+      payload: { id: userRecord.id, orgId: record.id },
       callback: () => {
         this.handleReload();
       },
@@ -141,7 +140,10 @@ export default class RoleUserForm extends PureComponent {
         render: (text, record) => {
           return (
             <Fragment>
-              <Popconfirm title={'是否要将此用户添加为' + roles.name + '?'} onConfirm={() => this.handleAdd(record)}>
+              <Popconfirm
+                title={'是否要将此用户添加到' + roles.name + '这个组织?'}
+                onConfirm={() => this.handleAdd(record)}
+              >
                 <a>添加</a>
               </Popconfirm>
             </Fragment>

@@ -23,11 +23,13 @@ import UserForm from './UserForm';
 import styles from './UserMng.less';
 import UserRoleForm from './UserRoleForm';
 import UserRegForm from './UserRegForm';
+import UserOrgForm from './UserOrgForm';
 
 const FormItem = Form.Item;
 const { Description } = DescriptionList;
-@connect(({ sucuser, userrole, loading }) => ({
+@connect(({ sucuser, userrole, sucorg, loading }) => ({
   sucuser,
+  sucorg,
   userrole,
   loading: loading.models.sucuser,
 }))
@@ -112,6 +114,17 @@ export default class UserMng extends SimpleMng {
     });
   }
 
+  // 解除组织绑定
+  unbindOrg(record) {
+    this.props.dispatch({
+      type: 'sucuserorg/del',
+      payload: { id: record.id },
+      callback: () => {
+        this.handleReload();
+      },
+    });
+  }
+
   // 搜索
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
@@ -178,6 +191,10 @@ export default class UserMng extends SimpleMng {
       {
         title: '操作',
         render: (text, record) => {
+          let editFormTitle = '设置组织';
+          if (record.orgName !== null && record.orgName !== '' && record.orgName !== undefined) {
+            editFormTitle = record.orgName;
+          }
           return (
             <Fragment>
               <Fragment>
@@ -194,6 +211,17 @@ export default class UserMng extends SimpleMng {
                       }
                     >
                       添加角色
+                    </a>,
+                    <a
+                      onClick={() =>
+                        this.showAddForm({
+                          editForm: 'userOrgForm',
+                          editFormTitle: '设置组织',
+                          editFormRecord: record,
+                        })
+                      }
+                    >
+                      {editFormTitle}
                     </a>,
                     <a
                       onClick={() =>
@@ -248,6 +276,11 @@ export default class UserMng extends SimpleMng {
           <Menu.Item>
             <Popconfirm title="是否解除此账号的QQ绑定？" onConfirm={() => this.unbindQQ(record)}>
               <a>解绑QQ</a>
+            </Popconfirm>
+          </Menu.Item>
+          <Menu.Item>
+            <Popconfirm title="是否解除此账号的绑定组织？" onConfirm={() => this.unbindOrg(record)}>
+              <a>解绑组织</a>
             </Popconfirm>
           </Menu.Item>
         </Menu>
@@ -379,6 +412,26 @@ export default class UserMng extends SimpleMng {
                   roleIds: userrole.targetKeys,
                 },
                 moduleCode: 'userrole',
+              })
+            }
+          />
+        )}
+        {editForm === 'userOrgForm' && (
+          <UserOrgForm
+            visible
+            loading={loading}
+            title={editFormTitle}
+            width={600}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            handleSave={fields =>
+              this.handleSave({
+                fields: {
+                  id: editFormRecord.id,
+                  orgId: fields.id,
+                },
+                moduleCode: 'sucuserorg',
               })
             }
           />
