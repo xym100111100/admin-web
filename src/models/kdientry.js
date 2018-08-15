@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { companynameandcode, add } from '../services/kdientry';
+import { add } from '../services/kdientry';
 
 export default {
   namespace: 'kdientry',
@@ -17,14 +17,6 @@ export default {
       } else {
         message.error(response.msg);
       }
-    },
-    *companynameandcode({ payload, callback }, { call, put }) {
-      const response = yield call(companynameandcode, payload);
-      yield put({
-        type: 'changeList',
-        payload: response,
-      });
-      if (callback) callback(response);
     },
   },
 

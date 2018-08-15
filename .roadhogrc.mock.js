@@ -7,6 +7,7 @@ import {
   kdilogisticModify,
   kdilogisticDel,
 } from './mock/kdilogistic';
+import { kdicompanyList, kdicompanyGetById, kdicompanyAdd, kdicompanyModify, kdicompanyDel } from './mock/kdicompany';
 import {
   rnarealnameList,
   rnarealnameGetById,
@@ -101,6 +102,12 @@ const proxy = {
   'POST /kdi-svr/kdi/logistic': kdilogisticAdd,
   'PUT /kdi-svr/kdi/logistic': kdilogisticModify,
   'DELETE /kdi-svr/kdi/logistic': kdilogisticDel,
+  //kdilogitic
+  'GET /kdi-svr/kdi/company': kdicompanyList,
+  'GET /kdi-svr/kdi/company/getbyid': kdicompanyGetById,
+  'POST /kdi-svr/kdi/company': kdicompanyAdd,
+  'PUT /kdi-svr/kdi/company': kdicompanyModify,
+  'DELETE /kdi-svr/kdi/company': kdicompanyDel,
   //rnarealname
   'GET /rna-svr/rna/realname': rnarealnameList,
   'GET /rna-svr/rna/realname/getbyid': rnarealnameGetById,
@@ -204,6 +211,7 @@ const proxy = {
       avatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
       userid: '00000001',
       notifyCount: 12,
+      organizeId: 253274870,
     },
   },
   // GET POST 可省略
@@ -309,7 +317,9 @@ export default (noProxy
       'PUT /suc-svr/(.*)': 'http://127.0.0.1:9100/',
       'DELETE /suc-svr/(.*)': 'http://127.0.0.1:9100/',
       'GET /kdi-svr/(.*)': 'http://127.0.0.1:20080/',
+      'PUT /kdi-svr/(.*)': 'http://127.0.0.1:20080/',
       'POST /kdi-svr/(.*)': 'http://127.0.0.1:20080/',
+      'DELETE /kdi-svr/(.*)': 'http://127.0.0.1:20080/',
     }
   : delay(proxy));
 //  : delay(proxy, 1000));
