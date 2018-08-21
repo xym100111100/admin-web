@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { getByCondition, list, getById, add, modify, del } from '../services/kdilogistic';
+import { list, getById, add, modify, del } from '../services/kdilogistic';
 
 export default {
   namespace: 'kdilogistic',

@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { getByCondition, list, getById, add, modify, del } from '../services/kdieorder';
+import { getByCondition, list, getById, eorder, modify, del } from '../services/kdieorder';
 
 export default {
   namespace: 'kdieorder',
@@ -54,6 +54,16 @@ export default {
         message.error(response.msg);
       }
     },
+    *eorder({ payload, callback }, { call }) {
+      const response = yield call(eorder, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
+
   },
 
   reducers: {

@@ -3,7 +3,8 @@ import { parse } from 'url';
 // mock tableListDataSource
 const tableListDataSource = [
   {
-    id: '1234556',
+    senderId: '1234556',
+    isDefault:1,
     senderName: '微薄利',
     senderTel: '124563254',
     senderMobile: '4516135846',
@@ -11,10 +12,50 @@ const tableListDataSource = [
     senderaddr: ['广西壮族自治区', '南宁市', '西乡塘区'],
     senderAddress: '华尔街工谷',
   },
+  {
+    key: '1',
+    senderId: '1234556',
+    isDefault:0,
+    senderName: '微薄利',
+    senderTel: '1111111',
+    senderMobile: '4516135846',
+    senderPostCode: '530000',
+    senderaddr: ['广西壮族自治区', '南宁市', '西乡塘区'],
+    senderAddress: '华尔街工谷',
+  },
+  {
+    key: '2',
+    senderId: '1234556',
+    isDefault:0,
+    senderName: '微薄利',
+    senderTel: '22222',
+    senderMobile: '4516135846',
+    senderPostCode: '530000',
+    senderaddr: ['广西壮族自治区', '南宁市', '西乡塘区'],
+    senderAddress: '华尔街工谷',
+  },
+  {
+    key: '3',
+    senderId: '1234556',
+    isDefault:0,
+    senderName: '微薄利',
+    senderTel: '333333',
+    senderMobile: '4516135846',
+    senderPostCode: '530000',
+    senderaddr: ['广西壮族自治区', '南宁市', '西乡塘区'],
+    senderAddress: '华尔街工谷',
+  },
+
 ];
 
-export function kdisenderList(req, res) {
+export function kdiSenderList(req, res) {
+  console.info('8888');
   res.json(tableListDataSource);
+}
+
+export function getDefaultSender(req, res) {
+  console.info('7777');
+  res.json(tableListDataSource[0]);
 }
 
 export function modifyDefaultSender(req, res, u, b) {
@@ -53,6 +94,24 @@ export function kdisenderGetById(req, res, u) {
     return res.json({
       result: -1,
       msg: '获取失败，找不到要获取的记录',
+    });
+  }
+}
+
+export function addKdiSender(req, res, u, b) {
+  const body = (b && b.body) || req.body;
+  console.info(body);
+  if (Math.random() >= 0.495) {
+    // body.id = tableListDataSource.length + 1;
+    tableListDataSource.push(body);
+    return res.json({
+      result: 1,
+      msg: '添加成功',
+    });
+  } else {
+    return res.json({
+      result: -1,
+      msg: '添加失败，系统名称已存在',
     });
   }
 }

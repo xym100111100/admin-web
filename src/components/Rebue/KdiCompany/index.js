@@ -22,10 +22,19 @@ export default class KdiCompany extends PureComponent {
       type: `kdicompany/list`,
       payload: { organizeId: organizeId },
     });
+    
   }
 
+  componentWillMount(){
+    if(this.props.getShipper!=undefined){
+      this.props.getShipper(this)
+    }
+  }
+
+
+
   render() {
-    const { kdicompany: { kdicompany }, loading } = this.props;
+    const { kdicompany: { kdicompany }, width } = this.props;
     const { Option } = Select;
     const { ...props } = this.props;
     if (kdicompany === undefined || kdicompany.length === 0) {
@@ -37,7 +46,7 @@ export default class KdiCompany extends PureComponent {
       </Option>
     ));
     return (
-      <Select {...props} placeholder="请选择快递公司">
+      <Select {...props} style={{ width: width }} placeholder="请选择快递公司">
         {listItems}
       </Select>
     );

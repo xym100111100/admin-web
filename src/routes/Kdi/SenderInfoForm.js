@@ -6,14 +6,16 @@ import styles from './KdiEorder.less';
 
 const FormItem = Form.Item;
 @connect(({ kdisender, loading }) => ({ kdisender, loading: loading.models.kdisender }))
+
 @Form.create({
   mapPropsToFields(props) {
-    const { record } = props;
+    const { kdisender: { kdisender }, loading } = props;
+    // const { record } = props;
     const result = {};
-    for (const key in record) {
-      if ({}.hasOwnProperty.call(record, key)) {
+    for (const key in kdisender) {
+      if ({}.hasOwnProperty.call(kdisender, key)) {
         result[key] = Form.createFormField({
-          value: record[key],
+          value: kdisender[key],
         });
       }
     }
@@ -24,17 +26,39 @@ export default class SenderInfoForm extends PureComponent {
   constructor() {
     super();
     this.moduleCode = 'kdisender';
+  };
+
+  state = {
+    seleteSender: undefined
+  };
+
+  componentDidMount() {
+    this.props.getSender(this)
   }
 
-  // state = {
-  //   options: {},
-  //   record: {},
-  // };
-
   setDefaulSender = () => {
-    this.props.dispatch({
-      type: 'kdisender/setDefaultSender',
-      payload: {},
+    const { form } = this.props;
+    form.validateFieldsAndScroll((err, fields) => {
+      if (err) return;
+      const payload = fields;
+      console.info(payload);
+      this.props.dispatch({
+        type: 'kdisender/setDefaultSender',
+        payload
+      });
+    });
+  };
+
+  addSender = () => {
+    const { form } = this.props;
+    form.validateFieldsAndScroll((err, fields) => {
+      if (err) return;
+      const payload = fields;
+      console.info(payload);
+      this.props.dispatch({
+        type: 'kdisender/addSender',
+        payload
+      });
     });
   };
 
@@ -52,6 +76,7 @@ export default class SenderInfoForm extends PureComponent {
 
   render() {
     const { form } = this.props;
+
     const formItemLayout = {
       labelCol: {
         xs: { span: 4 },
@@ -79,34 +104,42 @@ export default class SenderInfoForm extends PureComponent {
       <Fragment>
         <Form>
           <Row>
+            <Col span={0}>
+              <Form.Item label="id">
+                {form.getFieldDecorator('senderId', {
+                  rules: [{ required: false, message: '请输入' }],
+                })(<Input />)}
+              </Form.Item>
+            </Col>
             <Col span={12}>
               <Form.Item {...formItemLayout} className={styles.formItem} label="寄件人">
                 {form.getFieldDecorator('senderName', {
-                  rules: [{ required: true, message: '请输入' }],
-                })(<Input placeholder="请输入" />)}
+                  rules: [{ required: true, message: '' }],
+                })(<Input placeholder="寄件人不能为空" />)}
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item {...formItemLayout} className={styles.formItem} label="手机">
+                {form.getFieldDecorator('senderMobile', {
+                  rules: [{ required: true, message: '' }],
+                })(<Input placeholder="寄件人手机不能空" />)}
+              </Form.Item>
+            </Col>
+            
+          </Row>
+          <Row>
+            <Col span={12}>
+              <Form.Item {...formItemLayout} className={styles.formItem} label="邮编">
+                {form.getFieldDecorator('senderPostCode', {
+                  rules: [{ required: true, message: '寄件人邮编不能为空' }],
+                })(<Input placeholder="" />)}
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item {...formItemLayout} className={styles.formItem} label="电话">
                 {form.getFieldDecorator('senderTel', {
-                  rules: [{ required: true, message: '请选择' }],
-                })(<Input placeholder="请输入" />)}
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={12}>
-              <Form.Item {...formItemLayout} className={styles.formItem} label="手机">
-                {form.getFieldDecorator('senderMobile', {
-                  rules: [{ required: true, message: '请输入' }],
-                })(<Input placeholder="请输入" />)}
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item {...formItemLayout} className={styles.formItem} label="邮编">
-                {form.getFieldDecorator('senderPostCode', {
-                  rules: [{ required: true, message: '请选择' }],
-                })(<Input placeholder="请输入" />)}
+                  rules: [],
+                })(<Input placeholder="" />)}
               </Form.Item>
             </Col>
           </Row>
@@ -114,7 +147,7 @@ export default class SenderInfoForm extends PureComponent {
             <Col span={24} pull={2}>
               <Form.Item {...senderFormItemLayout} className={styles.formItem} label="省市区">
                 {form.getFieldDecorator('senderaddr', {
-                  rules: [{ required: true, message: '请选择' }],
+                  rules: [{ required: true, message: '寄件人省市区不能为空' }],
                 })(<AddrCascader />)}
               </Form.Item>
             </Col>
@@ -126,20 +159,21 @@ export default class SenderInfoForm extends PureComponent {
                   rules: [
                     {
                       required: true,
-                      message: '请输入详细地址',
+                      message: '寄件人地址不能为空',
                     },
                   ],
-                })(<Input placeholder="请输入详细地址" />)}
+                })(<Input placeholder="" />)}
               </FormItem>
             </Col>
           </Row>
-          <Button style={{ marginLeft: 60 }}>新增联系人</Button>
+          <Button style={{ marginLeft: 60 }} onClick={this.addSender}>新增联系人</Button>
           <Button style={{ marginLeft: 20 }} onClick={this.setDefaulSender}>
             设为默认联系人
           </Button>
           <Button style={{ marginLeft: 20 }} onClick={this.handleFormReset}>
             清空
           </Button>
+          
         </Form>
       </Fragment>
     );

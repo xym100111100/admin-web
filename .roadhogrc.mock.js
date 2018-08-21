@@ -17,12 +17,14 @@ import {
 } from './mock/rnarealname';
 import { kdieorderList, kdieorderGetById, kdieorderAdd, kdieorderModify, kdieorderDel } from './mock/kdieorder';
 import {
-  kdisenderList,
+  kdiSenderList,
   kdisenderGetById,
   kdisenderAdd,
   kdisenderModify,
   kdisenderDel,
   modifyDefaultSender,
+  addKdiSender,
+  getDefaultSender
 } from './mock/kdisender';
 import {
   pfmmenuList,
@@ -90,11 +92,14 @@ const noProxy = process.env.NO_PROXY === 'true';
 // 代码中会兼容本地 service mock 以及部署站点的静态数据
 const proxy = {
   //kdisender
-  'GET /kdi-svr/kdi/sender': kdisenderList,
+  'GET /kdi-svr/kdi/sender': kdiSenderList,
+  'GET /kdi-svr/kdi/sender/alllist': kdiSenderList,
+  'GET /kdi-svr/kdi/sender/default': getDefaultSender,
   'GET /kdi-svr/kdi/sender/getbyid': kdisenderGetById,
   'POST /kdi-svr/kdi/sender': kdisenderAdd,
   'PUT /kdi-svr/kdi/sender': kdisenderModify,
   'PUT /kdi-svr/kdi/sender/default': modifyDefaultSender,
+  'POST /kdi-svr/kdi/sender/add': addKdiSender,
   'DELETE /kdi-svr/kdi/sender': kdisenderDel,
   //kdilogitic
   'GET /kdi-svr/kdi/logistic': kdilogisticList,
@@ -211,7 +216,7 @@ const proxy = {
       avatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
       userid: '00000001',
       notifyCount: 12,
-      organizeId: 253274870,
+      organizeId:4513464,
     },
   },
   // GET POST 可省略

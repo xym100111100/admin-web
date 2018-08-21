@@ -31,7 +31,6 @@ export default class SimpleMng extends PureComponent {
   // 查询
   handleSearch = e => {
     e.preventDefault();
-
     const { form } = this.props;
 
     form.validateFields((err, fieldsValue) => {

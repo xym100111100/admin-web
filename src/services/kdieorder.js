@@ -9,7 +9,7 @@ export async function getById(params) {
   return request(`/kdi-svr/kdi/eorder/getbyid?${stringify(params)}`);
 }
 
-export async function add(params) {
+export async function eorder(params) {
   return request('/kdi-svr/kdi/eorder', {
     method: 'POST',
     body: {

@@ -27,6 +27,10 @@ export default class ReceiverInfoForm extends PureComponent {
     this.moduleCode = 'kdireceiver';
   }
 
+  componentDidMount() {
+    this.props.getReceiver(this)
+  }
+
   state = {
     // options: {},
     // record: {},
@@ -62,53 +66,53 @@ export default class ReceiverInfoForm extends PureComponent {
       <Fragment>
         <Form>
           <FormItem {...formItemLayout} className={styles.formItem} label="订单标题">
-            {form.getFieldDecorator('title', {
+            {form.getFieldDecorator('orderTitle', {
               rules: [
                 {
                   required: true,
                   message: '请输入标题',
                 },
               ],
-            })(<Input placeholder="请输入标题" />)}
+            })(<Input placeholder="" />)}
           </FormItem>
 
           <Form.Item {...formItemLayout} className={styles.formItem} label="收件人">
-            {form.getFieldDecorator('receiveName', {
-              rules: [{ required: true, message: '请输入' }],
-            })(<Input placeholder="请输入" />)}
+            {form.getFieldDecorator('receiverName', {
+              rules: [{ required: true, message: '收件人不能为空' }],
+            })(<Input placeholder="" />)}
           </Form.Item>
 
           <Form.Item {...formItemLayout} className={styles.formItem} label="手机">
-            {form.getFieldDecorator('phone', {
-              rules: [{ required: true, message: '请选择' }],
-            })(<Input placeholder="请输入" />)}
+            {form.getFieldDecorator('receiverMobile', {
+              rules: [{ required: true, message: '收件人手机不能为空' }],
+            })(<Input placeholder="" />)}
           </Form.Item>
 
           <Form.Item {...formItemLayout} className={styles.formItem} label="电话">
-            {form.getFieldDecorator('mobil', {
-              rules: [{ required: true, message: '请输入' }],
-            })(<Input placeholder="请输入" />)}
+            {form.getFieldDecorator('receiverTel', {
+              rules: [],
+            })(<Input placeholder="" />)}
           </Form.Item>
 
           <Form.Item {...formItemLayout} className={styles.formItem} label="邮编">
-            {form.getFieldDecorator('postcode', {
-              rules: [{ required: true, message: '请选择' }],
-            })(<Input placeholder="请输入" />)}
+            {form.getFieldDecorator('receiverPostCode', {
+              rules: [{ required: true, message: '收件人邮编不能为空' }],
+            })(<Input placeholder="" />)}
           </Form.Item>
           <Form.Item {...formItemLayout} className={styles.formItem} label="省市区">
-            {form.getFieldDecorator('addr', {
-              rules: [{ required: true, message: '请选择' }],
+            {form.getFieldDecorator('receiveraddr', {
+              rules: [{ required: true, message: '省市区不能为空' }],
             })(<AddrCascader />)}
           </Form.Item>
           <FormItem {...formItemLayout} className={styles.formItem} label="详细地址">
-            {form.getFieldDecorator('detailaddr', {
+            {form.getFieldDecorator('receiverAddress', {
               rules: [
                 {
                   required: true,
-                  message: '请输入详细地址',
+                  message: '详细地址不能为空',
                 },
               ],
-            })(<Input placeholder="请输入详细地址" />)}
+            })(<Input placeholder="" />)}
           </FormItem>
           <Button style={{ marginLeft: 300 }} onClick={this.handleFormReset}>
             重置
