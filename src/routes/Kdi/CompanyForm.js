@@ -1,5 +1,5 @@
 import React, { Fragment, PureComponent } from 'react';
-import { Form, Input, Select } from 'antd';
+import { Form, Icon, Input, Select } from 'antd';
 import { connect } from 'dva';
 import EditForm from 'components/Rebue/EditForm';
 
@@ -12,8 +12,24 @@ const { Option } = Select;
 }))
 @EditForm
 export default class CompanyForm extends PureComponent {
+  state = {
+    see: 'password',
+  };
+
+  show = () => {
+    if (this.state.see === 'password') {
+      this.setState({ see: 'text' });
+    } else {
+      this.setState({ see: 'password' });
+    }
+  };
+
   render() {
     const { form } = this.props;
+
+    const types = {
+      type: this.state.see,
+    };
 
     return (
       <Fragment>
@@ -29,11 +45,19 @@ export default class CompanyForm extends PureComponent {
             rules: [{ required: true, message: '请输入快递公司帐号' }],
           })(<Input placeholder="请输入快递公司帐号" />)}
         </FormItem>
-        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="密码">
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          style={{ marginLeft: 20, width: '76%' }}
+          label="密码"
+        >
           {form.getFieldDecorator('companyPwd', {
             rules: [{ required: true, message: '请输入快递公司密码' }],
-          })(<Input placeholder="请输入快递公司密码" />)}
+          })(<Input style={{ width: '290px' }} placeholder="请输入快递公司密码" {...types} />)}
         </FormItem>
+        <a onClick={() => this.show()} style={{ float: 'right', marginTop: -55, marginRight: 60 }}>
+          <Icon type="eye" />
+        </a>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="编号">
           {form.getFieldDecorator('companyCode', {
             rules: [{ required: true, message: '请输入快递公司编号' }],

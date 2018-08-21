@@ -2,17 +2,25 @@ import { Form, Select } from 'antd';
 import { PureComponent } from 'react';
 import { connect } from 'dva';
 
-@connect(({ kdicompany, loading }) => ({ kdicompany, loading: loading.models.kdicompany }))
+@connect(({ kdicompany, user, loading }) => ({
+  kdicompany,
+  user,
+  loading: loading.models.kdicompany || loading.models.user,
+}))
 export default class KdiCompany extends PureComponent {
   constructor() {
     super();
     this.moduleCode = 'kdicompany';
   }
   componentDidMount() {
+    // let {user} =this.props
+    // let organizeId=user.currentUser.organizeId
+    //这里连调的时候先写死organizeId
+    let organizeId = 253274870;
     //初始化的时候加载快递公司
     this.props.dispatch({
       type: `kdicompany/list`,
-      payload: {},
+      payload: { organizeId: organizeId },
     });
   }
 

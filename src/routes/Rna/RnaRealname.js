@@ -24,10 +24,10 @@ export default class RnaRealname extends SimpleMng {
     const { form } = this.props;
     pager.current = pagination.current;
     this.setState({
-      pagination: pager,
-    });
-    this.setState({
-      pageSize: pagination.pageSize,
+      options: {
+        pageNum: pagination.current,
+        pageSize: pagination.pageSize,
+      },
     });
     form.validateFields((err, fieldsValue) => {
       if (err) return;

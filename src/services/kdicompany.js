@@ -1,8 +1,8 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
 
-export async function list() {
-  return request(`/kdi-svr/kdi/company`);
+export async function list(params) {
+  return request(`/kdi-svr/kdi/company?${stringify(params)}`);
 }
 
 export async function getById(params) {

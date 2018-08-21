@@ -6,16 +6,40 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import CompanyForm from './CompanyForm';
 import styles from './KdiCompany.less';
 
-@connect(({ kdicompany, user, loading }) => ({
+@connect(({ kdicompany, user, login, loading }) => ({
   kdicompany,
   user,
-  loading: loading.models.kdicompany || loading.models.kdicompany,
+  login,
+  loading: loading.models.kdicompany || loading.models.user || loading.models.login,
 }))
 export default class KdiCompany extends SimpleMng {
   constructor() {
     super();
     this.moduleCode = 'kdicompany';
   }
+  //初始化
+  componentDidMount() {
+    // let {user} =this.props
+    // let organizeId=user.currentUser.organizeId
+    //这里连调的时候先写死organizeId
+    let organizeId = 253274870;
+    this.props.dispatch({
+      type: `${this.moduleCode}/list`,
+      payload: { organizeId: organizeId },
+    });
+  }
+  // 刷新
+  handleReload() {
+    // let {user} =this.props
+    // let organizeId=user.currentUser.organizeId
+    //这里连调的时候先写死organizeId
+    let organizeId = 253274870;
+    this.props.dispatch({
+      type: `${this.moduleCode}/list`,
+      payload: { organizeId: organizeId },
+    });
+  }
+
   render() {
     const { kdicompany: { kdicompany }, loading, user } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
@@ -30,10 +54,6 @@ export default class KdiCompany extends SimpleMng {
       {
         title: '帐号',
         dataIndex: 'companyAccount',
-      },
-      {
-        title: '密码',
-        dataIndex: 'companyPwd',
       },
       {
         title: '编号',

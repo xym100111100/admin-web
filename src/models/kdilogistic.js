@@ -11,10 +11,9 @@ export default {
   effects: {
     *list({ payload, callback }, { call, put }) {
       const response = yield call(list, payload);
-      console.info(response);
       yield put({
         type: 'changeList',
-        payload: Array.isArray(response) ? response : [],
+        payload: response,
       });
       if (callback) callback(response);
     },
