@@ -69,6 +69,17 @@ const menuData = [
     ],
   },
   {
+    name: '商品管理',
+    icon: 'user',
+    path: 'onl',
+    children: [
+      {
+        name: '商品上线',
+        path: 'onl-mng',
+      },
+    ],
+  },
+  {
     name: '用户管理',
     icon: 'user',
     path: 'suc',

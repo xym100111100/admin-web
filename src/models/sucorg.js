@@ -1,6 +1,6 @@
 import { message } from 'antd';
 
-import { list, getById, getByName, add, modify, del } from '../services/sucorg';
+import { list, getById, getByName, add, modify, del, enable } from '../services/sucorg';
 
 export default {
   namespace: 'sucorg',
@@ -55,6 +55,15 @@ export default {
     },
     *del({ payload, callback }, { call }) {
       const response = yield call(del, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *enable({ payload, callback }, { call }) {
+      const response = yield call(enable, payload);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);
