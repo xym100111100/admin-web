@@ -1,7 +1,7 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React from 'react';
 import { connect } from 'dva';
-import { Form, Input, Button, Row, Col, Card } from 'antd';
+import { Form, Input, Button, Row, Col, Divider } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './KdiEntry.less';
 import AddrCascader from 'components/Rebue/AddrCascader';
@@ -50,20 +50,9 @@ export default class KdiEntry extends SimpleMng {
   constructor() {
     super();
     this.moduleCode = 'kdientry';
-    this.state.distinguish = {
-      isOff: 'on',
-    };
-    this.state.receiver = {
-      receiver: '1',
-    };
-    this.state.sender = {
-      sender: '1',
-    };
+    //这个状态的名字值是随意的，使用到的地方都是为了能获取到当前数据而不是上一次数据的bug
     this.state.aa = {
       aa: 'aa',
-    };
-    this.state.bb = {
-      bb: 'aa',
     };
   }
 
@@ -75,6 +64,33 @@ export default class KdiEntry extends SimpleMng {
     const { form } = this.props;
     //设置默认发件人
     form.setFieldsValue({ senderPostCode: '530000' });
+    form.setFieldsValue({ receiverPostCode: '000000' });
+  }
+
+  /**
+   * 为了使form.getFieldValue()得到的是当前的值
+   * 而不是上一个的值而加的前置方法
+   */
+  receiver() {
+    this.setState(
+      {
+        aa: { aa: 'a' },
+      },
+      () => this.automatic(2)
+    );
+  }
+
+  /**
+   * 为了使form.getFieldValue()得到的是当前的值
+   * 而不是上一个的值而加的前置方法
+   */
+  sender() {
+    this.setState(
+      {
+        aa: { aa: 'a' },
+      },
+      () => this.automatic(1)
+    );
   }
 
   /**
@@ -84,9 +100,9 @@ export default class KdiEntry extends SimpleMng {
   automatic(where) {
     let who = '';
     if (where === 2) {
-      who = 'receiverAddress';
+      who = 'receiver';
     } else {
-      who = 'senderAddress';
+      who = 'sender';
     }
     const { form } = this.props;
     let Address = form.getFieldValue(who);
@@ -109,7 +125,7 @@ export default class KdiEntry extends SimpleMng {
       let index = before.indexOf('市');
       let index2 = before.indexOf('区');
       area = before.substring(index + 1, index2 + 1);
-      if (index2 !== -1 && this.state.distinguish.isOff === 'on') {
+      if (index2 !== -1) {
         before = before.substring(index2 + 1, before.length);
       }
     } else if (before.indexOf('上海市') !== -1) {
@@ -121,7 +137,7 @@ export default class KdiEntry extends SimpleMng {
       let index = before.indexOf('市');
       let index2 = before.indexOf('区');
       area = before.substring(index + 1, index2 + 1);
-      if (index2 !== -1 && this.state.distinguish.isOff === 'on') {
+      if (index2 !== -1) {
         before = before.substring(index2 + 1, before.length);
       }
     } else if (before.indexOf('重庆市') !== -1) {
@@ -135,9 +151,9 @@ export default class KdiEntry extends SimpleMng {
       let index3 = before.indexOf('县');
       index3 !== -1 ? (index2 = index3) : (index2 = index2);
       area = before.substring(index + 1, index2 + 1);
-      if (index2 !== -1 && this.state.distinguish.isOff === 'on') {
+      if (index2 !== -1) {
         before = before.substring(index2 + 1, before.length);
-      } else if (index3 !== -1 && this.state.distinguish.isOff === 'on') {
+      } else if (index3 !== -1) {
         before = before.substring(index3 + 1, before.length);
       }
     } else if (before.indexOf('北京市') !== -1) {
@@ -149,7 +165,7 @@ export default class KdiEntry extends SimpleMng {
       let index = before.indexOf('市');
       let index2 = before.indexOf('区');
       area = before.substring(index + 1, index2 + 1);
-      if (index2 !== -1 && this.state.distinguish.isOff === 'on') {
+      if (index2 !== -1) {
         before = before.substring(index2 + 1, before.length);
       }
     } else {
@@ -188,18 +204,16 @@ export default class KdiEntry extends SimpleMng {
           area = before.substring(index2 + 1, index3 + 1);
         }
         //将识别到的地区从详细地址中删除
-        if (this.state.distinguish.isOff === 'on') {
-          if (index5 !== -1) {
-            before = before.substring(index5 + 1, before.length);
-          } else if (index4 !== -1) {
-            before = before.substring(index4 + 1, before.length);
-          } else if (index3 !== -1) {
-            before = before.substring(index3 + 1, before.length);
-          } else if (index2 !== -1) {
-            before = before.substring(index2 + 1, before.length);
-          } else if (index1 !== -1) {
-            before = before.substring(index1 + 1, before.length);
-          }
+        if (index5 !== -1) {
+          before = before.substring(index5 + 1, before.length);
+        } else if (index4 !== -1) {
+          before = before.substring(index4 + 1, before.length);
+        } else if (index3 !== -1) {
+          before = before.substring(index3 + 1, before.length);
+        } else if (index2 !== -1) {
+          before = before.substring(index2 + 1, before.length);
+        } else if (index1 !== -1) {
+          before = before.substring(index1 + 1, before.length);
         }
       }
     }
@@ -214,6 +228,11 @@ export default class KdiEntry extends SimpleMng {
         //设置收件人手机
         form.setFieldsValue({ receiverMobile: before.match(reg)[0] });
         var i = before.indexOf(before.match(reg)[0]);
+        //截取订单标题
+        if (before.length > i + 11) {
+          form.setFieldsValue({ orderTitle: before.substr(i + 11, before.length) });
+          before = before.replace(before.substr(i + 11, before.length), '');
+        }
         before = before.replace(before.match(reg)[0], '');
         //截取电话号码前第三个判断是否是姓
         if (surname.indexOf(before.substr(i - 3, 1)) !== -1) {
@@ -248,6 +267,7 @@ export default class KdiEntry extends SimpleMng {
         //设置发件人手机
         form.setFieldsValue({ senderMobile: before.match(reg)[0] });
         var i = before.indexOf(before.match(reg)[0]);
+
         before = before.replace(before.match(reg)[0], '');
         //截取电话号码前第三个判断是否是姓
         if (surname.indexOf(before.substr(i - 3, 1)) !== -1) {
@@ -355,213 +375,198 @@ export default class KdiEntry extends SimpleMng {
     });
   };
 
-  //是否开启将识别到的地区从详细地址中去除
-  isOff() {
-    if (this.state.distinguish.isOff === 'off') {
-      this.setState({
-        distinguish: { isOff: 'on' },
-      });
-    } else {
-      this.setState({
-        distinguish: { isOff: 'off' },
-      });
-    }
-  }
-
-  distinguish() {
-    if (this.state.distinguish.isOff === 'on') {
-      return (
-        <Button title="开启该功能将自动解析地址" style={{ marginLeft: 30 }} onClick={() => this.isOff()}>
-          取消智能解析
-        </Button>
-      );
-    } else {
-      return (
-        <Button title="开启该功能将自动解析地址" style={{ marginLeft: 30 }} onClick={() => this.isOff()}>
-          开启智能解析
-        </Button>
-      );
-    }
-  }
-
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
     const { kdientry: { kdientry }, loading } = this.props;
+
     return (
       <Form onSubmit={() => this.entry()} layout="inline">
-        <Row gutter={{ md: 1, lg: 12, xl: 24 }}>
+        <Row gutter={{ md: 1, lg: 4, xl: 2 }}>
           <Col md={10} sm={24} push={1}>
-            <Card title="收件人信息">
-              <Input type="hidden" value={this.state.aa.aa} />
-              <FormItem label="收件人姓名">
-                {getFieldDecorator('receiverName', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入收件人姓名',
-                    },
-                  ],
-                })(<Input placeholder="请输入收件人姓名" />)}
-              </FormItem>
-              <FormItem label="收件人手机">
-                {getFieldDecorator('receiverMobile', {
-                  rules: [
-                    {
-                      required: true,
-                      pattern: /^[0-9]*$/,
-                      message: '请输入全部为数字的收件人手机',
-                    },
-                  ],
-                })(<Input placeholder="请输入全部为数字的收件人手机" />)}
-              </FormItem>
-              <FormItem label="收件地邮编">
-                {getFieldDecorator('receiverPostCode', {
-                  rules: [
-                    {
-                      required: true,
-                      pattern: /^[0-9]*$/,
-                      message: '请输入全部为数字收件地邮编',
-                    },
-                  ],
-                })(<Input placeholder="请输入收件地邮编" />)}
-              </FormItem>
-              <FormItem label="收件人地址">
-                {getFieldDecorator('receiverProvince', {
-                  rules: [
-                    {
-                      required: true,
-                      message: ' ',
-                    },
-                    {
-                      validator: this.provinceInfo,
-                    },
-                  ],
-                })(<AddrCascader />)}
-              </FormItem>
-              <FormItem label="详细地址" style={{ paddingLeft: 15 }}>
-                {getFieldDecorator('receiverAddress', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入收件人详细地址',
-                    },
-                  ],
-                })(
-                  <Input
-                    onBlur={() => this.automatic(2)}
-                    onChange={() => this.automatic(2)}
-                    placeholder="请输入收件人详细地址"
-                  />
-                )}
-              </FormItem>
-              <FormItem style={{ paddingLeft: 15 }} label="物流单号">
-                {getFieldDecorator('logisticCode', {
-                  rules: [
-                    {
-                      required: true,
-                      pattern: /^[0-9]*$/,
-                      message: '请输入全部为数字的物流单号',
-                    },
-                  ],
-                })(<Input placeholder="请输入全部为数字的物流单号" />)}
-              </FormItem>
-
-              <FormItem label="订单标题" style={{ paddingLeft: 15 }}>
-                {getFieldDecorator('orderTitle', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入订单标题',
-                    },
-                  ],
-                })(<Input placeholder="请输入订单标题" />)}
-              </FormItem>
-            </Card>
+            <h3 style={{ paddingTop: 20, marginBottom: 40 }}>收件人信息</h3>
+            <FormItem label="智能解析" style={{ paddingLeft: 24 }}>
+              {getFieldDecorator('receiver')(
+                <Input onInput={() => this.receiver()} placeholder="请粘贴地址，姓名，手机号码" />
+              )}
+            </FormItem>
+            <Divider />
+            <FormItem label="收件人姓名">
+              {getFieldDecorator('receiverName', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入收件人姓名',
+                  },
+                ],
+              })(<Input placeholder="请输入收件人姓名" />)}
+            </FormItem>
+            <FormItem label="收件人手机">
+              {getFieldDecorator('receiverMobile', {
+                rules: [
+                  {
+                    required: true,
+                    pattern: /^[0-9]*$/,
+                    message: '请输入全部为数字的收件人手机',
+                  },
+                ],
+              })(<Input placeholder="请输入全部为数字的收件人手机" />)}
+            </FormItem>
+            <FormItem label="收件地邮编">
+              {getFieldDecorator('receiverPostCode', {
+                rules: [
+                  {
+                    required: true,
+                    pattern: /^[0-9]*$/,
+                    message: '请输入全部为数字收件地邮编',
+                  },
+                ],
+              })(<Input placeholder="请输入收件地邮编" />)}
+            </FormItem>
+            <FormItem label="收件人地址">
+              {getFieldDecorator('receiverProvince', {
+                rules: [
+                  {
+                    required: true,
+                    message: ' ',
+                  },
+                  {
+                    validator: this.provinceInfo,
+                  },
+                ],
+              })(<AddrCascader />)}
+            </FormItem>
+            <FormItem label="详细地址" style={{ paddingLeft: 15 }}>
+              {getFieldDecorator('receiverAddress', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入收件人详细地址',
+                  },
+                ],
+              })(<Input placeholder="请输入收件人详细地址" />)}
+            </FormItem>
+          </Col>
+          <Col md={1} sm={24} push={1} style={{ textAlign: 'center' }}>
+            <Divider type="vertical" style={{ height: 255, marginTop: 155 }} />
+          </Col>
+          <Col md={10} sm={24} push={1}>
+            <h3 style={{ paddingTop: 20, marginBottom: 40 }}>发件人信息</h3>
+            <FormItem label="智能解析" style={{ paddingLeft: 24 }}>
+              {getFieldDecorator('sender')(
+                <Input onInput={() => this.sender()} placeholder="请粘贴地址，姓名，手机号码" />
+              )}
+            </FormItem>
+            <Divider />
+            <FormItem label="发件人姓名">
+              {getFieldDecorator('senderName', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入发件人姓名',
+                  },
+                ],
+              })(<Input placeholder="请输入发件人姓名" />)}
+            </FormItem>
+            <FormItem label="发件人手机">
+              {getFieldDecorator('senderMobile', {
+                rules: [
+                  {
+                    required: true,
+                    pattern: /^[0-9]*$/,
+                    message: '请输入全部为数字的发件人手机',
+                  },
+                ],
+              })(<Input placeholder="请输入全部为数字的发件人手机" />)}
+            </FormItem>
+            <FormItem label="发件地邮编">
+              {getFieldDecorator('senderPostCode', {
+                rules: [
+                  {
+                    required: true,
+                    pattern: /^[0-9]*$/,
+                    message: '请输入全部为数字发件地邮编',
+                  },
+                ],
+              })(<Input placeholder="请输入发件地邮编" />)}
+            </FormItem>
+            <FormItem label="发件人地址">
+              {getFieldDecorator('senderProvince', {
+                rules: [
+                  {
+                    required: true,
+                    message: ' ',
+                  },
+                  ,
+                  {
+                    validator: this.provinceInfo,
+                  },
+                ],
+              })(<AddrCascader />)}
+            </FormItem>
+            <FormItem label="详细地址" style={{ paddingLeft: 15 }}>
+              {getFieldDecorator('senderAddress', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入发件人详细地址',
+                  },
+                ],
+              })(<Input placeholder="请输入发件人详细地址" />)}
+            </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <Col md={24} sm={24} push={1}>
+            <h3 style={{ paddingTop: 20, marginBottom: 20 }}>物流信息</h3>
+          </Col>
+        </Row>
+        <Row>
+          <Col md={10} sm={24} push={1}>
+            <FormItem style={{ paddingLeft: 15 }} label="物流单号">
+              {getFieldDecorator('logisticCode', {
+                rules: [
+                  {
+                    required: true,
+                    pattern: /^[0-9]*$/,
+                    message: '请输入全部为数字的物流单号',
+                  },
+                ],
+              })(<Input placeholder="请输入全部为数字的物流单号" />)}
+            </FormItem>
+            <FormItem label="订单标题" style={{ paddingLeft: 15 }}>
+              {getFieldDecorator('orderTitle', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入订单标题',
+                  },
+                ],
+              })(<Input placeholder="请输入订单标题" />)}
+            </FormItem>
           </Col>
           <Col md={10} sm={24} push={2}>
-            <Card title="发件人信息">
-              <FormItem label="发件人姓名">
-                {getFieldDecorator('senderName', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入发件人姓名',
-                    },
-                  ],
-                })(<Input placeholder="请输入发件人姓名" />)}
-              </FormItem>
-              <FormItem label="发件人手机">
-                {getFieldDecorator('senderMobile', {
-                  rules: [
-                    {
-                      required: true,
-                      pattern: /^[0-9]*$/,
-                      message: '请输入全部为数字的发件人手机',
-                    },
-                  ],
-                })(<Input placeholder="请输入全部为数字的发件人手机" />)}
-              </FormItem>
-              <FormItem label="发件地邮编">
-                {getFieldDecorator('senderPostCode', {
-                  rules: [
-                    {
-                      required: true,
-                      pattern: /^[0-9]*$/,
-                      message: '请输入全部为数字发件地邮编',
-                    },
-                  ],
-                })(<Input placeholder="请输入发件地邮编" />)}
-              </FormItem>
-              <FormItem label="发件人地址">
-                {getFieldDecorator('senderProvince', {
-                  rules: [
-                    {
-                      required: true,
-                      message: ' ',
-                    },
-                    ,
-                    {
-                      validator: this.provinceInfo,
-                    },
-                  ],
-                })(<AddrCascader />)}
-              </FormItem>
-              <FormItem label="详细地址" style={{ paddingLeft: 15 }}>
-                {getFieldDecorator('senderAddress', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入发件人详细地址',
-                    },
-                  ],
-                })(
-                  <Input
-                    onBlur={() => this.automatic(1)}
-                    onChange={() => this.automatic(1)}
-                    placeholder="请输入发件人详细地址"
-                  />
-                )}
-              </FormItem>
-              <FormItem label="快递公司" style={{ paddingLeft: 15 }}>
-                {getFieldDecorator('shipperName', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入快递公司',
-                    },
-                  ],
-                })(<KdiCompany />)}
-              </FormItem>
-              <FormItem>
-                <Button style={{ marginLeft: 26 }} type="primary" htmlType="submit">
-                  录入
-                </Button>
-                <Button style={{ marginLeft: 30 }} onClick={this.handleReset}>
-                  重置
-                </Button>
-                {this.distinguish()}
-              </FormItem>
-            </Card>
+            <FormItem label="快递公司" style={{ paddingLeft: 15 }}>
+              {getFieldDecorator('shipperName', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入快递公司',
+                  },
+                ],
+              })(<KdiCompany />)}
+            </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <Col md={14} sm={24}>
+            <FormItem>
+              <Button style={{ float: 'right', marginRight: 30 }} type="primary" htmlType="submit">
+                录入
+              </Button>
+              <Button style={{ float: 'right', marginRight: 35 }} onClick={this.handleReset}>
+                重置
+              </Button>
+            </FormItem>
           </Col>
         </Row>
       </Form>
@@ -572,7 +577,9 @@ export default class KdiEntry extends SimpleMng {
     const { kdientry: { kdientry }, loading } = this.props;
     return (
       <PageHeaderLayout title="快递单录入">
-        <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
+        <div style={{ background: 'white' }} className={styles.tableListForm}>
+          {this.renderSearchForm()}
+        </div>
       </PageHeaderLayout>
     );
   }

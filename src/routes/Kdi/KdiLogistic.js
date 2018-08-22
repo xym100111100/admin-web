@@ -199,30 +199,44 @@ export default class KdiLogistic extends SimpleMng {
       {
         title: '快递单号',
         dataIndex: 'logisticCode',
+        key: 'logisticCode',
       },
       {
         title: '快递公司',
         dataIndex: 'shipperName',
+        key: 'shipperName',
+      },
+      {
+        title: '状态',
+        dataIndex: 'logisticStatus',
+        key: 'logisticStatus',
+        render: (text, record) => {
+          if (record.logisticStatus === '0') return '无轨迹';
+          if (record.logisticStatus === '1') return '已揽收';
+          if (record.logisticStatus === '2') return '在途中';
+          if (record.logisticStatus === '3') return '已签收';
+          if (record.logisticStatus === '4') return '问题件';
+        },
       },
       {
         title: '收件人',
         dataIndex: 'receiverName',
+        key: 'receiverName',
       },
       {
         title: '收件人手机',
         dataIndex: 'receiverMobile',
-      },
-      {
-        title: '寄件人',
-        dataIndex: 'senderName',
+        key: 'receiverMobile',
       },
       {
         title: '商品内容',
         dataIndex: 'orderTitle',
+        key: 'orderTitle',
       },
       {
         title: '下单时间',
         dataIndex: 'orderTime',
+        key: 'orderTime',
       },
     ];
 
@@ -237,6 +251,12 @@ export default class KdiLogistic extends SimpleMng {
               loading={loading}
               onChange={this.handleTableChange}
               dataSource={kdilogistic.list}
+              expandedRowRender={record => (
+                <p style={{ margin: 0 }}>
+                  <span>{'寄件人:' + record.senderName}</span>
+                  <span style={{ paddingLeft: '15px' }}>{'寄件人手机:' + record.senderMobile}</span>
+                </p>
+              )}
               columns={columns}
             />
           </div>
