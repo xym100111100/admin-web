@@ -30,6 +30,10 @@ const menuData = [
             name: '快递公司配置',
             path: 'kdi-company-cfg',
           },
+          {
+            name: '发件人配置',
+            path: 'kdi-sender-cfg',
+          },
         ],
       },
     ],
