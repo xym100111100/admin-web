@@ -36,7 +36,7 @@ const surname =
   '晁勾敖融冷訾辛阚那简饶空' +
   '曾毋沙乜养鞠须丰巢关蒯相' +
   '查后荆红游竺权逮盍益桓公兰';
-export default class KdiCompany extends PureComponent {
+export default class AddrRanalysis extends PureComponent {
   constructor() {
     super();
   }
