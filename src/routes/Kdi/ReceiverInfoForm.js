@@ -3,6 +3,7 @@ import { Form, Input, Button } from 'antd';
 import { connect } from 'dva';
 import AddrCascader from 'components/Rebue/AddrCascader';
 import styles from './KdiEorder.less';
+import AddrRanalysis from 'components/Rebue/AddrRanalysis';
 
 const FormItem = Form.Item;
 
@@ -36,6 +37,17 @@ export default class ReceiverInfoForm extends PureComponent {
     // record: {},
   };
 
+  /**
+   * 收发件人的自定义规则
+   */
+  provinceInfo = (rule, value, callback) => {
+    if (value === undefined || value.length < 3) {
+      callback('请选择完省市区 ');
+    } else {
+      callback();
+    }
+  };
+
   handleFormReset = () => {
     const { form, dispatch } = this.props;
     form.resetFields();
@@ -50,6 +62,7 @@ export default class ReceiverInfoForm extends PureComponent {
 
   render() {
     const { form } = this.props;
+    console.info(form.getFieldValue('receiverProvince'));
     const formItemLayout = {
       labelCol: {
         xs: { span: 4 },
@@ -65,26 +78,28 @@ export default class ReceiverInfoForm extends PureComponent {
     return (
       <Fragment>
         <Form>
+          <FormItem label="智能解析" {...formItemLayout} className={styles.formItem}>
+            {form.getFieldDecorator('receiver')(<AddrRanalysis who="receiver" form={form} />)}
+          </FormItem>
           <FormItem {...formItemLayout} className={styles.formItem} label="订单标题">
             {form.getFieldDecorator('orderTitle', {
               rules: [
                 {
                   required: true,
                   message: '请输入标题',
-                },
+                }, , { whitespace: true, message: '标题不能为空' }
               ],
             })(<Input placeholder="" />)}
           </FormItem>
-
           <Form.Item {...formItemLayout} className={styles.formItem} label="收件人">
             {form.getFieldDecorator('receiverName', {
-              rules: [{ required: true, message: '收件人不能为空' }],
+              rules: [{ required: true, message: '收件人不能为空' }, { whitespace: true, message: '收件人不能为空' }],
             })(<Input placeholder="" />)}
           </Form.Item>
 
           <Form.Item {...formItemLayout} className={styles.formItem} label="手机">
             {form.getFieldDecorator('receiverMobile', {
-              rules: [{ required: true, message: '收件人手机不能为空' }],
+              rules: [{ required: true, message: '收件人手机不能为空' }, { whitespace: true, message: '收件人手机不能为空' }],
             })(<Input placeholder="" />)}
           </Form.Item>
 
@@ -96,12 +111,14 @@ export default class ReceiverInfoForm extends PureComponent {
 
           <Form.Item {...formItemLayout} className={styles.formItem} label="邮编">
             {form.getFieldDecorator('receiverPostCode', {
-              rules: [{ required: true, message: '收件人邮编不能为空' }],
+              rules: [{ required: true, message: '收件人邮编不能为空' }, { whitespace: true, message: '收件人邮编不能为空' }],
             })(<Input placeholder="" />)}
           </Form.Item>
           <Form.Item {...formItemLayout} className={styles.formItem} label="省市区">
-            {form.getFieldDecorator('receiveraddr', {
-              rules: [{ required: true, message: '省市区不能为空' }],
+            {form.getFieldDecorator('receiverProvince', {
+              rules: [{ required: true, message: '省市区不能为空' },{
+                validator: this.provinceInfo,
+              }],
             })(<AddrCascader />)}
           </Form.Item>
           <FormItem {...formItemLayout} className={styles.formItem} label="详细地址">
@@ -110,7 +127,10 @@ export default class ReceiverInfoForm extends PureComponent {
                 {
                   required: true,
                   message: '详细地址不能为空',
-                },
+                }, {
+                  whitespace: true,
+                  message: '详细地址不能为空'
+                }
               ],
             })(<Input placeholder="" />)}
           </FormItem>

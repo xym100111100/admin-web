@@ -10,6 +10,7 @@ import kdisender from '../../models/kdisender';
 import KdiCompany from 'components/Rebue/KdiCompany';
 import styles from './SysMng.less';
 
+
 @connect(({ kdieorder, kdisender,user, loading }) => ({ kdieorder, kdisender, user,loading: loading.models.kdieorder }))
 @Form.create()
 export default class KdiEorder extends PureComponent {
@@ -102,9 +103,9 @@ export default class KdiEorder extends PureComponent {
         console.info(eorderParam);
         this.ReceiverInfo.props.form.validateFields((err, receivervalues) => {
           if (err) return;
-          receivervalues.receiverProvince = receivervalues.receiveraddr[0];
-          receivervalues.receiverCity = receivervalues.receiveraddr[1];
-          receivervalues.receiverExpArea = receivervalues.receiveraddr[2];
+          receivervalues.receiverProvince = receivervalues.receiverProvince[0];
+          receivervalues.receiverCity = receivervalues.receiverProvince[1];
+          receivervalues.receiverExpArea = receivervalues.receiverProvince[2];
           Object.assign(eorderParam, receivervalues);
           console.info(eorderParam);
           let printWindow;
@@ -138,7 +139,7 @@ export default class KdiEorder extends PureComponent {
               <SenderInfoForm getSender={this.getSender} />
             </Card>
             <div style={{ marginTop: '20px', height: '1px' }}>
-              <Card title="选择寄件人">
+              <Card title="选择寄件人" extra={<a href='#/kdi/kdi-entry'>寄件人管理</a>}>
                 <KdiSenderList />
               </Card>
             </div>
