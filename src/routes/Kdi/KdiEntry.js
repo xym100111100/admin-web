@@ -92,71 +92,6 @@ export default class KdiEntry extends SimpleMng {
       <Form onSubmit={() => this.entry()} layout="inline">
         <Row gutter={{ md: 1, lg: 4, xl: 2 }}>
           <Col md={10} sm={24} push={1}>
-            <h3 style={{ paddingTop: 20, marginBottom: 40 }}>收件人信息</h3>
-            <FormItem label="智能解析" style={{ paddingLeft: 24 }}>
-              {getFieldDecorator('receiver')(<AddrRanalysis who="receiver" form={form} />)}
-            </FormItem>
-            <Divider />
-            <FormItem label="收件人姓名">
-              {getFieldDecorator('receiverName', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入收件人姓名',
-                  },
-                ],
-              })(<Input placeholder="请输入收件人姓名" />)}
-            </FormItem>
-            <FormItem label="收件人手机">
-              {getFieldDecorator('receiverMobile', {
-                rules: [
-                  {
-                    required: true,
-                    pattern: /^[0-9]*$/,
-                    message: '请输入全部为数字的收件人手机',
-                  },
-                ],
-              })(<Input placeholder="请输入全部为数字的收件人手机" />)}
-            </FormItem>
-            <FormItem label="收件地邮编">
-              {getFieldDecorator('receiverPostCode', {
-                rules: [
-                  {
-                    required: true,
-                    pattern: /^\d{6}$/,
-                    message: '请输入六位全部为数字收件地邮编',
-                  },
-                ],
-              })(<Input placeholder="请输入收件地邮编" />)}
-            </FormItem>
-            <FormItem label="收件人地址">
-              {getFieldDecorator('receiverProvince', {
-                rules: [
-                  {
-                    required: true,
-                    message: ' ',
-                  },
-                  {
-                    validator: this.provinceInfo,
-                  },
-                ],
-              })(<AddrCascader />)}
-            </FormItem>
-            <FormItem label="详细地址" style={{ paddingLeft: 15 }}>
-              {getFieldDecorator('receiverAddress', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入收件人详细地址',
-                  },
-                ],
-              })(<Input placeholder="请输入收件人详细地址" />)}
-            </FormItem>
-          </Col>
-          <Col md={1} sm={24} push={1} style={{ textAlign: 'center' }}>
-            <Divider type="vertical" style={{ height: 255, marginTop: 155 }} />
-          </Col>
-          <Col md={10} sm={24} push={1}>
             <h3 style={{ paddingTop: 20, marginBottom: 40 }}>发件人信息</h3>
             <FormItem label="智能解析" style={{ paddingLeft: 24 }}>
               {getFieldDecorator('sender')(<AddrRanalysis who="sender" form={form} />)}
@@ -217,6 +152,72 @@ export default class KdiEntry extends SimpleMng {
                   },
                 ],
               })(<Input placeholder="请输入发件人详细地址" />)}
+            </FormItem>
+          </Col>
+
+          <Col md={1} sm={24} push={1} style={{ textAlign: 'center' }}>
+            <Divider type="vertical" style={{ height: 255, marginTop: 155 }} />
+          </Col>
+          <Col md={10} sm={24} push={1}>
+            <h3 style={{ paddingTop: 20, marginBottom: 40 }}>收件人信息</h3>
+            <FormItem label="智能解析" style={{ paddingLeft: 24 }}>
+              {getFieldDecorator('receiver')(<AddrRanalysis who="receiver" form={form} />)}
+            </FormItem>
+            <Divider />
+            <FormItem label="收件人姓名">
+              {getFieldDecorator('receiverName', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入收件人姓名',
+                  },
+                ],
+              })(<Input placeholder="请输入收件人姓名" />)}
+            </FormItem>
+            <FormItem label="收件人手机">
+              {getFieldDecorator('receiverMobile', {
+                rules: [
+                  {
+                    required: true,
+                    pattern: /^[0-9]*$/,
+                    message: '请输入全部为数字的收件人手机',
+                  },
+                ],
+              })(<Input placeholder="请输入全部为数字的收件人手机" />)}
+            </FormItem>
+            <FormItem label="收件地邮编">
+              {getFieldDecorator('receiverPostCode', {
+                rules: [
+                  {
+                    required: true,
+                    pattern: /^\d{6}$/,
+                    message: '请输入六位全部为数字收件地邮编',
+                  },
+                ],
+              })(<Input placeholder="请输入收件地邮编" />)}
+            </FormItem>
+            <FormItem label="收件人地址">
+              {getFieldDecorator('receiverProvince', {
+                rules: [
+                  {
+                    required: true,
+                    message: ' ',
+                  },
+                  {
+                    validator: this.provinceInfo,
+                  },
+                ],
+              })(<AddrCascader />)}
+            </FormItem>
+            <FormItem label="详细地址" style={{ paddingLeft: 15 }}>
+              {getFieldDecorator('receiverAddress', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入收件人详细地址',
+                  },
+                ],
+              })(<Input placeholder="请输入收件人详细地址" />)}
             </FormItem>
           </Col>
         </Row>

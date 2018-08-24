@@ -286,7 +286,7 @@ export default class AddrRanalysis extends PureComponent {
     let allArea = document.getElementsByClassName('ant-cascader-picker-label');
     console.log(allArea);
     let pattern = new RegExp(' ', 'g');
-    allArea = allArea[0].innerHTML;
+    allArea = allArea[1].innerHTML;
     let before = allArea.replace(pattern, '');
     before = before.split('/');
     form.setFieldsValue({ receiverProvince: before });
@@ -299,7 +299,7 @@ export default class AddrRanalysis extends PureComponent {
     const { form } = this.props;
     let allArea = document.getElementsByClassName('ant-cascader-picker-label');
     let pattern = new RegExp(' ', 'g');
-    allArea = allArea[1].innerHTML;
+    allArea = allArea[0].innerHTML;
     let before = allArea.replace(pattern, '');
     before = before.split('/');
     form.setFieldsValue({ senderProvince: before });
