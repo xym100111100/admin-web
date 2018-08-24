@@ -6,7 +6,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './KdiEntry.less';
 import AddrCascader from 'components/Rebue/AddrCascader';
 import KdiCompany from 'components/Rebue/KdiCompany';
-import AddRanalysis from 'components/Rebue/AddRanalysis';
+import AddrRanalysis from 'components/Rebue/AddrRanalysis';
 
 const FormItem = Form.Item;
 @connect(({ kdientry, user, loading }) => ({ kdientry, user, loading: loading.models.kdientry || loading.models.user }))
@@ -94,7 +94,7 @@ export default class KdiEntry extends SimpleMng {
           <Col md={10} sm={24} push={1}>
             <h3 style={{ paddingTop: 20, marginBottom: 40 }}>收件人信息</h3>
             <FormItem label="智能解析" style={{ paddingLeft: 24 }}>
-              {getFieldDecorator('receiver')(<AddRanalysis who="receiver" form={form} />)}
+              {getFieldDecorator('receiver')(<AddrRanalysis who="receiver" form={form} />)}
             </FormItem>
             <Divider />
             <FormItem label="收件人姓名">
@@ -159,7 +159,7 @@ export default class KdiEntry extends SimpleMng {
           <Col md={10} sm={24} push={1}>
             <h3 style={{ paddingTop: 20, marginBottom: 40 }}>发件人信息</h3>
             <FormItem label="智能解析" style={{ paddingLeft: 24 }}>
-              {getFieldDecorator('sender')(<AddRanalysis who="sender" form={form} />)}
+              {getFieldDecorator('sender')(<AddrRanalysis who="sender" form={form} />)}
             </FormItem>
             <Divider />
             <FormItem label="发件人姓名">
