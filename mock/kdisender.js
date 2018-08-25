@@ -12,6 +12,9 @@ const tableListDataSource = [
     senderaddr: ['广西壮族自治区', '南宁市', '西乡塘区'],
     senderAddress: '华尔街工谷',
     organizeId: 253274870,
+    senderProvince:'广西壮族自治区',
+    senderCity:'南宁市',
+    senderExpArea:'西乡塘区'
   },
   {
     key: '1',
@@ -24,6 +27,9 @@ const tableListDataSource = [
     senderaddr: ['广西壮族自治区', '南宁市', '西乡塘区'],
     senderAddress: '华尔街工谷',
     organizeId: 253274870,
+    senderProvince:'广西壮族自治区',
+    senderCity:'南宁市',
+    senderExpArea:'西乡塘区'
   },
   {
     key: '2',
@@ -36,6 +42,9 @@ const tableListDataSource = [
     senderaddr: ['广西壮族自治区', '南宁市', '西乡塘区'],
     senderAddress: '华尔街工谷',
     organizeId: 253274870,
+    senderProvince:'广西壮族自治区',
+    senderCity:'南宁市',
+    senderExpArea:'西乡塘区'
   },
   {
     key: '3',
@@ -48,6 +57,9 @@ const tableListDataSource = [
     senderaddr: ['广西壮族自治区', '南宁市', '西乡塘区'],
     senderAddress: '华尔街工谷',
     organizeId: 253274870,
+    senderProvince:'广西壮族自治区',
+    senderCity:'南宁市',
+    senderExpArea:'西乡塘区'
   },
 ];
 

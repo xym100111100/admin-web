@@ -100,7 +100,7 @@ export default class KdiSenderList extends PureComponent {
     }
 
     render() {
-        const tips = this.state.data.length>0?'':'请设置常用联系人-> ';
+        const tips = this.state.data.length>0?`请设置常用联系人➔`:``;
         return (
             <Card title={'选择常用寄件人'} extra={<Tooltip><div style={{ color: 'red', marginTop: '-6px' }}>{tips}<Tooltip title="常用寄件人配置"> <a href='#/kdi/kdi-cfg/kdi-sender-cfg'>{<Icon type="setting" style={{ fontSize: 28, color: '#A8A8A8', marginTop: '0px' }} />}</a></Tooltip></div></Tooltip>}>
                 <div>

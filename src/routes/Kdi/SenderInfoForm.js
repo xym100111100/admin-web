@@ -154,7 +154,7 @@ export default class SenderInfoForm extends PureComponent {
             <Col span={24} pull={2}>
               <Form.Item {...senderFormItemLayout} className={styles.formItem} label="省市区">
                 {form.getFieldDecorator('senderaddr', {
-                  rules: [{ required: true, message: '寄件人省市区不能为空' }, { whitespace: true, message: '寄件人省市区不能为空' }],
+                  rules: [{ required: true, message: '寄件人省市区不能为空' }],
                 })(<AddrCascader />)}
               </Form.Item>
             </Col>
