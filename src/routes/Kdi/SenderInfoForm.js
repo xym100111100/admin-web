@@ -5,7 +5,7 @@ import { connect } from 'dva';
 import styles from './KdiEorder.less';
 
 const FormItem = Form.Item;
-@connect(({ kdisender, loading }) => ({ kdisender, loading: loading.models.kdisender }))
+@connect(({ kdisender,user, loading }) => ({ kdisender, user,loading: loading.models.kdisender }))
 
 @Form.create({
   mapPropsToFields(props) {
@@ -50,10 +50,15 @@ export default class SenderInfoForm extends PureComponent {
   };
 
   addSender = () => {
-    const { form } = this.props;
+    const { form,user } = this.props;
     form.validateFieldsAndScroll((err, fields) => {
       if (err) return;
       const payload = fields;
+      payload.senderProvince = payload.senderaddr[0];
+      payload.senderCity = payload.senderaddr[1];
+      payload.senderExpArea = payload.senderaddr[2];
+      // payload.organizeId = user.currentUser.organizeId;
+      payload.organizeId = 123;
       console.info(payload);
       this.props.dispatch({
         type: 'kdisender/addSender',
@@ -114,24 +119,26 @@ export default class SenderInfoForm extends PureComponent {
             <Col span={12}>
               <Form.Item {...formItemLayout} className={styles.formItem} label="寄件人">
                 {form.getFieldDecorator('senderName', {
-                  rules: [{ required: true, message: '' }],
+                  rules: [{ required: true, message: '寄件人不能为空' },{ whitespace: true, message: '寄件人不能为空' }],
                 })(<Input placeholder="寄件人不能为空" />)}
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item {...formItemLayout} className={styles.formItem} label="手机">
                 {form.getFieldDecorator('senderMobile', {
-                  rules: [{ required: true, message: '' }],
+                  rules: [{ required: true, message: '寄件人手机不能为空' },{ whitespace: true, message: '寄件人手机不能为空' }],
                 })(<Input placeholder="寄件人手机不能空" />)}
               </Form.Item>
             </Col>
-            
+
           </Row>
           <Row>
             <Col span={12}>
               <Form.Item {...formItemLayout} className={styles.formItem} label="邮编">
                 {form.getFieldDecorator('senderPostCode', {
-                  rules: [{ required: true, message: '寄件人邮编不能为空' }],
+                  rules: [{ required: true, message: '寄件人邮编不能为空' },{pattern: /^\d{6}$/,
+                  message: '请输入六位全部为数字的邮编'},
+                  { whitespace: true, message: '寄件人邮编不能为空' }],
                 })(<Input placeholder="" />)}
               </Form.Item>
             </Col>
@@ -147,7 +154,7 @@ export default class SenderInfoForm extends PureComponent {
             <Col span={24} pull={2}>
               <Form.Item {...senderFormItemLayout} className={styles.formItem} label="省市区">
                 {form.getFieldDecorator('senderaddr', {
-                  rules: [{ required: true, message: '寄件人省市区不能为空' }],
+                  rules: [{ required: true, message: '寄件人省市区不能为空' }, { whitespace: true, message: '寄件人省市区不能为空' }],
                 })(<AddrCascader />)}
               </Form.Item>
             </Col>
@@ -161,19 +168,20 @@ export default class SenderInfoForm extends PureComponent {
                       required: true,
                       message: '寄件人地址不能为空',
                     },
+                    { whitespace: true, message: '寄件人地址不能为空' }
                   ],
                 })(<Input placeholder="" />)}
               </FormItem>
             </Col>
           </Row>
-          <Button style={{ marginLeft: 60 }} onClick={this.addSender}>新增联系人</Button>
+          {/* <Button style={{ marginLeft: 60 }} onClick={this.addSender}>新增联系人</Button>
           <Button style={{ marginLeft: 20 }} onClick={this.setDefaulSender}>
             设为默认联系人
           </Button>
           <Button style={{ marginLeft: 20 }} onClick={this.handleFormReset}>
             清空
-          </Button>
-          
+          </Button> */}
+
         </Form>
       </Fragment>
     );

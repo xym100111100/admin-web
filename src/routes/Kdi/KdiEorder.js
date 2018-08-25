@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Button, Table, Select } from 'antd';
+import { Row, Col, Card, Form, Button, Icon, Tooltip, Fragment } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import SenderInfoForm from './SenderInfoForm';
 import ReceiverInfoForm from './ReceiverInfoForm';
@@ -11,7 +11,7 @@ import KdiCompany from 'components/Rebue/KdiCompany';
 import styles from './SysMng.less';
 
 
-@connect(({ kdieorder, kdisender,user, loading }) => ({ kdieorder, kdisender, user,loading: loading.models.kdieorder }))
+@connect(({ kdieorder, kdisender, user, loading }) => ({ kdieorder, kdisender, user, loading: loading.models.kdieorder }))
 @Form.create()
 export default class KdiEorder extends PureComponent {
   constructor() {
@@ -22,7 +22,7 @@ export default class KdiEorder extends PureComponent {
   state = {
     options: {},
     record: {},
-    orderId:Date.parse(new Date()),
+    orderId: Date.parse(new Date()),
   };
 
   componentDidMount() {
@@ -79,7 +79,7 @@ export default class KdiEorder extends PureComponent {
   };
 
   kdiEorder = () => {
-    const {user} = this.props;
+    const { user } = this.props;
     let organizeId = user.currentUser.organizeId;
     console.info(organizeId);
     this.props.form.validateFields((err, values) => {
@@ -115,12 +115,12 @@ export default class KdiEorder extends PureComponent {
             payload: eorderParam,
             callback: data => {
               const printPage = data.printPage;
-              printWindow = window.open('','_blank');
+              printWindow = window.open('', '_blank');
               printWindow.document.body.innerHTML = printPage;
               printWindow.print();
               printWindow.close();
-              newTimeStamp =  Date.parse(new Date());
-              this.state.orderId =newTimeStamp; 
+              newTimeStamp = Date.parse(new Date());
+              this.state.orderId = newTimeStamp;
             },
           })
         })
@@ -129,6 +129,7 @@ export default class KdiEorder extends PureComponent {
   }
 
   render() {
+    console.info(this);
     const { getFieldDecorator } = this.props.form;
     const record = this.state.record;
     return (
@@ -139,9 +140,7 @@ export default class KdiEorder extends PureComponent {
               <SenderInfoForm getSender={this.getSender} />
             </Card>
             <div style={{ marginTop: '20px', height: '1px' }}>
-              <Card title="选择寄件人" extra={<a href='#/kdi/kdi-entry'>寄件人管理</a>}>
-                <KdiSenderList />
-              </Card>
+              <KdiSenderList />
             </div>
           </Col>
           <Col md={12} sm={24}>
@@ -155,7 +154,7 @@ export default class KdiEorder extends PureComponent {
                     {getFieldDecorator('shipperCode', {
                       rules: [{ required: true, message: '快递公司不能为空' }],
                     })(<KdiCompany width={200} getShipper={this.getShipper} />)}
-                    <Button style={{ marginLeft: 60 }} onClick={this.kdiEorder}>快递下单</Button>
+                    <Button type="primary" style={{ marginLeft: 60 }} onClick={this.kdiEorder}>快递下单</Button>
                   </Form.Item>
                 </Form>
 

@@ -62,7 +62,6 @@ export default class ReceiverInfoForm extends PureComponent {
 
   render() {
     const { form } = this.props;
-    console.info(form.getFieldValue('receiverProvince'));
     const formItemLayout = {
       labelCol: {
         xs: { span: 4 },
@@ -111,7 +110,8 @@ export default class ReceiverInfoForm extends PureComponent {
 
           <Form.Item {...formItemLayout} className={styles.formItem} label="邮编">
             {form.getFieldDecorator('receiverPostCode', {
-              rules: [{ required: true, message: '收件人邮编不能为空' }, { whitespace: true, message: '收件人邮编不能为空' }],
+              rules: [{ required: true, message: '收件人邮编不能为空' }, { whitespace: true, message: '收件人邮编不能为空' },{pattern: /^\d{6}$/,
+              message: '请输入六位全部为数字的邮编',}],
             })(<Input placeholder="" />)}
           </Form.Item>
           <Form.Item {...formItemLayout} className={styles.formItem} label="省市区">
