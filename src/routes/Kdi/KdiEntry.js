@@ -73,15 +73,15 @@ export default class KdiEntry extends SimpleMng {
         fieldsValue.receiverCity = receiverProvinceInfo[1];
         fieldsValue.receiverExpArea = receiverProvinceInfo[2];
       }
-      //  console.log(fieldsValue);
+      console.log(fieldsValue);
 
-      this.props.dispatch({
-        type: `${this.moduleCode}/add`,
-        payload: { ...fieldsValue },
-        callback: () => {
-          this.handleReload();
-        },
-      });
+      // this.props.dispatch({
+      //   type: `${this.moduleCode}/add`,
+      //   payload: { ...fieldsValue },
+      //   callback: () => {
+      //     this.handleReload();
+      //   },
+      // });
     });
   };
 
@@ -251,16 +251,7 @@ export default class KdiEntry extends SimpleMng {
             </FormItem>
           </Col>
           <Col md={10} sm={24} push={2}>
-            <FormItem label="快递公司" style={{ paddingLeft: 15 }}>
-              {getFieldDecorator('shipperName', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入快递公司',
-                  },
-                ],
-              })(<KdiCompany />)}
-            </FormItem>
+            <KdiCompany FormItemStyle={{ paddingLeft: 15 }} form={form} />
           </Col>
         </Row>
         <Row>

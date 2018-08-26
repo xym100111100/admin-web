@@ -10,8 +10,12 @@ import kdisender from '../../models/kdisender';
 import KdiCompany from 'components/Rebue/KdiCompany';
 import styles from './SysMng.less';
 
-
-@connect(({ kdieorder, kdisender, user, loading }) => ({ kdieorder, kdisender, user, loading: loading.models.kdieorder }))
+@connect(({ kdieorder, kdisender, user, loading }) => ({
+  kdieorder,
+  kdisender,
+  user,
+  loading: loading.models.kdieorder,
+}))
 @Form.create()
 export default class KdiEorder extends PureComponent {
   constructor() {
@@ -29,17 +33,17 @@ export default class KdiEorder extends PureComponent {
     this.handleReload();
   }
 
-  getSender = (ref) => {
-    this.SenderInfo = ref
-  }
+  getSender = ref => {
+    this.SenderInfo = ref;
+  };
 
-  getReceiver = (ref) => {
-    this.ReceiverInfo = ref
-  }
+  getReceiver = ref => {
+    this.ReceiverInfo = ref;
+  };
 
-  getShipper = (ref) => {
-    this.Shipper = ref
-  }
+  getShipper = ref => {
+    this.Shipper = ref;
+  };
 
   selectSenderInfo(params) {
     const { id, moduleCode, ...state } = Object.assign(defaultParams, params);
@@ -80,13 +84,20 @@ export default class KdiEorder extends PureComponent {
 
   kdiEorder = () => {
     const { user } = this.props;
-    let organizeId = user.currentUser.organizeId;
+    //  let organizeId = user.currentUser.organizeId; 使用联调的时候使用假的organizeId
+    let organizeId = 13164165415;
     console.info(organizeId);
     this.props.form.validateFields((err, values) => {
       if (err) return;
-      let eorderParam = { shipperId: undefined, shipperName: undefined, shipperCode: undefined, orderId: this.state.orderId, organizeId: organizeId };
+      let eorderParam = {
+        shipperId: undefined,
+        shipperName: undefined,
+        shipperCode: undefined,
+        orderId: this.state.orderId,
+        organizeId: organizeId,
+      };
       console.info(eorderParam.orderId);
-      let shipperInfo = values.shipperCode.split('/');
+      let shipperInfo = values.shipperName.split('/');
       eorderParam.shipperId = shipperInfo[0];
       eorderParam.shipperName = shipperInfo[1];
       eorderParam.shipperCode = shipperInfo[2];
@@ -110,6 +121,7 @@ export default class KdiEorder extends PureComponent {
           console.info(eorderParam);
           let printWindow;
           let newTimeStamp;
+
           this.props.dispatch({
             type: 'kdieorder/eorder',
             payload: eorderParam,
@@ -122,15 +134,15 @@ export default class KdiEorder extends PureComponent {
               newTimeStamp = Date.parse(new Date());
               this.state.orderId = newTimeStamp;
             },
-          })
-        })
-      })
-    })
-  }
+          });
+        });
+      });
+    });
+  };
 
   render() {
     console.info(this);
-    const { getFieldDecorator } = this.props.form;
+    const { form } = this.props;
     const record = this.state.record;
     return (
       <PageHeaderLayout title="快递下单">
@@ -149,15 +161,18 @@ export default class KdiEorder extends PureComponent {
             </Card>
             <div style={{ marginTop: '25px' }}>
               <Card title="快递下单">
-                <Form>
-                  <Form.Item label="">
-                    {getFieldDecorator('shipperCode', {
-                      rules: [{ required: true, message: '快递公司不能为空' }],
-                    })(<KdiCompany width={200} getShipper={this.getShipper} />)}
-                    <Button type="primary" style={{ marginLeft: 60 }} onClick={this.kdiEorder}>快递下单</Button>
-                  </Form.Item>
+                <Form layout="inline">
+                  <Row>
+                    <Col md={16} sm={24}>
+                      <KdiCompany form={form} SelectStyle={{ width: 200 }} getShipper={this.getShipper} />
+                    </Col>
+                    <Col md={8} sm={24}>
+                      <Button type="primary" style={{ marginTop: 3 }} onClick={this.kdiEorder}>
+                        快递下单
+                      </Button>
+                    </Col>
+                  </Row>
                 </Form>
-
               </Card>
             </div>
           </Col>

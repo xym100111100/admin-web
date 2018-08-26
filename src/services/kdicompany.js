@@ -32,3 +32,12 @@ export async function del(params) {
     method: 'DELETE',
   });
 }
+
+export async function setDefaultCompany(params) {
+  return request('/kdi-svr/kdi/company/default', {
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
+}

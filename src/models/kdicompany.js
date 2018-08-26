@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { list, getById, add, modify, del } from '../services/kdicompany';
+import { list, getById, add, modify, del, setDefaultCompany } from '../services/kdicompany';
 
 export default {
   namespace: 'kdicompany',
@@ -74,6 +74,15 @@ export default {
     },
     *del({ payload, callback }, { call }) {
       const response = yield call(del, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *setDefaultCompany({ payload, callback }, { call }) {
+      const response = yield call(setDefaultCompany, payload);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);

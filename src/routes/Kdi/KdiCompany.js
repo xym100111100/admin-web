@@ -40,6 +40,17 @@ export default class KdiCompany extends SimpleMng {
     });
   }
 
+  //设置默认快递公司
+  setDefuteCompany = record => {
+    this.props.dispatch({
+      type: `${this.moduleCode}/setDefaultCompany`,
+      payload: record,
+      callback: () => {
+        this.handleReload();
+      },
+    });
+  };
+
   render() {
     const { kdicompany: { kdicompany }, loading, user } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
@@ -75,21 +86,45 @@ export default class KdiCompany extends SimpleMng {
       },
       {
         title: '操作',
-        render: (text, record) => (
-          <Fragment>
-            <a
-              onClick={() =>
-                this.showEditForm({ id: record.id, editForm: 'kdiCompany', editFormTitle: '编辑快递公司信息' })
-              }
-            >
-              编辑
-            </a>
-            <Divider type="vertical" />
-            <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record)}>
-              <a>删除</a>
-            </Popconfirm>
-          </Fragment>
-        ),
+        render: (text, record) => {
+          if (record.isDefault === false) {
+            return (
+              <Fragment>
+                <a
+                  onClick={() =>
+                    this.showEditForm({ id: record.id, editForm: 'kdiCompany', editFormTitle: '编辑快递公司信息' })
+                  }
+                >
+                  编辑
+                </a>
+                <Divider type="vertical" />
+                <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record)}>
+                  <a>删除</a>
+                </Popconfirm>
+                <Divider type="vertical" />
+                <a onClick={() => this.setDefuteCompany(record)}>设为默认</a>
+              </Fragment>
+            );
+          } else {
+            return (
+              <Fragment>
+                <a
+                  onClick={() =>
+                    this.showEditForm({ id: record.id, editForm: 'kdiCompany', editFormTitle: '编辑快递公司信息' })
+                  }
+                >
+                  编辑
+                </a>
+                <Divider type="vertical" />
+                <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record)}>
+                  <a>删除</a>
+                </Popconfirm>
+                <Divider type="vertical" />
+                <a>默认</a>
+              </Fragment>
+            );
+          }
+        },
       },
     ];
 
