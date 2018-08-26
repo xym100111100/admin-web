@@ -1,14 +1,11 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Button, Icon, Tooltip, Fragment } from 'antd';
+import { Row, Col, Card, Form, Button } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import SenderInfoForm from './SenderInfoForm';
 import ReceiverInfoForm from './ReceiverInfoForm';
-import KdiSenderSelect from './KdiSenderSelect';
 import KdiSenderList from './KdiSenderList';
-import kdisender from '../../models/kdisender';
 import KdiCompany from 'components/Rebue/KdiCompany';
-import styles from './SysMng.less';
 
 @connect(({ kdieorder, kdisender, user, loading }) => ({
   kdieorder,
