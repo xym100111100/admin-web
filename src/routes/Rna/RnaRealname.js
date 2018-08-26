@@ -1,11 +1,14 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { DatePicker, Pagination, Card, Divider, Table, Button, Radio, Input, Modal, Popconfirm, Form } from 'antd';
+import { DatePicker, Row, Col, Card, Divider, Table, Button, Radio, Input, Popconfirm, Form } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './RnaRealname.less';
 import RnaRealnameForm from './RnaRealnameForm';
-
+const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
+const FormItem = Form.Item;
+const { RangePicker } = DatePicker;
 @Form.create()
 @connect(({ rnarealname, loading }) => ({ rnarealname, loading: loading.models.rnarealname }))
 export default class RnaRealname extends SimpleMng {
@@ -73,14 +76,62 @@ export default class RnaRealname extends SimpleMng {
     });
   }
 
+  renderSearchForm() {
+    const { getFieldDecorator } = this.props.form;
+    return (
+      <Form onSubmit={this.handleSearch} layout="inline">
+        <Row gutter={{ md: 6, lg: 24, xl: 0 }}>
+          <Col md={8} sm={24}>
+            <FormItem style={{ float: 'left' }}>
+              {getFieldDecorator('applyState', {
+                initialValue: '1',
+              })(
+                <RadioGroup>
+                  <RadioButton onClick={() => this.listState('')} value="">
+                    全部
+                  </RadioButton>
+                  <RadioButton onClick={() => this.listState(1)} value="1">
+                    待审核
+                  </RadioButton>
+                  <RadioButton onClick={() => this.listState(2)} value="2">
+                    已通过
+                  </RadioButton>
+                  <RadioButton onClick={() => this.listState(3)} value="3">
+                    已拒绝
+                  </RadioButton>
+                </RadioGroup>
+              )}
+            </FormItem>
+            <Divider type="vertical" style={{ height: 22, float: 'right', marginTop: '2%', marginRight: '9%' }} />
+          </Col>
+          <Col md={7} sm={24} style={{ marginRight: 6 }}>
+            <FormItem>{getFieldDecorator('startApplyTime')(<RangePicker />)}</FormItem>
+          </Col>
+          <Col md={3} sm={24} style={{ marginRight: 6 }}>
+            <FormItem>{getFieldDecorator('realName')(<Input placeholder="姓名" />)}</FormItem>
+          </Col>
+          <Col md={4} sm={24} style={{ marginRight: 6 }}>
+            <FormItem>
+              {getFieldDecorator('idCard', {
+                rules: [{ pattern: /^[0-9]*$/, message: '请输入数字' }],
+              })(<Input placeholder="身份证号" />)}
+            </FormItem>
+          </Col>
+          <Col md={1} sm={24}>
+            <FormItem>
+              <Button type="primary" htmlType="submit">
+                查询
+              </Button>
+            </FormItem>
+          </Col>
+        </Row>
+      </Form>
+    );
+  }
+
   render() {
     const { rnarealname: { rnarealname }, loading } = this.props;
-    const RadioGroup = Radio.Group;
-    const RadioButton = Radio.Button;
-    const { getFieldDecorator } = this.props.form;
-    const FormItem = Form.Item;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
-    const { RangePicker } = DatePicker;
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
@@ -88,46 +139,6 @@ export default class RnaRealname extends SimpleMng {
       total: Number(rnarealname.total),
       pageSizeOptions: ['5', '10'],
     };
-
-    const extraContent = (
-      <Form onSubmit={this.handleSearch} layout="inline" style={{ paddingBottom: 20 }}>
-        <div className={styles.extraContent}>
-          <FormItem label="" style={{ marginRight: 120 }}>
-            {getFieldDecorator('applyState')(
-              <RadioGroup>
-                <RadioButton onClick={() => this.listState('')} value="">
-                  全部
-                </RadioButton>
-                <RadioButton onClick={() => this.listState(1)} value="1">
-                  待审核
-                </RadioButton>
-                <RadioButton onClick={() => this.listState(2)} value="2">
-                  已通过
-                </RadioButton>
-                <RadioButton onClick={() => this.listState(3)} value="3">
-                  已拒绝
-                </RadioButton>
-              </RadioGroup>
-            )}
-          </FormItem>
-          <Divider type="vertical" style={{ height: 30 }} orientation="left" />
-          <FormItem style={{ width: 180 }}>
-            {getFieldDecorator('startApplyTime')(<RangePicker style={{ width: 250, marginLeft: -80 }} />)}
-          </FormItem>
-          <FormItem max="5" label="" style={{ width: 100 }}>
-            {getFieldDecorator('realName')(<Input placeholder="姓名" />)}
-          </FormItem>
-          <FormItem label="" style={{ width: 200 }}>
-            {getFieldDecorator('idCard', {
-              rules: [{ pattern: /^[0-9]*$/, message: '请输入数字' }],
-            })(<Input placeholder="请输入用户身份证" />)}
-          </FormItem>
-          <Button type="primary" htmlType="submit" style={{ marginTop: 4 }}>
-            查询
-          </Button>
-        </div>
-      </Form>
-    );
 
     const columns = [
       {
@@ -177,13 +188,8 @@ export default class RnaRealname extends SimpleMng {
 
     return (
       <PageHeaderLayout title="实名认证审核">
-        <Card
-          className={styles.listCard}
-          bordered={false}
-          style={{ marginBottom: 30 }}
-          bodyStyle={{ padding: '0 32px 0px 32px' }}
-          extra={extraContent}
-        >
+        <Card bordered={false}>
+          <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
           <div className={styles.tableList}>
             <Table
               rowKey="id"
