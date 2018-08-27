@@ -86,7 +86,7 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['kdicompany', 'user'], () => import('../routes/Kdi/KdiCompany')),
     },
     '/kdi/kdi-cfg/kdi-sender-cfg': {
-      component: dynamicWrapper(app, ['kdisender'], () => import('../routes/Kdi/KdiSender')),
+      component: dynamicWrapper(app, ['kdisender'], () => import('../routes/Kdi/KdiSenderCfg')),
     },
     '/pfm/sys-mng': {
       component: dynamicWrapper(app, ['pfmsys'], () => import('../routes/Pfm/SysMng')),
