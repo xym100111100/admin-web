@@ -1,7 +1,7 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Divider, Popconfirm, Form, Input, Button, Table, List, Tooltip } from 'antd';
+import { Row, Col, Card, Divider, Switch, Popconfirm, Form, Input, Button, Table, List, Tooltip } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './OrgMng.less';
 import OrgForm from './OrgForm';
@@ -88,6 +88,18 @@ export default class OrgMng extends SimpleMng {
     });
   }
 
+  // 启用/禁用组织
+  handleEnable(record) {
+    console.log(record);
+    this.props.dispatch({
+      type: `sucorg/enable`,
+      payload: { id: record.id, isEnabled: !record.isEnabled },
+      callback: () => {
+        this.handleReload();
+      },
+    });
+  }
+
   // 搜索
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
@@ -126,6 +138,17 @@ export default class OrgMng extends SimpleMng {
             <Tooltip placement="topLeft" title={record.remark}>
               {record.name}
             </Tooltip>
+          );
+        },
+      },
+      {
+        title: '是否启用',
+        dataIndex: 'isEnabled',
+        render: (text, record) => {
+          return (
+            <Fragment>
+              <Switch checked={record.isEnabled} loading={loading} onChange={() => this.handleEnable(record)} />
+            </Fragment>
           );
         },
       },

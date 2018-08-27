@@ -1,16 +1,18 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Button, Table, Select } from 'antd';
+import { Row, Col, Card, Form, Button } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import SenderInfoForm from './SenderInfoForm';
 import ReceiverInfoForm from './ReceiverInfoForm';
-import KdiSenderSelect from './KdiSenderSelect';
 import KdiSenderList from './KdiSenderList';
-import kdisender from '../../models/kdisender';
 import KdiCompany from 'components/Rebue/KdiCompany';
-import styles from './SysMng.less';
 
-@connect(({ kdieorder, kdisender,user, loading }) => ({ kdieorder, kdisender, user,loading: loading.models.kdieorder }))
+@connect(({ kdieorder, kdisender, user, loading }) => ({
+  kdieorder,
+  kdisender,
+  user,
+  loading: loading.models.kdieorder,
+}))
 @Form.create()
 export default class KdiEorder extends PureComponent {
   constructor() {
@@ -21,24 +23,24 @@ export default class KdiEorder extends PureComponent {
   state = {
     options: {},
     record: {},
-    orderId:Date.parse(new Date()),
+    orderId: Date.parse(new Date()),
   };
 
   componentDidMount() {
     this.handleReload();
   }
 
-  getSender = (ref) => {
-    this.SenderInfo = ref
-  }
+  getSender = ref => {
+    this.SenderInfo = ref;
+  };
 
-  getReceiver = (ref) => {
-    this.ReceiverInfo = ref
-  }
+  getReceiver = ref => {
+    this.ReceiverInfo = ref;
+  };
 
-  getShipper = (ref) => {
-    this.Shipper = ref
-  }
+  getShipper = ref => {
+    this.Shipper = ref;
+  };
 
   selectSenderInfo(params) {
     const { id, moduleCode, ...state } = Object.assign(defaultParams, params);
@@ -78,14 +80,21 @@ export default class KdiEorder extends PureComponent {
   };
 
   kdiEorder = () => {
-    const {user} = this.props;
-    let organizeId = user.currentUser.organizeId;
+    const { user } = this.props;
+    //  let organizeId = user.currentUser.organizeId; 使用联调的时候使用假的organizeId
+    let organizeId = 13164165415;
     console.info(organizeId);
     this.props.form.validateFields((err, values) => {
       if (err) return;
-      let eorderParam = { shipperId: undefined, shipperName: undefined, shipperCode: undefined, orderId: this.state.orderId, organizeId: organizeId };
+      let eorderParam = {
+        shipperId: undefined,
+        shipperName: undefined,
+        shipperCode: undefined,
+        orderId: this.state.orderId,
+        organizeId: organizeId,
+      };
       console.info(eorderParam.orderId);
-      let shipperInfo = values.shipperCode.split('/');
+      let shipperInfo = values.shipperName.split('/');
       eorderParam.shipperId = shipperInfo[0];
       eorderParam.shipperName = shipperInfo[1];
       eorderParam.shipperCode = shipperInfo[2];
@@ -102,33 +111,35 @@ export default class KdiEorder extends PureComponent {
         console.info(eorderParam);
         this.ReceiverInfo.props.form.validateFields((err, receivervalues) => {
           if (err) return;
-          receivervalues.receiverProvince = receivervalues.receiveraddr[0];
-          receivervalues.receiverCity = receivervalues.receiveraddr[1];
-          receivervalues.receiverExpArea = receivervalues.receiveraddr[2];
+          receivervalues.receiverProvince = receivervalues.receiverProvince[0];
+          receivervalues.receiverCity = receivervalues.receiverProvince[1];
+          receivervalues.receiverExpArea = receivervalues.receiverProvince[2];
           Object.assign(eorderParam, receivervalues);
           console.info(eorderParam);
           let printWindow;
           let newTimeStamp;
+
           this.props.dispatch({
             type: 'kdieorder/eorder',
             payload: eorderParam,
             callback: data => {
               const printPage = data.printPage;
-              printWindow = window.open('','_blank');
+              printWindow = window.open('', '_blank');
               printWindow.document.body.innerHTML = printPage;
               printWindow.print();
               printWindow.close();
-              newTimeStamp =  Date.parse(new Date());
-              this.state.orderId =newTimeStamp; 
+              newTimeStamp = Date.parse(new Date());
+              this.state.orderId = newTimeStamp;
             },
-          })
-        })
-      })
-    })
-  }
+          });
+        });
+      });
+    });
+  };
 
   render() {
-    const { getFieldDecorator } = this.props.form;
+    console.info(this);
+    const { form } = this.props;
     const record = this.state.record;
     return (
       <PageHeaderLayout title="快递下单">
@@ -138,9 +149,7 @@ export default class KdiEorder extends PureComponent {
               <SenderInfoForm getSender={this.getSender} />
             </Card>
             <div style={{ marginTop: '20px', height: '1px' }}>
-              <Card title="选择寄件人">
-                <KdiSenderList />
-              </Card>
+              <KdiSenderList />
             </div>
           </Col>
           <Col md={12} sm={24}>
@@ -149,15 +158,18 @@ export default class KdiEorder extends PureComponent {
             </Card>
             <div style={{ marginTop: '25px' }}>
               <Card title="快递下单">
-                <Form>
-                  <Form.Item label="">
-                    {getFieldDecorator('shipperCode', {
-                      rules: [{ required: true, message: '快递公司不能为空' }],
-                    })(<KdiCompany width={200} getShipper={this.getShipper} />)}
-                    <Button style={{ marginLeft: 60 }} onClick={this.kdiEorder}>快递下单</Button>
-                  </Form.Item>
+                <Form layout="inline">
+                  <Row>
+                    <Col md={16} sm={24}>
+                      <KdiCompany form={form} SelectStyle={{ width: 200 }} getShipper={this.getShipper} />
+                    </Col>
+                    <Col md={8} sm={24}>
+                      <Button type="primary" style={{ marginTop: 3 }} onClick={this.kdiEorder}>
+                        快递下单
+                      </Button>
+                    </Col>
+                  </Row>
                 </Form>
-
               </Card>
             </div>
           </Col>

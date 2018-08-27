@@ -1,7 +1,7 @@
-import { Form, Select } from 'antd';
+import { Form, Select, Input } from 'antd';
 import { PureComponent } from 'react';
 import { connect } from 'dva';
-
+const FormItem = Form.Item;
 @connect(({ kdicompany, user, loading }) => ({
   kdicompany,
   user,
@@ -12,6 +12,7 @@ export default class KdiCompany extends PureComponent {
     super();
     this.moduleCode = 'kdicompany';
   }
+
   componentDidMount() {
     // let {user} =this.props
     // let organizeId=user.currentUser.organizeId
@@ -31,21 +32,45 @@ export default class KdiCompany extends PureComponent {
   }
 
   render() {
-    const { kdicompany: { kdicompany }, width } = this.props;
+    const { kdicompany: { kdicompany }, form, FormItemStyle, SelectStyle } = this.props;
     const { Option } = Select;
     const { ...props } = this.props;
+    let defaultItems;
     if (kdicompany === undefined || kdicompany.length === 0) {
       return <Select placeholder="请选择快递公司" />;
     }
-    const listItems = kdicompany.map(items => (
-      <Option value={items.id + '/' + items.companyName + '/' + items.companyCode} key={items.id.toString()}>
-        {items.companyName}
-      </Option>
-    ));
+    const listItems = kdicompany.map(items => {
+      if (items.isDefault === true) {
+        defaultItems = items.id + '/' + items.companyName + '/' + items.companyCode;
+        return (
+          <Option value={items.id + '/' + items.companyName + '/' + items.companyCode} key={items.id.toString()}>
+            {items.companyName}
+          </Option>
+        );
+      } else {
+        return (
+          <Option value={items.id + '/' + items.companyName + '/' + items.companyCode} key={items.id.toString()}>
+            {items.companyName}
+          </Option>
+        );
+      }
+    });
     return (
-      <Select {...props} style={{ width: width }} placeholder="请选择快递公司">
-        {listItems}
-      </Select>
+      <FormItem label="快递公司" style={FormItemStyle}>
+        {form.getFieldDecorator('shipperName', {
+          rules: [
+            {
+              required: true,
+              message: '请输入快递公司',
+            },
+          ],
+          initialValue: defaultItems,
+        })(
+          <Select {...props} style={SelectStyle} placeholder="请选择快递公司">
+            {listItems}
+          </Select>
+        )}
+      </FormItem>
     );
   }
 }

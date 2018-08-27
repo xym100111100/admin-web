@@ -4,10 +4,6 @@
 .tableList {
   .tableListOperator {
     margin-bottom: 16px;
-
-    button {
-      margin-right: 8px;
-    }
   }
 }
 
@@ -20,7 +16,6 @@
       > .ant-form-item-label {
         width: auto;
         line-height: 32px;
-        padding-right: 8px;
       }
       .ant-form-item-control {
         line-height: 32px;
@@ -38,7 +33,7 @@
 
 @media screen and (max-width: @screen-lg) {
   .tableListForm :global(.ant-form-item) {
-    margin-right: 24px;
+    margin-right: 0px;
   }
 }
 
@@ -48,120 +43,8 @@
   }
 }
 
-//以下为自定义追加
-
-.headerInfo {
-  position: relative;
-  text-align: center;
-  & > span {
-    color: @text-color-secondary;
-    display: inline-block;
-    font-size: @font-size-base;
-    line-height: 22px;
-    margin-bottom: 4px;
-  }
-  & > p {
-    color: @heading-color;
-    font-size: 24px;
-    line-height: 32px;
-    margin: 0;
-  }
-  & > em {
-    background-color: @border-color-split;
-    position: absolute;
-    height: 56px;
-    width: 1px;
-    top: 0;
-    right: 0;
-  }
-}
-
-@media screen and (max-width: @screen-xs) {
-  .standardList {
-    :global {
-      .ant-list-item-content {
-        display: block;
-        flex: none;
-        width: 100%;
-      }
-      .ant-list-item-action {
-        margin-left: 0;
-      }
-    }
-    .listContent {
-      margin-left: 0;
-      & > div {
-        margin-left: 0;
-      }
-    }
-    .listCard {
-      :global {
-        .ant-card-head-title {
-          overflow: visible;
-        }
-      }
-    }
-  }
-}
-
-@media screen and (max-width: @screen-md) {
-  .standardList {
-    .listContent {
-      & > div {
-        display: block;
-      }
-      & > div:last-child {
-        top: 0;
-        width: 100%;
-      }
-    }
-  }
-  .listCard {
-    :global {
-      .ant-radio-group {
-        display: block;
-        margin-bottom: 8px;
-      }
-    }
-  }
-}
-
-@media screen and (max-width: @screen-sm) {
-  .standardList {
-    .extraContentSearch {
-      margin-left: 0;
-      width: 100%;
-    }
-    .headerInfo {
-      margin-bottom: 16px;
-      & > em {
-        display: none;
-      }
-    }
-  }
-}
-
-.listContent {
-  font-size: 0;
-  .listContentItem {
-    color: @text-color-secondary;
-    display: inline-block;
-    vertical-align: middle;
-    font-size: @font-size-base;
-    margin-left: 40px;
-    > span {
-      line-height: 20px;
-    }
-    > p {
-      margin-top: 4px;
-      margin-bottom: 0;
-      line-height: 22px;
-    }
-  }
-}
-.extraContentSearch {
-  margin-left: 16px;
-  width: 272px;
+.hover:hover {
+  background-color: #d6e9fc;
 }
 
 .user_info {

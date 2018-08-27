@@ -6,7 +6,7 @@ export async function list(params) {
 }
 
 export async function userList(params) {
-  return request(`/suc-svr/suc/user/usernamelist?${stringify(params)}`);
+  return request(`/pfm-svr/pfm/userrole/listuserbysysidandroleid?${stringify(params)}`);
 }
 
 export async function add(params) {

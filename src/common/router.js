@@ -85,6 +85,9 @@ export const getRouterData = app => {
     '/kdi/kdi-cfg/kdi-company-cfg': {
       component: dynamicWrapper(app, ['kdicompany', 'user'], () => import('../routes/Kdi/KdiCompany')),
     },
+    '/kdi/kdi-cfg/kdi-sender-cfg': {
+      component: dynamicWrapper(app, ['kdisender'], () => import('../routes/Kdi/KdiSenderCfg')),
+    },
     '/pfm/sys-mng': {
       component: dynamicWrapper(app, ['pfmsys'], () => import('../routes/Pfm/SysMng')),
     },
@@ -118,7 +121,11 @@ export const getRouterData = app => {
     '/': {
       component: dynamicWrapper(app, ['user'], () => import('../layouts/BasicLayout')),
     },
-
+    '/onl/onl-mng': {
+      component: dynamicWrapper(app, ['sucuser', 'pfmsys', 'userrole', 'sucorg', 'sucuserorg'], () =>
+        import('../routes/Onl/OnlineMng')
+      ),
+    },
     '/dashboard/analysis': {
       component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
     },

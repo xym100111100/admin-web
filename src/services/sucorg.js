@@ -36,3 +36,9 @@ export async function del(params) {
     method: 'DELETE',
   });
 }
+
+export async function enable(params) {
+  return request(`/suc-svr/suc/org/enable?${stringify(params)}`, {
+    method: 'PUT',
+  });
+}

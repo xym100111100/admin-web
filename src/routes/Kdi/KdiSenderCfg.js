@@ -3,19 +3,19 @@ import React, { Fragment } from 'react';
 import { connect } from 'dva';
 import { Button, Card, Divider, Popconfirm, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import CompanyForm from './CompanyForm';
-import styles from './KdiCompany.less';
+import SenderForm from './SenderForm';
+import styles from './KdiSender.less';
 
-@connect(({ kdicompany, user, login, loading }) => ({
-  kdicompany,
-  user,
+@connect(({ kdisender, user, login, loading }) => ({
+  kdisender,
   login,
-  loading: loading.models.kdicompany || loading.models.user || loading.models.login,
+  user,
+  loading: loading.models.kdisender || loading.models.login || loading.models.user,
 }))
-export default class KdiCompany extends SimpleMng {
+export default class KdiSenderCfg extends SimpleMng {
   constructor() {
     super();
-    this.moduleCode = 'kdicompany';
+    this.moduleCode = 'kdisender';
   }
   //初始化
   componentDidMount() {
@@ -39,11 +39,10 @@ export default class KdiCompany extends SimpleMng {
       payload: { organizeId: organizeId },
     });
   }
-
-  //设置默认快递公司
-  setDefuteCompany = record => {
+  //设置默认发件人
+  setDefuteSender = record => {
     this.props.dispatch({
-      type: `${this.moduleCode}/setDefaultCompany`,
+      type: `${this.moduleCode}/setDefaultSender`,
       payload: record,
       callback: () => {
         this.handleReload();
@@ -52,37 +51,34 @@ export default class KdiCompany extends SimpleMng {
   };
 
   render() {
-    const { kdicompany: { kdicompany }, loading, user } = this.props;
+    const { kdisender: { kdisender }, loading, user } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
     //  const organizeId=user.currentUser.organizeId; 不是连调的时候应该把这里放开获取动态的organizeId
     const organizeId = 253274870;
     editFormRecord.organizeId = organizeId;
+    let kdisenderData;
+    if (!Array.isArray(kdisender)) {
+      kdisenderData = [];
+    } else {
+      kdisenderData = kdisender;
+    }
+
     const columns = [
       {
-        title: '名称',
-        dataIndex: 'companyName',
+        title: '名字',
+        dataIndex: 'senderName',
       },
       {
-        title: '帐号',
-        dataIndex: 'companyAccount',
+        title: '手机',
+        dataIndex: 'senderMobile',
       },
       {
-        title: '编号',
-        dataIndex: 'companyCode',
+        title: '地址',
+        dataIndex: 'senderaddr',
       },
       {
-        title: '支付方式',
-        dataIndex: 'payType',
-        render: (text, record) => {
-          if (record.payType === 1) return '现付';
-          if (record.payType === 2) return '到付';
-          if (record.payType === 3) return '月结';
-          if (record.payType === 4) return '第三方付';
-        },
-      },
-      {
-        title: '录入时间',
-        dataIndex: 'entryTime',
+        title: '邮编',
+        dataIndex: 'senderPostCode',
       },
       {
         title: '操作',
@@ -92,7 +88,7 @@ export default class KdiCompany extends SimpleMng {
               <Fragment>
                 <a
                   onClick={() =>
-                    this.showEditForm({ id: record.id, editForm: 'kdiCompany', editFormTitle: '编辑快递公司信息' })
+                    this.showEditForm({ id: record.id, editForm: 'kdiSender', editFormTitle: '编辑发件人信息' })
                   }
                 >
                   编辑
@@ -102,7 +98,7 @@ export default class KdiCompany extends SimpleMng {
                   <a>删除</a>
                 </Popconfirm>
                 <Divider type="vertical" />
-                <a onClick={() => this.setDefuteCompany(record)}>设为默认</a>
+                <a onClick={() => this.setDefuteSender(record)}>设为默认</a>
               </Fragment>
             );
           } else {
@@ -110,7 +106,7 @@ export default class KdiCompany extends SimpleMng {
               <Fragment>
                 <a
                   onClick={() =>
-                    this.showEditForm({ id: record.id, editForm: 'kdiCompany', editFormTitle: '编辑快递公司信息' })
+                    this.showEditForm({ id: record.id, editForm: 'kdiSender', editFormTitle: '编辑发件人信息' })
                   }
                 >
                   编辑
@@ -129,7 +125,7 @@ export default class KdiCompany extends SimpleMng {
     ];
 
     return (
-      <PageHeaderLayout title="快递公司配置">
+      <PageHeaderLayout title="发件人配置">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListOperator}>
@@ -137,7 +133,7 @@ export default class KdiCompany extends SimpleMng {
                 icon="plus"
                 type="primary"
                 onClick={() =>
-                  this.showAddForm({ organizeId: organizeId, editForm: 'kdiCompany', editFormTitle: '添加新快递公司' })
+                  this.showAddForm({ organizeId: organizeId, editForm: 'kdiSender', editFormTitle: '添加新快递公司' })
                 }
               >
                 添加
@@ -147,11 +143,11 @@ export default class KdiCompany extends SimpleMng {
                 刷新
               </Button>
             </div>
-            <Table rowKey="id" pagination={false} loading={loading} dataSource={kdicompany} columns={columns} />
+            <Table rowKey="id" pagination={false} loading={loading} dataSource={kdisenderData} columns={columns} />
           </div>
         </Card>
-        {editForm === 'kdiCompany' && (
-          <CompanyForm
+        {editForm === 'kdiSender' && (
+          <SenderForm
             visible
             organizeId={organizeId}
             title={editFormTitle}

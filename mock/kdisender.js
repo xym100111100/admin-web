@@ -4,52 +4,66 @@ import { parse } from 'url';
 const tableListDataSource = [
   {
     senderId: '1234556',
-    isDefault:1,
+    isDefault: '1',
     senderName: '微薄利',
     senderTel: '124563254',
     senderMobile: '4516135846',
     senderPostCode: '530000',
     senderaddr: ['广西壮族自治区', '南宁市', '西乡塘区'],
     senderAddress: '华尔街工谷',
+    organizeId: 253274870,
+    senderProvince:'广西壮族自治区',
+    senderCity:'南宁市',
+    senderExpArea:'西乡塘区'
   },
   {
     key: '1',
     senderId: '1234556',
-    isDefault:0,
+    isDefault: '0',
     senderName: '微薄利',
     senderTel: '1111111',
     senderMobile: '4516135846',
     senderPostCode: '530000',
     senderaddr: ['广西壮族自治区', '南宁市', '西乡塘区'],
     senderAddress: '华尔街工谷',
+    organizeId: 253274870,
+    senderProvince:'广西壮族自治区',
+    senderCity:'南宁市',
+    senderExpArea:'西乡塘区'
   },
   {
     key: '2',
     senderId: '1234556',
-    isDefault:0,
+    isDefault: '0',
     senderName: '微薄利',
     senderTel: '22222',
     senderMobile: '4516135846',
     senderPostCode: '530000',
     senderaddr: ['广西壮族自治区', '南宁市', '西乡塘区'],
     senderAddress: '华尔街工谷',
+    organizeId: 253274870,
+    senderProvince:'广西壮族自治区',
+    senderCity:'南宁市',
+    senderExpArea:'西乡塘区'
   },
   {
     key: '3',
     senderId: '1234556',
-    isDefault:0,
+    isDefault: '0',
     senderName: '微薄利',
     senderTel: '333333',
     senderMobile: '4516135846',
     senderPostCode: '530000',
     senderaddr: ['广西壮族自治区', '南宁市', '西乡塘区'],
     senderAddress: '华尔街工谷',
+    organizeId: 253274870,
+    senderProvince:'广西壮族自治区',
+    senderCity:'南宁市',
+    senderExpArea:'西乡塘区'
   },
-
 ];
 
 export function kdiSenderList(req, res) {
-  console.info('8888');
   res.json(tableListDataSource);
 }
 

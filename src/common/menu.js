@@ -30,6 +30,10 @@ const menuData = [
             name: '快递公司配置',
             path: 'kdi-company-cfg',
           },
+          {
+            name: '发件人配置',
+            path: 'kdi-sender-cfg',
+          },
         ],
       },
     ],
@@ -65,6 +69,17 @@ const menuData = [
       {
         name: '角色',
         path: 'role-mng',
+      },
+    ],
+  },
+  {
+    name: '商品管理',
+    icon: 'user',
+    path: 'onl',
+    children: [
+      {
+        name: '商品上线',
+        path: 'onl-mng',
       },
     ],
   },
