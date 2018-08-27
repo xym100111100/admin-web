@@ -24,7 +24,7 @@ import {
   kdisenderDel,
   modifyDefaultSender,
   addKdiSender,
-  getDefaultSender
+  getDefaultSender,
 } from './mock/kdisender';
 import {
   pfmmenuList,
@@ -216,7 +216,7 @@ const proxy = {
       avatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
       userid: '00000001',
       notifyCount: 12,
-      organizeId:4513464,
+      orgId: 4513464,
     },
   },
   // GET POST 可省略
