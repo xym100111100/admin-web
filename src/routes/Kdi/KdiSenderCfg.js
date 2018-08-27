@@ -6,10 +6,11 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import SenderForm from './SenderForm';
 import styles from './KdiSender.less';
 
-@connect(({ kdisender,  login, loading }) => ({
+@connect(({ kdisender, user, login, loading }) => ({
   kdisender,
   login,
-  loading: loading.models.kdisender  || loading.models.login,
+  user,
+  loading: loading.models.kdisender || loading.models.login || loading.models.user,
 }))
 export default class KdiSenderCfg extends SimpleMng {
   constructor() {
@@ -21,7 +22,6 @@ export default class KdiSenderCfg extends SimpleMng {
     // let {user} =this.props
     // let organizeId=user.currentUser.organizeId
     //这里连调的时候先写死organizeId
-    console.log("2222222222222222222222222");
     let organizeId = 253274870;
     this.props.dispatch({
       type: `${this.moduleCode}/list`,
@@ -52,19 +52,16 @@ export default class KdiSenderCfg extends SimpleMng {
 
   render() {
     const { kdisender: { kdisender }, loading, user } = this.props;
-    console.log(this.props);
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
     //  const organizeId=user.currentUser.organizeId; 不是连调的时候应该把这里放开获取动态的organizeId
     const organizeId = 253274870;
     editFormRecord.organizeId = organizeId;
     let kdisenderData;
-    if(!Array.isArray(kdisender)){
-      kdisenderData=[];
-    }else{
-      kdisenderData=kdisender;
+    if (!Array.isArray(kdisender)) {
+      kdisenderData = [];
+    } else {
+      kdisenderData = kdisender;
     }
- 
-    
 
     const columns = [
       {
