@@ -100,14 +100,19 @@ class BasicLayout extends React.PureComponent {
     };
   }
   componentDidMount() {
+    const { currentUser } = this.props;
     this.enquireHandler = enquireScreen(mobile => {
       this.setState({
         isMobile: mobile,
       });
     });
-    this.props.dispatch({
-      type: 'user/fetchCurrent',
-    });
+    console.log(currentUser);
+
+    if (Object.keys(currentUser).length === 0) {
+      this.props.dispatch({
+        type: 'user/fetchCurrent',
+      });
+    }
   }
   componentWillUnmount() {
     unenquireScreen(this.enquireHandler);
@@ -115,7 +120,7 @@ class BasicLayout extends React.PureComponent {
   getPageTitle() {
     const { routerData, location } = this.props;
     const { pathname } = location;
-    let title = 'Ant Design Pro';
+    let title = '大卖后台管理';
     let currRouterData = null;
     // match params path
     Object.keys(routerData).forEach(key => {
@@ -124,7 +129,7 @@ class BasicLayout extends React.PureComponent {
       }
     });
     if (currRouterData && currRouterData.name) {
-      title = `${currRouterData.name} - Ant Design Pro`;
+      title = `${currRouterData.name} - 大卖后台管理`;
     }
     return title;
   }
@@ -181,6 +186,8 @@ class BasicLayout extends React.PureComponent {
   };
   render() {
     const { currentUser, collapsed, fetchingNotices, notices, routerData, match, location } = this.props;
+    console.log(currentUser);
+
     const bashRedirect = this.getBaseRedirect();
     const layout = (
       <Layout>

@@ -1,4 +1,5 @@
-import { query as queryUsers, queryCurrent } from '../services/user';
+import { query as queryUsers } from '../services/user';
+import { queryCurrent } from '../services/pfmlogin';
 
 export default {
   namespace: 'user',
@@ -33,12 +34,16 @@ export default {
       };
     },
     saveCurrentUser(state, action) {
+      console.log(action.payload);
+
       return {
         ...state,
         currentUser: action.payload,
       };
     },
     changeNotifyCount(state, action) {
+      console.log(state);
+
       return {
         ...state,
         currentUser: {

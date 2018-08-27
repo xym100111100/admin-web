@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import CryptoJS from 'crypto-js';
 import { Checkbox, Alert } from 'antd';
@@ -11,7 +11,7 @@ const { Tab, UserName, Password, Submit } = Login;
   login,
   submitting: loading.effects['login/login'],
 }))
-export default class LoginPage extends Component {
+export default class LoginPage extends PureComponent {
   state = {
     type: 'account',
     autoLogin: true,
@@ -30,6 +30,7 @@ export default class LoginPage extends Component {
         type: 'login/login',
         payload: {
           ...tempValues,
+          sysId: 'damai-admin',
           type,
         },
       });
@@ -69,10 +70,9 @@ export default class LoginPage extends Component {
       <div className={styles.main}>
         <Login defaultActiveKey={type} onTabChange={this.onTabChange} onSubmit={this.handleSubmit}>
           <Tab key="account" tab="账户密码登录">
-            {login.status === -1 && !submitting && this.renderMessage(login.msg)}
+            {login.status !== 1 && login.type === 'account' && !submitting && this.renderMessage(login.msg)}
             <UserName name="userName" placeholder="email/手机号/登录名称" {...userNameRules} />
             <Password name="loginPswd" placeholder="登录密码" {...loginPswdRules} />
-            <input name="appId" type="hidden" />
           </Tab>
           <div>
             <Checkbox checked={this.state.autoLogin} onChange={this.changeAutoLogin}>

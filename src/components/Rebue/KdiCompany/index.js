@@ -22,16 +22,13 @@ export default class KdiCompany extends PureComponent {
       type: `kdicompany/list`,
       payload: { organizeId: organizeId },
     });
-    
   }
 
-  componentWillMount(){
-    if(this.props.getShipper!=undefined){
-      this.props.getShipper(this)
+  componentWillMount() {
+    if (this.props.getShipper != undefined) {
+      this.props.getShipper(this);
     }
   }
-
-
 
   render() {
     const { kdicompany: { kdicompany }, width } = this.props;

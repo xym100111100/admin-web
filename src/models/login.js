@@ -1,5 +1,5 @@
 import { routerRedux } from 'dva/router';
-import { fakeAccountLogin } from '../services/suc';
+import { login } from '../services/pfmlogin';
 import { setAuthority } from '../utils/authority';
 import { reloadAuthorized } from '../utils/Authorized';
 
@@ -12,19 +12,23 @@ export default {
 
   effects: {
     *login({ payload }, { call, put }) {
-      const response = yield call(fakeAccountLogin, payload);
-      let status = false;
-      if (response.result === 1) {
-        status = true;
-      }
+      const response = yield call(login, payload);
+      const { result: status, msg, userId, orgId, nickname } = response;
+      const currentUser = { userId, orgId, nickname };
+
       yield put({
         type: 'changeLoginStatus',
-        payload: { status, msg: response.msg, currentAuthority: 'admin' },
+        payload: { status, msg, type: payload.type, currentAuthority: 'admin' },
       });
 
       // Login successfully
-      if (response.result === 1) {
+      if (status === 1) {
         reloadAuthorized();
+        yield put({
+          type: 'user/saveCurrentUser',
+          payload: currentUser,
+        });
+
         yield put(routerRedux.push('/'));
       }
     },
@@ -52,12 +56,13 @@ export default {
 
   reducers: {
     changeLoginStatus(state, { payload }) {
-      setAuthority(payload.currentAuthority);
+      const { status, msg, type, currentAuthority } = payload;
+      setAuthority(currentAuthority);
       return {
         ...state,
-        status: payload.status,
-        msg: payload.msg,
-        // type: payload.type,
+        type,
+        status,
+        msg,
       };
     },
   },
