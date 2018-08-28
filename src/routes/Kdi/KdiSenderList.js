@@ -33,7 +33,6 @@ export default class KdiSenderList extends PureComponent {
         data.forEach((item, index) => {
           item.senderaddr = [item.senderProvince, item.senderCity, item.senderExpArea];
         });
-        console.info(data);
         this.state.data = data;
         this.setState(this.state);
       },
@@ -42,7 +41,6 @@ export default class KdiSenderList extends PureComponent {
 
   setDefaulSender = item => {
     const payload = item;
-    console.info(payload);
     this.props.dispatch({
       type: 'kdisender/setDefaultSender',
       payload,
@@ -54,23 +52,25 @@ export default class KdiSenderList extends PureComponent {
   };
 
   onChange = e => {
-    console.info(e.target.value);
     this.setState({
       value: e.target.value,
     });
     this.selectRow(e.target.value);
-    console.info(this.state.value);
   };
 
   selectRow = record => {
     const payload = record;
-    console.info(this.props);
     // 刷新寄件人信息
     this.props.dispatch({
       type: `kdisender/selectSender`,
       payload,
     });
   };
+
+  /**
+   * 这里只是为了页面不出现警告
+   */
+  handleInfiniteOnLoad = () => {};
 
   render() {
     const tips = this.state.data.length > 0 ? `` : `请设置常用联系人➔`;
@@ -93,6 +93,7 @@ export default class KdiSenderList extends PureComponent {
       >
         <div className={styles.senderList}>
           <InfiniteScroll
+            loadMore={this.handleInfiniteOnLoad}
             initialLoad={false}
             pageStart={0}
             hasMore={!this.state.loading && this.state.hasMore}

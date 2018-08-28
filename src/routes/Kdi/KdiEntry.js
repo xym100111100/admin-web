@@ -73,7 +73,6 @@ export default class KdiEntry extends SimpleMng {
         fieldsValue.receiverCity = receiverProvinceInfo[1];
         fieldsValue.receiverExpArea = receiverProvinceInfo[2];
       }
-      console.log(fieldsValue);
 
       this.props.dispatch({
         type: `${this.moduleCode}/add`,

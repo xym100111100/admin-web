@@ -15,7 +15,6 @@ export default {
         type: 'changeList',
         payload: response,
       });
-      console.info(response);
       if (callback) callback(response);
     },
     *getById({ payload, callback }, { call }) {

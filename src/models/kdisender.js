@@ -38,7 +38,7 @@ export default {
 
     *getDefaultSender({ payload, callback }, { call, put }) {
       const response = yield call(getDefaultSender, payload);
-      if (response!=undefined) {
+      if (response != undefined) {
         response.senderaddr = [response.senderProvince, response.senderCity, response.senderExpArea];
       }
       yield put({
@@ -49,26 +49,15 @@ export default {
     },
 
     *listSenderByOrgId({ payload, callback }, { call, put }) {
-      console.info(payload);
       const response = yield call(listSenderByOrgId, payload);
-      console.info(response);
-      // yield put({
-      //   type: 'changeList',
-      //   payload: response,
-      // });
       if (callback) callback(response);
     },
 
     *alllist({ payload, callback }, { call, put }) {
       const response = yield call(alllist, payload);
-      // yield put({
-      //   type: 'changeList',
-      //   payload: response,
-      // });
       if (callback) callback(response);
     },
     *selectSender({ payload, callback }, { call, put }) {
-      console.info(payload);
       yield put({
         type: 'changeList',
         payload: payload,

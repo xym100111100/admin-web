@@ -88,7 +88,6 @@ export function getDefaultSender(req, res) {
 
 export function modifyDefaultSender(req, res, u, b) {
   const body = (b && b.body) || req.body;
-  console.info(body);
   const replacedIndex = tableListDataSource.findIndex(item => item.id === body.id);
   if (replacedIndex !== -1) {
     tableListDataSource.splice(replacedIndex, 1, body);
@@ -128,7 +127,6 @@ export function kdisenderGetById(req, res, u) {
 
 export function addKdiSender(req, res, u, b) {
   const body = (b && b.body) || req.body;
-  console.info(body);
   if (Math.random() >= 0.495) {
     // body.id = tableListDataSource.length + 1;
     tableListDataSource.push(body);

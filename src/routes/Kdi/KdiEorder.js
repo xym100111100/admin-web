@@ -7,8 +7,6 @@ import ReceiverInfoForm from './ReceiverInfoForm';
 import KdiSenderList from './KdiSenderList';
 import KdiCompany from 'components/Kdi/KdiCompany';
 
-
-
 @connect(({ kdieorder, kdisender, user, loading }) => ({
   kdieorder,
   kdisender,
@@ -17,7 +15,6 @@ import KdiCompany from 'components/Kdi/KdiCompany';
 }))
 @Form.create()
 export default class KdiEorder extends PureComponent {
-  
   constructor() {
     super();
     this.moduleCode = 'kdieorder';
@@ -65,7 +62,7 @@ export default class KdiEorder extends PureComponent {
     // 刷新
     this.props.dispatch({
       type: `kdisender/getDefaultSender`,
-      payload:{orgId:orgId},
+      payload: { orgId: orgId },
     });
   }
 
@@ -85,7 +82,6 @@ export default class KdiEorder extends PureComponent {
     const { user } = this.props;
     //  let orgId = user.currentUser.orgId; 使用联调的时候使用假的orgId
     let orgId = 13164165415;
-    console.info(orgId);
     this.props.form.validateFields((err, values) => {
       if (err) return;
       let eorderParam = {
@@ -102,21 +98,18 @@ export default class KdiEorder extends PureComponent {
       this.SenderInfo.componentDidMount;
       this.ReceiverInfo.componentDidMount;
       this.SenderInfo.props.form.validateFields((err, sendervalues) => {
-        console.info(eorderParam);
         if (err) return;
         sendervalues.senderProvince = sendervalues.senderaddr[0];
         sendervalues.senderCity = sendervalues.senderaddr[1];
         sendervalues.senderExpArea = sendervalues.senderaddr[2];
         // eorderParam = { ...sendervalues };
         Object.assign(eorderParam, sendervalues);
-        console.info(eorderParam);
         this.ReceiverInfo.props.form.validateFields((err, receivervalues) => {
           if (err) return;
           receivervalues.receiverProvince = receivervalues.receiverProvince[0];
           receivervalues.receiverCity = receivervalues.receiverProvince[1];
           receivervalues.receiverExpArea = receivervalues.receiverProvince[2];
           Object.assign(eorderParam, receivervalues);
-          console.info(eorderParam);
           let printWindow;
           let newTimeStamp;
 
@@ -139,7 +132,6 @@ export default class KdiEorder extends PureComponent {
   };
 
   render() {
-    console.info(this);
     const { form } = this.props;
     const record = this.state.record;
     return (

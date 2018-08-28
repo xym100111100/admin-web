@@ -55,7 +55,6 @@ export async function setDefaultSender(params) {
 }
 
 export async function addSender(params) {
-  console.info(params);
   return request('/kdi-svr/kdi/sender/add', {
     method: 'POST',
     body: {

@@ -83,7 +83,6 @@ export default class KdiLogistic extends SimpleMng {
         fieldsValue.orderTimeStart = fieldsValue.orderTime[0].format('YYYY-MM-DD HH:mm:ss');
         fieldsValue.orderTime = undefined;
       }
-      // console.log(fieldsValue);
       this.props.dispatch({
         type: `${this.moduleCode}/list`,
         payload: fieldsValue,
