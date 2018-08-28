@@ -2,7 +2,7 @@ import React, { Fragment, PureComponent } from 'react';
 import { Form, Input } from 'antd';
 import { connect } from 'dva';
 import EditForm from 'components/Rebue/EditForm';
-import AddrCascader from 'components/Rebue/AddrCascader';
+import AddrCascader from 'components/Kdi/AddrCascader';
 const FormItem = Form.Item;
 
 // 添加与编辑的表单

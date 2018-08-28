@@ -75,13 +75,13 @@ export default class KdiEntry extends SimpleMng {
       }
       console.log(fieldsValue);
 
-      // this.props.dispatch({
-      //   type: `${this.moduleCode}/add`,
-      //   payload: { ...fieldsValue },
-      //   callback: () => {
-      //     this.handleReload();
-      //   },
-      // });
+      this.props.dispatch({
+        type: `${this.moduleCode}/add`,
+        payload: { ...fieldsValue },
+        callback: () => {
+          this.handleReload();
+        },
+      });
     });
   };
 
@@ -274,7 +274,7 @@ export default class KdiEntry extends SimpleMng {
     const { kdientry: { kdientry }, loading } = this.props;
     return (
       <PageHeaderLayout title="快递单录入">
-        <div id="dd" style={{ background: 'white' }} className={styles.tableListForm}>
+        <div style={{ background: 'white' }} className={styles.tableListForm}>
           {this.renderSearchForm()}
         </div>
       </PageHeaderLayout>
