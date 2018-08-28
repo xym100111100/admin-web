@@ -1,6 +1,6 @@
 import React, { Fragment, PureComponent } from 'react';
 import { Row, Col, Form, Input, Button } from 'antd';
-import AddrCascader from 'components/Rebue/AddrCascader';
+import AddrCascader from 'components/Kdi/AddrCascader';
 import { connect } from 'dva';
 import styles from './KdiEorder.less';
 

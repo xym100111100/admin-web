@@ -4,9 +4,9 @@ import { connect } from 'dva';
 import { Form, Input, Button, Row, Col, Divider } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './KdiEntry.less';
-import AddrCascader from 'components/Rebue/AddrCascader';
-import KdiCompany from 'components/Rebue/KdiCompany';
-import AddrRanalysis from 'components/Rebue/AddrRanalysis';
+import AddrCascader from 'components/Kdi/AddrCascader';
+import KdiCompany from 'components/Kdi/KdiCompany';
+import AddrRanalysis from 'components/Kdi/AddrRanalysis';
 
 const FormItem = Form.Item;
 @connect(({ kdientry, user, loading }) => ({ kdientry, user, loading: loading.models.kdientry || loading.models.user }))

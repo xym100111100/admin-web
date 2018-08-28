@@ -9,6 +9,10 @@ export async function alllist(params) {
   return request(`/kdi-svr/kdi/sender/alllist`);
 }
 
+export async function listSenderByOrgId(params) {
+  return request(`/kdi-svr/kdi/sender/listSenderByOrgId?${stringify(params)}`);
+}
+
 export async function getById(params) {
   return request(`/kdi-svr/kdi/sender/getbyid?${stringify(params)}`);
 }

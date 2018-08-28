@@ -5,7 +5,9 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import SenderInfoForm from './SenderInfoForm';
 import ReceiverInfoForm from './ReceiverInfoForm';
 import KdiSenderList from './KdiSenderList';
-import KdiCompany from 'components/Rebue/KdiCompany';
+import KdiCompany from 'components/Kdi/KdiCompany';
+
+
 
 @connect(({ kdieorder, kdisender, user, loading }) => ({
   kdieorder,
@@ -15,6 +17,7 @@ import KdiCompany from 'components/Rebue/KdiCompany';
 }))
 @Form.create()
 export default class KdiEorder extends PureComponent {
+  
   constructor() {
     super();
     this.moduleCode = 'kdieorder';
@@ -27,7 +30,7 @@ export default class KdiEorder extends PureComponent {
   };
 
   componentDidMount() {
-    this.handleReload();
+    this.getDefaultSender();
   }
 
   getSender = ref => {
@@ -55,15 +58,14 @@ export default class KdiEorder extends PureComponent {
   }
 
   // 获取默认发件人
-  handleReload(params) {
-    if (params) {
-      this.state.options = params;
-    }
-    const payload = this.state;
+  getDefaultSender() {
+    const { user } = this.props;
+    // let orgId = user.currentUser.orgId;
+    let orgId = '253274870';
     // 刷新
     this.props.dispatch({
       type: `kdisender/getDefaultSender`,
-      payload,
+      payload:{orgId:orgId},
     });
   }
 
@@ -93,7 +95,6 @@ export default class KdiEorder extends PureComponent {
         orderId: this.state.orderId,
         orgId: orgId,
       };
-      console.info(eorderParam.orderId);
       let shipperInfo = values.shipperName.split('/');
       eorderParam.shipperId = shipperInfo[0];
       eorderParam.shipperName = shipperInfo[1];

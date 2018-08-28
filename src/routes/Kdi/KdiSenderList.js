@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react';
-import { List, Avatar, Radio, Spin, Button,Card ,Tooltip,Icon} from 'antd';
+import { List, Avatar, Radio, Spin, Button, Card, Tooltip, Icon } from 'antd';
 import InfiniteScroll from 'react-infinite-scroller';
 import { connect } from 'dva';
 const RadioGroup = Radio.Group;
 import styles from './SysMng.less';
 
-@connect(({ kdisender, loading }) => ({ kdisender, loading: loading.models.kdisender }))
+@connect(({ kdisender, user, loading }) => ({ kdisender, user, loading: loading.models.kdisender }))
 export default class KdiSenderList extends PureComponent {
     constructor() {
         super();
@@ -23,9 +23,12 @@ export default class KdiSenderList extends PureComponent {
     }
 
     handleReload() {
+        const { user } = this.props;
+        // let orgId = user.currentUser.orgId;
+        let orgId = '253274870';
         this.props.dispatch({
-            type: `kdisender/alllist`,
-            payload: {},
+            type: `kdisender/listSenderByOrgId`,
+            payload: {orgId:orgId},
             callback: data => {
                 data.forEach((item, index) => {
                     item.senderaddr = [item.senderProvince, item.senderCity, item.senderExpArea]
@@ -83,7 +86,7 @@ export default class KdiSenderList extends PureComponent {
     };
 
     selectRow = (record) => {
-        
+
         const payload = record;
         console.info(payload);
         // const selectedRowKeys = [...this.state.selectedRowKeys];
@@ -100,7 +103,7 @@ export default class KdiSenderList extends PureComponent {
     }
 
     render() {
-        const tips = this.state.data.length>0?``:`请设置常用联系人➔`;
+        const tips = this.state.data.length > 0 ? `` : `请设置常用联系人➔`;
         return (
             <Card title={'选择常用寄件人'} extra={<Tooltip><div style={{ color: 'red', marginTop: '-6px' }}>{tips}<Tooltip title="常用寄件人配置"> <a href='#/kdi/kdi-cfg/kdi-sender-cfg'>{<Icon type="setting" style={{ fontSize: 28, color: '#A8A8A8', marginTop: '0px' }} />}</a></Tooltip></div></Tooltip>}>
                 <div>
