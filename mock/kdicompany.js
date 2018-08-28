@@ -10,7 +10,7 @@ const tableListDataSource = [
     companyCode: '789',
     payType: 1,
     entryTime: '1995-03-16 12:45:52',
-    organizeId: '253274870',
+    orgId: '253274870',
     isDefault: false,
   },
   {
@@ -21,7 +21,7 @@ const tableListDataSource = [
     companyCode: '546884',
     payType: 4,
     entryTime: '1990-03-16 08:45:52',
-    organizeId: '253274870',
+    orgId: '253274870',
     isDefault: true,
   },
   {
@@ -32,7 +32,7 @@ const tableListDataSource = [
     companyCode: '78129',
     payType: 2,
     entryTime: '1995-01-16 17:45:52',
-    organizeId: '253274871',
+    orgId: '253274871',
   },
   {
     id: '4',
@@ -42,7 +42,7 @@ const tableListDataSource = [
     companyCode: '789310',
     payType: 3,
     entryTime: '1990-03-06 12:05:52',
-    organizeId: '253274871',
+    orgId: '253274871',
   },
 ];
 
@@ -52,7 +52,7 @@ export function kdicompanyList(req, res, u) {
     url = req.url; // eslint-disable-line
   }
   const params = parse(url, true).query;
-  const eo = tableListDataSource.filter(item => item.organizeId === params.organizeId);
+  const eo = tableListDataSource.filter(item => item.orgId === params.orgId);
   res.json(eo);
 }
 

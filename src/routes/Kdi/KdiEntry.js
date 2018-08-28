@@ -46,11 +46,11 @@ export default class KdiEntry extends SimpleMng {
     const { form } = this.props;
 
     //设置截取后的详细地址
-    //  const organizeId=user.currentUser.organizeId; 不是连调的时候应该把这里放开获取动态的organizeId(在上面的获取属性里面加user)
+    //  const orgId=user.currentUser.orgId; 不是连调的时候应该把这里放开获取动态的orgId(在上面的获取属性里面加user)
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       //添加组织ID
-      fieldsValue.organizeId = 253274870;
+      fieldsValue.orgId = 253274870;
       //这里其实传上来的shipperName中已经包含了shipperId和shipperCode，且用/隔开，所有这里要处理数据。
       let shipperInfo;
       if (fieldsValue.shipperName !== undefined) {

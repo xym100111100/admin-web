@@ -34,7 +34,7 @@ export default class CompanyForm extends PureComponent {
     return (
       <Fragment>
         {form.getFieldDecorator('id')(<Input type="hidden" />)}
-        {form.getFieldDecorator('organizeId')(<Input type="hidden" />)}
+        {form.getFieldDecorator('orgId')(<Input type="hidden" />)}
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="名称">
           {form.getFieldDecorator('companyName', {
             rules: [{ required: true, message: '请输入快递公司名称' }],

@@ -81,9 +81,9 @@ export default class KdiEorder extends PureComponent {
 
   kdiEorder = () => {
     const { user } = this.props;
-    //  let organizeId = user.currentUser.organizeId; 使用联调的时候使用假的organizeId
-    let organizeId = 13164165415;
-    console.info(organizeId);
+    //  let orgId = user.currentUser.orgId; 使用联调的时候使用假的orgId
+    let orgId = 13164165415;
+    console.info(orgId);
     this.props.form.validateFields((err, values) => {
       if (err) return;
       let eorderParam = {
@@ -91,7 +91,7 @@ export default class KdiEorder extends PureComponent {
         shipperName: undefined,
         shipperCode: undefined,
         orderId: this.state.orderId,
-        organizeId: organizeId,
+        orgId: orgId,
       };
       console.info(eorderParam.orderId);
       let shipperInfo = values.shipperName.split('/');
