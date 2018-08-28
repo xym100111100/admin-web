@@ -61,6 +61,21 @@ const tableListDataSource = [
     senderCity: '南宁市',
     senderExpArea: '西乡塘区',
   },
+  {
+    key: '3',
+    senderId: '1234556',
+    isDefault: '0',
+    senderName: '微薄利',
+    senderTel: '333333',
+    senderMobile: '4516135846',
+    senderPostCode: '530000',
+    senderaddr: ['广西壮族自治区', '南宁市', '西乡塘区'],
+    senderAddress: '华尔街工谷',
+    orgId: 253274870,
+    senderProvince: '广西壮族自治区',
+    senderCity: '南宁市',
+    senderExpArea: '西乡塘区',
+  },
 ];
 
 export function kdiSenderList(req, res) {
@@ -68,7 +83,6 @@ export function kdiSenderList(req, res) {
 }
 
 export function getDefaultSender(req, res) {
-  console.info('7777');
   res.json(tableListDataSource[0]);
 }
 

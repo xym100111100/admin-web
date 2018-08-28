@@ -3,8 +3,7 @@ import React from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Input, Select, Button, Table, DatePicker } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import SysForm from './SysForm';
-import styles from './SysMng.less';
+import styles from './KdiLogistic.less';
 
 const { Option } = Select;
 const FormItem = Form.Item;
@@ -261,16 +260,6 @@ export default class KdiLogistic extends SimpleMng {
             />
           </div>
         </Card>
-        {editForm === 'sysForm' && (
-          <SysForm
-            visible
-            title={editFormTitle}
-            editFormType={editFormType}
-            record={editFormRecord}
-            closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields => this.handleSave(fields)}
-          />
-        )}
       </PageHeaderLayout>
     );
   }
