@@ -38,8 +38,9 @@ export default {
 
     *getDefaultSender({ payload, callback }, { call, put }) {
       const response = yield call(getDefaultSender, payload);
-      console.info(payload);
-      response.senderaddr = [response.senderProvince, response.senderCity, response.senderExpArea];
+      if (response!=undefined) {
+        response.senderaddr = [response.senderProvince, response.senderCity, response.senderExpArea];
+      }
       yield put({
         type: 'changeList',
         payload: response,
