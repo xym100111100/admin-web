@@ -1,4 +1,5 @@
 import mockjs from 'mockjs';
+import { getMenuData } from './mock/menu';
 import { pfmsysList, pfmsysGetById, pfmsysAdd, pfmsysModify, pfmsysDel } from './mock/pfmsys';
 import {
   kdilogisticList,
@@ -188,12 +189,13 @@ const proxy = {
   'POST /suc-svr/suc/org': sucUserOrgAdd,
   'PUT /suc-svr/suc/org': sucUserOrgModify,
   // pfmsuc
-  'POST /suc-svr/user/login/by/user/name': (req, res) => {
+  'POST /pfm-svr/user/login/by/user/name': (req, res) => {
     const { loginPswd, userName, type } = req.body;
     if (loginPswd === '21218cca77804d2ba1922c33e0151105' && userName === 'admin') {
       res.send({
         result: 1,
         msg: '登录成功',
+        menus: getMenuData(),
       });
       return;
     }
@@ -203,7 +205,7 @@ const proxy = {
     });
   },
   // 支持值为 Object 和 Array
-  'GET /api/currentUser': {
+  'GET /pfm-svr/user/currentUser': {
     $desc: '获取当前用户接口',
     $params: {
       pageSize: {
@@ -212,11 +214,12 @@ const proxy = {
       },
     },
     $body: {
-      name: 'Serati Ma',
-      avatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
-      userid: '00000001',
+      userId: '00000001',
+      nickname: 'Serati Ma',
+      face: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
       notifyCount: 12,
-      orgId: 4513464,
+      orgId: '4513464',
+      menus: getMenuData(),
     },
   },
   // GET POST 可省略

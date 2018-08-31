@@ -1,5 +1,6 @@
 import { query as queryUsers } from '../services/user';
 import { queryCurrent } from '../services/pfmlogin';
+import TreeUtils from '../utils/TreeUtils';
 
 export default {
   namespace: 'user',
@@ -7,6 +8,8 @@ export default {
   state: {
     list: [],
     currentUser: {},
+    urns: [],
+    menus: [],
   },
 
   effects: {
@@ -34,16 +37,15 @@ export default {
       };
     },
     saveCurrentUser(state, action) {
-      console.log(action.payload);
-
+      const { menus, urns, ...currentUser } = action.payload;
       return {
         ...state,
-        currentUser: action.payload,
+        currentUser,
+        urns,
+        menus: TreeUtils.convertFlatToTree(menus),
       };
     },
     changeNotifyCount(state, action) {
-      console.log(state);
-
       return {
         ...state,
         currentUser: {

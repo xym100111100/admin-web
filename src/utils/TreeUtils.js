@@ -5,7 +5,9 @@ import ArrayUtils from './ArrayUtils';
 const { TreeNode } = Tree;
 
 export default class TreeUtils {
-  // 渲染AntDesign的Tree控件的节点
+  /**
+   * 渲染AntDesign的Tree控件的节点
+   */
   static renderTreeNodes(treeData) {
     if (treeData.length > 0) {
       let treeNode;
@@ -37,7 +39,38 @@ export default class TreeUtils {
     }
   }
 
-  // 通过ID查找元素
+  /**
+   * 转换flat的数组成为AntDesign的Tree结构
+   */
+  static convertFlatToTree(flatArray) {
+    const result = [];
+    flatArray.forEach(item => {
+      const { code } = item;
+      const { length } = code;
+      if (length === 2) {
+        result.push(item);
+        // } else if (length === 4) {
+        //   const index = getIndexAtLevel(code, 1);
+        //   if (!result[index].children) result[index].children = [];
+        //   result[index].children.push(item);
+      } else {
+        const count = length / 2;
+        let sEval = `result[${getIndexAtLevel(code, 1)}]`;
+        for (let level = 2; level < count; level++) {
+          const index = getIndexAtLevel(code, level);
+          sEval += `.children[${index}]`;
+        }
+        sEval += `.children`;
+        eval(`if (!${sEval}) ${sEval}=[];`);
+        eval(`${sEval}.push(item);`);
+      }
+    });
+    return result;
+  }
+
+  /**
+   * 通过ID查找元素
+   */
   static findById(treeList, findId) {
     for (const item of treeList) {
       if (item.id && item.id === findId) return item;
@@ -49,9 +82,11 @@ export default class TreeUtils {
     return undefined;
   }
 
-  // 通过ID删除元素
+  /**
+   * 通过ID删除元素
+   */
   static delById(treeList, findId) {
-    const result = delById1(treeList, findId);
+    const result = delById0(treeList, findId);
     if (result) {
       if (result instanceof Object) {
         ArrayUtils.delById(treeList, findId);
@@ -62,14 +97,26 @@ export default class TreeUtils {
   }
 }
 
-// 递归删除的内部函数
-function delById1(treeList, findId) {
+/**
+ * 得到在第几级上的索引
+ * @param {*} code 树编码
+ * @param {*} level 第几级(1..n)
+ * @param {*} levelLength 第一级的长度，默认为2
+ */
+function getIndexAtLevel(code, level, levelLength = 2) {
+  return code.substr((level - 1) * 2, levelLength) - 0;
+}
+
+/**
+ * 递归删除的内部函数
+ */
+function delById0(treeList, findId) {
   for (const item of treeList) {
     if (item.id && item.id === findId) {
       return item;
     }
     if (item.children) {
-      const result = delById1(item.children, findId);
+      const result = delById0(item.children, findId);
       if (result) {
         if (result instanceof Object) {
           ArrayUtils.delById(item.children, findId);

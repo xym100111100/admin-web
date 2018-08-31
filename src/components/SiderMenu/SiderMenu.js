@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Layout, Menu, Icon } from 'antd';
+import { Layout, Menu, Icon, Spin } from 'antd';
 import pathToRegexp from 'path-to-regexp';
 import { Link } from 'dva/router';
 import styles from './index.less';
@@ -186,7 +186,7 @@ export default class SiderMenu extends PureComponent {
     });
   };
   render() {
-    const { logo, collapsed, onCollapse } = this.props;
+    const { logo, collapsed, onCollapse, menuData } = this.props;
     const { openKeys } = this.state;
     // Don't show popup menu when it is been collapsed
     const menuProps = collapsed
@@ -215,6 +215,7 @@ export default class SiderMenu extends PureComponent {
             <h1>大卖-后台管理</h1>
           </Link>
         </div>
+        {/* <Spin spinning={menuData.length === 0}> */}
         <Menu
           key="Menu"
           theme="dark"
@@ -226,6 +227,7 @@ export default class SiderMenu extends PureComponent {
         >
           {this.getNavMenuItems(this.menus)}
         </Menu>
+        {/* </Spin> */}
       </Sider>
     );
   }

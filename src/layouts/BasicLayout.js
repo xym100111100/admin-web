@@ -21,9 +21,31 @@ const { Content, Header, Footer } = Layout;
 const { AuthorizedRoute, check } = Authorized;
 
 /**
+ * 获取面包屑映射
+ * @param {Object} menuData 菜单配置
+ * @param {Object} routerData 路由配置
+ */
+const getBreadcrumbNameMap = (menuData, routerData) => {
+  const result = {};
+  const childResult = {};
+  if (menuData) {
+    for (const i of menuData) {
+      if (!routerData[i.path]) {
+        result[i.path] = i;
+      }
+      if (i.children) {
+        Object.assign(childResult, getBreadcrumbNameMap(i.children, routerData));
+      }
+    }
+  }
+  return Object.assign({}, routerData, result, childResult);
+};
+
+/**
  * 根据菜单取得重定向地址.
  */
 const redirectData = [];
+// let menus;
 const getRedirect = item => {
   if (item && item.children) {
     if (item.children[0] && item.children[0].path) {
@@ -36,26 +58,6 @@ const getRedirect = item => {
       });
     }
   }
-};
-getMenuData().forEach(getRedirect);
-
-/**
- * 获取面包屑映射
- * @param {Object} menuData 菜单配置
- * @param {Object} routerData 路由配置
- */
-const getBreadcrumbNameMap = (menuData, routerData) => {
-  const result = {};
-  const childResult = {};
-  for (const i of menuData) {
-    if (!routerData[i.path]) {
-      result[i.path] = i;
-    }
-    if (i.children) {
-      Object.assign(childResult, getBreadcrumbNameMap(i.children, routerData));
-    }
-  }
-  return Object.assign({}, routerData, result, childResult);
 };
 
 const query = {
@@ -93,26 +95,26 @@ class BasicLayout extends React.PureComponent {
     isMobile,
   };
   getChildContext() {
-    const { location, routerData } = this.props;
+    const { menuData, location, routerData } = this.props;
     return {
       location,
-      breadcrumbNameMap: getBreadcrumbNameMap(getMenuData(), routerData),
+      breadcrumbNameMap: getBreadcrumbNameMap(menuData, routerData),
     };
   }
-  componentDidMount() {
+  componentWillMount() {
     const { currentUser } = this.props;
-    this.enquireHandler = enquireScreen(mobile => {
-      this.setState({
-        isMobile: mobile,
-      });
-    });
-    console.log(currentUser);
-
     if (Object.keys(currentUser).length === 0) {
       this.props.dispatch({
         type: 'user/fetchCurrent',
       });
     }
+  }
+  componentDidMount() {
+    this.enquireHandler = enquireScreen(mobile => {
+      this.setState({
+        isMobile: mobile,
+      });
+    });
   }
   componentWillUnmount() {
     unenquireScreen(this.enquireHandler);
@@ -185,8 +187,13 @@ class BasicLayout extends React.PureComponent {
     }
   };
   render() {
-    const { currentUser, collapsed, fetchingNotices, notices, routerData, match, location } = this.props;
-    console.log(currentUser);
+    const { currentUser, menus, collapsed, fetchingNotices, notices, routerData, match, location } = this.props;
+
+    // 请求还没响应回来
+    if (Object.keys(currentUser).length === 0) return null;
+
+    const menuData = getMenuData(menus);
+    menuData.forEach(getRedirect);
 
     const bashRedirect = this.getBaseRedirect();
     const layout = (
@@ -197,7 +204,7 @@ class BasicLayout extends React.PureComponent {
           // If you do not have the Authorized parameter
           // you will be forced to jump to the 403 interface without permission
           Authorized={Authorized}
-          menuData={getMenuData()}
+          menuData={menuData}
           collapsed={collapsed}
           location={location}
           isMobile={this.state.isMobile}
@@ -220,7 +227,8 @@ class BasicLayout extends React.PureComponent {
           </Header>
           <Content style={{ margin: '24px 24px 0', height: '100%' }}>
             <Switch>
-              {redirectData.map(item => <Redirect key={item.from} exact from={item.from} to={item.to} />)}
+              {redirectData &&
+                redirectData.map(item => <Redirect key={item.from} exact from={item.from} to={item.to} />)}
               {getRoutes(match.path, routerData).map(item => (
                 <AuthorizedRoute
                   key={item.key}
@@ -278,6 +286,8 @@ class BasicLayout extends React.PureComponent {
 
 export default connect(({ user, global, loading }) => ({
   currentUser: user.currentUser,
+  urns: user.urns,
+  menus: user.menus,
   collapsed: global.collapsed,
   fetchingNotices: loading.effects['global/fetchNotices'],
   notices: global.notices,
