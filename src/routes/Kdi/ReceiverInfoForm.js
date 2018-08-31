@@ -1,9 +1,9 @@
 import React, { Fragment, PureComponent } from 'react';
 import { Form, Input, Button } from 'antd';
 import { connect } from 'dva';
-import AddrCascader from 'components/Rebue/AddrCascader';
+import AddrCascader from 'components/Kdi/AddrCascader';
 import styles from './KdiEorder.less';
-import AddrRanalysis from 'components/Rebue/AddrRanalysis';
+import AddrRanalysis from 'components/Kdi/AddrRanalysis';
 
 const FormItem = Form.Item;
 

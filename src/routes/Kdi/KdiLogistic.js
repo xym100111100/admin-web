@@ -3,8 +3,7 @@ import React from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Input, Select, Button, Table, DatePicker } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import SysForm from './SysForm';
-import styles from './SysMng.less';
+import styles from './KdiLogistic.less';
 
 const { Option } = Select;
 const FormItem = Form.Item;
@@ -24,10 +23,10 @@ export default class KdiLogistic extends SimpleMng {
   //初始化
   componentDidMount() {
     // let {user} =this.props
-    // let organizeId=user.currentUser.organizeId
-    //这里连调的时候先写死organizeId来给下面需要的地方用
+    // let orgId=user.currentUser.orgId
+    //这里连调的时候先写死orgId来给下面需要的地方用
     this.state.payloads = {
-      organizeId: 253274870,
+      orgId: 253274870,
       pageNum: this.state.options.pageNum,
       pageSize: this.state.options.pageSize,
     };
@@ -56,9 +55,9 @@ export default class KdiLogistic extends SimpleMng {
   //点击submit查询
   list = () => {
     // let {user} =this.props
-    // let organizeId=user.currentUser.organizeId
-    //这里连调的时候先写死organizeId
-    let organizeId = 253274870;
+    // let orgId=user.currentUser.orgId
+    //这里连调的时候先写死orgId
+    let orgId = 253274870;
     const { form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -77,14 +76,13 @@ export default class KdiLogistic extends SimpleMng {
       }
       fieldsValue.pageNum = this.state.options.pageNum;
       fieldsValue.pageSize = this.state.options.pageSize;
-      fieldsValue.organizeId = organizeId;
+      fieldsValue.orgId = orgId;
       //上传上来的时间是一个数组，需要格式化
       if (fieldsValue.orderTime !== undefined && fieldsValue.orderTime !== '' && fieldsValue.orderTime.length >= 1) {
         fieldsValue.orderTimeEnd = fieldsValue.orderTime[1].format('YYYY-MM-DD HH:mm:ss');
         fieldsValue.orderTimeStart = fieldsValue.orderTime[0].format('YYYY-MM-DD HH:mm:ss');
         fieldsValue.orderTime = undefined;
       }
-      // console.log(fieldsValue);
       this.props.dispatch({
         type: `${this.moduleCode}/list`,
         payload: fieldsValue,
@@ -95,9 +93,9 @@ export default class KdiLogistic extends SimpleMng {
   //改变页数查询
   handleTableChange = pagination => {
     // let {user} =this.props
-    // let organizeId=user.currentUser.organizeId
-    //这里连调的时候先写死organizeId
-    let organizeId = 253274870;
+    // let orgId=user.currentUser.orgId
+    //这里连调的时候先写死orgId
+    let orgId = 253274870;
     const pager = { ...this.state.pagination };
     const { form } = this.props;
     pager.current = pagination.current;
@@ -124,7 +122,7 @@ export default class KdiLogistic extends SimpleMng {
       }
       fieldsValue.pageNum = pagination.current;
       fieldsValue.pageSize = pagination.pageSize;
-      fieldsValue.organizeId = organizeId;
+      fieldsValue.orgId = orgId;
       //上传上来的时间是一个数组，需要格式化
       if (fieldsValue.orderTime !== undefined && fieldsValue.orderTime !== '' && fieldsValue.orderTime.length >= 1) {
         fieldsValue.orderTimeEnd = fieldsValue.orderTime[1].format('YYYY-MM-DD HH:mm:ss');
@@ -261,16 +259,6 @@ export default class KdiLogistic extends SimpleMng {
             />
           </div>
         </Card>
-        {editForm === 'sysForm' && (
-          <SysForm
-            visible
-            title={editFormTitle}
-            editFormType={editFormType}
-            record={editFormRecord}
-            closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields => this.handleSave(fields)}
-          />
-        )}
       </PageHeaderLayout>
     );
   }

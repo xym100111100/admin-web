@@ -95,6 +95,7 @@ const proxy = {
   //kdisender
   'GET /kdi-svr/kdi/sender': kdiSenderList,
   'GET /kdi-svr/kdi/sender/alllist': kdiSenderList,
+  'GET /kdi-svr/kdi/sender/listSenderByOrgId': kdiSenderList,
   'GET /kdi-svr/kdi/sender/default': getDefaultSender,
   'GET /kdi-svr/kdi/sender/getbyid': kdisenderGetById,
   'POST /kdi-svr/kdi/sender': kdisenderAdd,

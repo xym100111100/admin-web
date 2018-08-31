@@ -5,7 +5,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import SenderInfoForm from './SenderInfoForm';
 import ReceiverInfoForm from './ReceiverInfoForm';
 import KdiSenderList from './KdiSenderList';
-import KdiCompany from 'components/Rebue/KdiCompany';
+import KdiCompany from 'components/Kdi/KdiCompany';
 
 @connect(({ kdieorder, kdisender, user, loading }) => ({
   kdieorder,
@@ -27,7 +27,7 @@ export default class KdiEorder extends PureComponent {
   };
 
   componentDidMount() {
-    this.handleReload();
+    this.getDefaultSender();
   }
 
   getSender = ref => {
@@ -55,15 +55,14 @@ export default class KdiEorder extends PureComponent {
   }
 
   // 获取默认发件人
-  handleReload(params) {
-    if (params) {
-      this.state.options = params;
-    }
-    const payload = this.state;
+  getDefaultSender() {
+    const { user } = this.props;
+    // let orgId = user.currentUser.orgId;
+    let orgId = '253274870';
     // 刷新
     this.props.dispatch({
       type: `kdisender/getDefaultSender`,
-      payload,
+      payload: { orgId: orgId },
     });
   }
 
@@ -81,9 +80,8 @@ export default class KdiEorder extends PureComponent {
 
   kdiEorder = () => {
     const { user } = this.props;
-    //  let organizeId = user.currentUser.organizeId; 使用联调的时候使用假的organizeId
-    let organizeId = 13164165415;
-    console.info(organizeId);
+    //  let orgId = user.currentUser.orgId; 使用联调的时候使用假的orgId
+    let orgId = 13164165415;
     this.props.form.validateFields((err, values) => {
       if (err) return;
       let eorderParam = {
@@ -91,9 +89,8 @@ export default class KdiEorder extends PureComponent {
         shipperName: undefined,
         shipperCode: undefined,
         orderId: this.state.orderId,
-        organizeId: organizeId,
+        orgId: orgId,
       };
-      console.info(eorderParam.orderId);
       let shipperInfo = values.shipperName.split('/');
       eorderParam.shipperId = shipperInfo[0];
       eorderParam.shipperName = shipperInfo[1];
@@ -101,21 +98,18 @@ export default class KdiEorder extends PureComponent {
       this.SenderInfo.componentDidMount;
       this.ReceiverInfo.componentDidMount;
       this.SenderInfo.props.form.validateFields((err, sendervalues) => {
-        console.info(eorderParam);
         if (err) return;
         sendervalues.senderProvince = sendervalues.senderaddr[0];
         sendervalues.senderCity = sendervalues.senderaddr[1];
         sendervalues.senderExpArea = sendervalues.senderaddr[2];
         // eorderParam = { ...sendervalues };
         Object.assign(eorderParam, sendervalues);
-        console.info(eorderParam);
         this.ReceiverInfo.props.form.validateFields((err, receivervalues) => {
           if (err) return;
           receivervalues.receiverProvince = receivervalues.receiverProvince[0];
           receivervalues.receiverCity = receivervalues.receiverProvince[1];
           receivervalues.receiverExpArea = receivervalues.receiverProvince[2];
           Object.assign(eorderParam, receivervalues);
-          console.info(eorderParam);
           let printWindow;
           let newTimeStamp;
 
@@ -138,7 +132,6 @@ export default class KdiEorder extends PureComponent {
   };
 
   render() {
-    console.info(this);
     const { form } = this.props;
     const record = this.state.record;
     return (

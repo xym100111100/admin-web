@@ -11,10 +11,10 @@ const tableListDataSource = [
     senderPostCode: '530000',
     senderaddr: ['广西壮族自治区', '南宁市', '西乡塘区'],
     senderAddress: '华尔街工谷',
-    organizeId: 253274870,
-    senderProvince:'广西壮族自治区',
-    senderCity:'南宁市',
-    senderExpArea:'西乡塘区'
+    orgId: 253274870,
+    senderProvince: '广西壮族自治区',
+    senderCity: '南宁市',
+    senderExpArea: '西乡塘区',
   },
   {
     key: '1',
@@ -26,10 +26,10 @@ const tableListDataSource = [
     senderPostCode: '530000',
     senderaddr: ['广西壮族自治区', '南宁市', '西乡塘区'],
     senderAddress: '华尔街工谷',
-    organizeId: 253274870,
-    senderProvince:'广西壮族自治区',
-    senderCity:'南宁市',
-    senderExpArea:'西乡塘区'
+    orgId: 253274870,
+    senderProvince: '广西壮族自治区',
+    senderCity: '南宁市',
+    senderExpArea: '西乡塘区',
   },
   {
     key: '2',
@@ -41,10 +41,10 @@ const tableListDataSource = [
     senderPostCode: '530000',
     senderaddr: ['广西壮族自治区', '南宁市', '西乡塘区'],
     senderAddress: '华尔街工谷',
-    organizeId: 253274870,
-    senderProvince:'广西壮族自治区',
-    senderCity:'南宁市',
-    senderExpArea:'西乡塘区'
+    orgId: 253274870,
+    senderProvince: '广西壮族自治区',
+    senderCity: '南宁市',
+    senderExpArea: '西乡塘区',
   },
   {
     key: '3',
@@ -56,10 +56,25 @@ const tableListDataSource = [
     senderPostCode: '530000',
     senderaddr: ['广西壮族自治区', '南宁市', '西乡塘区'],
     senderAddress: '华尔街工谷',
-    organizeId: 253274870,
-    senderProvince:'广西壮族自治区',
-    senderCity:'南宁市',
-    senderExpArea:'西乡塘区'
+    orgId: 253274870,
+    senderProvince: '广西壮族自治区',
+    senderCity: '南宁市',
+    senderExpArea: '西乡塘区',
+  },
+  {
+    key: '3',
+    senderId: '1234556',
+    isDefault: '0',
+    senderName: '微薄利',
+    senderTel: '333333',
+    senderMobile: '4516135846',
+    senderPostCode: '530000',
+    senderaddr: ['广西壮族自治区', '南宁市', '西乡塘区'],
+    senderAddress: '华尔街工谷',
+    orgId: 253274870,
+    senderProvince: '广西壮族自治区',
+    senderCity: '南宁市',
+    senderExpArea: '西乡塘区',
   },
 ];
 
@@ -68,13 +83,11 @@ export function kdiSenderList(req, res) {
 }
 
 export function getDefaultSender(req, res) {
-  console.info('7777');
   res.json(tableListDataSource[0]);
 }
 
 export function modifyDefaultSender(req, res, u, b) {
   const body = (b && b.body) || req.body;
-  console.info(body);
   const replacedIndex = tableListDataSource.findIndex(item => item.id === body.id);
   if (replacedIndex !== -1) {
     tableListDataSource.splice(replacedIndex, 1, body);
@@ -114,7 +127,6 @@ export function kdisenderGetById(req, res, u) {
 
 export function addKdiSender(req, res, u, b) {
   const body = (b && b.body) || req.body;
-  console.info(body);
   if (Math.random() >= 0.495) {
     // body.id = tableListDataSource.length + 1;
     tableListDataSource.push(body);

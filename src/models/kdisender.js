@@ -9,6 +9,7 @@ import {
   alllist,
   getDefaultSender,
   addSender,
+  listSenderByOrgId,
 } from '../services/kdisender';
 
 export default {
@@ -37,7 +38,9 @@ export default {
 
     *getDefaultSender({ payload, callback }, { call, put }) {
       const response = yield call(getDefaultSender, payload);
-      response.senderaddr = [response.senderProvince, response.senderCity, response.senderExpArea];
+      if (response != undefined) {
+        response.senderaddr = [response.senderProvince, response.senderCity, response.senderExpArea];
+      }
       yield put({
         type: 'changeList',
         payload: response,
@@ -45,16 +48,16 @@ export default {
       if (callback) callback(response);
     },
 
+    *listSenderByOrgId({ payload, callback }, { call, put }) {
+      const response = yield call(listSenderByOrgId, payload);
+      if (callback) callback(response);
+    },
+
     *alllist({ payload, callback }, { call, put }) {
       const response = yield call(alllist, payload);
-      // yield put({
-      //   type: 'changeList',
-      //   payload: response,
-      // });
       if (callback) callback(response);
     },
     *selectSender({ payload, callback }, { call, put }) {
-      console.info(payload);
       yield put({
         type: 'changeList',
         payload: payload,

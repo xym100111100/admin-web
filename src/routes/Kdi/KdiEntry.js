@@ -4,9 +4,9 @@ import { connect } from 'dva';
 import { Form, Input, Button, Row, Col, Divider } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './KdiEntry.less';
-import AddrCascader from 'components/Rebue/AddrCascader';
-import KdiCompany from 'components/Rebue/KdiCompany';
-import AddrRanalysis from 'components/Rebue/AddrRanalysis';
+import AddrCascader from 'components/Kdi/AddrCascader';
+import KdiCompany from 'components/Kdi/KdiCompany';
+import AddrRanalysis from 'components/Kdi/AddrRanalysis';
 
 const FormItem = Form.Item;
 @connect(({ kdientry, user, loading }) => ({ kdientry, user, loading: loading.models.kdientry || loading.models.user }))
@@ -46,11 +46,11 @@ export default class KdiEntry extends SimpleMng {
     const { form } = this.props;
 
     //设置截取后的详细地址
-    //  const organizeId=user.currentUser.organizeId; 不是连调的时候应该把这里放开获取动态的organizeId(在上面的获取属性里面加user)
+    //  const orgId=user.currentUser.orgId; 不是连调的时候应该把这里放开获取动态的orgId(在上面的获取属性里面加user)
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       //添加组织ID
-      fieldsValue.organizeId = 253274870;
+      fieldsValue.orgId = 253274870;
       //这里其实传上来的shipperName中已经包含了shipperId和shipperCode，且用/隔开，所有这里要处理数据。
       let shipperInfo;
       if (fieldsValue.shipperName !== undefined) {
@@ -73,15 +73,14 @@ export default class KdiEntry extends SimpleMng {
         fieldsValue.receiverCity = receiverProvinceInfo[1];
         fieldsValue.receiverExpArea = receiverProvinceInfo[2];
       }
-      console.log(fieldsValue);
 
-      // this.props.dispatch({
-      //   type: `${this.moduleCode}/add`,
-      //   payload: { ...fieldsValue },
-      //   callback: () => {
-      //     this.handleReload();
-      //   },
-      // });
+      this.props.dispatch({
+        type: `${this.moduleCode}/add`,
+        payload: { ...fieldsValue },
+        callback: () => {
+          this.handleReload();
+        },
+      });
     });
   };
 
@@ -274,7 +273,7 @@ export default class KdiEntry extends SimpleMng {
     const { kdientry: { kdientry }, loading } = this.props;
     return (
       <PageHeaderLayout title="快递单录入">
-        <div id="dd" style={{ background: 'white' }} className={styles.tableListForm}>
+        <div style={{ background: 'white' }} className={styles.tableListForm}>
           {this.renderSearchForm()}
         </div>
       </PageHeaderLayout>
