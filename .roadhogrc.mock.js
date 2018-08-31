@@ -216,7 +216,7 @@ const proxy = {
     },
     $body: {
       userId: '00000001',
-      nickname: 'Serati Ma',
+      nickname: '超级管理员',
       face: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
       notifyCount: 12,
       orgId: '4513464',
