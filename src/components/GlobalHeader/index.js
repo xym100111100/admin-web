@@ -56,6 +56,7 @@ export default class GlobalHeader extends PureComponent {
   }
   render() {
     const {
+      title,
       currentUser = {},
       collapsed,
       fetchingNotices,
@@ -93,6 +94,7 @@ export default class GlobalHeader extends PureComponent {
           <Divider type="vertical" key="line" />,
         ]}
         <Icon className={styles.trigger} type={collapsed ? 'menu-unfold' : 'menu-fold'} onClick={this.toggle} />
+        {title && <h1 className={styles.title}>{title}</h1>}
         <div className={styles.right}>
           <HeaderSearch
             className={`${styles.action} ${styles.search}`}

@@ -28,14 +28,17 @@ const { AuthorizedRoute, check } = Authorized;
 const getBreadcrumbNameMap = (menuData, routerData) => {
   const result = {};
   const childResult = {};
-  if (menuData) {
-    for (const i of menuData) {
-      if (!routerData[i.path]) {
-        result[i.path] = i;
-      }
-      if (i.children) {
-        Object.assign(childResult, getBreadcrumbNameMap(i.children, routerData));
-      }
+  for (const i of menuData) {
+    const router = routerData[i.path];
+    if (!router) {
+      result[i.path] = i;
+    }
+    if (i.children) {
+      Object.assign(childResult, getBreadcrumbNameMap(i.children, routerData));
+    }
+    // 不知道什么时候设置路由的名称，暂时在这里将菜单的名称设置给路由
+    if (router && !router.name) {
+      router.name = i.name;
     }
   }
   return Object.assign({}, routerData, result, childResult);
@@ -95,10 +98,13 @@ class BasicLayout extends React.PureComponent {
     isMobile,
   };
   getChildContext() {
-    const { menuData, location, routerData } = this.props;
+    const { menus, location, routerData } = this.props;
+    const menuData = getMenuData(menus);
+    const breadcrumbNameMap = getBreadcrumbNameMap(menuData, routerData);
+
     return {
       location,
-      breadcrumbNameMap: getBreadcrumbNameMap(menuData, routerData),
+      breadcrumbNameMap,
     };
   }
   componentWillMount() {
