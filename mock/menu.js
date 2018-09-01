@@ -186,6 +186,15 @@ menuData.push({
   path: 'role-mng',
 });
 menuData.push({
+  id: 316,
+  code: '0404',
+  sysId: 'damai-admin',
+  isEnabled: true,
+  remark: '脚本相关业务',
+  name: '脚本',
+  path: 'script-mng',
+});
+menuData.push({
   id: 21,
   code: '05',
   sysId: 'damai-admin',
@@ -474,6 +483,24 @@ menuData.push({
   remark: '注册结果相关业务',
   name: '注册结果',
   path: 'register-result',
+});
+menuData.push({
+  id: 52,
+  code: '12',
+  sysId: 'damai-admin',
+  isEnabled: true,
+  remark: '报表相关业务',
+  name: '报表管理',
+  path: 'rep',
+});
+menuData.push({
+  id: 53,
+  code: '1201',
+  sysId: 'damai-admin',
+  isEnabled: true,
+  remark: '报表相关业务',
+  name: '物流报表',
+  path: 'rep-logistic',
 });
 
 // export const getMenuData = () => menuData;

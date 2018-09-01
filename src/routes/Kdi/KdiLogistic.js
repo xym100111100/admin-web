@@ -185,12 +185,29 @@ export default class KdiLogistic extends SimpleMng {
 
   render() {
     const { kdilogistic: { kdilogistic }, loading } = this.props;
-    const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
+    let ps;
+    if (kdilogistic === undefined || kdilogistic.pageSize === undefined) {
+      ps = 5;
+    } else {
+      ps = kdilogistic.pageSize;
+    }
+    let tl;
+    if (kdilogistic === undefined || kdilogistic.total === undefined) {
+      tl = 1;
+    } else {
+      tl = Number(kdilogistic.total);
+    }
+    let kdilogisticData;
+    if (kdilogistic === undefined) {
+      kdilogisticData = [];
+    } else {
+      kdilogisticData = kdilogistic.list;
+    }
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      pageSize: kdilogistic.pageSize,
-      total: Number(kdilogistic.total),
+      pageSize: ps,
+      total: tl,
       pageSizeOptions: ['5', '10'],
     };
     const columns = [
@@ -248,7 +265,7 @@ export default class KdiLogistic extends SimpleMng {
               pagination={paginationProps}
               loading={loading}
               onChange={this.handleTableChange}
-              dataSource={kdilogistic.list}
+              dataSource={kdilogisticData}
               expandedRowRender={record => (
                 <p style={{ margin: 0 }}>
                   <span>{'寄件人:' + record.senderName}</span>
