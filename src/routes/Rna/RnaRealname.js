@@ -132,11 +132,25 @@ export default class RnaRealname extends SimpleMng {
   render() {
     const { rnarealname: { rnarealname }, loading } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
+    let ps;
+    if (rnarealname === undefined || rnarealname.pageSize === undefined) {
+      ps = 5;
+    } else {
+      ps = rnarealname.pageSize;
+    }
+    let tl;
+    if (rnarealname === undefined || rnarealname.total === undefined) {
+      tl = 1;
+    } else {
+      tl = Number(rnarealname.total);
+    }
+    let rnarealnameData;
+
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      pageSize: rnarealname.pageSize,
-      total: Number(rnarealname.total),
+      pageSize: ps,
+      total: tl,
       pageSizeOptions: ['5', '10'],
     };
 
@@ -196,7 +210,7 @@ export default class RnaRealname extends SimpleMng {
               pagination={paginationProps}
               loading={loading}
               onChange={this.handleTableChange}
-              dataSource={rnarealname.list}
+              dataSource={rnarealnameData}
               columns={columns}
             />
           </div>
