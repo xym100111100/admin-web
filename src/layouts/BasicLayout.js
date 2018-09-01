@@ -16,6 +16,7 @@ import { getRoutes } from '../utils/utils';
 import Authorized from '../utils/Authorized';
 import { getMenuData } from '../common/menu';
 import logo from '../assets/logo.svg';
+import TreeUtils from '../utils/TreeUtils';
 
 const { Content, Header, Footer } = Layout;
 const { AuthorizedRoute, check } = Authorized;
@@ -99,6 +100,7 @@ class BasicLayout extends React.PureComponent {
   };
   getChildContext() {
     const { menus, location, routerData } = this.props;
+
     const menuData = getMenuData(menus);
     const breadcrumbNameMap = getBreadcrumbNameMap(menuData, routerData);
 
@@ -201,6 +203,10 @@ class BasicLayout extends React.PureComponent {
     const menuData = getMenuData(menus);
     menuData.forEach(getRedirect);
 
+    const menu = TreeUtils.findByProp(menuData, 'path', location.pathname);
+
+    const title = menu ? menu.title : undefined;
+
     const bashRedirect = this.getBaseRedirect();
     const layout = (
       <Layout>
@@ -221,6 +227,7 @@ class BasicLayout extends React.PureComponent {
             <GlobalHeader
               logo={logo}
               currentUser={currentUser}
+              title={title}
               fetchingNotices={fetchingNotices}
               notices={notices}
               collapsed={collapsed}

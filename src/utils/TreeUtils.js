@@ -83,6 +83,24 @@ export default class TreeUtils {
   }
 
   /**
+   * 通过属性查找元素
+   *
+   * @param {[]} treeList 树形数据
+   * @param {string} propName 属性名
+   * @param {*} propVal 属性值
+   */
+  static findByProp(treeList, propName, propVal) {
+    for (const item of treeList) {
+      if (item[propName] && item[propName] === propVal) return item;
+      if (item.children) {
+        const result = TreeUtils.findByProp(item.children, propName, propVal);
+        if (result) return result;
+      }
+    }
+    return undefined;
+  }
+
+  /**
    * 通过ID删除元素
    */
   static delById(treeList, findId) {

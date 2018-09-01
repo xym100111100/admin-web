@@ -85,6 +85,9 @@ export default class GlobalHeader extends PureComponent {
       </Menu>
     );
     const noticeData = this.getNoticeData();
+    const { menuData, location, routerData } = this.props;
+    console.log(menuData, location, routerData);
+
     return (
       <div className={styles.header}>
         {isMobile && [
@@ -94,7 +97,7 @@ export default class GlobalHeader extends PureComponent {
           <Divider type="vertical" key="line" />,
         ]}
         <Icon className={styles.trigger} type={collapsed ? 'menu-unfold' : 'menu-fold'} onClick={this.toggle} />
-        {title && <h1 className={styles.title}>{title}</h1>}
+        {title && <label className={styles.title}>{title}</label>}
         <div className={styles.right}>
           <HeaderSearch
             className={`${styles.action} ${styles.search}`}
