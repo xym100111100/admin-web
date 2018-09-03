@@ -329,6 +329,10 @@ export default (noProxy
       'PUT /kdi-svr/(.*)': 'http://127.0.0.1:20080/',
       'POST /kdi-svr/(.*)': 'http://127.0.0.1:20080/',
       'DELETE /kdi-svr/(.*)': 'http://127.0.0.1:20080/',
+      'GET /onl-svr/(.*)': 'http://127.0.0.1:9100/',
+      'PUT /onl-svr/(.*)': 'http://127.0.0.1:9100/',
+      'POST /onl-svr/(.*)': 'http://127.0.0.1:9100/',
+      'DELETE /onl-svr/(.*)': 'http://127.0.0.1:9100/',
     }
   : delay(proxy));
 //  : delay(proxy, 1000));
