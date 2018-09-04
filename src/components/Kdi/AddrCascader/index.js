@@ -5110,6 +5110,6 @@ const options = [
 export default class AddrCascader extends PureComponent {
   render() {
     const { ...props } = this.props;
-    return <Cascader options={options} {...props} />;
+    return <Cascader placeholder="请选择省市区(县)" options={options} {...props} />;
   }
 }

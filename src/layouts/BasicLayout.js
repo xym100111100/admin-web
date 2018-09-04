@@ -16,6 +16,7 @@ import { getRoutes } from '../utils/utils';
 import Authorized from '../utils/Authorized';
 import { getMenuData } from '../common/menu';
 import logo from '../assets/logo.svg';
+import TreeUtils from '../utils/TreeUtils';
 
 const { Content, Header, Footer } = Layout;
 const { AuthorizedRoute, check } = Authorized;
@@ -28,14 +29,17 @@ const { AuthorizedRoute, check } = Authorized;
 const getBreadcrumbNameMap = (menuData, routerData) => {
   const result = {};
   const childResult = {};
-  if (menuData) {
-    for (const i of menuData) {
-      if (!routerData[i.path]) {
-        result[i.path] = i;
-      }
-      if (i.children) {
-        Object.assign(childResult, getBreadcrumbNameMap(i.children, routerData));
-      }
+  for (const i of menuData) {
+    const router = routerData[i.path];
+    if (!router) {
+      result[i.path] = i;
+    }
+    if (i.children) {
+      Object.assign(childResult, getBreadcrumbNameMap(i.children, routerData));
+    }
+    // 不知道什么时候设置路由的名称，暂时在这里将菜单的名称设置给路由
+    if (router && !router.name) {
+      router.name = i.name;
     }
   }
   return Object.assign({}, routerData, result, childResult);
@@ -95,10 +99,14 @@ class BasicLayout extends React.PureComponent {
     isMobile,
   };
   getChildContext() {
-    const { menuData, location, routerData } = this.props;
+    const { menus, location, routerData } = this.props;
+
+    const menuData = getMenuData(menus);
+    const breadcrumbNameMap = getBreadcrumbNameMap(menuData, routerData);
+
     return {
       location,
-      breadcrumbNameMap: getBreadcrumbNameMap(menuData, routerData),
+      breadcrumbNameMap,
     };
   }
   componentWillMount() {
@@ -195,6 +203,10 @@ class BasicLayout extends React.PureComponent {
     const menuData = getMenuData(menus);
     menuData.forEach(getRedirect);
 
+    const menu = TreeUtils.findByProp(menuData, 'path', location.pathname);
+
+    const title = menu ? menu.title : undefined;
+
     const bashRedirect = this.getBaseRedirect();
     const layout = (
       <Layout>
@@ -215,6 +227,7 @@ class BasicLayout extends React.PureComponent {
             <GlobalHeader
               logo={logo}
               currentUser={currentUser}
+              title={title}
               fetchingNotices={fetchingNotices}
               notices={notices}
               collapsed={collapsed}

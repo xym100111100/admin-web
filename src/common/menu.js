@@ -19,4 +19,7 @@ function formatter(data, parentPath = '/', parentAuthority) {
   });
 }
 
+/**
+ * 原数据库的菜单数据的path只是当前这一级的路径，所以需要转换成全路径的形式
+ */
 export const getMenuData = menuData => formatter(menuData);

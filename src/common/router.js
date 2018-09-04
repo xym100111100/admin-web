@@ -1,7 +1,6 @@
 import { createElement } from 'react';
 import dynamic from 'dva/dynamic';
 import pathToRegexp from 'path-to-regexp';
-import { getMenuData } from './menu';
 
 let routerDataCache;
 
@@ -68,6 +67,7 @@ function getFlatMenuData(menus) {
 
 export const getRouterData = app => {
   const routerConfig = {
+    // ****************** 业务路由 *******************
     '/rna/rna-realname': {
       component: dynamicWrapper(app, ['rnarealname'], () => import('../routes/Rna/RnaRealname')),
     },
@@ -107,6 +107,11 @@ export const getRouterData = app => {
         import('../routes/Pfm/FuncMng')
       ),
     },
+    '/pfm/script-mng': {
+      component: dynamicWrapper(app, ['kdicompany', 'pfmscript', 'user', 'pfmsys', 'pfmrole', 'pfmfunc'], () =>
+        import('../routes/Pfm/PfmScript')
+      ),
+    },
     '/pfm/role-mng': {
       component: dynamicWrapper(app, ['pfmsys', 'pfmrole', 'pfmroleacti', 'pfmfunc', 'sucuser', 'userrole'], () =>
         import('../routes/Pfm/RoleMng')
@@ -120,6 +125,8 @@ export const getRouterData = app => {
     '/suc/org-mng': {
       component: dynamicWrapper(app, ['sucuser', 'sucorg', 'sucuserorg'], () => import('../routes/Suc/OrgMng')),
     },
+
+    // ****************** 基础路由 ******************
     '/user': {
       component: dynamicWrapper(app, [], () => import('../layouts/UserLayout')),
     },
@@ -129,6 +136,8 @@ export const getRouterData = app => {
     '/': {
       component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),
     },
+
+    // ****************** Ant Design Pro原始示例 ******************
     '/dashboard/analysis': {
       component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
     },
@@ -236,6 +245,7 @@ export const getRouterData = app => {
       menuItem = menuData[menuKey];
     }
     let router = routerConfig[path];
+
     // If you need to configure complex parameter routing,
     // https://github.com/ant-design/ant-design-pro-site/blob/master/docs/router-and-nav.md#%E5%B8%A6%E5%8F%82%E6%95%B0%E7%9A%84%E8%B7%AF%E7%94%B1%E8%8F%9C%E5%8D%95
     // eg . /list/:type/user/info/:id
@@ -247,5 +257,6 @@ export const getRouterData = app => {
     };
     routerData[path] = router;
   });
+
   return routerData;
 };
