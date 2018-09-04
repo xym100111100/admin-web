@@ -11,12 +11,7 @@ export default {
   effects: {
     *getById({ payload, callback }, { call }) {
       const response = yield call(getById, payload);
-      if (response.result === 1) {
-        message.success(response.msg);
-        if (callback) callback(response);
-      } else {
-        message.error(response.msg);
-      }
+      if (callback) callback(response);
     },
     *add({ payload, callback }, { call }) {
       const response = yield call(add, payload);

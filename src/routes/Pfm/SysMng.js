@@ -46,7 +46,7 @@ export default class SysMng extends SimpleMng {
     ];
 
     return (
-      <PageHeaderLayout title="系统信息管理">
+      <PageHeaderLayout>
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListOperator}>

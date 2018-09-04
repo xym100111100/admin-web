@@ -85,8 +85,6 @@ export default class GlobalHeader extends PureComponent {
       </Menu>
     );
     const noticeData = this.getNoticeData();
-    const { menuData, location, routerData } = this.props;
-    console.log(menuData, location, routerData);
 
     return (
       <div className={styles.header}>
@@ -99,7 +97,7 @@ export default class GlobalHeader extends PureComponent {
         <Icon className={styles.trigger} type={collapsed ? 'menu-unfold' : 'menu-fold'} onClick={this.toggle} />
         {title && <label className={styles.title}>{title}</label>}
         <div className={styles.right}>
-          <HeaderSearch
+          {/* <HeaderSearch
             className={`${styles.action} ${styles.search}`}
             placeholder="站内搜索"
             dataSource={['搜索提示一', '搜索提示二', '搜索提示三']}
@@ -149,7 +147,7 @@ export default class GlobalHeader extends PureComponent {
               emptyText="你已完成所有待办"
               emptyImage="https://gw.alipayobjects.com/zos/rmsportal/HsIsxMZiWKrNUavQUXqx.svg"
             />
-          </NoticeIcon>
+          </NoticeIcon> */}
           {currentUser.nickname ? (
             <Dropdown overlay={menu}>
               <span className={`${styles.action} ${styles.account}`}>

@@ -90,6 +90,15 @@ import { sucUserOrgList, sucUserOrgGetById, sucUserOrgAdd, sucUserOrgModify } fr
 // 是否禁用代理
 const noProxy = process.env.NO_PROXY === 'true';
 
+const currentUser = {
+  userId: '00000001',
+  nickname: '超级管理员',
+  face: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
+  notifyCount: 12,
+  orgId: '4513464',
+  menus: getMenuData(),
+};
+
 // 代码中会兼容本地 service mock 以及部署站点的静态数据
 const proxy = {
   //kdisender
@@ -196,7 +205,8 @@ const proxy = {
       res.send({
         result: 1,
         msg: '登录成功',
-        menus: getMenuData(),
+        ...currentUser,
+        // menus: getMenuData(),
       });
       return;
     }
@@ -214,14 +224,7 @@ const proxy = {
         exp: 2,
       },
     },
-    $body: {
-      userId: '00000001',
-      nickname: '超级管理员',
-      face: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
-      notifyCount: 12,
-      orgId: '4513464',
-      menus: getMenuData(),
-    },
+    $body: currentUser,
   },
   // GET POST 可省略
   'GET /api/users': [

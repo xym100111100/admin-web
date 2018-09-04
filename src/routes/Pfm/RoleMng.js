@@ -265,7 +265,7 @@ export default class RoleMng extends SimpleMng {
     };
 
     return (
-      <PageHeaderLayout title="角色信息管理">
+      <PageHeaderLayout>
         <Card loading={pfmsysloading}>
           <div className={styles.tableList}>
             <div className={styles.tableListOperator}>
