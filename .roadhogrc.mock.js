@@ -302,15 +302,40 @@ const proxy = {
   },
 };
 
+function addProxy(key, value) {
+  // 先删除旧的
+  for (const prop in proxy) {
+    if (prop.includes(` /${key}/`)) {
+      delete proxy[prop];
+    }
+  }
+
+  // 再添加新的
+  proxy[`GET /${key}/(.*)`] = value;
+  proxy[`POST /${key}/(.*)`] = value;
+  proxy[`PUT /${key}/(.*)`] = value;
+  proxy[`DELETE /${key}/(.*)`] = value;
+}
+
+if (noProxy) {
+  addProxy('pfm-svr', 'http://127.0.0.1,20182/');
+  addProxy('rna-svr', 'http://127.0.0.1,20088/');
+  addProxy('suc-svr', 'http://127.0.0.1,9100/');
+  addProxy('kdi-svr', 'http://127.0.0.1,20080/');
+  addProxy('onl-svr', 'http://127.0.0.1,9100/');
+}
+
+console.log(proxy);
+
 // 响应请求延迟1秒
 // export default (noProxy ? {} : delay(proxy, 1000));
 // 响应请求不延迟
 export default (noProxy
   ? Object.assign(proxy, {
-      // 'GET /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
-      // 'POST /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
-      // 'PUT /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
-      // 'DELETE /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
+      'GET /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
+      'POST /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
+      'PUT /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
+      'DELETE /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
       'GET /rna-svr/(.*)': 'http://127.0.0.1:20088/',
       'POST /rna-svr/(.*)': 'http://127.0.0.1:20088/',
       'PUT /rna-svr/(.*)': 'http://127.0.0.1:20088/',
