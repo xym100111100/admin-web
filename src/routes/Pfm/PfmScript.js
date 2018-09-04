@@ -385,8 +385,6 @@ export default class PfmScript extends SimpleMng {
   render() {
     const { user, pfmfunc, pfmsys, pfmrole } = this.props;
     const menus = user.menus;
-    console.log('11111');
-    console.log(this.props);
     return (
       <PageHeaderLayout title="脚本">
         <Card bordered={false}>
