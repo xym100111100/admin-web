@@ -154,11 +154,11 @@ export default class KdiEorder extends PureComponent {
                 <Form layout="inline">
                   <Row>
                     <Col md={16} sm={24}>
-                      <KdiCompany form={form} SelectStyle={{ width: 200 }} getShipper={this.getShipper} />
+                      <KdiCompany form={form} SelectStyle={{ width: 130 }} getShipper={this.getShipper} />
                     </Col>
                     <Col md={8} sm={24}>
                       <Button type="primary" style={{ marginTop: 3 }} onClick={this.kdiEorder}>
-                        快递下单
+                        下单
                       </Button>
                     </Col>
                   </Row>
