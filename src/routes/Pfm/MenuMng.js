@@ -111,6 +111,7 @@ export default class MenuMng extends EditMng {
       code,
       path: undefined,
       name: undefined,
+      title: undefined,
       remark: undefined,
       icon: undefined,
       isEnabled: true,
@@ -144,6 +145,7 @@ export default class MenuMng extends EditMng {
       code,
       path: undefined,
       name: undefined,
+      title: undefined,
       remark: undefined,
       icon: undefined,
       isEnabled: true,
@@ -209,7 +211,7 @@ export default class MenuMng extends EditMng {
       {
         title: '菜单名称',
         dataIndex: 'name',
-        width: '30%',
+        width: '20%',
         render: (text, record) => {
           const { editRecord } = this.state;
           if (editType !== 'none' && record && editRecord && editRecord.id === record.id)
@@ -229,7 +231,7 @@ export default class MenuMng extends EditMng {
       {
         title: '路径',
         dataIndex: 'path',
-        width: '15%',
+        width: '10%',
         render: (text, record) => {
           const { editRecord } = this.state;
           if (editType !== 'none' && record && editRecord && editRecord.id === record.id)
@@ -245,9 +247,29 @@ export default class MenuMng extends EditMng {
         },
       },
       {
+        title: '标题',
+        dataIndex: 'title',
+        width: '20%',
+        render: (text, record) => {
+          const { editRecord } = this.state;
+          if (editType !== 'none' && record && editRecord && editRecord.id === record.id)
+            return (
+              <Input
+                defaultValue={text}
+                // 首格input要设置width不是默认的100%，否则会被换到下一行
+                style={{ width: 'auto' }}
+                onChange={e => this.handleFieldChange('title', e.target.value)}
+                onKeyPress={::this.handleKeyPress}
+                placeholder="菜单名称"
+              />
+            );
+          return text;
+        },
+      },
+      {
         title: '图标',
         dataIndex: 'icon',
-        width: '10%',
+        width: '5%',
         render: (text, record) => {
           const { editRecord } = this.state;
           if (editType !== 'none' && record && editRecord && editRecord.id === record.id)
@@ -341,7 +363,7 @@ export default class MenuMng extends EditMng {
     ];
 
     return (
-      <PageHeaderLayout title="菜单信息管理">
+      <PageHeaderLayout>
         <Card bordered={false} loading={pfmsysloading}>
           <div className={styles.tableList}>
             <div className={styles.tableListOperator}>

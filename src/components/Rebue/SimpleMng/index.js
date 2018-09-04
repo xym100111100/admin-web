@@ -64,7 +64,7 @@ export default class SimpleMng extends PureComponent {
       type: `${moduleCode}/getById`,
       payload: { id },
       callback: data => {
-        state.editFormRecord = data.record;
+        state.editFormRecord = data.record || data;
         this.setState(state);
       },
     });

@@ -269,7 +269,7 @@ export default class FuncMng extends SimpleMng {
     ];
 
     return (
-      <PageHeaderLayout title="功能信息管理">
+      <PageHeaderLayout>
         <Card bordered={false} loading={pfmsysloading}>
           <div className={styles.tableList}>
             <div className={styles.tableListOperator}>

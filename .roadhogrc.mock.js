@@ -90,6 +90,15 @@ import { sucUserOrgList, sucUserOrgGetById, sucUserOrgAdd, sucUserOrgModify } fr
 // 是否禁用代理
 const noProxy = process.env.NO_PROXY === 'true';
 
+const currentUser = {
+  userId: '00000001',
+  nickname: '超级管理员',
+  face: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
+  notifyCount: 12,
+  orgId: '4513464',
+  menus: getMenuData(),
+};
+
 // 代码中会兼容本地 service mock 以及部署站点的静态数据
 const proxy = {
   //kdisender
@@ -196,7 +205,8 @@ const proxy = {
       res.send({
         result: 1,
         msg: '登录成功',
-        menus: getMenuData(),
+        ...currentUser,
+        // menus: getMenuData(),
       });
       return;
     }
@@ -206,23 +216,7 @@ const proxy = {
     });
   },
   // 支持值为 Object 和 Array
-  'GET /pfm-svr/user/currentUser': {
-    $desc: '获取当前用户接口',
-    $params: {
-      pageSize: {
-        desc: '分页',
-        exp: 2,
-      },
-    },
-    $body: {
-      userId: '00000001',
-      nickname: '超级管理员',
-      face: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
-      notifyCount: 12,
-      orgId: '4513464',
-      menus: getMenuData(),
-    },
-  },
+  'GET /pfm-svr/user/currentuser': currentUser,
   // GET POST 可省略
   'GET /api/users': [
     {
@@ -312,11 +306,11 @@ const proxy = {
 // export default (noProxy ? {} : delay(proxy, 1000));
 // 响应请求不延迟
 export default (noProxy
-  ? {
-      'GET /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
-      'POST /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
-      'PUT /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
-      'DELETE /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
+  ? Object.assign(proxy, {
+      // 'GET /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
+      // 'POST /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
+      // 'PUT /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
+      // 'DELETE /pfm-svr/(.*)': 'http://127.0.0.1:20182/',
       'GET /rna-svr/(.*)': 'http://127.0.0.1:20088/',
       'POST /rna-svr/(.*)': 'http://127.0.0.1:20088/',
       'PUT /rna-svr/(.*)': 'http://127.0.0.1:20088/',
@@ -333,6 +327,6 @@ export default (noProxy
       'PUT /onl-svr/(.*)': 'http://127.0.0.1:9100/',
       'POST /onl-svr/(.*)': 'http://127.0.0.1:9100/',
       'DELETE /onl-svr/(.*)': 'http://127.0.0.1:9100/',
-    }
+    })
   : delay(proxy));
 //  : delay(proxy, 1000));

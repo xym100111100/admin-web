@@ -37,16 +37,9 @@ export function pfmsysGetById(req, res, u) {
 
   const eo = tableListDataSource.find(item => item.id === params.id);
   if (eo) {
-    return res.json({
-      result: 1,
-      msg: '获取成功',
-      record: eo,
-    });
+    return res.json(eo);
   } else {
-    return res.json({
-      result: -1,
-      msg: '获取失败，找不到要获取的记录',
-    });
+    return res.json({});
   }
 }
 
