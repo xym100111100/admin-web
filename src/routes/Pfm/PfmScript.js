@@ -53,13 +53,22 @@ export default class PfmScript extends SimpleMng {
     const sqlArray = TreeUtils.convertTreeToFlat(dataArray);
     let menuSql = '';
     for (const item of sqlArray) {
+      if (item.icon === undefined) {
+        item.icon = null;
+      }
+      if (item.title === undefined) {
+        item.title = null;
+      }
       menuSql +=
-        'INSERT INTO `PFM_MENU`(`ID`,`SYS_ID`,`CODE`,`NAME`,`PATH`,`IS_ENABLED`,`ICON`,`REMARK`) values (' +
+        'INSERT INTO `PFM_MENU`(`ID`,`SYS_ID`,`CODE`,`TITLE`,NAME`,`PATH`,`IS_ENABLED`,`ICON`,`REMARK`) values (' +
         item.id +
         ",'" +
         item.sysId +
         "','" +
         item.code +
+        "','" +
+        "','" +
+        item.title +
         "','" +
         item.name +
         "','" +
@@ -171,6 +180,12 @@ export default class PfmScript extends SimpleMng {
     const menuscriptArray = TreeUtils.convertTreeToFlat(dataArray);
     let menuScriptText = '';
     for (const item of menuscriptArray) {
+      if (item.icon === undefined) {
+        item.icon = null;
+      }
+      if (item.title === undefined) {
+        item.title = null;
+      }
       menuScriptText +=
         'menuData.push({' +
         'id: ' +
@@ -183,6 +198,9 @@ export default class PfmScript extends SimpleMng {
         'code: ' +
         "'" +
         item.code +
+        "'," +
+        'title: ' +
+        item.title +
         "'," +
         'name: ' +
         "'" +
