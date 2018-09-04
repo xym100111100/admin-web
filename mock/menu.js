@@ -18,6 +18,7 @@ menuData.push({
   remark: '快递下单相关业务',
   name: '快递下单',
   path: 'kdi-eorder',
+  title: '快递下单',
 });
 menuData.push({
   id: 3,
@@ -27,6 +28,7 @@ menuData.push({
   remark: '快递单录入相关业务',
   name: '快递单录入',
   path: 'kdi-entry',
+  title: '快递录入',
 });
 menuData.push({
   id: 4,
@@ -36,6 +38,7 @@ menuData.push({
   remark: '快递单相关业务',
   name: '快递单管理',
   path: 'kdi-mng',
+  title: '快递管理',
 });
 menuData.push({
   id: 5,
@@ -54,6 +57,7 @@ menuData.push({
   remark: '快递面单相关业务',
   name: '快递面单配置',
   path: 'kdi-eorder-cfg',
+  title: '快递面单配置',
 });
 menuData.push({
   id: 7,
@@ -63,6 +67,7 @@ menuData.push({
   remark: '快递公司相关业务',
   name: '快递公司配置',
   path: 'kdi-company-cfg',
+  title: '快递公司配置',
 });
 menuData.push({
   id: 8,
@@ -72,6 +77,7 @@ menuData.push({
   remark: '发件人相关业务',
   name: '发件人配置',
   path: 'kdi-sender-cfg',
+  title: '发件人配置',
 });
 menuData.push({
   id: 9,
@@ -91,7 +97,9 @@ menuData.push({
   remark: '认证用户相关业务',
   name: '认证用户信息',
   path: 'rna-realname',
+  title: '认证用户信息',
 });
+
 menuData.push({
   id: 11,
   code: '02',
@@ -110,6 +118,7 @@ menuData.push({
   remark: '商品上线相关业务',
   name: '商品上线',
   path: 'onl-mng',
+  title: '商品上线',
 });
 menuData.push({
   id: 13,
@@ -120,6 +129,7 @@ menuData.push({
   remark: '用户相关业务',
   name: '用户管理',
   path: 'suc',
+  title: '用户管理',
 });
 menuData.push({
   id: 14,
@@ -129,6 +139,7 @@ menuData.push({
   remark: '用户信息相关业务',
   name: '用户信息',
   path: 'user-mng',
+  title: '用户信息',
 });
 menuData.push({
   id: 15,
@@ -138,6 +149,7 @@ menuData.push({
   remark: '组织相关业务',
   name: '组织信息',
   path: 'org-mng',
+  title: '组织信息',
 });
 menuData.push({
   id: 16,
@@ -157,6 +169,7 @@ menuData.push({
   remark: '系统相关业务',
   name: '系统',
   path: 'sys-mng',
+  title: '系统',
 });
 menuData.push({
   id: 18,
@@ -166,6 +179,7 @@ menuData.push({
   remark: '菜单相关业务',
   name: '菜单',
   path: 'menu-mng',
+  title: '菜单',
 });
 menuData.push({
   id: 19,
@@ -175,6 +189,7 @@ menuData.push({
   remark: '功能相关业务',
   name: '功能',
   path: 'func-mng',
+  title: '功能',
 });
 menuData.push({
   id: 20,
@@ -184,6 +199,7 @@ menuData.push({
   remark: '角色相关业务',
   name: '角色',
   path: 'role-mng',
+  title: '角色',
 });
 menuData.push({
   id: 316,
@@ -212,6 +228,7 @@ menuData.push({
   remark: '分析页相关业务',
   name: '分析页',
   path: 'analysis',
+  title: '分析页',
 });
 menuData.push({
   id: 23,
@@ -221,6 +238,7 @@ menuData.push({
   remark: '监控页相关业务',
   name: '监控页',
   path: 'monitor',
+  title: '监控页',
 });
 menuData.push({
   id: 24,
@@ -230,6 +248,7 @@ menuData.push({
   remark: '工作台相关业务',
   name: '工作台',
   path: 'workplace',
+  title: '工作台',
 });
 menuData.push({
   id: 25,
@@ -249,6 +268,7 @@ menuData.push({
   remark: '基础表单相关业务',
   name: '基础表单',
   path: 'basic-form',
+  title: '基础表单',
 });
 menuData.push({
   id: 27,
@@ -258,6 +278,7 @@ menuData.push({
   remark: '快递下单相关业务',
   name: '分步表单',
   path: 'step-form',
+  title: '分步表单',
 });
 menuData.push({
   id: 28,
@@ -268,6 +289,7 @@ menuData.push({
   name: '高级表单',
   authority: 'admin',
   path: 'advanced-form',
+  title: '高级表单',
 });
 menuData.push({
   id: 29,
@@ -287,6 +309,7 @@ menuData.push({
   remark: '查询表格相关业务',
   name: '查询表格',
   path: 'table-list',
+  title: '查询表格',
 });
 menuData.push({
   id: 31,
@@ -296,6 +319,7 @@ menuData.push({
   remark: '标准列表相关业务',
   name: '标准列表',
   path: 'basic-list',
+  title: '标准列表',
 });
 menuData.push({
   id: 32,
@@ -305,6 +329,7 @@ menuData.push({
   remark: '卡片列表相关业务',
   name: '卡片列表',
   path: 'card-list',
+  title: '卡片列表',
 });
 menuData.push({
   id: 33,
@@ -314,6 +339,7 @@ menuData.push({
   remark: '搜索列表相关业务',
   name: '搜索列表',
   path: 'search',
+  title: '搜索列表',
 });
 menuData.push({
   id: 34,
@@ -323,6 +349,7 @@ menuData.push({
   remark: '搜索列表（文章）相关业务',
   name: '搜索列表（文章）',
   path: 'articles',
+  title: '搜索列表（文章）',
 });
 menuData.push({
   id: 35,
@@ -332,6 +359,7 @@ menuData.push({
   remark: '搜索列表（项目）相关业务',
   name: '搜索列表（项目）',
   path: 'projects',
+  title: '搜索列表（项目）',
 });
 menuData.push({
   id: 36,
@@ -341,6 +369,7 @@ menuData.push({
   remark: '搜索列表（应用）相关业务',
   name: '搜索列表（应用）',
   path: 'applications',
+  title: '搜索列表（应用）',
 });
 menuData.push({
   id: 37,
@@ -360,6 +389,7 @@ menuData.push({
   remark: '基础详情页相关业务',
   name: '基础详情页',
   path: 'basic',
+  title: '基础详情页',
 });
 menuData.push({
   id: 39,
@@ -370,6 +400,7 @@ menuData.push({
   name: '高级详情页',
   path: 'advanced',
   authority: 'admin',
+  title: '高级详情页',
 });
 menuData.push({
   id: 40,
@@ -389,6 +420,7 @@ menuData.push({
   remark: '成功相关业务',
   name: '成功',
   path: 'success',
+  title: '成功',
 });
 menuData.push({
   id: 42,
@@ -398,6 +430,7 @@ menuData.push({
   remark: '失败相关业务',
   name: '失败',
   path: 'fail',
+  title: '失败',
 });
 menuData.push({
   id: 43,
@@ -417,6 +450,7 @@ menuData.push({
   remark: '403相关业务',
   name: '403',
   path: '403',
+  title: '403',
 });
 menuData.push({
   id: 45,
@@ -426,6 +460,7 @@ menuData.push({
   remark: '404相关业务',
   name: '404',
   path: '404',
+  title: '404',
 });
 menuData.push({
   id: 46,
@@ -435,6 +470,7 @@ menuData.push({
   remark: '500相关业务',
   name: '500',
   path: '500',
+  title: '500',
 });
 menuData.push({
   id: 47,
@@ -445,6 +481,7 @@ menuData.push({
   name: '触发异常',
   path: 'trigger',
   hideInMenu: true,
+  title: '触发异常',
 });
 menuData.push({
   id: 48,
@@ -465,6 +502,7 @@ menuData.push({
   remark: '登录相关业务',
   name: '登录',
   path: 'login',
+  title: '登录',
 });
 menuData.push({
   id: 50,
@@ -474,6 +512,7 @@ menuData.push({
   remark: '注册相关业务',
   name: '注册',
   path: 'register',
+  title: '注册',
 });
 menuData.push({
   id: 51,
@@ -483,6 +522,7 @@ menuData.push({
   remark: '注册结果相关业务',
   name: '注册结果',
   path: 'register-result',
+  title: '注册结果',
 });
 menuData.push({
   id: 52,
@@ -494,13 +534,14 @@ menuData.push({
   path: 'rep',
 });
 menuData.push({
-  id: 53,
+  id: 314,
   code: '1201',
   sysId: 'damai-admin',
   isEnabled: true,
   remark: '报表相关业务',
   name: '物流报表',
   path: 'rep-logistic',
+  title: '物流报表',
 });
 
 // export const getMenuData = () => menuData;

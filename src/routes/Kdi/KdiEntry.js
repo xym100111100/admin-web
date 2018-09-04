@@ -91,11 +91,10 @@ export default class KdiEntry extends SimpleMng {
       <Form onSubmit={() => this.entry()} layout="inline">
         <Row gutter={{ md: 1, lg: 4, xl: 2 }}>
           <Col md={10} sm={24} push={1}>
-            <h3 style={{ paddingTop: 20, marginBottom: 40 }}>发件人信息</h3>
             <FormItem label="智能解析" style={{ paddingLeft: 24 }}>
               {getFieldDecorator('sender')(<AddrRanalysis who="sender" form={form} />)}
             </FormItem>
-            <Divider />
+            <h3 style={{ paddingTop: 10, marginBottom: 40 }}>发件人信息</h3>
             <FormItem label="发件人姓名">
               {getFieldDecorator('senderName', {
                 rules: [
@@ -155,14 +154,13 @@ export default class KdiEntry extends SimpleMng {
           </Col>
 
           <Col md={1} sm={24} push={1} style={{ textAlign: 'center' }}>
-            <Divider type="vertical" style={{ height: 255, marginTop: 155 }} />
+            <Divider type="vertical" style={{ height: 220, marginTop: 155 }} />
           </Col>
           <Col md={10} sm={24} push={1}>
-            <h3 style={{ paddingTop: 20, marginBottom: 40 }}>收件人信息</h3>
             <FormItem label="智能解析" style={{ paddingLeft: 24 }}>
               {getFieldDecorator('receiver')(<AddrRanalysis who="receiver" form={form} />)}
             </FormItem>
-            <Divider />
+            <h3 style={{ paddingTop: 10, marginBottom: 40 }}>收件人信息</h3>
             <FormItem label="收件人姓名">
               {getFieldDecorator('receiverName', {
                 rules: [

@@ -69,6 +69,22 @@ export default class TreeUtils {
   }
 
   /**
+   * 转换AntDesign的Tree结构成为flat的数组
+   */
+  static convertTreeToFlat(menus) {
+    let keys = [];
+    menus.forEach(item => {
+      if (item.children) {
+        keys.push({ ...item });
+        keys = [...keys, ...this.convertTreeToFlat(item.children)];
+      } else {
+        keys.push({ ...item });
+      }
+    });
+    return keys;
+  }
+
+  /**
    * 通过ID查找元素
    */
   static findById(treeList, findId) {

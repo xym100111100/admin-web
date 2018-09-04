@@ -142,6 +142,16 @@ export default class KdiLogistic extends SimpleMng {
     return (
       <Form onSubmit={this.list} layout="inline">
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
+          <Col md={6} sm={24} style={{ marginBottom:20}} >
+            <Button
+              icon="plus"
+              type="primary"
+              onClick={this.handleFormReset}>
+              快递录入
+              </Button>
+          </Col>
+        </Row>
+        <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
           <Col md={6} sm={24}>
             <FormItem label="">
               {getFieldDecorator('receiverName')(<Input placeholder="收件人姓名/手机/快递单号" />)}

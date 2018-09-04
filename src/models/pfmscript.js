@@ -1,32 +1,15 @@
 import { message } from 'antd';
-import { list, getById, add, modify, del } from '../services/rnarealname';
+import { list, getById, add, modify, del } from '../services/pfmscript';
 
 export default {
-  namespace: 'rnarealname',
+  namespace: 'pfmscript',
 
   state: {
-    rnarealname: [],
+    pfmscript: [],
   },
 
   effects: {
     *list({ payload, callback }, { call, put }) {
-      //默认查询待审核的。
-      if (payload.applyState === undefined) {
-        payload.applyState = 1;
-      }
-      if (payload.startApplyTime !== undefined && payload.startApplyTime !== '' && payload.startApplyTime.length >= 1) {
-        payload.endApplyTime = payload.startApplyTime[1].format('YYYY-MM-DD HH:mm:ss');
-        payload.startApplyTime = payload.startApplyTime[0].format('YYYY-MM-DD HH:mm:ss');
-      }
-      //判断用户输入的是用户名还是身份证
-      if (/^[0-9]+$/.test(payload.nameOrIdCard)) {
-        payload.idCard = payload.nameOrIdCard;
-        payload.name = undefined;
-      } else {
-        payload.name = payload.nameOrIdCard;
-        payload.idCard = undefined;
-      }
-      payload.nameOrIdCard = undefined;
       const response = yield call(list, payload);
       yield put({
         type: 'changeList',
@@ -75,7 +58,7 @@ export default {
   reducers: {
     changeList(state, action) {
       return {
-        rnarealname: action.payload,
+        pfmscript: action.payload,
       };
     },
   },
