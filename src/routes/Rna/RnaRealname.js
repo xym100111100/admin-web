@@ -36,6 +36,15 @@ export default class RnaRealname extends SimpleMng {
       if (err) return;
       fieldsValue.pageNum = pagination.current;
       fieldsValue.pageSize = pagination.pageSize;
+      //判断用户输入的是用户名还是身份证
+      if (/^[0-9]+$/.test(fieldsValue.nameOrIdCard)) {
+        fieldsValue.idCard = fieldsValue.nameOrIdCard;
+        fieldsValue.name = undefined;
+      } else {
+        fieldsValue.name = fieldsValue.nameOrIdCard;
+        fieldsValue.idCard = undefined;
+      }
+      fieldsValue.nameOrIdCard = undefined;
       this.props.dispatch({
         type: `${this.moduleCode}/list`,
         payload: fieldsValue,
@@ -80,8 +89,8 @@ export default class RnaRealname extends SimpleMng {
     const { getFieldDecorator } = this.props.form;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{ md: 6, lg: 24, xl: 0 }}>
-          <Col md={8} sm={24}>
+        <Row gutter={{ md: 6, lg: 24, xl: 24 }}>
+          <Col md={8} sm={24}  >
             <FormItem style={{ float: 'left' }}>
               {getFieldDecorator('applyState', {
                 initialValue: '1',
@@ -102,20 +111,15 @@ export default class RnaRealname extends SimpleMng {
                 </RadioGroup>
               )}
             </FormItem>
-            <Divider type="vertical" style={{ height: 22, float: 'right', marginTop: '2%', marginRight: '9%' }} />
           </Col>
-          <Col md={7} sm={24} style={{ marginRight: 6 }}>
+          <Col md={1} sm={24}    >
+            <Divider type="vertical" style={{ height: 22, marginTop: 4, marginLeft: -10 }} />
+          </Col >
+          <Col md={7} sm={24} >
             <FormItem>{getFieldDecorator('startApplyTime')(<RangePicker />)}</FormItem>
           </Col>
-          <Col md={3} sm={24} style={{ marginRight: 6 }}>
-            <FormItem>{getFieldDecorator('realName')(<Input placeholder="姓名" />)}</FormItem>
-          </Col>
-          <Col md={4} sm={24} style={{ marginRight: 6 }}>
-            <FormItem>
-              {getFieldDecorator('idCard', {
-                rules: [{ pattern: /^[0-9]*$/, message: '请输入数字' }],
-              })(<Input placeholder="身份证号" />)}
-            </FormItem>
+          <Col md={5} sm={24} >
+            <FormItem>{getFieldDecorator('nameOrIdCard')(<Input placeholder="姓名或身份证" />)}</FormItem>
           </Col>
           <Col md={1} sm={24}>
             <FormItem>
