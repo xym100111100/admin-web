@@ -5,6 +5,7 @@ import { DatePicker, Row, Col, Card, Divider, Table, Button, Radio, Input, Popco
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './RnaRealname.less';
 import RnaRealnameForm from './RnaRealnameForm';
+import moment from 'moment'
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const FormItem = Form.Item;
@@ -85,6 +86,11 @@ export default class RnaRealname extends SimpleMng {
     });
   }
 
+  //禁止选择当前日期后的
+  disabledDate = (current) => {
+    return current && current > moment().endOf('day');
+  }
+
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
     return (
@@ -116,7 +122,9 @@ export default class RnaRealname extends SimpleMng {
             <Divider type="vertical" style={{ height: 22, marginTop: 4, marginLeft: -10 }} />
           </Col >
           <Col md={7} sm={24} >
-            <FormItem>{getFieldDecorator('startApplyTime')(<RangePicker />)}</FormItem>
+            <FormItem>{getFieldDecorator('startApplyTime')(<RangePicker
+              disabledDate={this.disabledDate}
+            />)}</FormItem>
           </Col>
           <Col md={5} sm={24} >
             <FormItem>{getFieldDecorator('nameOrIdCard')(<Input placeholder="姓名或身份证" />)}</FormItem>

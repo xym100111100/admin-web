@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import { Row, Col, Card, Form, Input, Select, Button, Table, DatePicker } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './KdiLogistic.less';
+import moment from 'moment';
 
 const { Option } = Select;
 const FormItem = Form.Item;
@@ -136,13 +137,18 @@ export default class KdiLogistic extends SimpleMng {
     });
   };
 
+  //禁止选择当前日期后的
+  disabledDate = (current) => {
+    return current && current > moment().endOf('day');
+  }
+
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
 
     return (
       <Form onSubmit={this.list} layout="inline">
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
-          <Col md={6} sm={24} style={{ marginBottom:20}} >
+          <Col md={6} sm={24} style={{ marginBottom: 20 }} >
             <Button
               icon="plus"
               type="primary"
@@ -157,7 +163,16 @@ export default class KdiLogistic extends SimpleMng {
               {getFieldDecorator('receiverName')(<Input placeholder="收件人姓名/手机/快递单号" />)}
             </FormItem>
           </Col>
-          <Col md={5} sm={24}>
+          <Col md={7} sm={24}>
+            <FormItem label="">
+              {getFieldDecorator('orderTime')(
+                <RangePicker
+                  disabledDate={this.disabledDate}
+                  style={{ width: '100%' }} placeholder={['开始日期', '结束日期']} />
+              )}
+            </FormItem>
+          </Col>
+          <Col md={3} sm={24}>
             <FormItem label="">
               {getFieldDecorator('logisticStatus')(
                 <Select placeholder="状态" style={{ width: '100%' }}>
@@ -171,19 +186,12 @@ export default class KdiLogistic extends SimpleMng {
               )}
             </FormItem>
           </Col>
-          <Col md={7} sm={24}>
-            <FormItem label="">
-              {getFieldDecorator('orderTime')(
-                <RangePicker style={{ width: '100%' }} placeholder={['开始日期', '结束日期']} />
-              )}
-            </FormItem>
-          </Col>
           <Col md={6} sm={24}>
-            <span style={{ float: 'left', marginBottom: 24 }}>
+            <span >
               <Button type="primary" htmlType="submit">
                 查询
               </Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+              <Button style={{ marginLeft: 20 }} onClick={this.handleFormReset}>
                 重置
               </Button>
             </span>
