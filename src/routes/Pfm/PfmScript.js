@@ -235,12 +235,12 @@ export default class PfmScript extends SimpleMng {
    */
   getSysScriptText = dataArray => {
     dataArray = TreeUtils.convertTreeToFlat(dataArray);
-    let sysScriptText = 'const tableListDataSource = [\n';
+    let sysScriptText = '';
     for (const item of dataArray) {
       sysScriptText +=
         "  { id: '" + item.id + "'," + " name: '" + item.name + "'," + " remark: '" + item.remark + "'},\n";
     }
-    sysScriptText += ']\n';
+    sysScriptText += '\n';
     //设置状态值以便复制
     this.setState({
       sysScriptText: sysScriptText,
@@ -253,7 +253,7 @@ export default class PfmScript extends SimpleMng {
    */
   getFuncScriptText = dataArray => {
     dataArray = TreeUtils.convertTreeToFlat(dataArray);
-    let funcScriptText = 'const tableListDataSource = [\n';
+    let funcScriptText = '';
     for (const item of dataArray) {
       funcScriptText +=
         "  { id: '" +
@@ -275,7 +275,7 @@ export default class PfmScript extends SimpleMng {
         item.remark +
         "'},\n";
     }
-    funcScriptText += ']\n';
+    funcScriptText += '\n';
     //设置状态值以便复制
     this.setState({
       funcScriptText: funcScriptText,
@@ -288,7 +288,7 @@ export default class PfmScript extends SimpleMng {
    */
   getRoleScriptText = dataArray => {
     dataArray = TreeUtils.convertTreeToFlat(dataArray);
-    let roleScriptText = 'const tableListDataSource = [\n';
+    let roleScriptText = '';
     for (const item of dataArray) {
       roleScriptText +=
         "  { id: '" +
@@ -310,7 +310,7 @@ export default class PfmScript extends SimpleMng {
         item.remark +
         "'},\n";
     }
-    roleScriptText += ']\n';
+    roleScriptText += '\n';
     //设置状态值以便复制
     this.setState({
       roleScriptText: roleScriptText,
