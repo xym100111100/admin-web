@@ -4,7 +4,7 @@ import { getList } from './pfmacti';
 // mock tableListDataSource
 const tableListDataSource = [
   {
-    id: 1,
+    id: '1536131597087',
     sysId: 'pfm-admin',
     name: '系统',
     isEnabled: true,
@@ -12,7 +12,7 @@ const tableListDataSource = [
     orderNo: 1,
   },
   {
-    id: 2,
+    id: '1536131597088',
     sysId: 'pfm-admin',
     name: '菜单',
     isEnabled: true,
@@ -20,7 +20,7 @@ const tableListDataSource = [
     orderNo: 2,
   },
   {
-    id: 3,
+    id: '1536131597089',
     sysId: 'pfm-admin',
     name: '功能',
     isEnabled: true,
@@ -28,7 +28,7 @@ const tableListDataSource = [
     orderNo: 3,
   },
   {
-    id: 4,
+    id: '1536131597090',
     sysId: 'pfm-admin',
     name: '角色',
     isEnabled: true,
