@@ -1,5 +1,4 @@
 import mockjs from 'mockjs';
-import { getMenuData } from './mock/menu';
 import { pfmsysList, pfmsysGetById, pfmsysAdd, pfmsysModify, pfmsysDel } from './mock/pfmsys';
 import {
   kdilogisticList,
@@ -28,6 +27,7 @@ import {
   getDefaultSender,
 } from './mock/kdisender';
 import {
+  getMenuData,
   pfmmenuList,
   pfmmenuGetById,
   pfmmenuAdd,
@@ -206,7 +206,6 @@ const proxy = {
         result: 1,
         msg: '登录成功',
         ...currentUser,
-        // menus: getMenuData(),
       });
       return;
     }
