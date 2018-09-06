@@ -14,17 +14,22 @@ import 'echarts/lib/chart/bar';
 import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 import 'echarts/lib/component/legend';
-
+//引入时间处理插件
+import moment from 'moment';
+const orgId=253274870;
 @Form.create()
 @connect(({ replogistic, loading }) => ({ replogistic, loading: loading.models.replogistic }))
 export default class RepLogistic extends SimpleMng {
   constructor() {
     super();
     this.moduleCode = 'replogistic';
-    this.state.dateArr = ['08-30', '08-31', '09-01', '09-02', '09-03', '09-04', '09-05'];
+    this.state.dateArr = ['00-00', '00-00', '00-00', '00-00', '00-00', '00-00', '00-00'];
     this.state.dataArr = [1, 2, 3, 4, 5, 6, 7];
     //这个状态的意义只是为了使页面数据和实际数据一致
     this.state.aa = '';
+    this.state.select = false;
+    //为了固定moment的值为当前点击时间
+    this.state.momentStr = '';
   }
 
   componentDidMount() {
@@ -41,8 +46,8 @@ export default class RepLogistic extends SimpleMng {
     let orderTimeEnd = this.format(date);
     let orderTimeStart = this.format(date2);
     this.props.dispatch({
-      type: `${this.moduleCode}/list`,
-      payload: { orderTimeEnd: orderTimeEnd, orderTimeStart: orderTimeStart },
+      type: `${this.moduleCode}/report`,
+      payload: { orderTimeEnd: orderTimeEnd, orderTimeStart: orderTimeStart ,orgId:orgId},
       callback: data => {
         this.initData(data);
       },
@@ -147,6 +152,7 @@ export default class RepLogistic extends SimpleMng {
    */
   onChanges = () => {
     const { form } = this.props;
+
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       if (
@@ -157,9 +163,9 @@ export default class RepLogistic extends SimpleMng {
         fieldsValue.orderTimeEnd = fieldsValue.orderTimeStart[1].format('YYYY-MM-DD HH:mm:ss');
         fieldsValue.orderTimeStart = fieldsValue.orderTimeStart[0].format('YYYY-MM-DD HH:mm:ss');
       }
-      console.log(fieldsValue);
+      fieldsValue.orgId=orgId;
       this.props.dispatch({
-        type: `${this.moduleCode}/list`,
+        type: `${this.moduleCode}/report`,
         payload: fieldsValue,
         callback: data => {
           this.initData(data);
@@ -179,6 +185,12 @@ export default class RepLogistic extends SimpleMng {
     }
   };
 
+
+  //禁止选择当前日期后的
+  disabledDate = (current) => {
+      return current > moment().endOf('day');
+  }
+
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
     return (
@@ -196,7 +208,10 @@ export default class RepLogistic extends SimpleMng {
                     validator: this.provinceInfo,
                   },
                 ],
-              })(<RangePicker onChange={this.headonChange} />)}
+              })(<RangePicker
+                disabledDate={this.disabledDate}
+                onChange={this.headonChange}
+              />)}
             </FormItem>
           </Col>
         </Row>

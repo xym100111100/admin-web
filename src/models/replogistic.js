@@ -1,6 +1,6 @@
 import { message } from 'antd';
-import { list, getById, add, modify, del } from '../services/replogistic';
-
+import {  getById, add, modify, del } from '../services/replogistic';
+import {report, } from '../services/kdilogistic';
 export default {
   namespace: 'replogistic',
 
@@ -9,8 +9,8 @@ export default {
   },
 
   effects: {
-    *list({ payload, callback }, { call, put }) {
-      const response = yield call(list, payload);
+    *report({ payload, callback }, { call, put }) {
+      const response = yield call(report, payload);
       yield put({
         type: 'changeList',
         payload: response,

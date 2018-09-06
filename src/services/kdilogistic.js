@@ -5,6 +5,10 @@ export async function list(params) {
   return request(`/kdi-svr/kdi/logistic?${stringify(params)}`);
 }
 
+export async function report(params) {
+  return request(`/kdi-svr/kdi/logistic/report?${stringify(params)}`);
+}
+
 export async function getById(params) {
   return request(`/kdi-svr/kdi/logistic/getbyid?${stringify(params)}`);
 }

@@ -77,6 +77,14 @@ export default {
         message.error(response.msg);
       }
     },
+    *report({ payload, callback }, { call, put }) {
+      const response = yield call(list, payload);
+      yield put({
+        type: 'changeList',
+        payload: response,
+      });
+      if (callback) callback(response);
+    },
   },
 
   reducers: {
