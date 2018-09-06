@@ -75,9 +75,11 @@ export default class SimpleMng extends PureComponent {
     const defaultParams = {
       fields: undefined,
       moduleCode: this.moduleCode,
+      isReturn: false, // 默认不返回主页面
+      isReset: false, // 是否重置
     };
 
-    const { moduleCode, fields } = Object.assign(defaultParams, params);
+    const { moduleCode, fields, isReturn, isReset } = Object.assign(defaultParams, params);
 
     this.setState({ editFormRecord: fields });
     let dispatchType;
@@ -91,10 +93,28 @@ export default class SimpleMng extends PureComponent {
       payload: { ...fields },
       callback: () => {
         this.handleReload();
-        // 关闭窗口
-        this.setState({ editForm: undefined });
+        if (isReset) {
+          this.handelReset();
+        }
+        if (isReturn)
+          // 关闭窗口
+          this.setState({ editForm: undefined });
       },
     });
+  }
+
+  // 请求保存并开始添加下一条
+  handleNext(params) {
+    const temp = params;
+    temp.isReturn = true;
+    this.handleSave(temp);
+  }
+
+  // 请求保存提交(添加或修改)
+  handleSubmit(params) {
+    const temp = params;
+    temp.isReturn = true;
+    this.handleSave(temp);
   }
 
   // 删除

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Button, Form, Modal } from 'antd';
+import { Button, Form, Modal, Icon } from 'antd';
 
 // 编辑表单
 const EditForm = DivInfo => {
@@ -18,28 +18,73 @@ const EditForm = DivInfo => {
     },
   })
   class extends PureComponent {
+    handleSave = () => {
+      const { form, onSave } = this.props;
+      form.validateFieldsAndScroll((err, fields) => {
+        if (err) return;
+        onSave(fields);
+      });
+    };
+    handleNext = () => {
+      const { form, onNext } = this.props;
+      form.validateFieldsAndScroll((err, fields) => {
+        if (err) return;
+        onNext(fields);
+      });
+    };
+    handleSubmit = () => {
+      const { form, onSubmit } = this.props;
+      form.validateFieldsAndScroll((err, fields) => {
+        if (err) return;
+        onSubmit(fields);
+      });
+    };
+
     render() {
-      const { title, visible, width = 520, handleSave, closeModal, submitting, form, ...restProps } = this.props;
-      const handleOk = () => {
-        form.validateFieldsAndScroll((err, fields) => {
-          if (err) return;
-          handleSave(fields);
-        });
-      };
+      const {
+        title,
+        visible,
+        form,
+        onSave,
+        onNext,
+        onSubmit,
+        closeModal,
+        submitting,
+        width = 520,
+        ...restProps
+      } = this.props;
       return (
         <Modal
           visible={visible}
           title={title}
           closable={false}
-          bodyStyle={{ overflow: 'scroll' }}
           width={width}
           footer={[
-            <Button key="back" type="ghost" size="large" onClick={closeModal}>
+            <Button key="return" icon="rollback" size="large" onClick={closeModal}>
               返 回
             </Button>,
-            <Button key="submit" type="primary" size="large" loading={submitting} onClick={handleOk}>
-              保 存
-            </Button>,
+            onSave && (
+              <Button key="save" icon="check" size="large" loading={submitting} onClick={this.handleSave}>
+                保 存
+              </Button>
+            ),
+            onNext && (
+              <Button key="next" icon="fall" size="large" loading={submitting} onClick={this.handleNext}>
+                下一条
+              </Button>
+            ),
+            onSubmit && (
+              <Button
+                key="submit"
+                icon="upload"
+                type="primary"
+                size="large"
+                loading={submitting}
+                onClick={this.handleSubmit}
+              >
+                提 交
+              </Button>
+            ),
           ]}
         >
           <DivInfo form={form} {...restProps} />
