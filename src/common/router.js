@@ -71,14 +71,13 @@ export const getRouterData = app => {
     '/rna/rna-realname': {
       component: dynamicWrapper(app, ['rnarealname'], () => import('../routes/Rna/RnaRealname')),
     },
-    '/kdi/kdi-entry': {
-      component: dynamicWrapper(app, ['kdientry', 'user', 'kdicompany'], () => import('../routes/Kdi/KdiEntry')),
-    },
     '/rep/rep-logistic': {
       component: dynamicWrapper(app, ['replogistic'], () => import('../routes/Rep/RepLogistic')),
     },
     '/kdi/kdi-mng': {
-      component: dynamicWrapper(app, ['kdilogistic'], () => import('../routes/Kdi/KdiLogistic')),
+      component: dynamicWrapper(app, ['kdilogistic', 'kdientry', 'kdicompany'], () =>
+        import('../routes/Kdi/KdiLogistic')
+      ),
     },
     '/kdi/kdi-eorder': {
       component: dynamicWrapper(app, ['kdieorder', 'kdisender', 'user', 'kdireceiver', 'kdicompany'], () =>

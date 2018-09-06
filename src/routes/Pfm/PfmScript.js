@@ -37,7 +37,6 @@ export default class PfmScript extends SimpleMng {
     this.state.roleScriptText = '';
     this.state.funcScriptText = '';
     this.state.menuScriptText = '';
-
   }
 
   componentDidMount() {
@@ -52,7 +51,6 @@ export default class PfmScript extends SimpleMng {
       type: `pfmfunc/list`,
       payload: { sysId: 'pfm-admin' },
     });
-
   }
 
   /**
@@ -80,7 +78,7 @@ export default class PfmScript extends SimpleMng {
         item.path +
         "'," +
         item.isEnabled +
-        "," +
+        ',' +
         item.icon +
         ",'" +
         item.remark +
@@ -122,7 +120,7 @@ export default class PfmScript extends SimpleMng {
    * @param {*} dataArray
    */
   getFuncScriptSql(dataArray) {
-    const ActiSql=this.getActiSql(dataArray);
+    const ActiSql = this.getActiSql(dataArray);
     let funcSql = '-- 功能sql--\n';
     for (const item of dataArray) {
       funcSql +=
@@ -140,7 +138,7 @@ export default class PfmScript extends SimpleMng {
         item.remark +
         "');\n";
     }
-    funcSql+=ActiSql;
+    funcSql += ActiSql;
     //设置状态值以便复制
     this.setState({
       funcSql: funcSql,
@@ -179,8 +177,6 @@ export default class PfmScript extends SimpleMng {
     return roleSql;
   }
 
-
-
   /**
    * 获取MuneScriptText
    * @param {*} dataArray
@@ -193,9 +189,9 @@ export default class PfmScript extends SimpleMng {
       item.title = item.title == null ? null : "'" + item.title + "'";
       menuScriptText +=
         'menuData.push({' +
-        "id: '" +
+        'id: ' +
         item.id +
-        "'," +
+        ',' +
         'sysId: ' +
         "'" +
         item.sysId +
@@ -206,7 +202,7 @@ export default class PfmScript extends SimpleMng {
         "'," +
         'title: ' +
         item.title +
-        "," +
+        ',' +
         'name: ' +
         "'" +
         item.name +
@@ -242,7 +238,7 @@ export default class PfmScript extends SimpleMng {
     let sysScriptText = '';
     for (const item of dataArray) {
       sysScriptText +=
-        "  { id: '" + item.id + "'," + " name: '" + item.name + "'," + " remark: '" + item.remark + "'}\n";
+        "  { id: '" + item.id + "'," + " name: '" + item.name + "'," + " remark: '" + item.remark + "'},\n";
     }
     sysScriptText += '\n';
     //设置状态值以便复制
@@ -256,13 +252,13 @@ export default class PfmScript extends SimpleMng {
    * 获取funcScriptText
    */
   getFuncScriptText = dataArray => {
-    const ActiScriptText= this.getActiScriptText(dataArray);
+    const ActiScriptText = this.getActiScriptText(dataArray);
     let funcScriptText = '-- 功能--\n';
     for (const item of dataArray) {
       funcScriptText +=
-        "  { id: '" +
+        '  { id: ' +
         item.id +
-        "'," +
+        ',' +
         " sysId: '" +
         item.sysId +
         "'," +
@@ -277,10 +273,10 @@ export default class PfmScript extends SimpleMng {
         ',' +
         " remark: '" +
         item.remark +
-        "'}\n";
+        "'},\n";
     }
     funcScriptText += '\n';
-    funcScriptText +=ActiScriptText;
+    funcScriptText += ActiScriptText;
     //设置状态值以便复制
     this.setState({
       funcScriptText: funcScriptText,
@@ -296,9 +292,9 @@ export default class PfmScript extends SimpleMng {
     let roleScriptText = '';
     for (const item of dataArray) {
       roleScriptText +=
-        "  { id: '" +
+        '  { id: ' +
         item.id +
-        "'," +
+        ',' +
         " sysId: '" +
         item.sysId +
         "'," +
@@ -313,7 +309,7 @@ export default class PfmScript extends SimpleMng {
         ',' +
         " remark: '" +
         item.remark +
-        "'}\n";
+        "'},\n";
     }
     roleScriptText += '\n';
     //设置状态值以便复制
@@ -332,21 +328,21 @@ export default class PfmScript extends SimpleMng {
     for (let i = 0, j = 0; i < dataArray.length; i++) {
       if (dataArray[i].funcId !== undefined) {
         array[j] = dataArray[i];
-        j++
+        j++;
       }
     }
     let actiScriptText = '-- 动作--\n';
     for (const item of array) {
       actiScriptText +=
-        "  { id: '" +
+        '  { id: ' +
         item.id +
-        "'," +
-        "funcId: '" +
+        ',' +
+        'funcId: ' +
         item.funcId +
-        "'," +
-        "isAuth: " +
+        ',' +
+        'isAuth: ' +
         item.isAuth +
-        "," +
+        ',' +
         " sysId: '" +
         item.sysId +
         "'," +
@@ -361,11 +357,11 @@ export default class PfmScript extends SimpleMng {
         ',' +
         " remark: '" +
         item.remark +
-        "'}\n";
+        "'},\n";
     }
     actiScriptText += '\n';
     return actiScriptText;
-  }
+  };
 
   /**
    * 获取动作actiSql
@@ -376,7 +372,7 @@ export default class PfmScript extends SimpleMng {
     for (let i = 0, j = 0; i < dataArray.length; i++) {
       if (dataArray[i].funcId !== undefined) {
         array[j] = dataArray[i];
-        j++
+        j++;
       }
     }
     let actiSql = '-- 动作sql--\n';
@@ -384,9 +380,9 @@ export default class PfmScript extends SimpleMng {
       actiSql +=
         'INSERT INTO `PFM_FUNC`(`ID`,`FUNC_ID`,`IS_AUTH`,`SYS_ID`,`NAME`,`IS_ENABLED`,`ORDER_NO`,`REMARK`) values (' +
         item.id +
-        "," +
+        ',' +
         item.funcId +
-        "," +
+        ',' +
         item.isAuth +
         ",'" +
         item.sysId +
@@ -402,7 +398,7 @@ export default class PfmScript extends SimpleMng {
     }
 
     return actiSql;
-  }
+  };
 
   select = obj => {
     if (obj === 1) {
@@ -437,7 +433,7 @@ export default class PfmScript extends SimpleMng {
       this.setState({
         option: 'menuSql',
       });
-    } 
+    }
   };
 
   copyText = () => {
@@ -516,56 +512,80 @@ export default class PfmScript extends SimpleMng {
           <Row gutter={{ md: 6, lg: 24, xl: 0 }}>
             {this.state.option === 'menuSql' && (
               <Col md={24} sm={24}>
-                <textarea  value={this.state.menuSql} style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}>
+                <textarea
+                  value={this.state.menuSql}
+                  style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
+                >
                   {this.getMenuSql(menus)}
                 </textarea>
               </Col>
             )}
             {this.state.option === 'sysScriptText' && (
               <Col md={24} sm={24}>
-                <textarea value={this.state.sysScriptText} style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}>
+                <textarea
+                  value={this.state.sysScriptText}
+                  style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
+                >
                   {this.getSysScriptText(pfmsys.pfmsys)}
                 </textarea>
               </Col>
             )}
             {this.state.option === 'funcScriptText' && (
               <Col md={24} sm={24}>
-                <textarea value={this.state.funcScriptText} style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}>
+                <textarea
+                  value={this.state.funcScriptText}
+                  style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
+                >
                   {this.getFuncScriptText(pfmfunc.pfmfunc)}
                 </textarea>
               </Col>
             )}
             {this.state.option === 'funcSql' && (
               <Col md={24} sm={24}>
-                <textarea value={this.state.funcSql} style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}>
+                <textarea
+                  value={this.state.funcSql}
+                  style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
+                >
                   {this.getFuncScriptSql(pfmfunc.pfmfunc)}
                 </textarea>
               </Col>
             )}
             {this.state.option === 'roleScriptText' && (
               <Col md={24} sm={24}>
-                <textarea value={this.state.roleScriptText} style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}>
+                <textarea
+                  value={this.state.roleScriptText}
+                  style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
+                >
                   {this.getRoleScriptText(pfmrole.pfmrole)}
                 </textarea>
               </Col>
             )}
             {this.state.option === 'roleSql' && (
               <Col md={24} sm={24}>
-                <textarea value={this.state.roleSql} style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}>
+                <textarea
+                  value={this.state.roleSql}
+                  style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
+                >
                   {this.getRoleScriptSql(pfmrole.pfmrole)}
                 </textarea>
               </Col>
             )}
             {this.state.option === 'menuScriptText' && (
               <Col md={24} sm={24}>
-                <textarea value={this.state.menuScriptText} style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}>
+                <textarea
+                  value={this.state.menuScriptText}
+                  style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
+                >
                   {this.getMenuScriptText(menus)}
                 </textarea>
               </Col>
             )}
             {this.state.option === 'sysSql' && (
               <Col md={24} sm={24}>
-                <textarea value={this.state.sysSql} style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}>
+                <textarea
+                  value={this.state.sysSql}
+                  style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
+                >
                   {this.getSysSql(pfmsys.pfmsys)}
                 </textarea>
               </Col>

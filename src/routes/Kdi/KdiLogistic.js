@@ -5,11 +5,16 @@ import { Row, Col, Card, Form, Input, Select, Button, Table, DatePicker } from '
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './KdiLogistic.less';
 import moment from 'moment';
+import KdiEntryForm from './KdiEntryForm';
 
 const { Option } = Select;
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
-@connect(({ kdilogistic, loading }) => ({ kdilogistic, loading: loading.models.kdilogistic }))
+@connect(({ kdilogistic, KdiEntry, loading }) => ({
+  kdilogistic,
+  KdiEntry,
+  loading: loading.models.kdilogistic || loading.models.KdiEntry,
+}))
 @Form.create()
 export default class KdiLogistic extends SimpleMng {
   constructor() {
@@ -138,23 +143,26 @@ export default class KdiLogistic extends SimpleMng {
   };
 
   //禁止选择当前日期后的
-  disabledDate = (current) => {
+  disabledDate = current => {
     return current && current > moment().endOf('day');
-  }
+  };
 
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
-
+    const { editFormRecord } = this.state;
+    const orgId = 253274870;
+    editFormRecord.orgId = orgId;
     return (
       <Form onSubmit={this.list} layout="inline">
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
-          <Col md={6} sm={24} style={{ marginBottom: 20 }} >
+          <Col md={6} sm={24} style={{ marginBottom: 20 }}>
             <Button
               icon="plus"
               type="primary"
-              onClick={this.handleFormReset}>
+              onClick={() => this.showAddForm({ orgId: orgId, editForm: 'kdiEntry', editFormTitle: '快递录入' })}
+            >
               快递录入
-              </Button>
+            </Button>
           </Col>
         </Row>
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
@@ -168,7 +176,9 @@ export default class KdiLogistic extends SimpleMng {
               {getFieldDecorator('orderTime')(
                 <RangePicker
                   disabledDate={this.disabledDate}
-                  style={{ width: '100%' }} placeholder={['开始日期', '结束日期']} />
+                  style={{ width: '100%' }}
+                  placeholder={['开始日期', '结束日期']}
+                />
               )}
             </FormItem>
           </Col>
@@ -187,7 +197,7 @@ export default class KdiLogistic extends SimpleMng {
             </FormItem>
           </Col>
           <Col md={6} sm={24}>
-            <span >
+            <span>
               <Button type="primary" htmlType="submit">
                 查询
               </Button>
@@ -203,6 +213,8 @@ export default class KdiLogistic extends SimpleMng {
 
   render() {
     const { kdilogistic: { kdilogistic }, loading } = this.props;
+    const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
+    let orgId = 253274870;
     let ps;
     if (kdilogistic === undefined || kdilogistic.pageSize === undefined) {
       ps = 5;
@@ -294,6 +306,18 @@ export default class KdiLogistic extends SimpleMng {
             />
           </div>
         </Card>
+        {editForm === 'kdiEntry' && (
+          <KdiEntryForm
+            width={900}
+            visible
+            orgId={orgId}
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            handleSave={fields => this.handleSave({ fields })}
+          />
+        )}
       </PageHeaderLayout>
     );
   }
