@@ -23,19 +23,10 @@ menuData.push({
   path: 'kdi-eorder',
   title: '快递下单',
 });
-menuData.push({
-  id: 1536131597089,
-  code: '0001',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '快递单录入相关业务',
-  name: '快递单录入',
-  path: 'kdi-entry',
-  title: '快递录入',
-});
+
 menuData.push({
   id: 1536131597090,
-  code: '0002',
+  code: '0001',
   sysId: 'damai-admin',
   isEnabled: true,
   remark: '快递单相关业务',
@@ -45,7 +36,7 @@ menuData.push({
 });
 menuData.push({
   id: 1536131597091,
-  code: '0003',
+  code: '0002',
   sysId: 'damai-admin',
   isEnabled: true,
   remark: '快递配置相关业务',
@@ -54,7 +45,7 @@ menuData.push({
 });
 menuData.push({
   id: 1536131597092,
-  code: '000300',
+  code: '000200',
   sysId: 'damai-admin',
   isEnabled: true,
   remark: '快递面单相关业务',
@@ -64,7 +55,7 @@ menuData.push({
 });
 menuData.push({
   id: 1536131597093,
-  code: '000301',
+  code: '000201',
   sysId: 'damai-admin',
   isEnabled: true,
   remark: '快递公司相关业务',
@@ -74,7 +65,7 @@ menuData.push({
 });
 menuData.push({
   id: 1536131597094,
-  code: '000302',
+  code: '000202',
   sysId: 'damai-admin',
   isEnabled: true,
   remark: '发件人相关业务',

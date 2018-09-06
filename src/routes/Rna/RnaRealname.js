@@ -157,6 +157,11 @@ export default class RnaRealname extends SimpleMng {
       tl = Number(rnarealname.total);
     }
     let rnarealnameData;
+    if (rnarealname === undefined ||rnarealname.length ===0 || rnarealname.list.length ===0) {
+      rnarealnameData = [];
+    } else {
+      rnarealnameData = rnarealname.list;
+    }
 
     const paginationProps = {
       showSizeChanger: true,
