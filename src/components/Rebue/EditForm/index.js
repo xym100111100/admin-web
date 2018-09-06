@@ -18,6 +18,10 @@ const EditForm = DivInfo => {
     },
   })
   class extends PureComponent {
+    handleReset = () => {
+      const { form } = this.props;
+      form.resetFields();
+    };
     handleSave = () => {
       const { form, onSave } = this.props;
       form.validateFieldsAndScroll((err, fields) => {
@@ -45,6 +49,7 @@ const EditForm = DivInfo => {
         title,
         visible,
         form,
+        isShowResetButton = false,    // 是否显示重置按钮
         onSave,
         onNext,
         onSubmit,
@@ -63,6 +68,10 @@ const EditForm = DivInfo => {
             <Button key="return" icon="rollback" size="large" onClick={closeModal}>
               返 回
             </Button>,
+            isShowResetButton && (
+              <Button key="reset" icon="undo" size="large" onClick={this.handleReset}>
+                重 置
+              </Button>),
             onSave && (
               <Button key="save" icon="check" size="large" loading={submitting} onClick={this.handleSave}>
                 保 存
