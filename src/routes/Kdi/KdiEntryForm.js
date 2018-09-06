@@ -1,16 +1,18 @@
-import SimpleMng from 'components/Rebue/SimpleMng';
-import React from 'react';
+import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form, Input, Button, Row, Col, Divider } from 'antd';
+import { Form, Input, Row, Col, Divider } from 'antd';
 import styles from './KdiEntry.less';
 import AddrCascader from 'components/Kdi/AddrCascader';
 import KdiCompany from 'components/Kdi/KdiCompany';
 import AddrRanalysis from 'components/Kdi/AddrRanalysis';
+import EditForm from 'components/Rebue/EditForm';
 
 const FormItem = Form.Item;
+
+// 添加与编辑的表单
 @connect(({ kdientry, user, loading }) => ({ kdientry, user, loading: loading.models.kdientry || loading.models.user }))
-@Form.create()
-export default class KdiEntry extends SimpleMng {
+@EditForm
+export default class KdiEntryForm extends PureComponent {
   constructor() {
     super();
     this.moduleCode = 'kdientry';
@@ -36,51 +38,6 @@ export default class KdiEntry extends SimpleMng {
     } else {
       callback();
     }
-  };
-
-  /**
-   * 录入物流信息
-   */
-  entry = () => {
-    const { form } = this.props;
-
-    //设置截取后的详细地址
-    //  const orgId=user.currentUser.orgId; 不是连调的时候应该把这里放开获取动态的orgId(在上面的获取属性里面加user)
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-      //添加组织ID
-      fieldsValue.orgId = 253274870;
-      //这里其实传上来的shipperName中已经包含了shipperId和shipperCode，且用/隔开，所有这里要处理数据。
-      let shipperInfo;
-      if (fieldsValue.shipperName !== undefined) {
-        shipperInfo = fieldsValue.shipperName.split('/');
-        fieldsValue.shipperId = shipperInfo[0];
-        fieldsValue.shipperName = shipperInfo[1];
-        fieldsValue.shipperCode = shipperInfo[2];
-      }
-      //这里其实传上来的senderProvince中已经包含了senderCity和senderExpArea，是个数组，所有这里要处理数据。
-      let senderProvinceInfo = fieldsValue.senderProvince;
-      if (senderProvinceInfo !== undefined) {
-        fieldsValue.senderProvince = senderProvinceInfo[0];
-        fieldsValue.senderCity = senderProvinceInfo[1];
-        fieldsValue.senderExpArea = senderProvinceInfo[2];
-      }
-      //这里其实传上来的receiverProvince中已经包含了receiverCity和receiverExpArea，是个数组，所有这里要处理数据。
-      let receiverProvinceInfo = fieldsValue.receiverProvince;
-      if (receiverProvinceInfo !== undefined) {
-        fieldsValue.receiverProvince = receiverProvinceInfo[0];
-        fieldsValue.receiverCity = receiverProvinceInfo[1];
-        fieldsValue.receiverExpArea = receiverProvinceInfo[2];
-      }
-
-      // this.props.dispatch({
-      //   type: `${this.moduleCode}/add`,
-      //   payload: { ...fieldsValue },
-      //   callback: () => {
-      //     this.handleReload();
-      //   },
-      // });
-    });
   };
 
   renderSearchForm() {
@@ -250,28 +207,21 @@ export default class KdiEntry extends SimpleMng {
             <KdiCompany FormItemStyle={{ paddingLeft: 15 }} form={form} />
           </Col>
         </Row>
-        <Row>
-          <Col md={14} sm={24}>
-            <FormItem>
-              <Button style={{ float: 'right', marginRight: 30 }} type="primary" htmlType="submit">
-                录入
-              </Button>
-              <Button style={{ float: 'right', marginRight: 35 }} onClick={this.handleReset}>
-                重置
-              </Button>
-            </FormItem>
-          </Col>
-        </Row>
       </Form>
     );
   }
 
   render() {
-    const { kdientry: { kdientry }, loading } = this.props;
+    const { form } = this.props;
+
     return (
-      <div style={{ background: 'white' }} className={styles.tableListForm}>
-        {this.renderSearchForm()}
-      </div>
+      <Fragment>
+        {form.getFieldDecorator('id')(<Input type="hidden" />)}
+        {form.getFieldDecorator('orgId')(<Input type="hidden" />)}
+        <div style={{ background: 'white' }} className={styles.tableListForm}>
+          {this.renderSearchForm()}
+        </div>
+      </Fragment>
     );
   }
 }

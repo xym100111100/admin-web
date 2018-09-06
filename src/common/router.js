@@ -78,7 +78,9 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['replogistic'], () => import('../routes/Rep/RepLogistic')),
     },
     '/kdi/kdi-mng': {
-      component: dynamicWrapper(app, ['kdilogistic'], () => import('../routes/Kdi/KdiLogistic')),
+      component: dynamicWrapper(app, ['kdilogistic', 'kdientry', 'kdicompany'], () =>
+        import('../routes/Kdi/KdiLogistic')
+      ),
     },
     '/kdi/kdi-eorder': {
       component: dynamicWrapper(app, ['kdieorder', 'kdisender', 'user', 'kdireceiver', 'kdicompany'], () =>
