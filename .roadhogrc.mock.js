@@ -328,6 +328,7 @@ if (noProxy) {
   addProxy('suc-svr', 'http://127.0.0.1:9100/');
   addProxy('kdi-svr', 'http://127.0.0.1:20080/');
   addProxy('onl-svr', 'http://127.0.0.1:9100/');
+  addProxy('ise-svr', 'http://127.0.0.1:20180/');
 }
 
 // 响应请求延迟1秒

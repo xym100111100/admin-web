@@ -29,3 +29,12 @@ export async function tapeOut(params) {
     method: 'PUT',
   });
 }
+
+export async function append(params) {
+  return request('/onl-svr/onl/onlinespec/append', {
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
+}

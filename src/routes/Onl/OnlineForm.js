@@ -29,6 +29,7 @@ export default class OnlineForm extends React.Component {
     previewImages: '',
     fileLists: [],
     subjectType: 0,
+    onlOnlineSpec: [],
   };
 
   // 获取上线信息包括：上线信息、规格信息、图片信息等
@@ -47,14 +48,14 @@ export default class OnlineForm extends React.Component {
               uid: onlonline.record.onlinePicList[i].id,
               name: onlonline.record.onlinePicList[i].picPath,
               status: 'done',
-              url: 'http://127.0.0.1:20180/ise/upload/' + onlonline.record.onlinePicList[i].picPath,
+              url: '/ise-svr/files' + onlonline.record.onlinePicList[i].picPath,
             });
           } else {
             fileLists.push({
               uid: onlonline.record.onlinePicList[i].id,
               name: onlonline.record.onlinePicList[i].picPath,
               status: 'done',
-              url: 'http://127.0.0.1:20180/ise/upload/' + onlonline.record.onlinePicList[i].picPath,
+              url: '/ise-svr/files' + onlonline.record.onlinePicList[i].picPath,
             });
           }
         }
@@ -99,7 +100,9 @@ export default class OnlineForm extends React.Component {
     });
   };
 
-  handleChanges = ({ fileList }) => {
+  handleChanges = info => {
+    let fileList = info.fileList;
+    fileList = fileList.slice(-5);
     this.setState({ fileLists: fileList });
   };
   // 商品轮播图结束
@@ -116,12 +119,8 @@ export default class OnlineForm extends React.Component {
   editorOnHTMLChange = e => {
     // 去除div开始
     let detailHtml = e.replace(/<div\/?.+?>/g, '');
-    let detailHtmls = detailHtml.replace(/<\/div>/g, '');
+    let onlineDetail = detailHtml.replace(/<\/div>/g, '');
     // 去除div结束
-    // 去除p标签开始
-    let detailHtmlss = detailHtmls.replace(/<p>/g, '');
-    let onlineDetail = detailHtmlss.replace(/<\/p>/g, '');
-    // 去除p标签结束
     this.setState({ onlineDetail });
   };
 
@@ -190,6 +189,8 @@ export default class OnlineForm extends React.Component {
   };
 
   handleCheck = record => {
+    // 验证价格是否大于0
+    const reg = /^([1-9]\d*(\.\d*[1-9])?)|(0\.\d*[1-9])$/;
     if (!record.onlineSpec) {
       message.error('请输入规格名称');
       return false;
@@ -198,10 +199,17 @@ export default class OnlineForm extends React.Component {
       message.error('请输入上线价格');
       return false;
     }
-    if (!record.cashbackAmount) {
-      message.error('请输入返现金额');
-      return false;
+    if (this.state.subjectType === 0) {
+      if (!record.cashbackAmount) {
+        message.error('请输入返现金额');
+        return false;
+      }
+      if (!reg.test(record.cashbackAmount)) {
+        message.error('返现金额只能输入大于0的整数或者小数');
+        return false;
+      }
     }
+
     if (!record.saleCount) {
       message.error('请输入上线数量');
       return false;
@@ -210,16 +218,11 @@ export default class OnlineForm extends React.Component {
       message.error('请输入单位');
       return false;
     }
-    // 验证价格是否大于0
-    const reg = /^([1-9]\d*(\.\d*[1-9])?)|(0\.\d*[1-9])$/;
     if (!reg.test(record.salePrice)) {
       message.error('上线价格只能输入大于0的整数或者小数');
       return false;
     }
-    if (!reg.test(record.cashbackAmount)) {
-      message.error('返现金额只能输入大于0的整数或者小数');
-      return false;
-    }
+
     // 验证是否为正整数
     const regs = /^[1-9]\d*$/;
     if (!regs.test(record.saleCount)) {
@@ -298,7 +301,7 @@ export default class OnlineForm extends React.Component {
     // 富文本框功能配置
     const editorProps = {
       contentFormat: 'html',
-      initialContent: onlineDetail,
+      initialContent: onlineDetail || '',
       onHTMLChange: this.editorOnHTMLChange,
       media: {
         allowPasteImage: false, // 是否允许直接粘贴剪贴板图片（例如QQ截图等）到编辑器
@@ -395,7 +398,7 @@ export default class OnlineForm extends React.Component {
                   onChange={this.handleChanges}
                   className="damaiSlideshow"
                 >
-                  {fileLists.length >= 4 ? null : uploadButton}
+                  {fileLists.length >= 5 ? null : uploadButton}
                 </Upload>
                 <Modal visible={previewVisibles} footer={null} onCancel={this.handleCancels}>
                   <img alt="example" style={{ width: '100%' }} src={previewImages} />

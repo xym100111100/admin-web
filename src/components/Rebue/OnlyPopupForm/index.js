@@ -19,16 +19,27 @@ const OnlyPopupForm = DivInfo => {
   })
   class extends PureComponent {
     render() {
-      const { title, visible, width = 520, handleSave, closeModal, submitting, form, ...restProps } = this.props;
+      const {
+        title,
+        visible,
+        width = 520,
+        height = 300,
+        handleSave,
+        closeModal,
+        submitting,
+        form,
+        ...restProps
+      } = this.props;
       return (
         <Modal
+          style={{ marginTop: -90 }}
           visible={visible}
           title={title}
           closable={false}
-          bodyStyle={{ overflow: 'scroll' }}
+          bodyStyle={{ overflow: 'scroll', height: height }}
           width={width}
           footer={
-            <Button key="back" type="ghost" size="large" onClick={closeModal}>
+            <Button key="return" icon="rollback" size="large" onClick={closeModal}>
               返 回
             </Button>
           }

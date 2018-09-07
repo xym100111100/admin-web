@@ -124,7 +124,11 @@ export const getRouterData = app => {
     '/suc/org-mng': {
       component: dynamicWrapper(app, ['sucuser', 'sucorg', 'sucuserorg'], () => import('../routes/Suc/OrgMng')),
     },
-
+    '/onl/onl-mng': {
+      component: dynamicWrapper(app, ['onlonline', 'BraftEditorUpload', 'onlonlineporomotion'], () =>
+        import('../routes/Onl/OnlineMng')
+      ),
+    },
     // ****************** 基础路由 ******************
     '/user': {
       component: dynamicWrapper(app, [], () => import('../layouts/UserLayout')),

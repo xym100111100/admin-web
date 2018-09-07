@@ -312,7 +312,6 @@ export default class EditableTable extends PureComponent {
 
   render() {
     const { children } = this.props;
-    const { dataSource: records } = children.props;
     // 初始化列
     if (!children.props.columns[0].render) this.initColums();
 
