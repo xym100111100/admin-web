@@ -148,7 +148,7 @@ menuData.push({
   id: 1536131597102,
   code: '04',
   sysId: 'damai-admin',
-  icon: 'user',
+  icon: 'table',
   isEnabled: true,
   remark: '报表相关业务',
   name: '报表管理',
