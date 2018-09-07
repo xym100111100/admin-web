@@ -49,7 +49,7 @@ const EditForm = DivInfo => {
         title,
         visible,
         form,
-        isShowResetButton = false,    // 是否显示重置按钮
+        isShowResetButton = false, // 是否显示重置按钮
         onSave,
         onNext,
         onSubmit,
@@ -71,7 +71,8 @@ const EditForm = DivInfo => {
             isShowResetButton && (
               <Button key="reset" icon="undo" size="large" onClick={this.handleReset}>
                 重 置
-              </Button>),
+              </Button>
+            ),
             onSave && (
               <Button key="save" icon="check" size="large" loading={submitting} onClick={this.handleSave}>
                 保 存
