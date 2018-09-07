@@ -3,44 +3,44 @@ import { parse } from 'url';
 // mock tableListDataSource
 const tableListDataSource = [
   {
-    id: 1,
-    roleId: 2,
-    actiId: 1,
+    id: 1536131597087,
+    roleId: 1536131597091,
+    actiId: 1536131597087,
   },
   {
-    id: 2,
-    roleId: 2,
-    actiId: 2,
+    id: 1536131597088,
+    roleId: 1536131597090,
+    actiId: 1536131597088,
   },
   {
-    id: 3,
-    roleId: 4,
-    actiId: 1,
+    id: 1536131597089,
+    roleId: 1536131597093,
+    actiId: 1536131597087,
   },
   {
-    id: 4,
-    roleId: 4,
-    actiId: 3,
+    id: 1536131597090,
+    roleId: 1536131597093,
+    actiId: 1536131597089,
   },
   {
-    id: 5,
-    roleId: 6,
-    actiId: 1,
+    id: 1536131597091,
+    roleId: 1536131597095,
+    actiId: 1536131597087,
   },
   {
-    id: 6,
-    roleId: 6,
-    actiId: 4,
+    id: 1536131597092,
+    roleId: 1536131597095,
+    actiId: 1536131597090,
   },
   {
-    id: 7,
-    roleId: 8,
-    actiId: 1,
+    id: 1536131597093,
+    roleId: 1536131597097,
+    actiId: 1536131597087,
   },
   {
-    id: 8,
-    roleId: 8,
-    actiId: 5,
+    id: 1536131597094,
+    roleId: 1536131597097,
+    actiId: 1536131597091,
   },
 ];
 
@@ -57,6 +57,10 @@ export function pfmroleactiList(req, res, u) {
     }
   }
   return res.json(result);
+}
+
+export function pfmroleactiListAll(req, res) {
+  res.json(tableListDataSource);
 }
 
 export function pfmroleactiModify(req, res, u, b) {

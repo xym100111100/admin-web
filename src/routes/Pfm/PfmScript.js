@@ -11,9 +11,10 @@ const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const FormItem = Form.Item;
 
-@connect(({ pfmsys, pfmfunc, pfmscript, user, pfmrole, loading }) => ({
+@connect(({ pfmsys, pfmroleacti, pfmfunc, pfmscript, user, pfmrole, loading }) => ({
   pfmscript,
   pfmsys,
+  pfmroleacti,
   pfmfunc,
   pfmrole,
   user,
@@ -22,7 +23,8 @@ const FormItem = Form.Item;
     loading.models.pfmsys ||
     loading.models.pfmfunc ||
     loading.models.pfmrole ||
-    loading.models.user,
+    loading.models.user ||
+    loading.models.pfmroleacti,
 }))
 export default class PfmScript extends SimpleMng {
   constructor() {
@@ -50,6 +52,9 @@ export default class PfmScript extends SimpleMng {
     this.props.dispatch({
       type: `pfmfunc/list`,
       payload: { sysId: 'pfm-admin' },
+    });
+    this.props.dispatch({
+      type: 'pfmroleacti/listAll',
     });
   }
 
@@ -253,7 +258,7 @@ export default class PfmScript extends SimpleMng {
    */
   getFuncScriptText = dataArray => {
     const ActiScriptText = this.getActiScriptText(dataArray);
-    let funcScriptText = '-- 功能--\n';
+    let funcScriptText = '// 功能--\n';
     for (const item of dataArray) {
       funcScriptText +=
         '  { id: ' +
@@ -331,7 +336,7 @@ export default class PfmScript extends SimpleMng {
         j++;
       }
     }
-    let actiScriptText = '-- 动作--\n';
+    let actiScriptText = '// 动作--\n';
     for (const item of array) {
       actiScriptText +=
         '  { id: ' +
@@ -396,9 +401,39 @@ export default class PfmScript extends SimpleMng {
         item.remark +
         "');\n";
     }
-
+    actiSql += this.getRoleActiSql();
     return actiSql;
   };
+
+  /**
+   * 获取角色动作sql
+   */
+  getRoleActiSql = () => {
+    const { pfmroleacti } = this.props;
+    let roleActiSql = '-- 角色动作sql--\n';
+    for (const item of pfmroleacti.pfmroleacti) {
+      roleActiSql +=
+        'INSERT INTO `PFM_ROLE_ACTI`(`ID`,`ROLE_ID`,`ACTI_ID`) values (' +
+        item.id +
+        ',' +
+        item.roleId +
+        ',' +
+        item.actiId +
+        ');\n';
+    }
+    return roleActiSql;
+  };
+
+  /**
+   * 获取角色动作script
+   */
+  getRoleActiScriptTest() {
+    const { pfmroleacti } = this.props;
+    let roleActiScript = '// 角色动作--\n';
+    for (const item of pfmroleacti.pfmroleacti) {
+    }
+    return roleActiScript;
+  }
 
   select = obj => {
     if (obj === 1) {

@@ -65,7 +65,7 @@ import {
   pfmroleDel,
   pfmroleEnable,
 } from './mock/pfmrole';
-import { pfmroleactiList, pfmroleactiModify } from './mock/pfmroleacti';
+import { pfmroleactiList, pfmroleactiModify, pfmroleactiListAll } from './mock/pfmroleacti';
 import { getRule, postRule } from './mock/rule';
 import { getActivities, getNotice, getFakeList } from './mock/api';
 import { getFakeChartData } from './mock/chart';
@@ -183,6 +183,8 @@ const proxy = {
   // pfmroleacti
   'GET /pfm-svr/pfm/roleacti': pfmroleactiList,
   'PUT /pfm-svr/pfm/roleacti': pfmroleactiModify,
+  'PUT /pfm-svr/pfm/roleacti/ListAll': pfmroleactiListAll,
+
   // sucuser
   'GET /suc-svr/suc/user': sucUserList,
   'GET /suc-svr/suc/user/getbyid': sucUserGetById,

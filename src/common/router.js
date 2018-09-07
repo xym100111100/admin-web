@@ -107,8 +107,10 @@ export const getRouterData = app => {
       ),
     },
     '/pfm/script-mng': {
-      component: dynamicWrapper(app, ['kdicompany', 'pfmscript', 'user', 'pfmsys', 'pfmrole', 'pfmfunc'], () =>
-        import('../routes/Pfm/PfmScript')
+      component: dynamicWrapper(
+        app,
+        ['kdicompany', 'pfmroleacti', 'pfmscript', 'user', 'pfmsys', 'pfmrole', 'pfmfunc'],
+        () => import('../routes/Pfm/PfmScript')
       ),
     },
     '/pfm/role-mng': {

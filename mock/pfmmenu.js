@@ -77,7 +77,7 @@ menuData.push({
   id: 1536131597095,
   code: '01',
   sysId: 'damai-admin',
-  icon: 'hdd',
+  icon: 'idcard',
   isEnabled: true,
   remark: '实名认证相关业务',
   name: '实名认证',
@@ -98,10 +98,10 @@ menuData.push({
   id: 1536131597097,
   code: '02',
   sysId: 'damai-admin',
-  icon: 'user',
+  icon: 'cloud-upload',
   isEnabled: true,
   remark: '商品相关业务',
-  name: '商品管理',
+  name: '商品上线',
   path: 'onl',
 });
 menuData.push({
