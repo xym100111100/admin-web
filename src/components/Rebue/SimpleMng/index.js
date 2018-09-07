@@ -5,7 +5,7 @@ import { PureComponent } from 'react';
 export default class SimpleMng extends PureComponent {
   state = {
     editForm: undefined,
-    editFormType: undefined,
+    editFormType: undefined, // add-添加 edit-编辑
     editFormTitle: undefined,
     editFormRecord: {},
   };
@@ -75,18 +75,23 @@ export default class SimpleMng extends PureComponent {
     const defaultParams = {
       fields: undefined,
       moduleCode: this.moduleCode,
+      saveMethodName: undefined, // string 保存时调用的方法
       isReturn: false, // 默认不返回主页面
       isReset: false, // 是否重置
     };
 
-    const { moduleCode, fields, isReturn, isReset } = Object.assign(defaultParams, params);
+    const { moduleCode, saveMethodName, fields, isReturn, isReset } = Object.assign(defaultParams, params);
 
     this.setState({ editFormRecord: fields });
     let dispatchType;
-    if (this.state.editFormType === 'add') {
+    if (saveMethodName) {
+      dispatchType = `${moduleCode}/${saveMethodName}`;
+    } else if (this.state.editFormType === 'add') {
       dispatchType = `${moduleCode}/add`;
-    } else {
+    } else if (this.state.editFormType === 'edit') {
       dispatchType = `${moduleCode}/modify`;
+    } else {
+      throw '不能识别editFormType的类型';
     }
     this.props.dispatch({
       type: dispatchType,

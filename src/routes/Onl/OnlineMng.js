@@ -1,12 +1,31 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Button, Card, Divider, Popconfirm, Form, Table, Input, Row, Col, List, Menu, Dropdown, Icon } from 'antd';
+import {
+  Button,
+  Card,
+  Divider,
+  Popconfirm,
+  Select,
+  Form,
+  Table,
+  Input,
+  Row,
+  Col,
+  List,
+  Menu,
+  Dropdown,
+  Icon,
+} from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import OnlineForm from './OnlineForm';
 import styles from './OnlineMng.less';
+import OnlOnlinePromotionForm from './OnlOnlinePromotionForm';
+import OnlOnlineSpecForm from './OnlOnlineSpecForm';
+import OnlOnlineNumberForm from './OnlOnlineNumberForm';
 
 const FormItem = Form.Item;
+const Option = Select.Option;
 
 @connect(({ onlonline }) => ({ onlonline }))
 @Form.create()
@@ -30,6 +49,11 @@ export default class OnlineMng extends SimpleMng {
     });
   };
 
+  // 重置from
+  handleFormReset = () => {
+    this.props.form.resetFields();
+  };
+
   // 搜索
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
@@ -37,7 +61,19 @@ export default class OnlineMng extends SimpleMng {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
           <Col md={6} sm={24}>
-            <FormItem label="">{getFieldDecorator('onlineTitle')(<Input placeholder="上线标题" />)}</FormItem>
+            <FormItem label="上线标题">{getFieldDecorator('onlineTitle')(<Input placeholder="上线标题" />)}</FormItem>
+          </Col>
+          <Col md={6} sm={24}>
+            <FormItem label="上线状态">
+              {getFieldDecorator('onlineState', {
+                initialValue: '1',
+              })(
+                <Select style={{ width: 120 }}>
+                  <Option value="1">已上线</Option>
+                  <Option value="0">已下线</Option>
+                </Select>
+              )}
+            </FormItem>
           </Col>
           <Col md={6} sm={24}>
             <span style={{ float: 'left', marginBottom: 24 }}>
@@ -103,17 +139,34 @@ export default class OnlineMng extends SimpleMng {
               复制上线
             </a>
           </Menu.Item>
-          <Menu.Item>
-            <Popconfirm title="是否要取消此商品的推广？" onConfirm={() => this.cancelPromotion(record)}>
-              <a>取消推广</a>
-            </Popconfirm>
-          </Menu.Item>
+          {record.id === record.onlineId ? (
+            <Menu.Item>
+              <Popconfirm title="是否要取消此商品的推广？" onConfirm={() => this.cancelPromotion(record)}>
+                <a>取消推广</a>
+              </Popconfirm>
+            </Menu.Item>
+          ) : (
+            <Menu.Item>
+              <a
+                onClick={() =>
+                  this.showAddForm({
+                    id: record.id,
+                    editForm: 'onlOnlinePromotionForm',
+                    editFormRecord: record,
+                    editFormTitle: '商品推广',
+                  })
+                }
+              >
+                商品推广
+              </a>
+            </Menu.Item>
+          )}
           <Menu.Item>
             <a
               onClick={() =>
                 this.showAddForm({
                   id: record.id,
-                  editForm: 'onlLineSpecForm',
+                  editForm: 'onlOnlineSpecForm',
                   editFormRecord: record,
                   editFormTitle: '规格信息',
                 })
@@ -122,9 +175,22 @@ export default class OnlineMng extends SimpleMng {
               查询规格信息
             </a>
           </Menu.Item>
+          <Menu.Item>
+            <a
+              onClick={() =>
+                this.showAddForm({
+                  id: record.id,
+                  editForm: 'onlOnlineNumberForm',
+                  editFormRecord: record,
+                  editFormTitle: '追加上线数量',
+                })
+              }
+            >
+              追加上线数量
+            </a>
+          </Menu.Item>
         </Menu>
       );
-
       return (
         <Dropdown overlay={menu}>
           <a>
@@ -192,7 +258,7 @@ export default class OnlineMng extends SimpleMng {
                   onClick={() =>
                     this.showAddForm({
                       id: record.id,
-                      editForm: 'onlLineSpecForm',
+                      editForm: 'onlOnlineSpecForm',
                       editFormRecord: record,
                       editFormTitle: '规格信息',
                     })
@@ -248,10 +314,59 @@ export default class OnlineMng extends SimpleMng {
             visible
             title={editFormTitle}
             width={1100}
+            height={510}
             id={editFormRecord.id}
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
+          />
+        )}
+        {editForm === 'onlOnlinePromotionForm' && (
+          <OnlOnlinePromotionForm
+            visible
+            title={editFormTitle}
+            width={700}
+            id={editFormRecord.id}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            onSubmit={fields =>
+              this.handleSubmit({
+                fields: { onlineId: editFormRecord.id, promotionType: fields.promotionType },
+                moduleCode: 'onlonlineporomotion',
+              })
+            }
+          />
+        )}
+        {editForm === 'onlOnlineSpecForm' && (
+          <OnlOnlineSpecForm
+            visible
+            title={editFormTitle}
+            width={1000}
+            height={490}
+            id={editFormRecord.id}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+          />
+        )}
+        {editForm === 'onlOnlineNumberForm' && (
+          <OnlOnlineNumberForm
+            visible
+            title={editFormTitle}
+            width={700}
+            height={490}
+            id={editFormRecord.id}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            onSubmit={fields =>
+              this.handleSubmit({
+                fields: { onlineId: editFormRecord.id, appends: fields },
+                moduleCode: 'onlonline',
+                saveMethodName: 'append',
+              })
+            }
           />
         )}
       </PageHeaderLayout>

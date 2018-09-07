@@ -29,13 +29,7 @@ const flatMenuKeys = getFlatMenuKeys(menu);
 
 describe('test convert nested menu to flat menu', () => {
   it('simple menu', () => {
-    expect(flatMenuKeys).toEqual([
-      '/dashboard',
-      '/dashboard/name',
-      '/userinfo',
-      '/userinfo/:id',
-      '/userinfo/:id/info',
-    ]);
+    expect(flatMenuKeys).toEqual(['/dashboard', '/dashboard/name', '/userinfo', '/userinfo/:id', '/userinfo/:id/info']);
   });
 });
 
@@ -49,17 +43,11 @@ describe('test menu match', () => {
   });
 
   it('Secondary path', () => {
-    expect(getMenuMatchKeys(flatMenuKeys, urlToList('/dashboard/name'))).toEqual([
-      '/dashboard',
-      '/dashboard/name',
-    ]);
+    expect(getMenuMatchKeys(flatMenuKeys, urlToList('/dashboard/name'))).toEqual(['/dashboard', '/dashboard/name']);
   });
 
   it('Parameter path', () => {
-    expect(getMenuMatchKeys(flatMenuKeys, urlToList('/userinfo/2144'))).toEqual([
-      '/userinfo',
-      '/userinfo/:id',
-    ]);
+    expect(getMenuMatchKeys(flatMenuKeys, urlToList('/userinfo/2144'))).toEqual(['/userinfo', '/userinfo/:id']);
   });
 
   it('three parameter path', () => {

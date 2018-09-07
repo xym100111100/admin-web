@@ -314,7 +314,7 @@ export default class OrgMng extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields => this.handleSave({ fields, moduleCode: 'sucorg' })}
+            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'sucorg' })}
           />
         )}
         {editForm === 'orgUserForm' && (
@@ -326,7 +326,7 @@ export default class OrgMng extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields => this.handleSave({ fields, moduleCode: 'sucuser' })}
+            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'sucuser' })}
           />
         )}
       </PageHeaderLayout>

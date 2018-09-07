@@ -1,11 +1,11 @@
 import { message } from 'antd';
-import { list, getById, add, cancelPromotion, tapeOut, append } from '../services/onlonline';
+import { list, getById, add, modify, del } from '../services/onlonlineporomotion';
 
 export default {
-  namespace: 'onlonline',
+  namespace: 'onlonlineporomotion',
 
   state: {
-    onlonline: [],
+    onlonlineporomotion: [],
   },
 
   effects: {
@@ -19,7 +19,12 @@ export default {
     },
     *getById({ payload, callback }, { call }) {
       const response = yield call(getById, payload);
-      if (callback) callback(response);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
     },
     *add({ payload, callback }, { call }) {
       const response = yield call(add, payload);
@@ -30,8 +35,8 @@ export default {
         message.error(response.msg);
       }
     },
-    *cancelPromotion({ payload, callback }, { call }) {
-      const response = yield call(cancelPromotion, payload);
+    *modify({ payload, callback }, { call }) {
+      const response = yield call(modify, payload);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);
@@ -39,17 +44,8 @@ export default {
         message.error(response.msg);
       }
     },
-    *tapeOut({ payload, callback }, { call }) {
-      const response = yield call(tapeOut, payload);
-      if (response.result === 1) {
-        message.success(response.msg);
-        if (callback) callback(response);
-      } else {
-        message.error(response.msg);
-      }
-    },
-    *append({ payload, callback }, { call }) {
-      const response = yield call(append, payload);
+    *del({ payload, callback }, { call }) {
+      const response = yield call(del, payload);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);
@@ -62,7 +58,7 @@ export default {
   reducers: {
     changeList(state, action) {
       return {
-        onlonline: action.payload,
+        pfmsys: action.payload,
       };
     },
   },

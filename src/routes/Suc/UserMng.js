@@ -378,7 +378,7 @@ export default class UserMng extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields => this.handleSave({ fields, moduleCode: 'sucuser' })}
+            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'sucuser' })}
           />
         )}
         {editForm === 'userForm' && (
@@ -390,7 +390,7 @@ export default class UserMng extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields => this.handleSave({ fields, moduleCode: 'sucuser' })}
+            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'sucuser' })}
           />
         )}
         {editForm === 'userRoleForm' && (
@@ -404,8 +404,8 @@ export default class UserMng extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields =>
-              this.handleSave({
+            onSubmit={fields =>
+              this.handleSubmit({
                 fields: {
                   sysId: userrole.dataSource[0].sysId,
                   userId: editFormRecord.userId,
@@ -425,8 +425,8 @@ export default class UserMng extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields =>
-              this.handleSave({
+            onSubmit={fields =>
+              this.handleSubmit({
                 fields: {
                   id: editFormRecord.id,
                   orgId: fields.id,
