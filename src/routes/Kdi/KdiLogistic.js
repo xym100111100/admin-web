@@ -310,12 +310,14 @@ export default class KdiLogistic extends SimpleMng {
           <KdiEntryForm
             width={900}
             visible
+            isShowResetButton
             orgId={orgId}
             title={editFormTitle}
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields => this.handleSave({ fields })}
+            onNext={fields => this.handleSave({ fields })}
+            onSubmit={fields => this.handleSave({ fields })}
           />
         )}
       </PageHeaderLayout>

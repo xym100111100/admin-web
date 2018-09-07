@@ -22,13 +22,6 @@ export default class KdiEntryForm extends PureComponent {
     this.props.form.resetFields();
   };
 
-  componentDidMount() {
-    const { form } = this.props;
-    //设置默认发件人
-    form.setFieldsValue({ senderPostCode: '530000' });
-    form.setFieldsValue({ receiverPostCode: '000000' });
-  }
-
   /**
    * 收发件人的自定义规则
    */
@@ -81,6 +74,7 @@ export default class KdiEntryForm extends PureComponent {
                     message: '请输入六位全部为数字发件地邮编',
                   },
                 ],
+                initialValue: '530000'
               })(<Input placeholder="请输入发件地邮编" />)}
             </FormItem>
             <FormItem label="发件人地址">
@@ -147,6 +141,7 @@ export default class KdiEntryForm extends PureComponent {
                     message: '请输入六位全部为数字收件地邮编',
                   },
                 ],
+                initialValue: '000000'
               })(<Input placeholder="请输入收件地邮编" />)}
             </FormItem>
             <FormItem label="收件人地址">

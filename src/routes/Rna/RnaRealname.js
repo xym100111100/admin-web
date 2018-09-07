@@ -240,7 +240,6 @@ export default class RnaRealname extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields => this.handleSave({ fields })}
           />
         )}
       </PageHeaderLayout>
