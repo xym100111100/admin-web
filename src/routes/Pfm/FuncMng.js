@@ -325,7 +325,7 @@ export default class FuncMng extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields => this.handleSave({ fields })}
+            onSubmit={fields => this.handleSubmit({ fields })}
           />
         )}
         {editForm === 'actiForm' && (
@@ -336,7 +336,7 @@ export default class FuncMng extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields => this.handleSave({ fields, moduleCode: 'pfmacti' })}
+            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'pfmacti' })}
           />
         )}
         {editForm === 'actiMenuForm' && (
@@ -349,7 +349,7 @@ export default class FuncMng extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields => this.handleSave({ fields, moduleCode: 'pfmactimenu' })}
+            onSubmit={fields => this.handleSubmit({fields, moduleCode: 'pfmactimenu' })}
           />
         )}
         {editForm === 'actiUrnForm' && (
@@ -362,7 +362,7 @@ export default class FuncMng extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields => this.handleSave({ fields, moduleCode: 'pfmactiurn' })}
+            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'pfmactiurn' })}
           />
         )}
       </PageHeaderLayout>

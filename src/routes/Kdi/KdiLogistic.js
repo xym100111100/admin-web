@@ -317,7 +317,7 @@ export default class KdiLogistic extends SimpleMng {
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
             onNext={fields => this.handleSave({ fields })}
-            onSubmit={fields => this.handleSave({ fields })}
+            onSubmit={fields => this.handleSubmit({ fields })}
           />
         )}
       </PageHeaderLayout>

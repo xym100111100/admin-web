@@ -335,7 +335,7 @@ export default class RoleMng extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields => this.handleSave({ fields })}
+            onSubmit={fields => this.handleSubmit({ fields })}
           />
         )}
         {editForm === 'roleActiForm' && (
@@ -348,7 +348,7 @@ export default class RoleMng extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields => this.handleSave({ fields, moduleCode: 'pfmroleacti' })}
+            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'pfmroleacti' })}
           />
         )}
         {editForm === 'roleUserForm' && (
@@ -359,7 +359,7 @@ export default class RoleMng extends SimpleMng {
             record={editFormRecord}
             width={1200}
             closeModal={() => this.setState({ editForm: undefined })}
-            handleSave={fields => this.handleSave({ fields, moduleCode: 'pfmroleacti' })}
+            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'pfmroleacti' })}
           />
         )}
       </PageHeaderLayout>
