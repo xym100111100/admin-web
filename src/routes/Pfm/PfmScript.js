@@ -11,19 +11,23 @@ const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const FormItem = Form.Item;
 
-@connect(({ pfmsys, pfmroleacti, pfmfunc, pfmscript, user, pfmrole, loading }) => ({
+@connect(({ pfmsys, pfmroleacti, pfmfunc, pfmscript, user, pfmrole,pfmactimenu, pfmactiurn, loading }) => ({
   pfmscript,
   pfmsys,
   pfmroleacti,
   pfmfunc,
   pfmrole,
   user,
+  pfmactimenu, 
+  pfmactiurn,
   loading:
     loading.models.pfmscript ||
     loading.models.pfmsys ||
     loading.models.pfmfunc ||
     loading.models.pfmrole ||
     loading.models.user ||
+    loading.models.pfmactiurn ||
+    loading.models.pfmactimenu ||
     loading.models.pfmroleacti,
 }))
 export default class PfmScript extends SimpleMng {
@@ -55,6 +59,12 @@ export default class PfmScript extends SimpleMng {
     });
     this.props.dispatch({
       type: 'pfmroleacti/listAll',
+    });
+    this.props.dispatch({
+      type: 'pfmactimenu/listAll',
+    });
+    this.props.dispatch({
+      type: 'pfmactiurn/listAll',
     });
   }
 
@@ -143,7 +153,7 @@ export default class PfmScript extends SimpleMng {
         item.remark +
         "');\n";
     }
-    funcSql += ActiSql;
+    funcSql +='\n'+ ActiSql;
     //设置状态值以便复制
     this.setState({
       funcSql: funcSql,
@@ -336,7 +346,7 @@ export default class PfmScript extends SimpleMng {
         j++;
       }
     }
-    let actiScriptText = '// 动作--\n';
+    let actiScriptText = '// 动作\n';
     for (const item of array) {
       actiScriptText +=
         '  { id: ' +
@@ -365,6 +375,9 @@ export default class PfmScript extends SimpleMng {
         "'},\n";
     }
     actiScriptText += '\n';
+    actiScriptText+=this.getRoleActiScriptTest()+'\n';
+    actiScriptText+=this.getActiMenuScriptTest()+'\n';
+    actiScriptText+=this.getActiUrlScriptTest()+'\n';
     return actiScriptText;
   };
 
@@ -401,7 +414,9 @@ export default class PfmScript extends SimpleMng {
         item.remark +
         "');\n";
     }
-    actiSql += this.getRoleActiSql();
+    actiSql += '\n' +this.getRoleActiSql()+'\n';
+    actiSql +=this.getActiMenuSql()+'\n';
+    actiSql += this.getActiUrnSql()+'\n';
     return actiSql;
   };
 
@@ -423,17 +438,85 @@ export default class PfmScript extends SimpleMng {
     }
     return roleActiSql;
   };
+  
 
   /**
    * 获取角色动作script
    */
-  getRoleActiScriptTest() {
+  getRoleActiScriptTest=()=> {
     const { pfmroleacti } = this.props;
-    let roleActiScript = '// 角色动作--\n';
+    let roleActiScript = '// 角色动作\n';
     for (const item of pfmroleacti.pfmroleacti) {
+      roleActiScript +=
+      '{id:' +item.id+
+      ',roleId:'+item.roleId+
+      ',actiId:'+item.actiId+
+      '},\n';
     }
     return roleActiScript;
   }
+  
+  getActiMenuScriptTest=()=>{
+    const { pfmactimenu } = this.props;
+    let menuActiScript = '// 菜单动作\n';
+    for (const item of pfmactimenu.pfmactimenu) {
+      menuActiScript +=
+      '{id:' +item.id+
+      ',menuId:'+item.menuId+
+      ',actiId:'+item.actiId+
+      '},\n'
+    }
+    return menuActiScript;
+  }
+
+  getActiMenuSql=()=>{
+    const { pfmactimenu } = this.props;
+    let menuActiSql = '-- 菜单sql\n';
+    for (const item of pfmactimenu.pfmactimenu) {
+      menuActiSql +=
+      'INSERT INTO `PFM_ACTI_MENU`(`ID`,`MENU_ID`,`ACTI_ID`) values (' +
+      item.id +
+      ',' +
+      item.menuId +
+      ',' +
+      item.actiId +
+      ');\n';
+    }
+    return menuActiSql;
+  }
+
+  /**
+   * 获取动作url
+   */
+  getActiUrlScriptTest=()=>{
+    const { pfmactiurn } = this.props;
+    let actiUrlScript = '// 动作url\n';
+    for (const item of pfmactiurn.pfmactiurn) {
+      actiUrlScript +=
+      '{id:' +item.id+
+      ',actiId:'+item.actiId+
+      ',urn:'+item.urn+
+      '},\n'
+    }
+    return actiUrlScript;
+  }
+
+  getActiUrnSql=()=>{
+    const { pfmactiurn } = this.props;
+    let actiUrlSql = '-- 动作urlSql\n';
+    for (const item of pfmactiurn.pfmactiurn) {
+      actiUrlSql +=
+      'INSERT INTO `PFM_ACTI_URL`(`ID`,`URN`,`ACTI_ID`) values (' +
+      item.id +
+      ',' +
+      item.URN +
+      ',' +
+      item.actiId +
+      ');\n';
+    }
+    return actiUrlSql;
+  }
+
 
   select = obj => {
     if (obj === 1) {
@@ -472,6 +555,7 @@ export default class PfmScript extends SimpleMng {
   };
 
   copyText = () => {
+    console.log(this.props);
     if (this.state.option === 'menuSql') {
       copy(this.state.menuSql);
       message.success('复制menuSql成功');

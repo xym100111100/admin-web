@@ -193,6 +193,9 @@ export function pfmactiurnList(req, res, u) {
   }
   return res.json(result);
 }
+export function pfmactiurnListAll(req, res) {
+  res.json(tableListDataSource);
+}
 
 export function pfmactiurnModify(req, res, u, b) {
   const body = (b && b.body) || req.body;

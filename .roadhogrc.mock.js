@@ -54,8 +54,8 @@ import {
   pfmactiAuth,
   pfmactiEnable,
 } from './mock/pfmacti';
-import { pfmactimenuList, pfmactimenuModify } from './mock/pfmactimenu';
-import { pfmactiurnList, pfmactiurnModify } from './mock/pfmactiurn';
+import { pfmactimenuList, pfmactimenuModify,pfmactimenuListAll } from './mock/pfmactimenu';
+import { pfmactiurnList, pfmactiurnModify ,pfmactiurnListAll} from './mock/pfmactiurn';
 import {
   pfmroleList,
   pfmroleGetById,
@@ -169,9 +169,11 @@ const proxy = {
   // pfmactimenu
   'GET /pfm-svr/pfm/actimenu': pfmactimenuList,
   'PUT /pfm-svr/pfm/actimenu': pfmactimenuModify,
+  'GET /pfm-svr/pfm/actimenu/ListAll': pfmactimenuListAll,
   // pfmactiurn
   'GET /pfm-svr/pfm/actiurn': pfmactiurnList,
   'PUT /pfm-svr/pfm/actiurn': pfmactiurnModify,
+  'GET /pfm-svr/pfm/actiurn/ListAll': pfmactiurnListAll,
   // pfmrole
   'GET /pfm-svr/pfm/role': pfmroleList,
   'GET /pfm-svr/pfm/role/getbyid': pfmroleGetById,
@@ -183,7 +185,7 @@ const proxy = {
   // pfmroleacti
   'GET /pfm-svr/pfm/roleacti': pfmroleactiList,
   'PUT /pfm-svr/pfm/roleacti': pfmroleactiModify,
-  'PUT /pfm-svr/pfm/roleacti/ListAll': pfmroleactiListAll,
+  'GET /pfm-svr/pfm/roleacti/ListAll': pfmroleactiListAll,
 
   // sucuser
   'GET /suc-svr/suc/user': sucUserList,

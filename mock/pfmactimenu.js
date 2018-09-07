@@ -59,6 +59,11 @@ export function pfmactimenuList(req, res, u) {
   return res.json(result);
 }
 
+
+export function pfmactimenuListAll(req, res) {
+  res.json(tableListDataSource);
+}
+
 export function pfmactimenuModify(req, res, u, b) {
   const body = (b && b.body) || req.body;
   for (let index = tableListDataSource.length - 1; index >= 0; index--) {
