@@ -167,7 +167,7 @@ export default class PfmScript extends SimpleMng {
    */
   getRoleScriptSql(dataArray) {
     const sqlArray = TreeUtils.convertTreeToFlat(dataArray);
-    let roleSql = '';
+    let roleSql = '-- 角色sql \n';
     for (const item of sqlArray) {
       roleSql +=
         'INSERT INTO `PFM_ROLE`(`ID`,`SYS_ID`,`NAME`,`IS_ENABLED`,`ORDER_NO`,`REMARK`) values (' +
@@ -184,6 +184,7 @@ export default class PfmScript extends SimpleMng {
         item.remark +
         "');\n";
     }
+    roleSql += '\n' +this.getRoleActiSql()+'\n';
 
     //设置状态值以便复制
     this.setState({
@@ -204,9 +205,9 @@ export default class PfmScript extends SimpleMng {
       item.title = item.title == null ? null : "'" + item.title + "'";
       menuScriptText +=
         'menuData.push({' +
-        'id: ' +
+        "id: '" +
         item.id +
-        ',' +
+        "'," +
         'sysId: ' +
         "'" +
         item.sysId +
@@ -271,9 +272,9 @@ export default class PfmScript extends SimpleMng {
     let funcScriptText = '// 功能\n';
     for (const item of dataArray) {
       funcScriptText +=
-        '  { id: ' +
+        "  { id: '" +
         item.id +
-        ',' +
+        "'," +
         " sysId: '" +
         item.sysId +
         "'," +
@@ -304,12 +305,12 @@ export default class PfmScript extends SimpleMng {
    */
   getRoleScriptText = dataArray => {
     dataArray = TreeUtils.convertTreeToFlat(dataArray);
-    let roleScriptText = '';
+    let roleScriptText = '//角色\n';
     for (const item of dataArray) {
       roleScriptText +=
-        '  { id: ' +
+        "  { id: '" +
         item.id +
-        ',' +
+        "'," +
         " sysId: '" +
         item.sysId +
         "'," +
@@ -327,6 +328,7 @@ export default class PfmScript extends SimpleMng {
         "'},\n";
     }
     roleScriptText += '\n';
+    roleScriptText +=this.getRoleActiScriptTest()+'\n';
     //设置状态值以便复制
     this.setState({
       roleScriptText: roleScriptText,
@@ -349,12 +351,12 @@ export default class PfmScript extends SimpleMng {
     let actiScriptText = '// 动作\n';
     for (const item of array) {
       actiScriptText +=
-        '  { id: ' +
+        "  { id: '" +
         item.id +
-        ',' +
-        'funcId: ' +
+        "'," +
+        "funcId: '" +
         item.funcId +
-        ',' +
+        "'," +
         'isAuth: ' +
         item.isAuth +
         ',' +
@@ -375,7 +377,6 @@ export default class PfmScript extends SimpleMng {
         "'},\n";
     }
     actiScriptText += '\n';
-    actiScriptText+=this.getRoleActiScriptTest()+'\n';
     actiScriptText+=this.getActiMenuScriptTest()+'\n';
     actiScriptText+=this.getActiUrlScriptTest()+'\n';
     return actiScriptText;
@@ -396,7 +397,7 @@ export default class PfmScript extends SimpleMng {
     let actiSql = '-- 动作sql--\n';
     for (const item of array) {
       actiSql +=
-        'INSERT INTO `PFM_FUNC`(`ID`,`FUNC_ID`,`IS_AUTH`,`SYS_ID`,`NAME`,`IS_ENABLED`,`ORDER_NO`,`REMARK`) values (' +
+        'INSERT INTO `PFM_ACTI`(`ID`,`FUNC_ID`,`IS_AUTH`,`SYS_ID`,`NAME`,`IS_ENABLED`,`ORDER_NO`,`REMARK`) values (' +
         item.id +
         ',' +
         item.funcId +
@@ -414,8 +415,8 @@ export default class PfmScript extends SimpleMng {
         item.remark +
         "');\n";
     }
-    actiSql += '\n' +this.getRoleActiSql()+'\n';
-    actiSql +=this.getActiMenuSql()+'\n';
+   
+    actiSql +='\n'+this.getActiMenuSql()+'\n';
     actiSql += this.getActiUrnSql()+'\n';
     return actiSql;
   };
@@ -448,11 +449,12 @@ export default class PfmScript extends SimpleMng {
     let roleActiScript = '// 角色动作\n';
     for (const item of pfmroleacti.pfmroleacti) {
       roleActiScript +=
-      '{id:' +item.id+
-      ',roleId:'+item.roleId+
-      ',actiId:'+item.actiId+
-      '},\n';
+      "{id:'" +item.id+
+      "',roleId:'"+item.roleId+
+      "',actiId:'"+item.actiId+
+      "'},\n";
     }
+
     return roleActiScript;
   }
   
@@ -461,17 +463,17 @@ export default class PfmScript extends SimpleMng {
     let menuActiScript = '// 菜单动作\n';
     for (const item of pfmactimenu.pfmactimenu) {
       menuActiScript +=
-      '{id:' +item.id+
-      ',menuId:'+item.menuId+
-      ',actiId:'+item.actiId+
-      '},\n'
+      "{id:'" +item.id+
+      "',menuId:'"+item.menuId+
+      "',actiId:'"+item.actiId+
+      "'},\n"
     }
     return menuActiScript;
   }
 
   getActiMenuSql=()=>{
     const { pfmactimenu } = this.props;
-    let menuActiSql = '-- 菜单sql\n';
+    let menuActiSql = '-- 动作菜单sql\n';
     for (const item of pfmactimenu.pfmactimenu) {
       menuActiSql +=
       'INSERT INTO `PFM_ACTI_MENU`(`ID`,`MENU_ID`,`ACTI_ID`) values (' +
@@ -486,16 +488,16 @@ export default class PfmScript extends SimpleMng {
   }
 
   /**
-   * 获取动作url
+   * 获取动作urn
    */
   getActiUrlScriptTest=()=>{
     const { pfmactiurn } = this.props;
     let actiUrlScript = '// 动作urn\n';
     for (const item of pfmactiurn.pfmactiurn) {
       actiUrlScript +=
-      '{id:' +item.id+
-      ',actiId:'+item.actiId+
-      ",urn:'"+item.urn+
+      "{id:'" +item.id+
+      "',actiId:'"+item.actiId+
+      "',urn:'"+item.urn+
       "'},\n"
     }
     return actiUrlScript;
@@ -506,7 +508,7 @@ export default class PfmScript extends SimpleMng {
     let actiUrlSql = '-- 动作urnSql\n';
     for (const item of pfmactiurn.pfmactiurn) {
       actiUrlSql +=
-      'INSERT INTO `PFM_ACTI_URL`(`ID`,`ACTI_ID`,`URN`) values (' +
+      'INSERT INTO `PFM_ACTI_URN`(`ID`,`ACTI_ID`,`URN`) values (' +
       item.id +
       ',' +
       item.actiId +
@@ -558,28 +560,28 @@ export default class PfmScript extends SimpleMng {
     console.log(this.props);
     if (this.state.option === 'menuSql') {
       copy(this.state.menuSql);
-      message.success('复制menuSql成功');
+      message.success('复制菜单Sql成功');
     } else if (this.state.option === 'sysScriptText') {
       copy(this.state.sysScriptText);
-      message.success('复制sysScriptText成功');
+      message.success('复制系统Script成功');
     } else if (this.state.option === 'funcScriptText') {
       copy(this.state.funcScriptText);
-      message.success('复制funcScriptText成功');
+      message.success('复制功能Script成功');
     } else if (this.state.option === 'roleScriptText') {
       copy(this.state.roleScriptText);
-      message.success('复制roleScriptText成功');
+      message.success('复制角色Script成功');
     } else if (this.state.option === 'menuScriptText') {
       copy(this.state.menuScriptText);
-      message.success('复制menuScriptText成功');
+      message.success('复制菜单Script成功');
     } else if (this.state.option === 'sysSql') {
       copy(this.state.sysSql);
-      message.success('复制funcSql成功');
+      message.success('复制系统Sql成功');
     } else if (this.state.option === 'funcSql') {
       copy(this.state.funcSql);
-      message.success('复制funcSql成功');
+      message.success('复制功能Sql成功');
     } else if (this.state.option === 'roleSql') {
       copy(this.state.roleSql);
-      message.success('复制roleSql成功');
+      message.success('复制角色Sql成功');
     }
   };
 
