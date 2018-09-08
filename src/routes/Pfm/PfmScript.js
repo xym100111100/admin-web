@@ -268,7 +268,7 @@ export default class PfmScript extends SimpleMng {
    */
   getFuncScriptText = dataArray => {
     const ActiScriptText = this.getActiScriptText(dataArray);
-    let funcScriptText = '// 功能--\n';
+    let funcScriptText = '// 功能\n';
     for (const item of dataArray) {
       funcScriptText +=
         '  { id: ' +
@@ -490,29 +490,29 @@ export default class PfmScript extends SimpleMng {
    */
   getActiUrlScriptTest=()=>{
     const { pfmactiurn } = this.props;
-    let actiUrlScript = '// 动作url\n';
+    let actiUrlScript = '// 动作urn\n';
     for (const item of pfmactiurn.pfmactiurn) {
       actiUrlScript +=
       '{id:' +item.id+
       ',actiId:'+item.actiId+
-      ',urn:'+item.urn+
-      '},\n'
+      ",urn:'"+item.urn+
+      "'},\n"
     }
     return actiUrlScript;
   }
 
   getActiUrnSql=()=>{
     const { pfmactiurn } = this.props;
-    let actiUrlSql = '-- 动作urlSql\n';
+    let actiUrlSql = '-- 动作urnSql\n';
     for (const item of pfmactiurn.pfmactiurn) {
       actiUrlSql +=
-      'INSERT INTO `PFM_ACTI_URL`(`ID`,`URN`,`ACTI_ID`) values (' +
+      'INSERT INTO `PFM_ACTI_URL`(`ID`,`ACTI_ID`,`URN`) values (' +
       item.id +
       ',' +
-      item.URN +
-      ',' +
       item.actiId +
-      ');\n';
+      ",'" +
+      item.urn +
+      "');\n";
     }
     return actiUrlSql;
   }
