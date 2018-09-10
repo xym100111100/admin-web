@@ -217,7 +217,7 @@ const proxy = {
   'GET /suc-svr/suc/org/getbyid': sucUserOrgGetById,
   'POST /suc-svr/suc/org': sucUserOrgAdd,
   'PUT /suc-svr/suc/org': sucUserOrgModify,
-  // pfmsuc
+  // pfm
   'POST /pfm-svr/user/login/by/user/name': (req, res) => {
     const { loginPswd, userName, type } = req.body;
     if (loginPswd === '21218cca77804d2ba1922c33e0151105' && userName === 'admin') {
