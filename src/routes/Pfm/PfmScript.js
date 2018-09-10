@@ -54,7 +54,6 @@ export default class PfmScript extends SimpleMng {
     });
     this.props.dispatch({
       type: `pfmfunc/list`,
-      payload: { sysId: 'damai-admin' },
     });
     this.props.dispatch({
       type: 'pfmroleacti/listAll',

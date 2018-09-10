@@ -3,10 +3,10 @@ import { getList } from './pfmacti';
 
 // mock tableListDataSource
 const tableListDataSource = [
-  { id: '1536131597087', sysId: 'damai-admin', name: '系统', isEnabled: true, orderNo: 1, remark: '系统基础信息'},
-  { id: '1536131597088', sysId: 'damai-admin', name: '菜单', isEnabled: true, orderNo: 2, remark: '菜单基础信息'},
-  { id: '1536131597089', sysId: 'damai-admin', name: '功能', isEnabled: true, orderNo: 3, remark: '功能及其动作的基础信息'},
-  { id: '1536131597090', sysId: 'damai-admin', name: '角色', isEnabled: true, orderNo: 4, remark: '角色基础信息'},
+  { id: '1536131597087', sysId: 'pfm-admin', name: '系统配置-系统', isEnabled: true, orderNo: 1, remark: '系统基础信息'},
+  { id: '1536131597088', sysId: 'pfm-admin', name: '系统配置-菜单', isEnabled: true, orderNo: 2, remark: '菜单基础信息'},
+  { id: '1536131597089', sysId: 'pfm-admin', name: '系统配置-功能', isEnabled: true, orderNo: 3, remark: '功能及其动作的基础信息'},
+  { id: '1536131597090', sysId: 'pfm-admin', name: '系统配置-角色', isEnabled: true, orderNo: 4, remark: '角色基础信息'},
   
 ];
 
@@ -18,11 +18,11 @@ export function pfmfuncList(req, res, u) {
   const params = parse(url, true).query;
   const funcList = [];
   for (const item of tableListDataSource) {
-    if (item.sysId === params.sysId) funcList.push(item);
+    if (!params.sysId || item.sysId === params.sysId) funcList.push(item);
   }
   const actiList = [];
   for (const item of getList()) {
-    if (item.sysId === params.sysId) {
+    if (!params.sysId || item.sysId === params.sysId) {
       if (params.isAuth === undefined) actiList.push(item);
       else if (params.isAuth && item.isAuth) actiList.push(item);
     }

@@ -342,7 +342,7 @@ function addProxy(key, value) {
 }
 
 if (noProxy) {
-  // addProxy('pfm-svr', 'http://127.0.0.1:20182/');
+  addProxy('pfm-svr', 'http://127.0.0.1:20182/');
   addProxy('rna-svr', 'http://127.0.0.1:20088/');
   addProxy('suc-svr', 'http://127.0.0.1:9100/');
   addProxy('kdi-svr', 'http://127.0.0.1:20080/');

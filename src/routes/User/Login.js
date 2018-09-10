@@ -30,7 +30,7 @@ export default class LoginPage extends PureComponent {
         type: 'login/login',
         payload: {
           ...tempValues,
-          sysId: 'damai-admin',
+          sysId: 'pfm-admin',
           type,
         },
       });

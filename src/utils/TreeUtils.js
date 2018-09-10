@@ -49,10 +49,6 @@ export default class TreeUtils {
       const { length } = code;
       if (length === 2) {
         result.push(item);
-        // } else if (length === 4) {
-        //   const index = getIndexAtLevel(code, 1);
-        //   if (!result[index].children) result[index].children = [];
-        //   result[index].children.push(item);
       } else {
         const count = length / 2;
         let sEval = `result[${getIndexAtLevel(code, 1)}]`;
