@@ -5,7 +5,7 @@ import { getList } from './pfmacti';
 const tableListDataSource = [
   {
     id: 1536131597087,
-    sysId: 'pfm-admin',
+    sysId: 'damai-admin',
     name: '系统',
     isEnabled: true,
     remark: '系统基础信息',
@@ -13,7 +13,7 @@ const tableListDataSource = [
   },
   {
     id: 1536131597088,
-    sysId: 'pfm-admin',
+    sysId: 'damai-admin',
     name: '菜单',
     isEnabled: true,
     remark: '菜单基础信息',
@@ -21,7 +21,7 @@ const tableListDataSource = [
   },
   {
     id: 1536131597089,
-    sysId: 'pfm-admin',
+    sysId: 'damai-admin',
     name: '功能',
     isEnabled: true,
     remark: '功能及其动作的基础信息',
@@ -29,7 +29,7 @@ const tableListDataSource = [
   },
   {
     id: 1536131597090,
-    sysId: 'pfm-admin',
+    sysId: 'damai-admin',
     name: '角色',
     isEnabled: true,
     remark: '角色基础信息',

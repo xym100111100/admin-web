@@ -25,7 +25,7 @@ menuData.push({
 });
 
 menuData.push({
-  id: 1536131597090,
+  id: 1536131597089,
   code: '0001',
   sysId: 'damai-admin',
   isEnabled: true,
@@ -35,7 +35,7 @@ menuData.push({
   title: '快递管理',
 });
 menuData.push({
-  id: 1536131597091,
+  id: 1536131597090,
   code: '0002',
   sysId: 'damai-admin',
   isEnabled: true,
@@ -536,6 +536,26 @@ menuData.push({
   name: '注册结果',
   path: 'register-result',
   title: '注册结果',
+});
+menuData.push({
+  id: 1536131597141,
+  code: '13',
+  sysId: 'damai-admin',
+  icon: 'user',
+  isEnabled: true,
+  remark: '订单相关业务',
+  name: '订单管理',
+  path: 'ord',
+});
+menuData.push({
+  id: 1536131597142,
+  code: '1300',
+  sysId: 'damai-admin',
+  isEnabled: true,
+  remark: '订单管理',
+  name: '订单管理',
+  path: 'ord-order',
+  title: '订单管理',
 });
 
 export function getMenuData() {

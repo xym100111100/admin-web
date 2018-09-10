@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { list, getById, add, modify, sort, del, enable } from '../services/pfmrole';
+import { list, getById, add, modify, sort, del, enable ,listAll} from '../services/pfmrole';
 
 export default {
   namespace: 'pfmrole',
@@ -11,6 +11,14 @@ export default {
   effects: {
     *list({ payload, callback }, { call, put }) {
       const response = yield call(list, payload);
+      yield put({
+        type: 'changeList',
+        payload: response,
+      });
+      if (callback) callback(response);
+    },
+    *listAll({ payload, callback }, { call, put }) {
+      const response = yield call(listAll, payload);
       yield put({
         type: 'changeList',
         payload: response,

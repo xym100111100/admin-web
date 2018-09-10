@@ -4,7 +4,7 @@ import { parse } from 'url';
 const tableListDataSource = [
   {
     id: 1536131597087,
-    sysId: 'pfm-admin',
+    sysId: 'damai-admin',
     funcId: 1536131597087,
     name: '查看',
     isEnabled: true,
@@ -14,7 +14,7 @@ const tableListDataSource = [
   },
   {
     id: 1536131597088,
-    sysId: 'pfm-admin',
+    sysId: 'damai-admin',
     funcId: 1536131597087,
     name: '管理',
     isEnabled: true,
@@ -24,7 +24,7 @@ const tableListDataSource = [
   },
   {
     id: 1536131597089,
-    sysId: 'pfm-admin',
+    sysId: 'damai-admin',
     funcId: 1536131597088,
     name: '查看',
     isEnabled: true,
@@ -34,7 +34,7 @@ const tableListDataSource = [
   },
   {
     id: 1536131597090,
-    sysId: 'pfm-admin',
+    sysId: 'damai-admin',
     funcId: 1536131597088,
     name: '管理',
     isEnabled: true,
@@ -44,7 +44,7 @@ const tableListDataSource = [
   },
   {
     id: 1536131597091,
-    sysId: 'pfm-admin',
+    sysId: 'damai-admin',
     funcId: 1536131597089,
     name: '查看',
     isEnabled: true,
@@ -54,7 +54,7 @@ const tableListDataSource = [
   },
   {
     id: 1536131597092,
-    sysId: 'pfm-admin',
+    sysId: 'damai-admin',
     funcId: 1536131597089,
     name: '管理',
     isEnabled: true,
@@ -64,7 +64,7 @@ const tableListDataSource = [
   },
   {
     id: 1536131597093,
-    sysId: 'pfm-admin',
+    sysId: 'damai-admin',
     funcId: 1536131597090,
     name: '查看',
     isEnabled: true,
@@ -74,7 +74,7 @@ const tableListDataSource = [
   },
   {
     id: 1536131597094,
-    sysId: 'pfm-admin',
+    sysId: 'damai-admin',
     funcId: 1536131597090,
     name: '管理',
     isEnabled: true,

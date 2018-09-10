@@ -49,6 +49,10 @@ export function pfmroleList(req, res, u) {
   res.json(list);
 }
 
+export function ListAll(req, res) {
+  res.json(tableListDataSource);
+}
+
 export function pfmroleGetById(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {

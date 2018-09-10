@@ -5,6 +5,10 @@ export async function list(params) {
   return request(`/pfm-svr/pfm/role?${stringify(params)}`);
 }
 
+export async function listAll() {
+  return request(`/pfm-svr/pfm/role/ListAll`);
+}
+
 export async function getById(params) {
   return request(`/pfm-svr/pfm/role/getbyid?${stringify(params)}`);
 }

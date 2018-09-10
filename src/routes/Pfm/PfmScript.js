@@ -50,12 +50,11 @@ export default class PfmScript extends SimpleMng {
       type: `pfmsys/list`,
     });
     this.props.dispatch({
-      type: `pfmrole/list`,
-      payload: { sysId: 'pfm-admin' },
+      type: `pfmrole/listAll`,
     });
     this.props.dispatch({
       type: `pfmfunc/list`,
-      payload: { sysId: 'pfm-admin' },
+      payload: { sysId: 'damai-admin' },
     });
     this.props.dispatch({
       type: 'pfmroleacti/listAll',
@@ -232,9 +231,8 @@ export default class PfmScript extends SimpleMng {
         ',' +
         'icon: ' +
         item.icon +
-        ",'" +
-        'remark: ' +
-        "'" +
+        "," +
+        "remark: '" +
         item.remark +
         "'});\n";
     }

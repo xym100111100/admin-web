@@ -90,6 +90,9 @@ export const getRouterData = app => {
     '/kdi/kdi-cfg/kdi-sender-cfg': {
       component: dynamicWrapper(app, ['kdisender'], () => import('../routes/Kdi/KdiSenderCfg')),
     },
+    '/ord/ord-order': {
+      component: dynamicWrapper(app, ['ordorder'], () => import('../routes/Ord/OrdOrder')),
+    },
     '/onl/onl-mng': {
       component: dynamicWrapper(app, ['sucuser', 'pfmsys', 'userrole', 'sucorg', 'sucuserorg'], () =>
         import('../routes/Onl/OnlineMng')

@@ -15,6 +15,13 @@ import {
   rnarealnameModify,
   rnarealnameDel,
 } from './mock/rnarealname';
+import {
+ ordorderList,
+ ordorderGetById,
+ ordorderAdd,
+ ordorderModify,
+ ordorderDel,
+} from './mock/ordorder';
 import { kdieorderList, kdieorderGetById, kdieorderAdd, kdieorderModify, kdieorderDel } from './mock/kdieorder';
 import {
   kdiSenderList,
@@ -57,6 +64,7 @@ import {
 import { pfmactimenuList, pfmactimenuModify,pfmactimenuListAll } from './mock/pfmactimenu';
 import { pfmactiurnList, pfmactiurnModify ,pfmactiurnListAll} from './mock/pfmactiurn';
 import {
+  ListAll,
   pfmroleList,
   pfmroleGetById,
   pfmroleAdd,
@@ -130,6 +138,12 @@ const proxy = {
   'POST /rna-svr/rna/realname': rnarealnameAdd,
   'PUT /rna-svr/rna/realname': rnarealnameModify,
   'DELETE /rna-svr/rna/realname': rnarealnameDel,
+  //rnarealname
+  'GET /ord-svr/ord/mng':ordorderList,
+  'GET /ord-svr/ord/mng/getbyid':ordorderGetById,
+  'POST /ord-svr/ord/mng':ordorderAdd,
+  'PUT /ord-svr/ord/mng':ordorderModify,
+  'DELETE /ord-svr/ord/mng':ordorderDel,
   //kdieorder
   'GET /kdi-svr/kdi/eorder': kdieorderList,
   'GET /kdi-svr/kdi/eorder/getbyid': kdieorderGetById,
@@ -176,6 +190,7 @@ const proxy = {
   'GET /pfm-svr/pfm/actiurn/ListAll': pfmactiurnListAll,
   // pfmrole
   'GET /pfm-svr/pfm/role': pfmroleList,
+  'GET /pfm-svr/pfm/role/ListAll': ListAll,
   'GET /pfm-svr/pfm/role/getbyid': pfmroleGetById,
   'POST /pfm-svr/pfm/role': pfmroleAdd,
   'PUT /pfm-svr/pfm/role': pfmroleModify,
@@ -333,6 +348,7 @@ if (noProxy) {
   addProxy('kdi-svr', 'http://127.0.0.1:20080/');
   addProxy('onl-svr', 'http://127.0.0.1:9100/');
   addProxy('ise-svr', 'http://127.0.0.1:20180/');
+  addProxy('ord-svr', 'http://127.0.0.1:20280/');
 }
 
 // 响应请求延迟1秒
