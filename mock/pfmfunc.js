@@ -3,38 +3,11 @@ import { getList } from './pfmacti';
 
 // mock tableListDataSource
 const tableListDataSource = [
-  {
-    id: 1536131597087,
-    sysId: 'damai-admin',
-    name: '系统',
-    isEnabled: true,
-    remark: '系统基础信息',
-    orderNo: 1,
-  },
-  {
-    id: 1536131597088,
-    sysId: 'damai-admin',
-    name: '菜单',
-    isEnabled: true,
-    remark: '菜单基础信息',
-    orderNo: 2,
-  },
-  {
-    id: 1536131597089,
-    sysId: 'damai-admin',
-    name: '功能',
-    isEnabled: true,
-    remark: '功能及其动作的基础信息',
-    orderNo: 3,
-  },
-  {
-    id: 1536131597090,
-    sysId: 'damai-admin',
-    name: '角色',
-    isEnabled: true,
-    remark: '角色基础信息',
-    orderNo: 4,
-  },
+  { id: '1536131597087', sysId: 'damai-admin', name: '系统', isEnabled: true, orderNo: 1, remark: '系统基础信息'},
+  { id: '1536131597088', sysId: 'damai-admin', name: '菜单', isEnabled: true, orderNo: 2, remark: '菜单基础信息'},
+  { id: '1536131597089', sysId: 'damai-admin', name: '功能', isEnabled: true, orderNo: 3, remark: '功能及其动作的基础信息'},
+  { id: '1536131597090', sysId: 'damai-admin', name: '角色', isEnabled: true, orderNo: 4, remark: '角色基础信息'},
+  
 ];
 
 export function pfmfuncList(req, res, u) {
@@ -64,7 +37,7 @@ export function pfmfuncGetById(req, res, u) {
   }
   const params = parse(url, true).query;
 
-  const eo = tableListDataSource.find(item => item.id === params.id - 0);
+  const eo = tableListDataSource.find(item => item.id === params.id );
   if (eo) {
     return res.json({
       result: 1,

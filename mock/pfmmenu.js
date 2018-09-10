@@ -3,560 +3,62 @@ import { parse } from 'url';
 // mock menuData
 const menuData = [];
 
-menuData.push({
-  id: 1536131597087,
-  code: '00',
-  sysId: 'damai-admin',
-  icon: 'profile',
-  isEnabled: true,
-  remark: '快递相关业务',
-  name: '快递业务',
-  path: 'kdi',
-});
-menuData.push({
-  id: 1536131597088,
-  code: '0000',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '快递下单相关业务',
-  name: '快递下单',
-  path: 'kdi-eorder',
-  title: '快递下单',
-});
+menuData.push({id: '1536131597087',sysId: 'damai-admin',code: '00',title: null,name: '快递业务',path: 'kdi',isEnabled:true,icon: 'profile',remark: '快递相关业务'});
+menuData.push({id: '1536131597088',sysId: 'damai-admin',code: '0000',title: '快递下单',name: '快递下单',path: 'kdi-eorder',isEnabled:true,icon: null,remark: '快递下单相关业务'});
+menuData.push({id: '1536131597089',sysId: 'damai-admin',code: '0001',title: '快递管理',name: '快递单管理',path: 'kdi-mng',isEnabled:true,icon: null,remark: '快递单相关业务'});
+menuData.push({id: '1536131597090',sysId: 'damai-admin',code: '0002',title: null,name: '快递配置',path: 'kdi-cfg',isEnabled:true,icon: null,remark: '快递配置相关业务'});
+menuData.push({id: '1536131597091',sysId: 'damai-admin',code: '000200',title: '快递面单配置',name: '快递面单配置',path: 'kdi-eorder-cfg',isEnabled:true,icon: null,remark: '快递面单相关业务'});
+menuData.push({id: '1536131597092',sysId: 'damai-admin',code: '000201',title: '快递公司配置',name: '快递公司配置',path: 'kdi-company-cfg',isEnabled:true,icon: null,remark: '快递公司相关业务'});
+menuData.push({id: '1536131597093',sysId: 'damai-admin',code: '000202',title: '发件人配置',name: '发件人配置',path: 'kdi-sender-cfg',isEnabled:true,icon: null,remark: '发件人相关业务'});
+menuData.push({id: '1536131597094',sysId: 'damai-admin',code: '01',title: null,name: '实名认证',path: 'rna',isEnabled:true,icon: 'idcard',remark: '实名认证相关业务'});
+menuData.push({id: '1536131597095',sysId: 'damai-admin',code: '0100',title: '认证用户信息',name: '认证用户信息',path: 'rna-realname',isEnabled:true,icon: null,remark: '认证用户相关业务'});
+menuData.push({id: '1536131597096',sysId: 'damai-admin',code: '02',title: null,name: '商品上线',path: 'onl',isEnabled:true,icon: 'cloud-upload',remark: '商品相关业务'});
+menuData.push({id: '1536131597097',sysId: 'damai-admin',code: '0200',title: '商品上线',name: '商品上线',path: 'onl-mng',isEnabled:true,icon: null,remark: '商品上线相关业务'});
+menuData.push({id: '1536131597098',sysId: 'damai-admin',code: '03',title: null,name: '报表管理',path: 'rep',isEnabled:true,icon: 'table',remark: '报表相关业务'});
+menuData.push({id: '1536131597099',sysId: 'damai-admin',code: '0301',title: '物流报表',name: '物流报表',path: 'rep-logistic',isEnabled:true,icon: null,remark: '报表相关业务'});
+menuData.push({id: '1536131597100',sysId: 'damai-admin',code: '04',title: null,name: '订单管理',path: 'ord',isEnabled:true,icon: 'user',remark: '订单相关业务'});
+menuData.push({id: '1536131597101',sysId: 'damai-admin',code: '0400',title: '订单管理',name: '订单管理',path: 'ord-order',isEnabled:true,icon: null,remark: '订单管理'});
+menuData.push({id: '1536131597102',sysId: 'damai-admin',code: '05',title: null,name: '用户管理',path: 'suc',isEnabled:true,icon: 'user',remark: '用户相关业务'});
+menuData.push({id: '1536131597103',sysId: 'damai-admin',code: '0500',title: '用户信息',name: '用户信息',path: 'user-mng',isEnabled:true,icon: null,remark: '用户信息相关业务'});
+menuData.push({id: '1536131597104',sysId: 'damai-admin',code: '0501',title: '组织信息',name: '组织信息',path: 'org-mng',isEnabled:true,icon: null,remark: '组织相关业务'});
+menuData.push({id: '1536131597105',sysId: 'damai-admin',code: '06',title: null,name: '系统配置',path: 'pfm',isEnabled:true,icon: 'setting',remark: '系统相关业务'});
+menuData.push({id: '1536131597106',sysId: 'damai-admin',code: '0600',title: '系统',name: '系统',path: 'sys-mng',isEnabled:true,icon: null,remark: '系统相关业务'});
+menuData.push({id: '1536131597107',sysId: 'damai-admin',code: '0601',title: '菜单',name: '菜单',path: 'menu-mng',isEnabled:true,icon: null,remark: '菜单相关业务'});
+menuData.push({id: '1536131597108',sysId: 'damai-admin',code: '0602',title: '功能',name: '功能',path: 'func-mng',isEnabled:true,icon: null,remark: '功能相关业务'});
+menuData.push({id: '1536131597109',sysId: 'damai-admin',code: '0603',title: '角色',name: '角色',path: 'role-mng',isEnabled:true,icon: null,remark: '角色相关业务'});
+menuData.push({id: '1536131597110',sysId: 'damai-admin',code: '0604',title: null,name: '脚本',path: 'script-mng',isEnabled:true,icon: null,remark: '脚本相关业务'});
+menuData.push({id: '1536131597111',sysId: 'damai-admin',code: '07',title: null,name: 'dashboard',path: 'dashboard',isEnabled:true,icon: 'dashboard',remark: 'dashboard相关业务'});
+menuData.push({id: '1536131597112',sysId: 'damai-admin',code: '0700',title: '分析页',name: '分析页',path: 'analysis',isEnabled:true,icon: null,remark: '分析页相关业务'});
+menuData.push({id: '1536131597113',sysId: 'damai-admin',code: '0701',title: '监控页',name: '监控页',path: 'monitor',isEnabled:true,icon: null,remark: '监控页相关业务'});
+menuData.push({id: '1536131597114',sysId: 'damai-admin',code: '0702',title: '工作台',name: '工作台',path: 'workplace',isEnabled:true,icon: null,remark: '工作台相关业务'});
+menuData.push({id: '1536131597115',sysId: 'damai-admin',code: '08',title: null,name: '表单页',path: 'form',isEnabled:true,icon: 'form',remark: '表单相关业务'});
+menuData.push({id: '1536131597116',sysId: 'damai-admin',code: '0800',title: '基础表单',name: '基础表单',path: 'basic-form',isEnabled:true,icon: null,remark: '基础表单相关业务'});
+menuData.push({id: '1536131597117',sysId: 'damai-admin',code: '0801',title: '分步表单',name: '分步表单',path: 'step-form',isEnabled:true,icon: null,remark: '快递下单相关业务'});
+menuData.push({id: '1536131597118',sysId: 'damai-admin',code: '0802',title: '高级表单',name: '高级表单',path: 'advanced-form',isEnabled:true,icon: null,remark: '高级表单相关业务'});
+menuData.push({id: '1536131597119',sysId: 'damai-admin',code: '09',title: null,name: '列表页',path: 'list',isEnabled:true,icon: 'table',remark: '列表页相关业务'});
+menuData.push({id: '1536131597120',sysId: 'damai-admin',code: '0900',title: '查询表格',name: '查询表格',path: 'table-list',isEnabled:true,icon: null,remark: '查询表格相关业务'});
+menuData.push({id: '1536131597121',sysId: 'damai-admin',code: '0901',title: '标准列表',name: '标准列表',path: 'basic-list',isEnabled:true,icon: null,remark: '标准列表相关业务'});
+menuData.push({id: '1536131597122',sysId: 'damai-admin',code: '0902',title: '卡片列表',name: '卡片列表',path: 'card-list',isEnabled:true,icon: null,remark: '卡片列表相关业务'});
+menuData.push({id: '1536131597123',sysId: 'damai-admin',code: '0903',title: '搜索列表',name: '搜索列表',path: 'search',isEnabled:true,icon: null,remark: '搜索列表相关业务'});
+menuData.push({id: '1536131597124',sysId: 'damai-admin',code: '090300',title: '搜索列表（文章）',name: '搜索列表（文章）',path: 'articles',isEnabled:true,icon: null,remark: '搜索列表（文章）相关业务'});
+menuData.push({id: '1536131597125',sysId: 'damai-admin',code: '090301',title: '搜索列表（项目）',name: '搜索列表（项目）',path: 'projects',isEnabled:true,icon: null,remark: '搜索列表（项目）相关业务'});
+menuData.push({id: '1536131597126',sysId: 'damai-admin',code: '090302',title: '搜索列表（应用）',name: '搜索列表（应用）',path: 'applications',isEnabled:true,icon: null,remark: '搜索列表（应用）相关业务'});
+menuData.push({id: '1536131597127',sysId: 'damai-admin',code: '10',title: null,name: '详情页',path: 'profile',isEnabled:true,icon: 'profile',remark: '详情页相关业务'});
+menuData.push({id: '1536131597128',sysId: 'damai-admin',code: '1000',title: '基础详情页',name: '基础详情页',path: 'basic',isEnabled:true,icon: null,remark: '基础详情页相关业务'});
+menuData.push({id: '1536131597129',sysId: 'damai-admin',code: '1001',title: '高级详情页',name: '高级详情页',path: 'advanced',isEnabled:true,icon: null,remark: '高级详情页相关业务'});
+menuData.push({id: '1536131597130',sysId: 'damai-admin',code: '11',title: null,name: '结果页',path: 'result',isEnabled:true,icon: 'check-circle-o',remark: '结果页相关业务'});
+menuData.push({id: '1536131597131',sysId: 'damai-admin',code: '1100',title: '成功',name: '成功',path: 'success',isEnabled:true,icon: null,remark: '成功相关业务'});
+menuData.push({id: '1536131597132',sysId: 'damai-admin',code: '1101',title: '失败',name: '失败',path: 'fail',isEnabled:true,icon: null,remark: '失败相关业务'});
+menuData.push({id: '1536131597133',sysId: 'damai-admin',code: '12',title: null,name: '异常页',path: 'exception',isEnabled:true,icon: 'warning',remark: '异常页相关业务'});
+menuData.push({id: '1536131597134',sysId: 'damai-admin',code: '1200',title: '403',name: '403',path: '403',isEnabled:true,icon: null,remark: '403相关业务'});
+menuData.push({id: '1536131597135',sysId: 'damai-admin',code: '1201',title: '404',name: '404',path: '404',isEnabled:true,icon: null,remark: '404相关业务'});
+menuData.push({id: '1536131597136',sysId: 'damai-admin',code: '1202',title: '500',name: '500',path: '500',isEnabled:true,icon: null,remark: '500相关业务'});
+menuData.push({id: '1536131597137',sysId: 'damai-admin',code: '1203',title: '触发异常',name: '触发异常',path: 'trigger',isEnabled:true,icon: null,remark: '触发异常相关业务'});
+menuData.push({id: '1536131597138',sysId: 'damai-admin',code: '13',title: null,name: '账户',path: 'user',isEnabled:true,icon: 'user',remark: '账户相关业务'});
+menuData.push({id: '1536131597139',sysId: 'damai-admin',code: '1300',title: '登录',name: '登录',path: 'login',isEnabled:true,icon: null,remark: '登录相关业务'});
+menuData.push({id: '1536131597140',sysId: 'damai-admin',code: '1301',title: '注册',name: '注册',path: 'register',isEnabled:true,icon: null,remark: '注册相关业务'});
+menuData.push({id: '1536131597141',sysId: 'damai-admin',code: '1302',title: '注册结果',name: '注册结果',path: 'register-result',isEnabled:true,icon: null,remark: '注册结果相关业务'});
 
-menuData.push({
-  id: 1536131597089,
-  code: '0001',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '快递单相关业务',
-  name: '快递单管理',
-  path: 'kdi-mng',
-  title: '快递管理',
-});
-menuData.push({
-  id: 1536131597090,
-  code: '0002',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '快递配置相关业务',
-  name: '快递配置',
-  path: 'kdi-cfg',
-});
-menuData.push({
-  id: 1536131597091,
-  code: '000200',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '快递面单相关业务',
-  name: '快递面单配置',
-  path: 'kdi-eorder-cfg',
-  title: '快递面单配置',
-});
-menuData.push({
-  id: 1536131597092,
-  code: '000201',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '快递公司相关业务',
-  name: '快递公司配置',
-  path: 'kdi-company-cfg',
-  title: '快递公司配置',
-});
-menuData.push({
-  id: 1536131597093,
-  code: '000202',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '发件人相关业务',
-  name: '发件人配置',
-  path: 'kdi-sender-cfg',
-  title: '发件人配置',
-});
-menuData.push({
-  id: 1536131597094,
-  code: '01',
-  sysId: 'damai-admin',
-  icon: 'idcard',
-  isEnabled: true,
-  remark: '实名认证相关业务',
-  name: '实名认证',
-  path: 'rna',
-});
-menuData.push({
-  id: 1536131597095,
-  code: '0100',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '认证用户相关业务',
-  name: '认证用户信息',
-  path: 'rna-realname',
-  title: '认证用户信息',
-});
-
-menuData.push({
-  id: 1536131597096,
-  code: '02',
-  sysId: 'damai-admin',
-  icon: 'cloud-upload',
-  isEnabled: true,
-  remark: '商品相关业务',
-  name: '商品上线',
-  path: 'onl',
-});
-menuData.push({
-  id: 1536131597097,
-  code: '0200',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '商品上线相关业务',
-  name: '商品上线',
-  path: 'onl-mng',
-  title: '商品上线',
-});
-menuData.push({
-  id: 1536131597098,
-  code: '03',
-  sysId: 'damai-admin',
-  icon: 'table',
-  isEnabled: true,
-  remark: '报表相关业务',
-  name: '报表管理',
-  path: 'rep',
-});
-menuData.push({
-  id: 1536131597099,
-  code: '0301',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '报表相关业务',
-  name: '物流报表',
-  path: 'rep-logistic',
-  title: '物流报表',
-});
-menuData.push({
-  id: 1536131597100,
-  code: '04',
-  sysId: 'damai-admin',
-  icon: 'user',
-  isEnabled: true,
-  remark: '订单相关业务',
-  name: '订单管理',
-  path: 'ord',
-});
-menuData.push({
-  id: 1536131597101,
-  code: '0400',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '订单管理',
-  name: '订单管理',
-  path: 'ord-order',
-  title: '订单管理',
-});
-menuData.push({
-  id: 1536131597102,
-  code: '05',
-  sysId: 'damai-admin',
-  icon: 'user',
-  isEnabled: true,
-  remark: '用户相关业务',
-  name: '用户管理',
-  path: 'suc',
-});
-menuData.push({
-  id: 1536131597103,
-  code: '0500',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '用户信息相关业务',
-  name: '用户信息',
-  path: 'user-mng',
-  title: '用户信息',
-});
-menuData.push({
-  id: 1536131597104,
-  code: '0501',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '组织相关业务',
-  name: '组织信息',
-  path: 'org-mng',
-  title: '组织信息',
-});
-menuData.push({
-  id: 1536131597105,
-  code: '06',
-  sysId: 'damai-admin',
-  icon: 'setting',
-  isEnabled: true,
-  remark: '系统相关业务',
-  name: '系统配置',
-  path: 'pfm',
-});
-menuData.push({
-  id: 1536131597106,
-  code: '0600',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '系统相关业务',
-  name: '系统',
-  path: 'sys-mng',
-  title: '系统',
-});
-menuData.push({
-  id: 1536131597107,
-  code: '0601',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '菜单相关业务',
-  name: '菜单',
-  path: 'menu-mng',
-  title: '菜单',
-});
-menuData.push({
-  id: 1536131597108,
-  code: '0602',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '功能相关业务',
-  name: '功能',
-  path: 'func-mng',
-  title: '功能',
-});
-menuData.push({
-  id: 1536131597109,
-  code: '0603',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '角色相关业务',
-  name: '角色',
-  path: 'role-mng',
-  title: '角色',
-});
-menuData.push({
-  id: 1536131597110,
-  code: '0604',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '脚本相关业务',
-  name: '脚本',
-  path: 'script-mng',
-});
-menuData.push({
-  id: 1536131597111,
-  code: '07',
-  sysId: 'damai-admin',
-  icon: 'dashboard',
-  isEnabled: true,
-  remark: 'dashboard相关业务',
-  name: 'dashboard',
-  path: 'dashboard',
-});
-menuData.push({
-  id: 1536131597112,
-  code: '0700',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '分析页相关业务',
-  name: '分析页',
-  path: 'analysis',
-  title: '分析页',
-});
-menuData.push({
-  id: 1536131597113,
-  code: '0701',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '监控页相关业务',
-  name: '监控页',
-  path: 'monitor',
-  title: '监控页',
-});
-menuData.push({
-  id: 1536131597114,
-  code: '0702',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '工作台相关业务',
-  name: '工作台',
-  path: 'workplace',
-  title: '工作台',
-});
-menuData.push({
-  id: 1536131597115,
-  code: '08',
-  sysId: 'damai-admin',
-  icon: 'form',
-  isEnabled: true,
-  remark: '表单相关业务',
-  name: '表单页',
-  path: 'form',
-});
-menuData.push({
-  id: 1536131597116,
-  code: '0800',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '基础表单相关业务',
-  name: '基础表单',
-  path: 'basic-form',
-  title: '基础表单',
-});
-menuData.push({
-  id: 1536131597117,
-  code: '0801',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '快递下单相关业务',
-  name: '分步表单',
-  path: 'step-form',
-  title: '分步表单',
-});
-menuData.push({
-  id: 1536131597118,
-  code: '0802',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '高级表单相关业务',
-  name: '高级表单',
-  authority: 'admin',
-  path: 'advanced-form',
-  title: '高级表单',
-});
-menuData.push({
-  id: 1536131597119,
-  code: '09',
-  sysId: 'damai-admin',
-  icon: 'table',
-  isEnabled: true,
-  remark: '列表页相关业务',
-  name: '列表页',
-  path: 'list',
-});
-menuData.push({
-  id: 1536131597120,
-  code: '0900',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '查询表格相关业务',
-  name: '查询表格',
-  path: 'table-list',
-  title: '查询表格',
-});
-menuData.push({
-  id: 1536131597121,
-  code: '0901',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '标准列表相关业务',
-  name: '标准列表',
-  path: 'basic-list',
-  title: '标准列表',
-});
-menuData.push({
-  id: 1536131597122,
-  code: '0902',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '卡片列表相关业务',
-  name: '卡片列表',
-  path: 'card-list',
-  title: '卡片列表',
-});
-menuData.push({
-  id: 1536131597123,
-  code: '0903',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '搜索列表相关业务',
-  name: '搜索列表',
-  path: 'search',
-  title: '搜索列表',
-});
-menuData.push({
-  id: 1536131597124,
-  code: '090300',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '搜索列表（文章）相关业务',
-  name: '搜索列表（文章）',
-  path: 'articles',
-  title: '搜索列表（文章）',
-});
-menuData.push({
-  id: 1536131597125,
-  code: '090301',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '搜索列表（项目）相关业务',
-  name: '搜索列表（项目）',
-  path: 'projects',
-  title: '搜索列表（项目）',
-});
-menuData.push({
-  id: 1536131597126,
-  code: '090302',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '搜索列表（应用）相关业务',
-  name: '搜索列表（应用）',
-  path: 'applications',
-  title: '搜索列表（应用）',
-});
-menuData.push({
-  id: 1536131597127,
-  code: '10',
-  sysId: 'damai-admin',
-  icon: 'profile',
-  isEnabled: true,
-  remark: '详情页相关业务',
-  name: '详情页',
-  path: 'profile',
-});
-menuData.push({
-  id: 1536131597128,
-  code: '1000',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '基础详情页相关业务',
-  name: '基础详情页',
-  path: 'basic',
-  title: '基础详情页',
-});
-menuData.push({
-  id: 1536131597129,
-  code: '1001',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '高级详情页相关业务',
-  name: '高级详情页',
-  path: 'advanced',
-  authority: 'admin',
-  title: '高级详情页',
-});
-menuData.push({
-  id: 1536131597130,
-  code: '11',
-  sysId: 'damai-admin',
-  icon: 'check-circle-o',
-  isEnabled: true,
-  remark: '结果页相关业务',
-  name: '结果页',
-  path: 'result',
-});
-menuData.push({
-  id: 1536131597131,
-  code: '1100',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '成功相关业务',
-  name: '成功',
-  path: 'success',
-  title: '成功',
-});
-menuData.push({
-  id: 1536131597132,
-  code: '1101',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '失败相关业务',
-  name: '失败',
-  path: 'fail',
-  title: '失败',
-});
-menuData.push({
-  id: 1536131597133,
-  code: '12',
-  sysId: 'damai-admin',
-  icon: 'warning',
-  isEnabled: true,
-  remark: '异常页相关业务',
-  name: '异常页',
-  path: 'exception',
-});
-menuData.push({
-  id: 1536131597134,
-  code: '1200',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '403相关业务',
-  name: '403',
-  path: '403',
-  title: '403',
-});
-menuData.push({
-  id: 1536131597135,
-  code: '1201',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '404相关业务',
-  name: '404',
-  path: '404',
-  title: '404',
-});
-menuData.push({
-  id: 1536131597136,
-  code: '1202',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '500相关业务',
-  name: '500',
-  path: '500',
-  title: '500',
-});
-menuData.push({
-  id: 1536131597137,
-  code: '1203',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '触发异常相关业务',
-  name: '触发异常',
-  path: 'trigger',
-  hideInMenu: true,
-  title: '触发异常',
-});
-menuData.push({
-  id: 1536131597138,
-  code: '13',
-  sysId: 'damai-admin',
-  icon: 'user',
-  isEnabled: true,
-  remark: '账户相关业务',
-  name: '账户',
-  path: 'user',
-  authority: 'guest',
-});
-menuData.push({
-  id: 1536131597139,
-  code: '1300',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '登录相关业务',
-  name: '登录',
-  path: 'login',
-  title: '登录',
-});
-menuData.push({
-  id: 1536131597140,
-  code: '1301',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '注册相关业务',
-  name: '注册',
-  path: 'register',
-  title: '注册',
-});
-menuData.push({
-  id: 1536131597141,
-  code: '1302',
-  sysId: 'damai-admin',
-  isEnabled: true,
-  remark: '注册结果相关业务',
-  name: '注册结果',
-  path: 'register-result',
-  title: '注册结果',
-});
 
 
 export function getMenuData() {
@@ -590,7 +92,7 @@ export function pfmmenuGetById(req, res, u) {
   }
   const params = parse(url, true).query;
 
-  const eo = menuData.find(item => item.id === params.id - 0);
+  const eo = menuData.find(item => item.id === params.id);
   if (eo) {
     return res.json({
       result: 1,

@@ -2,46 +2,14 @@ import { parse } from 'url';
 
 // mock tableListDataSource
 const tableListDataSource = [
-  {
-    id: 1536131597087,
-    actiId: 1536131597087,
-    menuId: 1536131597106,
-  },
-  {
-    id: 1536131597088,
-    actiId: 1536131597088,
-    menuId: 1536131597106,
-  },
-  {
-    id: 1536131597089,
-    actiId: 1536131597089,
-    menuId: 1536131597107,
-  },
-  {
-    id: 1536131597090,
-    actiId: 1536131597090,
-    menuId: 1536131597107,
-  },
-  {
-    id: 1536131597091,
-    actiId: 1536131597091,
-    menuId: 1536131597108,
-  },
-  {
-    id: 1536131597092,
-    actiId: 1536131597092,
-    menuId: 1536131597108,
-  },
-  {
-    id: 1536131597093,
-    actiId: 1536131597093,
-    menuId: 1536131597109,
-  },
-  {
-    id: 1536131597094,
-    actiId: 1536131597094,
-    menuId: 1536131597109,
-  },
+  {id:'1536131597087',menuId:'1536131597106',actiId:'1536131597087'},
+  {id:'1536131597088',menuId:'1536131597106',actiId:'1536131597088'},
+  {id:'1536131597089',menuId:'1536131597107',actiId:'1536131597089'},
+  {id:'1536131597090',menuId:'1536131597107',actiId:'1536131597090'},
+  {id:'1536131597091',menuId:'1536131597108',actiId:'1536131597091'},
+  {id:'1536131597092',menuId:'1536131597108',actiId:'1536131597092'},
+  {id:'1536131597093',menuId:'1536131597109',actiId:'1536131597093'},
+  {id:'1536131597094',menuId:'1536131597109',actiId:'1536131597094'},
 ];
 
 export function pfmactimenuList(req, res, u) {
@@ -52,7 +20,7 @@ export function pfmactimenuList(req, res, u) {
   const params = parse(url, true).query;
   const result = [];
   for (const item of tableListDataSource) {
-    if (item.actiId === params.actiId - 0) {
+    if (item.actiId === params.actiId ) {
       result.push(item);
     }
   }

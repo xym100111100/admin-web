@@ -2,86 +2,14 @@ import { parse } from 'url';
 
 // mock tableListDataSource
 const tableListDataSource = [
-  {
-    id: 1536131597087,
-    sysId: 'damai-admin',
-    funcId: 1536131597087,
-    name: '查看',
-    isEnabled: true,
-    isAuth: true,
-    remark: '查看系统的基础信息',
-    orderNo: 1,
-  },
-  {
-    id: 1536131597088,
-    sysId: 'damai-admin',
-    funcId: 1536131597087,
-    name: '管理',
-    isEnabled: true,
-    isAuth: true,
-    remark: '管理系统的基础信息',
-    orderNo: 2,
-  },
-  {
-    id: 1536131597089,
-    sysId: 'damai-admin',
-    funcId: 1536131597088,
-    name: '查看',
-    isEnabled: true,
-    isAuth: true,
-    remark: '查看菜单的基础信息',
-    orderNo: 1,
-  },
-  {
-    id: 1536131597090,
-    sysId: 'damai-admin',
-    funcId: 1536131597088,
-    name: '管理',
-    isEnabled: true,
-    isAuth: true,
-    remark: '管理菜单的基础信息',
-    orderNo: 2,
-  },
-  {
-    id: 1536131597091,
-    sysId: 'damai-admin',
-    funcId: 1536131597089,
-    name: '查看',
-    isEnabled: true,
-    isAuth: true,
-    remark: '查看功能及其动作的基础信息',
-    orderNo: 1,
-  },
-  {
-    id: 1536131597092,
-    sysId: 'damai-admin',
-    funcId: 1536131597089,
-    name: '管理',
-    isEnabled: true,
-    isAuth: true,
-    remark: '管理功能及其动作的基础信息',
-    orderNo: 2,
-  },
-  {
-    id: 1536131597093,
-    sysId: 'damai-admin',
-    funcId: 1536131597090,
-    name: '查看',
-    isEnabled: true,
-    isAuth: true,
-    remark: '查看角色的基础信息',
-    orderNo: 1,
-  },
-  {
-    id: 1536131597094,
-    sysId: 'damai-admin',
-    funcId: 1536131597090,
-    name: '管理',
-    isEnabled: true,
-    isAuth: true,
-    remark: '管理角色的基础信息',
-    orderNo: 2,
-  },
+  { id: '1536131597087',funcId: '1536131597087',isAuth: true, sysId: 'damai-admin', name: '查看', isEnabled: true, orderNo: 1, remark: '查看系统的基础信息'},
+  { id: '1536131597088',funcId: '1536131597087',isAuth: true, sysId: 'damai-admin', name: '管理', isEnabled: true, orderNo: 2, remark: '管理系统的基础信息'},
+  { id: '1536131597089',funcId: '1536131597088',isAuth: true, sysId: 'damai-admin', name: '查看', isEnabled: true, orderNo: 1, remark: '查看菜单的基础信息'},
+  { id: '1536131597090',funcId: '1536131597088',isAuth: true, sysId: 'damai-admin', name: '管理', isEnabled: true, orderNo: 2, remark: '管理菜单的基础信息'},
+  { id: '1536131597091',funcId: '1536131597089',isAuth: true, sysId: 'damai-admin', name: '查看', isEnabled: true, orderNo: 1, remark: '查看功能及其动作的基础信息'},
+  { id: '1536131597092',funcId: '1536131597089',isAuth: true, sysId: 'damai-admin', name: '管理', isEnabled: true, orderNo: 2, remark: '管理功能及其动作的基础信息'},
+  { id: '1536131597093',funcId: '1536131597090',isAuth: true, sysId: 'damai-admin', name: '查看', isEnabled: true, orderNo: 1, remark: '查看角色的基础信息'},
+  { id: '1536131597094',funcId: '1536131597090',isAuth: true, sysId: 'damai-admin', name: '管理', isEnabled: true, orderNo: 2, remark: '管理角色的基础信息'},
 ];
 
 export function getList() {
@@ -95,7 +23,7 @@ export function pfmactiGetById(req, res, u) {
   }
   const params = parse(url, true).query;
 
-  const eo = tableListDataSource.find(item => item.id === params.id - 0);
+  const eo = tableListDataSource.find(item => item.id === params.id);
   if (eo) {
     return res.json({
       result: 1,

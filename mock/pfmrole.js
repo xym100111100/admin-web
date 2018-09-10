@@ -2,38 +2,10 @@ import { parse } from 'url';
 
 // mock tableListDataSource
 const tableListDataSource = [
-  {
-    id: 1536131597090,
-    sysId: 'pfm-admin',
-    name: '平台管理员',
-    isEnabled: true,
-    remark: '管理平台的人员，主要负责平台基础信息维护，拥有最高权限',
-    orderNo: 1,
-  },
-  {
-    id: 1536131597091,
-    sysId: 'pfm-admin',
-    name: '系统权限管理员',
-    isEnabled: true,
-    remark: '管理系统权限的人员，主要负责维护角色和用户的相关信息',
-    orderNo: 2,
-  },
-  {
-    id: 1536131597092,
-    sysId: 'kdi-admin',
-    name: '快递管理员',
-    isEnabled: true,
-    remark: '管理快递相关信息的人员',
-    orderNo: 1,
-  },
-  {
-    id: 1536131597093,
-    sysId: 'damai-admin',
-    name: '大卖后台管理员',
-    isEnabled: true,
-    remark: '管理大卖相关信息的人员',
-    orderNo: 1,
-  },
+  { id: '1536131597090', sysId: 'pfm-admin', name: '平台管理员', isEnabled: true, orderNo: 1, remark: '管理平台的人员，主要负责平台基础信息维护，拥有最高权限'},
+  { id: '1536131597091', sysId: 'pfm-admin', name: '系统权限管理员', isEnabled: true, orderNo: 2, remark: '管理系统权限的人员，主要负责维护角色和用户的相关信息'},
+  { id: '1536131597092', sysId: 'kdi-admin', name: '快递管理员', isEnabled: true, orderNo: 1, remark: '管理快递相关信息的人员'},
+  { id: '1536131597093', sysId: 'damai-admin', name: '大卖后台管理员', isEnabled: true, orderNo: 1, remark: '管理大卖相关信息的人员'},
 ];
 
 export function pfmroleList(req, res, u) {
@@ -60,7 +32,7 @@ export function pfmroleGetById(req, res, u) {
   }
   const params = parse(url, true).query;
 
-  const eo = tableListDataSource.find(item => item.id === params.id - 0);
+  const eo = tableListDataSource.find(item => item.id === params.id);
   if (eo) {
     return res.json({
       result: 1,

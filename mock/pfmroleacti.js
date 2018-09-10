@@ -2,46 +2,14 @@ import { parse } from 'url';
 
 // mock tableListDataSource
 const tableListDataSource = [
-  {
-    id: 1536131597087,
-    roleId: 1536131597093,
-    actiId: 1536131597087,
-  },
-  {
-    id: 1536131597088,
-    roleId: 1536131597093,
-    actiId: 1536131597088,
-  },
-  {
-    id: 1536131597089,
-    roleId: 1536131597093,
-    actiId: 1536131597089,
-  },
-  {
-    id: 1536131597090,
-    roleId: 1536131597093,
-    actiId: 1536131597090,
-  },
-  {
-    id: 1536131597091,
-    roleId: 1536131597093,
-    actiId: 1536131597091,
-  },
-  {
-    id: 1536131597092,
-    roleId: 1536131597093,
-    actiId: 1536131597092,
-  },
-  {
-    id: 1536131597093,
-    roleId: 1536131597093,
-    actiId: 1536131597093,
-  },
-  {
-    id: 1536131597094,
-    roleId: 1536131597093,
-    actiId: 1536131597094,
-  },
+  {id:'1536131597087',roleId:'1536131597093',actiId:'1536131597087'},
+  {id:'1536131597088',roleId:'1536131597093',actiId:'1536131597088'},
+  {id:'1536131597089',roleId:'1536131597093',actiId:'1536131597089'},
+  {id:'1536131597090',roleId:'1536131597093',actiId:'1536131597090'},
+  {id:'1536131597091',roleId:'1536131597093',actiId:'1536131597091'},
+  {id:'1536131597092',roleId:'1536131597093',actiId:'1536131597092'},
+  {id:'1536131597093',roleId:'1536131597093',actiId:'1536131597093'},
+  {id:'1536131597094',roleId:'1536131597093',actiId:'1536131597094'},
 ];
 
 export function pfmroleactiList(req, res, u) {
@@ -52,7 +20,7 @@ export function pfmroleactiList(req, res, u) {
   const params = parse(url, true).query;
   const result = [];
   for (const item of tableListDataSource) {
-    if (item.roleId === params.roleId - 0) {
+    if (item.roleId === params.roleId ) {
       result.push(item);
     }
   }
