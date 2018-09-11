@@ -18,6 +18,14 @@ export async function add(params) {
   });
 }
 
+export async function canceldelivery(params) {
+  return request('/ord-svr/ord/order/canceldelivery', {
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
+}
 
 export async function cancel(params) {
   return request('/ord-svr/ord/order/cancel', {

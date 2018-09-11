@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { list, getById, add, modify, del,cancel } from '../services/ordorder';
+import { list, getById, add, modify, del,cancel,canceldelivery } from '../services/ordorder';
 
 export default {
   namespace: 'ordorder',
@@ -57,6 +57,15 @@ export default {
     },
     *cancel({ payload, callback }, { call }) {//取消订单
       const response = yield call(cancel, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *canceldelivery({ payload, callback }, { call }) {//取消发货
+      const response = yield call(canceldelivery, payload);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);
