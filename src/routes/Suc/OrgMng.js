@@ -5,7 +5,8 @@ import { Card, Divider, Switch, Popconfirm, Form, Input, Button, Table } from 'a
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './OrgMng.less';
 import OrgForm from './OrgForm';
-import OrgUserForm from './OrgUserForm';
+// import OrgUserForm from './OrgUserForm';
+import UserTransferForm from './UserTransferForm';
 
 const { Search } = Input;
 
@@ -208,8 +209,8 @@ export default class OrgMng extends SimpleMng {
         </PageHeaderLayout>,
         {editForm === 'orgForm' && (
           <OrgForm
-            visible
             id={editFormRecord.id}
+            visible
             title={editFormTitle}
             editFormType={editFormType}
             record={editFormRecord}
@@ -218,13 +219,21 @@ export default class OrgMng extends SimpleMng {
           />
         )}
         {editForm === 'orgUserForm' && (
-          <OrgUserForm
+          // <OrgUserForm
+          //   visible
+          //   title={editFormTitle}
+          //   width={1200}
+          //   editFormType={editFormType}
+          //   record={editFormRecord}
+          //   closeModal={() => this.setState({ editForm: undefined })}
+          //   onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'sucuser' })}
+          // />
+          <UserTransferForm
+            id={editFormRecord.id}
             visible
-            loading={loading}
             title={editFormTitle}
-            width={1200}
+            width={815}
             editFormType={editFormType}
-            record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
             onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'sucuser' })}
           />
