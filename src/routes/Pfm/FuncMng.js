@@ -221,8 +221,8 @@ export default class FuncMng extends SimpleMng {
                   <a
                     onClick={() =>
                       this.showEditForm({
-                        id: record.id,
-                        moduleCode: 'pfmacti',
+                        id: record.id, // 通过id调用getById方法请求获取记录并设置状态的editFormRecord
+                        moduleCode: 'pfmactimenu',
                         editForm: 'actiMenuForm',
                         editFormTitle: '设置动作的菜单',
                       })
@@ -234,8 +234,8 @@ export default class FuncMng extends SimpleMng {
                   <a
                     onClick={() =>
                       this.showEditForm({
-                        id: record.id,
-                        moduleCode: 'pfmacti',
+                        id: record.id, // 通过id调用getById方法请求获取记录并设置状态的editFormRecord
+                        moduleCode: 'pfmactiurn',
                         editForm: 'actiUrnForm',
                         editFormTitle: '设置动作的链接',
                       })
@@ -247,7 +247,7 @@ export default class FuncMng extends SimpleMng {
                   <a
                     onClick={() =>
                       this.showEditForm({
-                        id: record.id,
+                        id: record.id, // 通过id调用getById方法请求获取记录并设置状态的editFormRecord
                         moduleCode: 'pfmacti',
                         editForm: 'actiForm',
                         editFormTitle: '编辑动作信息',
@@ -269,103 +269,99 @@ export default class FuncMng extends SimpleMng {
     ];
 
     return (
-      <PageHeaderLayout>
-        <Card bordered={false} loading={pfmsysloading}>
-          <div className={styles.tableList}>
-            <div className={styles.tableListOperator}>
-              <Tabs onChange={this.switchSys}>{pfmsys.map(sys => <TabPane tab={sys.name} key={sys.id} />)}</Tabs>
-              <Button
-                icon="plus"
-                type="primary"
-                disabled={isDrag}
-                onClick={() =>
-                  this.showAddForm({ editForm: 'funcForm', editFormTitle: '添加新功能', editFormRecord: { sysId } })
-                }
+      <Fragment>
+        <PageHeaderLayout>
+          <Card bordered={false} loading={pfmsysloading}>
+            <div className={styles.tableList}>
+              <div className={styles.tableListOperator}>
+                <Tabs onChange={this.switchSys}>{pfmsys.map(sys => <TabPane tab={sys.name} key={sys.id} />)}</Tabs>
+                <Button
+                  icon="plus"
+                  type="primary"
+                  disabled={isDrag}
+                  onClick={() =>
+                    this.showAddForm({ editForm: 'funcForm', editFormTitle: '添加新功能', editFormRecord: { sysId } })
+                  }
+                >
+                  添加新功能
+                </Button>
+                <Divider type="vertical" />
+                拖拽排序:&nbsp;&nbsp;
+                <Switch
+                  checked={isDrag}
+                  checkedChildren="开启"
+                  unCheckedChildren="禁止"
+                  loading={loading}
+                  onChange={::this.switchDrag}
+                />
+                <Divider type="vertical" />
+                <Button icon="reload" onClick={() => this.handleReload()}>
+                  刷新
+                </Button>
+              </div>
+              <DragWrapper
+                isDrag={isDrag}
+                beginDrag={::this.beginDrag}
+                compare={::this.compareDragRecordAndDropRecord}
+                canDrop={::this.canDrop}
+                onDrop={::this.handleDrop}
               >
-                添加新功能
-              </Button>
-              <Divider type="vertical" />
-              拖拽排序:&nbsp;&nbsp;
-              <Switch
-                checked={isDrag}
-                checkedChildren="开启"
-                unCheckedChildren="禁止"
-                loading={loading}
-                onChange={::this.switchDrag}
-              />
-              <Divider type="vertical" />
-              <Button icon="reload" onClick={() => this.handleReload()}>
-                刷新
-              </Button>
+                <Table
+                  rowKey={record => record.type + record.id}
+                  expandedRowKeys={expandedRowKeys}
+                  onExpand={::this.handleExpand}
+                  pagination={false}
+                  loading={loading}
+                  dataSource={pfmfunc}
+                  columns={columns}
+                />
+              </DragWrapper>
             </div>
-            <DragWrapper
-              isDrag={isDrag}
-              beginDrag={::this.beginDrag}
-              compare={::this.compareDragRecordAndDropRecord}
-              canDrop={::this.canDrop}
-              onDrop={::this.handleDrop}
-            >
-              <Table
-                rowKey={record => record.type + record.id}
-                expandedRowKeys={expandedRowKeys}
-                onExpand={::this.handleExpand}
-                pagination={false}
-                loading={loading}
-                dataSource={pfmfunc}
-                columns={columns}
-              />
-            </DragWrapper>
-          </div>
-        </Card>
+          </Card>
+        </PageHeaderLayout>,
         {editForm === 'funcForm' && (
           <FuncForm
+            record={editFormRecord}
             visible
-            loading={loading}
             title={editFormTitle}
             editFormType={editFormType}
-            record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
             onSubmit={fields => this.handleSubmit({ fields })}
           />
         )}
         {editForm === 'actiForm' && (
           <ActiForm
+            record={editFormRecord}
             visible
-            loading={loading}
             title={editFormTitle}
             editFormType={editFormType}
-            record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
             onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'pfmacti' })}
           />
         )}
         {editForm === 'actiMenuForm' && (
           <ActiMenuForm
-            loading={loading}
-            sysId={sysId}
             actiId={editFormRecord.id}
+            sysId={sysId}
             visible
             title={editFormTitle}
             editFormType={editFormType}
-            record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            onSubmit={fields => this.handleSubmit({fields, moduleCode: 'pfmactimenu' })}
+            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'pfmactimenu' })}
           />
         )}
         {editForm === 'actiUrnForm' && (
           <ActiUrnForm
-            // loading={loading}
             actiId={editFormRecord.id}
             visible
-            title={editFormTitle}
             width={650}
+            title={editFormTitle}
             editFormType={editFormType}
-            record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
             onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'pfmactiurn' })}
           />
         )}
-      </PageHeaderLayout>
+      </Fragment>
     );
   }
 }

@@ -4,6 +4,9 @@ import { Button, Form, Modal, Icon } from 'antd';
 // 编辑表单
 const EditForm = DivInfo => {
   return @Form.create({
+    /**
+     * 将组件属性里的record的字段转换成以FormField为属性的对象
+     */
     mapPropsToFields(props) {
       const { record } = props;
       const result = {};
@@ -65,42 +68,41 @@ const EditForm = DivInfo => {
           bodyStyle={{ overflow: 'auto' }}
           closable={false}
           width={width}
-          footer={
-            [
-              <Button key="return" icon="rollback" size="large" onClick={closeModal}>
-                返 回
+          footer={[
+            <Button key="return" icon="rollback" size="large" onClick={closeModal}>
+              返 回
             </Button>,
-              isShowResetButton && (
-                <Button key="reset" icon="undo" size="large" onClick={this.handleReset}>
-                  重 置
+            isShowResetButton && (
+              <Button key="reset" icon="undo" size="large" onClick={this.handleReset}>
+                重 置
               </Button>
-              ),
-              onSave && (
-                <Button key="save" icon="check" size="large" loading={submitting} onClick={this.handleSave}>
-                  保 存
+            ),
+            onSave && (
+              <Button key="save" icon="check" size="large" loading={submitting} onClick={this.handleSave}>
+                保 存
               </Button>
-              ),
-              onNext && (
-                <Button key="next" icon="fall" size="large" loading={submitting} onClick={this.handleNext}>
-                  下一条
+            ),
+            onNext && (
+              <Button key="next" icon="fall" size="large" loading={submitting} onClick={this.handleNext}>
+                下一条
               </Button>
-              ),
-              onSubmit && (
-                <Button
-                  key="submit"
-                  icon="upload"
-                  type="primary"
-                  size="large"
-                  loading={submitting}
-                  onClick={this.handleSubmit}
-                >
-                  提 交
+            ),
+            onSubmit && (
+              <Button
+                key="submit"
+                icon="upload"
+                type="primary"
+                size="large"
+                loading={submitting}
+                onClick={this.handleSubmit}
+              >
+                提 交
               </Button>
-              ),
-            ]}
+            ),
+          ]}
         >
           <DivInfo form={form} {...restProps} />
-        </Modal >
+        </Modal>
       );
     }
   };

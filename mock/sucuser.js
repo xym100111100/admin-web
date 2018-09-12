@@ -75,13 +75,13 @@ export function sucUserList(req, res) {
   res.json(tableListDataSource);
 }
 
-export function sucUserGetById(req, res, u) {
+export function sucuserGetById(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
   }
   const params = parse(url, true).query;
-  const eo = tableListDataSource.find(item => item.id === params.id);
+  const eo = tableListDataSource.list.find(item => item.id === params.id);
   if (eo) {
     return res.json({
       result: 1,
@@ -94,6 +94,16 @@ export function sucUserGetById(req, res, u) {
       msg: '获取失败，找不到要获取的记录',
     });
   }
+}
+
+export function sucuserList2(sysId) {
+  const result = [];
+  for (const item of tableListDataSource.list) {
+    if (item.sysId === sysId) {
+      result.push(item);
+    }
+  }
+  return result;
 }
 
 export function sucUserAdd(req, res, u, b) {

@@ -1,22 +1,7 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import {
-  Row,
-  Col,
-  Card,
-  Divider,
-  Popconfirm,
-  Form,
-  Input,
-  Button,
-  Table,
-  Switch,
-  Menu,
-  List,
-  Dropdown,
-  Icon,
-} from 'antd';
+import { Row, Col, Card, Divider, Popconfirm, Form, Input, Button, Table, Switch, Menu, Dropdown, Icon } from 'antd';
 import DescriptionList from 'components/DescriptionList';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import UserForm from './UserForm';
@@ -27,10 +12,10 @@ import UserOrgForm from './UserOrgForm';
 
 const FormItem = Form.Item;
 const { Description } = DescriptionList;
-@connect(({ sucuser, userrole, sucorg, loading }) => ({
+@connect(({ sucuser, pfmuserrole, sucorg, loading }) => ({
   sucuser,
   sucorg,
-  userrole,
+  pfmuserrole,
   loading: loading.models.sucuser,
 }))
 @Form.create()
@@ -152,7 +137,7 @@ export default class UserMng extends SimpleMng {
   }
 
   render() {
-    const { sucuser: { sucuser }, userrole: { userrole }, loading } = this.props;
+    const { sucuser: { sucuser }, pfmuserrole: { userrole }, loading } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
     const columns = [
       {
@@ -178,8 +163,8 @@ export default class UserMng extends SimpleMng {
           return (
             <Fragment>
               <Switch
-                checkedChildren="已锁定"
-                unCheckedChildren="未锁定"
+                checkedChildren="锁定"
+                unCheckedChildren="未锁"
                 checked={record.isLock}
                 loading={loading}
                 onChange={() => this.handleEnable(record)}
@@ -191,55 +176,48 @@ export default class UserMng extends SimpleMng {
       {
         title: '操作',
         render: (text, record) => {
-          let editFormTitle = '设置组织';
-          if (record.orgName !== null && record.orgName !== '' && record.orgName !== undefined) {
-            editFormTitle = record.orgName;
-          }
           return (
             <Fragment>
-              <Fragment>
-                <Divider type="vertical" />
-                <List.Item
-                  actions={[
-                    <a
-                      onClick={() =>
-                        this.showAddForm({
-                          editForm: 'userRoleForm',
-                          editFormTitle: '添加角色',
-                          editFormRecord: { userId: record.id },
-                        })
-                      }
-                    >
-                      添加角色
-                    </a>,
-                    <a
-                      onClick={() =>
-                        this.showAddForm({
-                          editForm: 'userOrgForm',
-                          editFormTitle: '设置组织',
-                          editFormRecord: record,
-                        })
-                      }
-                    >
-                      {editFormTitle}
-                    </a>,
-                    <a
-                      onClick={() =>
-                        this.showEditForm({
-                          id: record.id,
-                          moduleCode: 'sucuser',
-                          editForm: 'userForm',
-                          editFormTitle: '编辑角色信息',
-                        })
-                      }
-                    >
-                      编辑
-                    </a>,
-                    <MoreBtn record={record} />,
-                  ]}
-                />
-                <Divider type="vertical" />
-              </Fragment>
+              <a
+                onClick={() =>
+                  this.showEditForm({
+                    isGetByIdOnInit: false, // 初始化的时候不用通过getById请求获取记录
+                    editForm: 'userRoleForm',
+                    editFormTitle: '设置用户的角色',
+                    editFormRecord: record, // 不请求，直接设置状态的editFormRecord（供设置组件属性时使用）
+                  })
+                }
+              >
+                角色
+              </a>
+              <Divider type="vertical" />
+              <a
+                onClick={() =>
+                  this.showEditForm({
+                    isGetByIdOnInit: false, // 初始化的时候不用通过getById请求获取记录
+                    editForm: 'userOrgForm',
+                    editFormTitle: '设置用户的组织',
+                    editFormRecord: record, // 不请求，直接设置状态的editFormRecord（供设置组件属性时使用）
+                  })
+                }
+              >
+                组织
+              </a>
+              <Divider type="vertical" />
+              <a
+                onClick={() =>
+                  this.showEditForm({
+                    moduleCode: 'sucuser',
+                    editForm: 'userForm',
+                    editFormTitle: '编辑角色信息',
+                    editFormRecord: record,
+                  })
+                }
+              >
+                编辑
+              </a>
+              <Divider type="vertical" />
+              <MoreBtn record={record} />
             </Fragment>
           );
         },
@@ -296,81 +274,94 @@ export default class UserMng extends SimpleMng {
     };
 
     return (
-      <PageHeaderLayout title="用户信息管理">
-        <Card bordered={false}>
-          <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
-          <div className={styles.tableList}>
-            <div className={styles.tableListOperator}>
-              <Button
-                icon="plus"
-                type="primary"
-                onClick={() => this.showAddForm({ editForm: 'userRegForm', editFormTitle: '添加新用户' })}
-              >
-                添加
-              </Button>
-              <Divider type="vertical" />
-              <Button icon="reload" onClick={() => this.handleReload()}>
-                刷新
-              </Button>
+      <Fragment>
+        <PageHeaderLayout>
+          <Card bordered={false}>
+            <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
+            <div className={styles.tableList}>
+              <div className={styles.tableListOperator}>
+                <Button
+                  icon="plus"
+                  type="primary"
+                  onClick={() => this.showAddForm({ editForm: 'userRegForm', editFormTitle: '添加新用户' })}
+                >
+                  添加
+                </Button>
+                <Divider type="vertical" />
+                <Button icon="reload" onClick={() => this.handleReload()}>
+                  刷新
+                </Button>
+              </div>
+              <Table
+                rowKey="id"
+                pagination={paginationProps}
+                loading={loading}
+                dataSource={sucuser.list}
+                columns={columns}
+                onChange={this.handleTableChange}
+                expandedRowRender={record => (
+                  <DescriptionList className={styles.headerList} size="small" col="2">
+                    <Description term="真实名字">{record.realname}</Description>
+                    <Description term="是否已验证实名">
+                      <Fragment>
+                        <Switch
+                          checkedChildren="已验证"
+                          unCheckedChildren="未验证"
+                          checked={record.isVerifiedRealname}
+                          loading={loading}
+                        />
+                      </Fragment>
+                    </Description>
+                    <Description term="身份证号">{record.idcard}</Description>
+                    <Description term="是否已验证身份证号">
+                      <Fragment>
+                        <Switch
+                          checkedChildren="已验证"
+                          unCheckedChildren="未验证"
+                          checked={record.isVerifiedIdcard}
+                          loading={loading}
+                        />
+                      </Fragment>
+                    </Description>
+                    <Description term="电子邮箱">{record.email}</Description>
+                    <Description term="是否已验证电子邮箱">
+                      <Fragment>
+                        <Switch
+                          checkedChildren="已验证"
+                          unCheckedChildren="未验证"
+                          checked={record.isVerifiedEmail}
+                          loading={loading}
+                        />
+                      </Fragment>
+                    </Description>
+                    <Description term="手机号码">{record.mobile}</Description>
+                    <Description term="是否已验证手机号码">
+                      <Fragment>
+                        <Switch
+                          checkedChildren="已验证"
+                          unCheckedChildren="未验证"
+                          checked={record.isVerifiedMobile}
+                          loading={loading}
+                        />
+                      </Fragment>
+                    </Description>
+                  </DescriptionList>
+                )}
+              />
             </div>
-            <Table
-              rowKey="id"
-              pagination={paginationProps}
-              loading={loading}
-              dataSource={sucuser.list}
-              columns={columns}
-              onChange={this.handleTableChange}
-              expandedRowRender={record => (
-                <DescriptionList className={styles.headerList} size="small" col="2">
-                  <Description term="真实名字">{record.realname}</Description>
-                  <Description term="是否已验证实名">
-                    <Fragment>
-                      <Switch
-                        checkedChildren="已验证"
-                        unCheckedChildren="未验证"
-                        checked={record.isVerifiedRealname}
-                        loading={loading}
-                      />
-                    </Fragment>
-                  </Description>
-                  <Description term="身份证号">{record.idcard}</Description>
-                  <Description term="是否已验证身份证号">
-                    <Fragment>
-                      <Switch
-                        checkedChildren="已验证"
-                        unCheckedChildren="未验证"
-                        checked={record.isVerifiedIdcard}
-                        loading={loading}
-                      />
-                    </Fragment>
-                  </Description>
-                  <Description term="电子邮箱">{record.email}</Description>
-                  <Description term="是否已验证电子邮箱">
-                    <Fragment>
-                      <Switch
-                        checkedChildren="已验证"
-                        unCheckedChildren="未验证"
-                        checked={record.isVerifiedEmail}
-                        loading={loading}
-                      />
-                    </Fragment>
-                  </Description>
-                  <Description term="手机号码">{record.mobile}</Description>
-                  <Description term="是否已验证手机号码">
-                    <Fragment>
-                      <Switch
-                        checkedChildren="已验证"
-                        unCheckedChildren="未验证"
-                        checked={record.isVerifiedMobile}
-                        loading={loading}
-                      />
-                    </Fragment>
-                  </Description>
-                </DescriptionList>
-              )}
-            />
-          </div>
-        </Card>
+          </Card>
+        </PageHeaderLayout>,
+        {editForm === 'userForm' && (
+          <UserForm
+            id={editFormRecord.id}
+            visible
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'sucuser' })}
+          />
+        )}
         {editForm === 'userRegForm' && (
           <UserRegForm
             visible
@@ -381,49 +372,34 @@ export default class UserMng extends SimpleMng {
             onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'sucuser' })}
           />
         )}
-        {editForm === 'userForm' && (
-          <UserForm
-            loading={loading}
-            id={editFormRecord.id}
-            visible
-            title={editFormTitle}
-            editFormType={editFormType}
-            record={editFormRecord}
-            closeModal={() => this.setState({ editForm: undefined })}
-            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'sucuser' })}
-          />
-        )}
         {editForm === 'userRoleForm' && (
           <UserRoleForm
+            userId={editFormRecord.id}
             visible
-            loading={loading}
-            id={editFormRecord.userId}
-            title={editFormTitle}
             width={715}
-            moduleCode={'userrole'}
+            title={editFormTitle}
             editFormType={editFormType}
-            record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            onSubmit={fields =>
+            onSubmit={() =>
               this.handleSubmit({
                 fields: {
+                  userId: editFormRecord.id,
                   sysId: userrole.dataSource[0].sysId,
-                  userId: editFormRecord.userId,
                   roleIds: userrole.targetKeys,
                 },
-                moduleCode: 'userrole',
+                moduleCode: 'pfmuserrole',
+                saveMethodName: 'modifyUserRoles',
               })
             }
           />
         )}
         {editForm === 'userOrgForm' && (
           <UserOrgForm
+            record={editFormRecord}
             visible
-            loading={loading}
             title={editFormTitle}
             width={600}
             editFormType={editFormType}
-            record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
             onSubmit={fields =>
               this.handleSubmit({
@@ -436,7 +412,7 @@ export default class UserMng extends SimpleMng {
             }
           />
         )}
-      </PageHeaderLayout>
+      </Fragment>
     );
   }
 }

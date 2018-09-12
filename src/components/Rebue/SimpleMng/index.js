@@ -30,13 +30,19 @@ export default class SimpleMng extends PureComponent {
 
   // 查询
   handleSearch = e => {
-    e.preventDefault();
-    const { form } = this.props;
+    // 如果是查询form的提交
+    if (e.preventDefault) {
+      e.preventDefault();
+      const { form } = this.props;
 
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-      this.handleReload({ ...fieldsValue });
-    });
+      form.validateFields((err, fieldsValue) => {
+        if (err) return;
+        this.handleReload({ ...fieldsValue });
+      });
+    } else {
+      // 否则是直接传值的查询
+      this.handleReload({ params: e });
+    }
   };
 
   // 显示新建表单
@@ -58,16 +64,21 @@ export default class SimpleMng extends PureComponent {
       editFormType: 'edit',
       editForm: undefined,
       editFormTitle: undefined,
+      isGetByIdOnInit: true, // 初始化的时候是否通过getById请求获取记录
     };
-    const { id, moduleCode, ...state } = Object.assign(defaultParams, params);
-    this.props.dispatch({
-      type: `${moduleCode}/getById`,
-      payload: { id },
-      callback: data => {
-        state.editFormRecord = data.record || data;
-        this.setState(state);
-      },
-    });
+    const { id, moduleCode, isGetByIdOnInit, ...state } = Object.assign(defaultParams, params);
+    if (isGetByIdOnInit) {
+      this.props.dispatch({
+        type: `${moduleCode}/getById`,
+        payload: { id },
+        callback: data => {
+          state.editFormRecord = data.record || data;
+          this.setState(state);
+        },
+      });
+    } else {
+      this.setState(state);
+    }
   }
 
   // 请求保存(添加或修改)
@@ -76,13 +87,14 @@ export default class SimpleMng extends PureComponent {
       fields: undefined,
       moduleCode: this.moduleCode,
       saveMethodName: undefined, // string 保存时调用的方法
-      isReturn: false, // 默认不返回主页面
-      isReset: false, // 是否重置
+      isReload: true, // 默认请求成功后刷新主页面（）
+      isReturn: false, // 默认不返回主页面（handleSubmit后需要返回）
+      isReset: false, // 默认不重置（handleNext后需要重置）
     };
 
     const { moduleCode, saveMethodName, fields, isReturn, isReset } = Object.assign(defaultParams, params);
 
-    this.setState({ editFormRecord: fields });
+    // this.setState({ editFormRecord: fields });
     let dispatchType;
     if (saveMethodName) {
       dispatchType = `${moduleCode}/${saveMethodName}`;

@@ -269,7 +269,7 @@ export default class MenuMng extends EditMng {
       {
         title: '图标',
         dataIndex: 'icon',
-        width: '5%',
+        width: '10%',
         render: (text, record) => {
           const { editRecord } = this.state;
           if (editType !== 'none' && record && editRecord && editRecord.id === record.id)
@@ -309,21 +309,19 @@ export default class MenuMng extends EditMng {
         render: (text, record) => {
           if (editType !== 'none' || isDrag) return null;
           return (
-            <Fragment>
-              <Switch
-                checkedChildren="启用"
-                unCheckedChildren="禁止"
-                checked={record.isEnabled}
-                loading={loading}
-                onChange={() => this.handleEnable(record)}
-              />
-            </Fragment>
+            <Switch
+              checkedChildren="启用"
+              unCheckedChildren="禁止"
+              checked={record.isEnabled}
+              loading={loading}
+              onChange={() => this.handleEnable(record)}
+            />
           );
         },
       },
       {
         title: '操作',
-        width: '20%',
+        width: '16%',
         render: (text, record) => {
           const { editRecord } = this.state;
           if (isDrag) return null;

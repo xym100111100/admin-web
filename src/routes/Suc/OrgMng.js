@@ -1,17 +1,18 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Divider, Switch, Popconfirm, Form, Input, Button, Table, List, Tooltip } from 'antd';
+import { Card, Divider, Switch, Popconfirm, Form, Input, Button, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './OrgMng.less';
 import OrgForm from './OrgForm';
 import OrgUserForm from './OrgUserForm';
 
-const FormItem = Form.Item;
+const { Search } = Input;
+
 @connect(({ sucorg, loading, sucuserorg }) => ({
   sucorg,
   sucuserorg,
-  loading: loading.models.sucuserorg,
+  loading: loading.models.sucorg || loading.models.sucuserorg,
 }))
 @Form.create()
 export default class OrgMng extends SimpleMng {
@@ -34,11 +35,6 @@ export default class OrgMng extends SimpleMng {
     });
   };
 
-  // 重置from
-  handleFormReset = () => {
-    this.props.form.resetFields();
-  };
-
   // 刷新用户列表
   handleUserReload(selectedRows) {
     // 加载用户信息
@@ -50,7 +46,7 @@ export default class OrgMng extends SimpleMng {
         orgId: selectedRows[0].id,
       },
       callback: () => {
-        this.setState({ selectedRows: selectedRows });
+        this.setState({ selectedRows });
       },
     });
   }
@@ -90,7 +86,6 @@ export default class OrgMng extends SimpleMng {
 
   // 启用/禁用组织
   handleEnable(record) {
-    console.log(record);
     this.props.dispatch({
       type: `sucorg/enable`,
       payload: { id: record.id, isEnabled: !record.isEnabled },
@@ -100,46 +95,17 @@ export default class OrgMng extends SimpleMng {
     });
   }
 
-  // 搜索
-  renderSearchForm() {
-    const { getFieldDecorator } = this.props.form;
-    return (
-      <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
-          <Col md={6} sm={24}>
-            <FormItem label="">
-              {getFieldDecorator('users')(<Input placeholder="登录账号/昵称/微信昵称/QQ昵称/手机号码/QQ邮箱" />)}
-            </FormItem>
-          </Col>
-          <Col md={6} sm={24}>
-            <span style={{ float: 'left', marginBottom: 24 }}>
-              <Button type="primary" htmlType="submit">
-                查询
-              </Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-                重置
-              </Button>
-            </span>
-          </Col>
-        </Row>
-      </Form>
-    );
-  }
-
   render() {
-    const { sucorg: { sucorg }, sucuserorg: { sucuserorg }, loading } = this.props;
+    const { sucorg: { sucorg }, loading } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
     const columns = [
       {
         title: '组织名称',
         dataIndex: 'name',
-        render: (text, record) => {
-          return (
-            <Tooltip placement="topLeft" title={record.remark}>
-              {record.name}
-            </Tooltip>
-          );
-        },
+      },
+      {
+        title: '描述',
+        dataIndex: 'remark',
       },
       {
         title: '是否启用',
@@ -147,7 +113,13 @@ export default class OrgMng extends SimpleMng {
         render: (text, record) => {
           return (
             <Fragment>
-              <Switch checked={record.isEnabled} loading={loading} onChange={() => this.handleEnable(record)} />
+              <Switch
+                checkedChildren="启用"
+                unCheckedChildren="停用"
+                checked={record.isEnabled}
+                loading={loading}
+                onChange={() => this.handleEnable(record)}
+              />
             </Fragment>
           );
         },
@@ -157,73 +129,32 @@ export default class OrgMng extends SimpleMng {
         render: (text, record) => {
           return (
             <Fragment>
-              <Fragment>
-                <Divider type="vertical" />
-                <List.Item
-                  actions={[
-                    <a
-                      onClick={() =>
-                        this.showAddForm({
-                          editForm: 'orgUserForm',
-                          editFormTitle: '添加用户',
-                          editFormRecord: record,
-                        })
-                      }
-                    >
-                      添加用户
-                    </a>,
-                    <a
-                      onClick={() =>
-                        this.showEditForm({
-                          id: record.id,
-                          moduleCode: 'sucorg',
-                          editForm: 'orgForm',
-                          editFormTitle: '编辑组织信息',
-                        })
-                      }
-                    >
-                      编辑
-                    </a>,
-                    <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record)}>
-                      <a>删除</a>
-                    </Popconfirm>,
-                  ]}
-                />
-                <Divider type="vertical" />
-              </Fragment>
-            </Fragment>
-          );
-        },
-      },
-    ];
-
-    const userColumns = [
-      {
-        title: '登录名称',
-        dataIndex: 'loginName',
-      },
-      {
-        title: '昵称',
-        dataIndex: 'nickname',
-      },
-      {
-        title: 'QQ昵称',
-        dataIndex: 'qqNickname',
-      },
-      {
-        title: '微信昵称',
-        dataIndex: 'wxNickname',
-      },
-      {
-        title: '真实姓名',
-        dataIndex: 'realname',
-      },
-      {
-        title: '操作',
-        render: (text, record) => {
-          return (
-            <Fragment>
-              <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDelUser(record)}>
+              <a
+                onClick={() =>
+                  this.showAddForm({
+                    editForm: 'orgUserForm',
+                    editFormTitle: '设置组织的用户',
+                    editFormRecord: record,
+                  })
+                }
+              >
+                用户
+              </a>
+              <Divider type="vertical" />
+              <a
+                onClick={() =>
+                  this.showEditForm({
+                    id: record.id,
+                    moduleCode: 'sucorg',
+                    editForm: 'orgForm',
+                    editFormTitle: '编辑组织信息',
+                  })
+                }
+              >
+                编辑
+              </a>
+              <Divider type="vertical" />
+              <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record)}>
                 <a>删除</a>
               </Popconfirm>
             </Fragment>
@@ -240,72 +171,41 @@ export default class OrgMng extends SimpleMng {
       total: Number(sucorg.total),
     };
 
-    // 分页
-    const paginationPropsByuser = {
-      showSizeChanger: true,
-      showQuickJumper: true,
-      pageSize: 5,
-      total: Number(sucuserorg.total),
-    };
-
-    const rowSelection = {
-      onChange: (selectedRowKeys, selectedRows) => {
-        this.handleUserReload(selectedRows);
-      },
-      type: 'radio',
-    };
-
     return (
-      <PageHeaderLayout title="组织信息管理">
-        <Card bordered={false}>
-          <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
-          <div className={styles.tableList}>
-            <div className={styles.tableListOperator}>
-              <Button
-                icon="plus"
-                type="primary"
-                onClick={() => this.showAddForm({ editForm: 'orgForm', editFormTitle: '添加新组织' })}
-              >
-                添加
-              </Button>
-              <Divider type="vertical" />
-              <Button icon="reload" onClick={() => this.handleReload()}>
-                刷新
-              </Button>
+      <Fragment>
+        <PageHeaderLayout>
+          <Card bordered={false}>
+            <div className={styles.tableListForm} />
+            <div className={styles.tableList}>
+              <div className={styles.tableListOperator}>
+                <div style={{ flexGrow: 1 }}>
+                  <Button
+                    icon="plus"
+                    type="primary"
+                    onClick={() => this.showAddForm({ editForm: 'orgForm', editFormTitle: '添加新组织' })}
+                  >
+                    添加
+                  </Button>
+                  <Divider type="vertical" />
+                  <Button icon="reload" onClick={() => this.handleReload()}>
+                    刷新
+                  </Button>
+                  <Divider type="vertical" />
+                </div>
+                <Divider type="vertical" />
+                <Search style={{ width: 220 }} placeholder="组织名称/描述" onSearch={this.handleSearch} />
+              </div>
+              <Table
+                rowKey="id"
+                pagination={paginationProps}
+                loading={loading}
+                dataSource={sucorg.list}
+                columns={columns}
+                onChange={this.handleTableChange}
+              />
             </div>
-            <Row gutter={16}>
-              {
-                <Col span={8}>
-                  <Card title="组织">
-                    <Table
-                      showHeader={false}
-                      rowKey="id"
-                      pagination={paginationProps}
-                      loading={loading}
-                      dataSource={sucorg.list}
-                      columns={columns}
-                      rowSelection={rowSelection}
-                      onChange={this.handleTableChange}
-                    />
-                  </Card>
-                </Col>
-              }
-              <Col span={16}>
-                <Card title="用户">
-                  {
-                    <Table
-                      rowKey="id"
-                      pagination={paginationPropsByuser}
-                      onChange={this.handleTableChanges}
-                      dataSource={sucuserorg.list}
-                      columns={userColumns}
-                    />
-                  }
-                </Card>
-              </Col>
-            </Row>
-          </div>
-        </Card>
+          </Card>
+        </PageHeaderLayout>,
         {editForm === 'orgForm' && (
           <OrgForm
             visible
@@ -329,7 +229,7 @@ export default class OrgMng extends SimpleMng {
             onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'sucuser' })}
           />
         )}
-      </PageHeaderLayout>
+      </Fragment>
     );
   }
 }

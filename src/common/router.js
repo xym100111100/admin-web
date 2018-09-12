@@ -94,7 +94,7 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['ordorder'], () => import('../routes/Ord/OrdOrder')),
     },
     '/onl/onl-mng': {
-      component: dynamicWrapper(app, ['sucuser', 'pfmsys', 'userrole', 'sucorg', 'sucuserorg'], () =>
+      component: dynamicWrapper(app, ['sucuser', 'pfmsys', 'pfmuserrole', 'sucorg', 'sucuserorg'], () =>
         import('../routes/Onl/OnlineMng')
       ),
     },
@@ -117,12 +117,12 @@ export const getRouterData = app => {
       ),
     },
     '/pfm/role-mng': {
-      component: dynamicWrapper(app, ['pfmsys', 'pfmrole', 'pfmroleacti', 'pfmfunc', 'sucuser', 'userrole'], () =>
+      component: dynamicWrapper(app, ['pfmsys', 'pfmrole', 'pfmroleacti', 'pfmfunc', 'sucuser', 'pfmuserrole'], () =>
         import('../routes/Pfm/RoleMng')
       ),
     },
     '/suc/user-mng': {
-      component: dynamicWrapper(app, ['sucuser', 'pfmsys', 'userrole', 'sucorg', 'sucuserorg'], () =>
+      component: dynamicWrapper(app, ['sucuser', 'pfmsys', 'pfmuserrole', 'sucorg', 'sucuserorg'], () =>
         import('../routes/Suc/UserMng')
       ),
     },

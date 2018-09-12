@@ -15,13 +15,7 @@ import {
   rnarealnameModify,
   rnarealnameDel,
 } from './mock/rnarealname';
-import {
- ordorderList,
- ordorderGetById,
- ordorderAdd,
- ordorderModify,
- ordorderDel,
-} from './mock/ordorder';
+import { ordorderList, ordorderGetById, ordorderAdd, ordorderModify, ordorderDel } from './mock/ordorder';
 import { kdieorderList, kdieorderGetById, kdieorderAdd, kdieorderModify, kdieorderDel } from './mock/kdieorder';
 import {
   kdiSenderList,
@@ -61,8 +55,8 @@ import {
   pfmactiAuth,
   pfmactiEnable,
 } from './mock/pfmacti';
-import { pfmactimenuList, pfmactimenuModify,pfmactimenuListAll } from './mock/pfmactimenu';
-import { pfmactiurnList, pfmactiurnModify ,pfmactiurnListAll} from './mock/pfmactiurn';
+import { pfmactimenuList, pfmactimenuModify, pfmactimenuListAll } from './mock/pfmactimenu';
+import { pfmactiurnList, pfmactiurnModify, pfmactiurnListAll } from './mock/pfmactiurn';
 import {
   ListAll,
   pfmroleList,
@@ -74,6 +68,7 @@ import {
   pfmroleEnable,
 } from './mock/pfmrole';
 import { pfmroleactiList, pfmroleactiModify, pfmroleactiListAll } from './mock/pfmroleacti';
+import { pfmuserroleListUserRoles, pfmuserroleListRoleUsers } from './mock/pfmuserrole';
 import { getRule, postRule } from './mock/rule';
 import { getActivities, getNotice, getFakeList } from './mock/api';
 import { getFakeChartData } from './mock/chart';
@@ -84,7 +79,7 @@ import { format, delay } from 'roadhog-api-doc';
 import { S_IRWXG } from 'constants';
 import {
   sucUserList,
-  sucUserGetById,
+  sucuserGetById,
   sucUserAdd,
   sucUserModify,
   sucuserEnable,
@@ -99,7 +94,7 @@ import { sucUserOrgList, sucUserOrgGetById, sucUserOrgAdd, sucUserOrgModify } fr
 const noProxy = process.env.NO_PROXY === 'true';
 
 const currentUser = {
-  userId: '00000001',
+  userId: '1',
   nickname: '超级管理员',
   face: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
   notifyCount: 12,
@@ -139,11 +134,11 @@ const proxy = {
   'PUT /rna-svr/rna/realname': rnarealnameModify,
   'DELETE /rna-svr/rna/realname': rnarealnameDel,
   //rnarealname
-  'GET /ord-svr/ord/mng':ordorderList,
-  'GET /ord-svr/ord/mng/getbyid':ordorderGetById,
-  'POST /ord-svr/ord/mng':ordorderAdd,
-  'PUT /ord-svr/ord/mng':ordorderModify,
-  'DELETE /ord-svr/ord/mng':ordorderDel,
+  'GET /ord-svr/ord/mng': ordorderList,
+  'GET /ord-svr/ord/mng/getbyid': ordorderGetById,
+  'POST /ord-svr/ord/mng': ordorderAdd,
+  'PUT /ord-svr/ord/mng': ordorderModify,
+  'DELETE /ord-svr/ord/mng': ordorderDel,
   //kdieorder
   'GET /kdi-svr/kdi/eorder': kdieorderList,
   'GET /kdi-svr/kdi/eorder/getbyid': kdieorderGetById,
@@ -201,10 +196,12 @@ const proxy = {
   'GET /pfm-svr/pfm/roleacti': pfmroleactiList,
   'PUT /pfm-svr/pfm/roleacti': pfmroleactiModify,
   'GET /pfm-svr/pfm/roleacti/ListAll': pfmroleactiListAll,
-
+  // pfmuserrole
+  'GET /pfm-svr/pfm/userrole': pfmuserroleListUserRoles,
+  'GET /pfm-svr/pfm/roleuser': pfmuserroleListRoleUsers,
   // sucuser
   'GET /suc-svr/suc/user': sucUserList,
-  'GET /suc-svr/suc/user/getbyid': sucUserGetById,
+  'GET /suc-svr/suc/user/getbyid': sucuserGetById,
   'POST /suc-svr/suc/user': sucUserAdd,
   'PUT /suc-svr/suc/user': sucUserModify,
   'PUT /suc-svr/suc/user/enable': sucuserEnable,
@@ -351,8 +348,7 @@ if (noProxy) {
   addProxy('ord-svr', 'http://127.0.0.1:20280/');
 }
 
-// 响应请求延迟1秒
-// export default (noProxy ? {} : delay(proxy, 1000));
 // 响应请求不延迟
 export default delay(proxy);
+// 响应请求延迟1秒
 // export default delay(proxy, 1000);

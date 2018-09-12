@@ -1,12 +1,14 @@
 import React, { PureComponent } from 'react';
-import { Tabs, Transfer } from 'antd';
+import { Tabs, Transfer, Tooltip } from 'antd';
 import { connect } from 'dva';
 import EditForm from 'components/Rebue/EditForm';
 import styles from './UserRoleForm.less';
 
-@connect(({ pfmsys, userrole, loading }) => ({
+const { TabPane } = Tabs;
+
+@connect(({ pfmsys, pfmuserrole, loading }) => ({
   pfmsys,
-  userrole,
+  pfmuserrole,
   loading: loading.models.pfmsys,
 }))
 @EditForm
@@ -20,8 +22,8 @@ export default class UserRoleForm extends PureComponent {
     this.props.dispatch({
       type: `pfmsys/list`,
       callback: () => {
-        const { pfmsys: { pfmsys }, id } = this.props;
-        this.handleReload({ sysId: pfmsys[0].id, userId: id });
+        const { pfmsys: { pfmsys }, userId } = this.props;
+        this.handleReload({ sysId: pfmsys[0].id, userId });
       },
     });
   }
@@ -34,35 +36,34 @@ export default class UserRoleForm extends PureComponent {
     const payload = this.state.options;
     // 刷新
     this.props.dispatch({
-      type: `userrole/list`,
+      type: `pfmuserrole/listUserRoles`,
       payload,
     });
   }
 
   // 切换系统
   switchSys = activeKey => {
-    const { id } = this.props;
-    this.handleReload({ sysId: activeKey, userId: id });
+    const { userId } = this.props;
+    this.handleReload({ sysId: activeKey, userId });
   };
 
   handleChange = targetKeys => {
-    const { userrole: { userrole } } = this.props;
+    const { pfmuserrole: { userrole } } = this.props;
     userrole.targetKeys = targetKeys;
     this.forceUpdate();
   };
 
   renderItem = item => {
-    const customLabel = <span className="custom-item">{item.description}</span>;
-
+    const customLabel = <Tooltip title={item.description}>{item.title}</Tooltip>;
     return {
       label: customLabel, // for displayed item
-      value: item.description, // for title and filter matching
+      value: item.title, // for title and filter matching
     };
   };
 
   render() {
-    const TabPane = Tabs.TabPane;
-    const { pfmsys: { pfmsys }, userrole: { userrole } } = this.props;
+    const { pfmsys: { pfmsys }, pfmuserrole: { userrole } } = this.props;
+
     return (
       <div className={styles.tableList}>
         <Tabs onChange={this.switchSys} defaultActiveKey="1">
@@ -71,11 +72,11 @@ export default class UserRoleForm extends PureComponent {
               <Transfer
                 titles={['未添加角色', '已添加角色']}
                 dataSource={userrole.dataSource}
-                listStyle={{
-                  width: 300,
-                  height: 300,
-                }}
                 targetKeys={userrole.targetKeys}
+                listStyle={{
+                  width: 310,
+                  height: 310,
+                }}
                 onChange={this.handleChange}
                 render={this.renderItem}
               />

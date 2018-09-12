@@ -46,25 +46,27 @@ export default class SysMng extends SimpleMng {
     ];
 
     return (
-      <PageHeaderLayout>
-        <Card bordered={false}>
-          <div className={styles.tableList}>
-            <div className={styles.tableListOperator}>
-              <Button
-                icon="plus"
-                type="primary"
-                onClick={() => this.showAddForm({ editForm: 'sysForm', editFormTitle: '添加新系统' })}
-              >
-                添加
-              </Button>
-              <Divider type="vertical" />
-              <Button icon="reload" onClick={() => this.handleReload()}>
-                刷新
-              </Button>
+      <Fragment>
+        <PageHeaderLayout>
+          <Card bordered={false}>
+            <div className={styles.tableList}>
+              <div className={styles.tableListOperator}>
+                <Button
+                  icon="plus"
+                  type="primary"
+                  onClick={() => this.showAddForm({ editForm: 'sysForm', editFormTitle: '添加新系统' })}
+                >
+                  添加
+                </Button>
+                <Divider type="vertical" />
+                <Button icon="reload" onClick={() => this.handleReload()}>
+                  刷新
+                </Button>
+              </div>
+              <Table rowKey="id" pagination={false} loading={loading} dataSource={pfmsys} columns={columns} />
             </div>
-            <Table rowKey="id" pagination={false} loading={loading} dataSource={pfmsys} columns={columns} />
-          </div>
-        </Card>
+          </Card>
+        </PageHeaderLayout>,
         {editForm === 'sysForm' && (
           <SysForm
             visible
@@ -75,7 +77,7 @@ export default class SysMng extends SimpleMng {
             onSubmit={fields => this.handleSubmit({ fields })}
           />
         )}
-      </PageHeaderLayout>
+      </Fragment>
     );
   }
 }

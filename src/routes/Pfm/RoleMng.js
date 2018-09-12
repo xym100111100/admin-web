@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Button, Tooltip, Card, Divider, Popconfirm, Switch, Table, Tabs, Form, Row, Col } from 'antd';
+import { Button, Card, Divider, Popconfirm, Switch, Table, Tabs, Form } from 'antd';
 import { connect } from 'dva';
 import SimpleMng from 'components/Rebue/SimpleMng';
 import DragSortTable from 'components/Rebue/DragSortTable';
@@ -10,12 +10,12 @@ import RoleUserForm from './RoleUserForm';
 import styles from './RoleMng.less';
 
 const { TabPane } = Tabs;
-@connect(({ pfmsys, pfmrole, pfmroleacti, pfmfunc, userrole, loading }) => ({
+@connect(({ pfmsys, pfmrole, pfmroleacti, pfmfunc, pfmuserrole, loading }) => ({
   pfmsys,
   pfmrole,
   pfmroleacti,
   pfmfunc,
-  userrole,
+  pfmuserrole,
   loading: loading.models.pfmrole,
   pfmsysloading: loading.models.pfmsys,
 }))
@@ -80,109 +80,95 @@ export default class RoleMng extends SimpleMng {
   };
 
   // 分页翻页
-  handleTableChange = pagination => {
-    const { selectedRows } = this.state;
-    if (selectedRows === undefined) {
-      return;
-    }
-    this.props.dispatch({
-      type: 'userrole/userList',
-      payload: {
-        pageNum: pagination.current,
-        pageSize: pagination.pageSize,
-        sysId: selectedRows[0].sysId,
-        roleId: selectedRows[0].id,
-      },
-      callback: () => {
-        this.setState();
-      },
-    });
-  };
+  // handleTableChange = pagination => {
+  //   const { selectedRows } = this.state;
+  //   if (selectedRows === undefined) {
+  //     return;
+  //   }
+  //   this.props.dispatch({
+  //     type: 'userrole/userList',
+  //     payload: {
+  //       pageNum: pagination.current,
+  //       pageSize: pagination.pageSize,
+  //       sysId: selectedRows[0].sysId,
+  //       roleId: selectedRows[0].id,
+  //     },
+  //     callback: () => {
+  //       this.setState();
+  //     },
+  //   });
+  // };
 
   // 删除用户
-  handleDelUser(record) {
-    const { selectedRows } = this.state;
-    this.props.dispatch({
-      type: `userrole/del`,
-      payload: {
-        userId: record.id,
-        roleId: selectedRows[0].id,
-        sysId: selectedRows[0].sysId,
-      },
-      callback: () => {
-        this.handleUserReload(selectedRows);
-      },
-    });
-  }
+  // handleDelUser(record) {
+  //   const { selectedRows } = this.state;
+  //   this.props.dispatch({
+  //     type: `userrole/del`,
+  //     payload: {
+  //       userId: record.id,
+  //       roleId: selectedRows[0].id,
+  //       sysId: selectedRows[0].sysId,
+  //     },
+  //     callback: () => {
+  //       this.handleUserReload(selectedRows);
+  //     },
+  //   });
+  // }
 
-  // 刷新用户列表
-  handleUserReload(selectedRows) {
-    // 加载用户信息
-    this.props.dispatch({
-      type: 'userrole/userList',
-      payload: {
-        pageNum: 1,
-        pageSize: 5,
-        sysId: selectedRows[0].sysId,
-        roleId: selectedRows[0].id,
-      },
-      callback: () => {
-        this.setState({ selectedRows: selectedRows });
-      },
-    });
-  }
+  // // 刷新用户列表
+  // handleUserReload(selectedRows) {
+  //   // 加载用户信息
+  //   this.props.dispatch({
+  //     type: 'userrole/userList',
+  //     payload: {
+  //       pageNum: 1,
+  //       pageSize: 5,
+  //       sysId: selectedRows[0].sysId,
+  //       roleId: selectedRows[0].id,
+  //     },
+  //     callback: () => {
+  //       this.setState({ selectedRows });
+  //     },
+  //   });
+  // }
 
   render() {
-    const { pfmsys: { pfmsys }, pfmrole: { pfmrole }, loading, pfmsysloading, userrole: { userrole } } = this.props;
+    const { pfmsys: { pfmsys }, pfmrole: { pfmrole }, loading, pfmsysloading, pfmuserrole: { userrole } } = this.props;
     const { isDrag, editForm, editFormType, editFormTitle, editFormRecord, options, selectedRows } = this.state;
     const { sysId } = options;
     const columns = [
       {
         title: '角色名称',
         dataIndex: 'name',
-        render: (text, record) => {
-          return (
-            <Tooltip placement="topLeft" title={record.remark}>
-              {record.name}
-            </Tooltip>
-          );
-        },
+      },
+      {
+        title: '角色描述',
+        dataIndex: 'remark',
       },
       {
         title: '是否启用',
         dataIndex: 'isEnabled',
+        width: 100,
         render: (text, record) => {
           if (isDrag) return null;
           return (
-            <Fragment>
-              <Switch checked={record.isEnabled} loading={loading} onChange={() => this.handleEnable(record)} />
-            </Fragment>
+            <Switch
+              checkedChildren="启用"
+              unCheckedChildren="禁止"
+              checked={record.isEnabled}
+              loading={loading}
+              onChange={() => this.handleEnable(record)}
+            />
           );
         },
       },
       {
         title: '操作',
+        width: 210,
         render: (text, record) => {
           if (isDrag) return null;
           return (
             <Fragment>
-              <a
-                icon="plus"
-                type="primary"
-                onClick={() =>
-                  this.showAddForm({
-                    id: record.id,
-                    sysId: record.sysId,
-                    moduleCode: 'sucuser',
-                    editForm: 'roleUserForm',
-                    editFormTitle: '添加用户',
-                    editFormRecord: record,
-                  })
-                }
-              >
-                添加用户
-              </a>
-              <Divider type="vertical" />
               <a
                 onClick={() =>
                   this.showEditForm({
@@ -194,6 +180,21 @@ export default class RoleMng extends SimpleMng {
                 }
               >
                 功能
+              </a>
+              <Divider type="vertical" />
+              <a
+                onClick={() =>
+                  this.showEditForm({
+                    id: record.id,
+                    // sysId: record.sysId,
+                    moduleCode: 'sucuser',
+                    editForm: 'roleUserForm',
+                    editFormTitle: '设置角色的用户',
+                    editFormRecord: record,
+                  })
+                }
+              >
+                用户
               </a>
               <Divider type="vertical" />
               <a
@@ -213,56 +214,56 @@ export default class RoleMng extends SimpleMng {
       },
     ];
 
-    const userColumns = [
-      {
-        title: '登录名称',
-        dataIndex: 'loginName',
-      },
-      {
-        title: '昵称',
-        dataIndex: 'nickname',
-      },
-      {
-        title: 'QQ昵称',
-        dataIndex: 'qqNickname',
-      },
-      {
-        title: '微信昵称',
-        dataIndex: 'wxNickname',
-      },
-      {
-        title: '真实姓名',
-        dataIndex: 'realname',
-      },
-      {
-        title: '操作',
-        render: (text, record) => {
-          if (isDrag) return null;
-          return (
-            <Fragment>
-              <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDelUser(record)}>
-                <a>删除</a>
-              </Popconfirm>
-            </Fragment>
-          );
-        },
-      },
-    ];
+    // const userColumns = [
+    //   {
+    //     title: '登录名称',
+    //     dataIndex: 'loginName',
+    //   },
+    //   {
+    //     title: '昵称',
+    //     dataIndex: 'nickname',
+    //   },
+    //   {
+    //     title: 'QQ昵称',
+    //     dataIndex: 'qqNickname',
+    //   },
+    //   {
+    //     title: '微信昵称',
+    //     dataIndex: 'wxNickname',
+    //   },
+    //   {
+    //     title: '真实姓名',
+    //     dataIndex: 'realname',
+    //   },
+    //   {
+    //     title: '操作',
+    //     render: (text, record) => {
+    //       if (isDrag) return null;
+    //       return (
+    //         <Fragment>
+    //           <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDelUser(record)}>
+    //             <a>删除</a>
+    //           </Popconfirm>
+    //         </Fragment>
+    //       );
+    //     },
+    //   },
+    // ];
 
-    const rowSelection = {
-      onChange: (selectedRowKeys, selectedRows) => {
-        this.handleUserReload(selectedRows);
-      },
-      type: 'radio',
-    };
+    // const rowSelection = {
+    //   onChange: (selectedRowKeys, selectedRows) => {
+    //     this.handleUserReload(selectedRows);
+    //   },
+    //   type: 'radio',
+    // };
 
-    // 分页
-    const paginationProps = {
-      showSizeChanger: true,
-      showQuickJumper: true,
-      pageSize: 5,
-      total: Number(userrole.total),
-    };
+    // // 分页
+    // const paginationProps = {
+    //   showSizeChanger: true,
+    //   showQuickJumper: true,
+    //   pageSize: 5,
+    //   total: userrole.total - 0,
+    // };
 
     return (
       <PageHeaderLayout>
@@ -295,36 +296,7 @@ export default class RoleMng extends SimpleMng {
               </Button>
             </div>
             <DragWrapper isDrag={isDrag} compare={::this.compareDragRecordAndDropRecord} onDrop={::this.handleDrop}>
-              <Row gutter={16}>
-                {
-                  <Col span={9}>
-                    <Card title="角色">
-                      <Table
-                        showHeader={false}
-                        rowKey="id"
-                        pagination={false}
-                        loading={loading}
-                        dataSource={pfmrole}
-                        rowSelection={rowSelection}
-                        columns={columns}
-                      />
-                    </Card>
-                  </Col>
-                }
-                <Col span={15}>
-                  <Card title="用户">
-                    {
-                      <Table
-                        rowKey="id"
-                        pagination={paginationProps}
-                        onChange={this.handleTableChange}
-                        dataSource={userrole.list}
-                        columns={userColumns}
-                      />
-                    }
-                  </Card>
-                </Col>
-              </Row>
+              <Table rowKey="id" pagination={false} loading={loading} dataSource={pfmrole} columns={columns} />
             </DragWrapper>
           </div>
         </Card>
@@ -340,10 +312,9 @@ export default class RoleMng extends SimpleMng {
         )}
         {editForm === 'roleActiForm' && (
           <RoleActiForm
-            loading={loading}
+            visible
             sysId={sysId}
             roleId={editFormRecord.id}
-            visible
             title={editFormTitle}
             editFormType={editFormType}
             record={editFormRecord}
@@ -357,9 +328,9 @@ export default class RoleMng extends SimpleMng {
             title={editFormTitle}
             editFormType={editFormType}
             record={editFormRecord}
-            width={1200}
+            // width={960}
             closeModal={() => this.setState({ editForm: undefined })}
-            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'pfmroleacti' })}
+            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'pfmuserrole' })}
           />
         )}
       </PageHeaderLayout>
