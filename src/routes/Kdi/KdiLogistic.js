@@ -41,13 +41,7 @@ export default class KdiLogistic extends SimpleMng {
       payload: this.state.payloads,
     });
   }
-  // 刷新
-  handleReload() {
-    this.props.dispatch({
-      type: `${this.moduleCode}/list`,
-      payload: this.state.payloads,
-    });
-  }
+
 
   handleFormReset = () => {
     const { form } = this.props;
@@ -298,8 +292,8 @@ export default class KdiLogistic extends SimpleMng {
               dataSource={kdilogisticData}
               expandedRowRender={record => (
                 <p style={{ margin: 0 }}>
-                  <span>{'寄件人:' + record.senderName}</span>
-                  <span style={{ paddingLeft: '15px' }}>{'寄件人手机:' + record.senderMobile}</span>
+                  <span><b>寄件人:</b>{record.senderName}</span>
+                  <span style={{ paddingLeft: '15px' }}><b>寄件人手机:</b>{ record.senderMobile}</span>
                 </p>
               )}
               columns={columns}

@@ -1,27 +1,18 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Popconfirm, Input, Select, Button, Divider, Table, DatePicker } from 'antd';
+import { Row, Divider, message, Col, Icon, Card, Form, Dropdown, Popconfirm, Input, Select, Button, Menu, Table, DatePicker } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './OrdOrder.less';
 import moment from 'moment';
 import OrdOrderForm from './OrdOrderForm';
-const EditableContext = React.createContext();
-const EditableRow = ({ form, index, ...props }) => (
-  <EditableContext.Provider value={form}>
-    <tr {...props} />
-  </EditableContext.Provider>
-);
 
-const EditableFormRow = Form.create()(EditableRow);
 
 const { Option } = Select;
 const FormItem = Form.Item;
-const { RangePicker } = DatePicker;
-@connect(({ ordorder, KdiEntry, loading }) => ({
-  ordorder,
-  KdiEntry,
-  loading: loading.models.ordorder || loading.models.KdiEntry,
+@connect(({ ordorder, user, loading }) => ({
+  ordorder, user,
+  loading: loading.models.ordorder || loading.models.user
 }))
 @Form.create()
 export default class OrdOrder extends SimpleMng {
@@ -31,72 +22,67 @@ export default class OrdOrder extends SimpleMng {
     this.state.options = {
       pageNum: 1,
       pageSize: 5,
+      orderState: 2,
     };
-    //可编辑单元格代码××
-    this.state.editing=false;
+    this.state.orderCode = undefined;
+    this.state.record = undefined;
   }
 
   //初始化
   componentDidMount() {
-    // let {user} =this.props
-    // let orgId=user.currentUser.orgId
-    //这里连调的时候先写死orgId来给下面需要的地方用
     this.state.payloads = {
-      orgId: 253274870,
       pageNum: this.state.options.pageNum,
       pageSize: this.state.options.pageSize,
+      orderState: this.state.options.orderState,
     };
     this.props.dispatch({
       type: `${this.moduleCode}/list`,
       payload: this.state.payloads,
     });
+  }
 
-    //可编辑单元格代码××
-    if (this.props.editable) {
-      document.addEventListener('click', this.handleClickOutside, true);
+
+  //取消订单
+  cancel = (record) => {
+    if (record.orderState !== 1) {
+      message.success('非已下单状态不能取消订单');
+      return;
     }
-  }
-  //可编辑单元格代码××
-  componentWillUnmount() {
-    if (this.props.editable) {
-      document.removeEventListener('click', this.handleClickOutside, true);
+    let Reason = prompt('请填写取消订单原因', '用户退款');
+    if (Reason === null) {
+      return;
     }
-  }
-
-  toggleEdit = () => {
-    const editing = !this.state.editing;
-    this.setState({ editing }, () => {
-      if (editing) {
-        this.input.focus();
-      }
-    });
-  }
-
-  handleClickOutside = (e) => {
-    const { editing } = this.state;
-    if (editing && this.cell !== e.target && !this.cell.contains(e.target)) {
-      this.save();
-    }
-  }
-
-  save = () => {
-    const { record, handleSave } = this.props;
-    this.form.validateFields((error, values) => {
-      if (error) {
-        return;
-      }
-      this.toggleEdit();
-      handleSave({ ...record, ...values });
-    });
-  }
-
-
-
-  // 刷新
-  handleReload() {
+    record.cancelReason = Reason;
+    const { user } = this.props;
+    record.cancelingOrderOpId = user.currentUser.userId;
     this.props.dispatch({
-      type: `${this.moduleCode}/list`,
-      payload: this.state.payloads,
+      type: `${this.moduleCode}/cancel`,
+      payload: record,
+      callback: () => {
+        this.handleReload(this.state.options);
+      },
+    });
+  }
+
+  //取消发货
+  canceldelivery = (record) => {
+    if (record.orderState !== 2) {
+      message.success('非已支付状态不能取消发货');
+      return;
+    }
+    let Reason = prompt('请填写取消发货原因', '用户退款');
+    if (Reason === null) {
+      return;
+    }
+    record.cancelReason = Reason;
+    const { user } = this.props;
+    record.cancelingOrderOpId = user.currentUser.userId;
+    this.props.dispatch({
+      type: `${this.moduleCode}/canceldelivery`,
+      payload: record,
+      callback: () => {
+        this.handleReload(this.state.options);
+      },
     });
   }
 
@@ -111,35 +97,29 @@ export default class OrdOrder extends SimpleMng {
 
   //点击submit查询
   list = () => {
-    // let {user} =this.props
-    // let orgId=user.currentUser.orgId
-    //这里连调的时候先写死orgId
-    let orgId = 253274870;
     const { form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       //使用正则来判断用户输入的是什么筛选条件,默认为名字，一旦是其他的就将名字设置为undefined
-      let info = fieldsValue.receiverName;
+      let info = fieldsValue.userName;
       if (info !== undefined) {
-        let reg = /[0-9]{13,30}/g;
-        let reg2 = /[0-9]{5,11}/g;
-        if (info.match(reg) !== null) {
-          fieldsValue.logisticCode = info;
-          fieldsValue.receiverName = undefined;
-        } else if (info.match(reg2) !== null) {
-          fieldsValue.receiverMobile = info;
-          fieldsValue.receiverName = undefined;
+        if (/^[0-9]+$/.test(info)) {
+          fieldsValue.orderCode = info;
+          fieldsValue.userName = undefined;
+        } else {
+          fieldsValue.orderCode = undefined;
+          fieldsValue.userName = info;
         }
       }
       fieldsValue.pageNum = this.state.options.pageNum;
       fieldsValue.pageSize = this.state.options.pageSize;
-      fieldsValue.orgId = orgId;
-      //上传上来的时间是一个数组，需要格式化
-      if (fieldsValue.orderTime !== undefined && fieldsValue.orderTime !== '' && fieldsValue.orderTime.length >= 1) {
-        fieldsValue.orderTimeEnd = fieldsValue.orderTime[1].format('YYYY-MM-DD HH:mm:ss');
-        fieldsValue.orderTimeStart = fieldsValue.orderTime[0].format('YYYY-MM-DD HH:mm:ss');
-        fieldsValue.orderTime = undefined;
-      }
+      this.setState({
+        options: {
+          pageNum: fieldsValue.pageNum,
+          pageSize: fieldsValue.pageSize,
+          orderState: fieldsValue.orderState
+        },
+      });
       this.props.dispatch({
         type: `${this.moduleCode}/list`,
         payload: fieldsValue,
@@ -149,43 +129,32 @@ export default class OrdOrder extends SimpleMng {
 
   //改变页数查询
   handleTableChange = pagination => {
-    // let {user} =this.props
-    // let orgId=user.currentUser.orgId
-    //这里连调的时候先写死orgId
-    let orgId = 253274870;
     const pager = { ...this.state.pagination };
     const { form } = this.props;
     pager.current = pagination.current;
-    this.setState({
-      options: {
-        pageNum: pagination.current,
-        pageSize: pagination.pageSize,
-      },
-    });
+
     form.validateFields((err, fieldsValue) => {
       if (err) return;
+      this.setState({
+        options: {
+          pageNum: pagination.current,
+          pageSize: pagination.pageSize,
+          orderState: fieldsValue.orderState
+        },
+      });
       //使用正则来判断用户输入的是什么筛选条件,默认为名字，一旦是其他的就将名字设置为undefined
-      let info = fieldsValue.receiverName;
+      let info = fieldsValue.userName;
       if (info !== undefined) {
-        let reg = /[0-9]{13,30}/g;
-        let reg2 = /[0-9]{5,11}/g;
-        if (info.match(reg) !== null) {
-          fieldsValue.logisticCode = info;
-          fieldsValue.receiverName = undefined;
-        } else if (info.match(reg2) !== null) {
-          fieldsValue.receiverMobile = info;
-          fieldsValue.receiverName = undefined;
+        if (/^[0-9]+$/.test(info)) {
+          fieldsValue.orderCode = info;
+          fieldsValue.userName = undefined;
+        } else {
+          fieldsValue.orderCode = undefined;
+          fieldsValue.userName = info;
         }
       }
       fieldsValue.pageNum = pagination.current;
       fieldsValue.pageSize = pagination.pageSize;
-      fieldsValue.orgId = orgId;
-      //上传上来的时间是一个数组，需要格式化
-      if (fieldsValue.orderTime !== undefined && fieldsValue.orderTime !== '' && fieldsValue.orderTime.length >= 1) {
-        fieldsValue.orderTimeEnd = fieldsValue.orderTime[1].format('YYYY-MM-DD HH:mm:ss');
-        fieldsValue.orderTimeStart = fieldsValue.orderTime[0].format('YYYY-MM-DD HH:mm:ss');
-        fieldsValue.orderTime = undefined;
-      }
       this.props.dispatch({
         type: `${this.moduleCode}/list`,
         payload: fieldsValue,
@@ -198,8 +167,43 @@ export default class OrdOrder extends SimpleMng {
     return current && current > moment().endOf('day');
   };
 
+  showInput = (record) => {
+    if (record.orderState !== 1) {
+      message.success('非已下单状态不能修改实际金额');
+      return;
+    }
+    this.setState({
+      orderCode: record.orderCode,
+    })
+  }
+  //隐藏input且根据情况去修改实际金额
+  hidInput = (e) => {
+    this.setState({
+      orderCode: undefined,
+    })
+    if (this.state.record === undefined) return;
+    if (this.state.record.realMoney === e.target.value) return;
 
+    this.state.record.realMoney = e.target.value;
+    const { user } = this.props;
+    this.state.record.modifyRealveryMoneyOpId = user.currentUser.userId;
+    this.props.dispatch({
+      type: `${this.moduleCode}/modifyOrderRealMoney`,
+      payload: this.state.record,
+      callback: () => {
+        this.setState({
+          record: undefined,
+        })
+        this.handleReload(this.state.options);
+      },
+    });
+  }
 
+  getOrderCode = (record) => {
+    this.setState({
+      record: record
+    })
+  }
 
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
@@ -211,28 +215,18 @@ export default class OrdOrder extends SimpleMng {
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
           <Col md={6} sm={24}>
             <FormItem label="">
-              {getFieldDecorator('receiverName')(<Input placeholder="用户姓名/单号编号/" />)}
+              {getFieldDecorator('userName')(<Input placeholder="用户名/单号编号" />)}
             </FormItem>
           </Col>
-          <Col md={7} sm={24}>
+          <Col md={4} sm={24}>
             <FormItem label="">
-              {getFieldDecorator('orderTime')(
-                <RangePicker
-                  disabledDate={this.disabledDate}
-                  style={{ width: '100%' }}
-                  placeholder={['开始日期', '结束日期']}
-                />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={3} sm={24}>
-            <FormItem label="">
-              {getFieldDecorator('orderState')(
-                <Select placeholder="状态" style={{ width: '100%' }}>
-                  <Option value="">全部</Option>
+              {getFieldDecorator('orderState', {
+                initialValue: '2'
+              })(
+                <Select placeholder="订单状态" style={{ width: '100%' }}>
                   <Option value="1">已下单</Option>
-                  <Option value="2">已发货</Option>
-                  <Option value="3">已支付</Option>
+                  <Option value="2">已支付</Option>
+                  <Option value="3">已发货</Option>
                   <Option value="4">已签收</Option>
                   <Option value="5">已结算</Option>
                   <Option value="-1">做废</Option>
@@ -255,20 +249,44 @@ export default class OrdOrder extends SimpleMng {
     );
   }
 
+  MoreBtn = (record) => {
+    const menu = (
+      <Menu>
+        <Menu.Item>
+          <a onClick={() => this.cancel(record)}>
+            取消订单
+            </a>
+        </Menu.Item>
+        <Menu.Item>
+          <a onClick={() => this.canceldelivery(record)}>
+            取消发货
+            </a>
+        </Menu.Item>
+        <Menu.Item>
+          <a onClick={() => this.showInput(record)}>
+            修改实际金额
+            </a>
+        </Menu.Item>
+        <Menu.Item>
+          <a onClick={() => this.showEditForm({ id: record.id, editForm: 'sysForm', editFormTitle: '编辑系统信息' })}>
+            重新打印快递单
+            </a>
+        </Menu.Item>
+      </Menu>
+    );
+    return (
+      <Dropdown overlay={menu}>
+        <a>
+          更多 <Icon type="down" />
+        </a>
+      </Dropdown>
+    )
+  }
+
   render() {
-    const { editing } = this.state;
-    const {
-      editable,
-      dataIndex,
-      title,
-      record,
-      index,
-      handleSave,
-      ...restProps
-    } = this.props;
-    
     const { ordorder: { ordorder }, loading } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
+
     let orgId = 253274870;
     let ps;
     if (ordorder === undefined || ordorder.pageSize === undefined) {
@@ -302,9 +320,15 @@ export default class OrdOrder extends SimpleMng {
         key: 'orderCode',
       },
       {
-        title: '用户姓名',
+        title: '用户名',
         dataIndex: 'userName',
         key: 'userName',
+        width: 150,
+      },
+      {
+        title: '商品',
+        dataIndex: 'orderTitle',
+        key: 'orderTitle',
         width: 150,
       },
       {
@@ -316,9 +340,13 @@ export default class OrdOrder extends SimpleMng {
         title: '实际金额',
         dataIndex: 'realMoney',
         key: 'realMoney',
+        render: (text, record) => {
+          if (record.orderCode === this.state.orderCode) return (<Input onPressEnter={this.hidInput.bind(this)} onInput={() => this.getOrderCode(record)} style={{ width: 60 }} onBlur={this.hidInput.bind(this)} defaultValue={record.realMoney} autoFocus />);
+          if (record.orderCode !== this.state.orderCode) return record.realMoney;
+        },
       },
       {
-        title: '订单状态',
+        title: '状态',
         dataIndex: 'orderState',
         key: 'orderState',
         render: (text, record) => {
@@ -339,29 +367,13 @@ export default class OrdOrder extends SimpleMng {
       },
       {
         title: '操作',
-        width: 200,
         render: (text, record) => (
           <Fragment  >
-            <a onClick={() => this.showEditForm({ id: record.id, editForm: 'sysForm', editFormTitle: '编辑系统信息' })}>
-              取消订单
-            </a>
-            <br />
-            <a onClick={() => this.showEditForm({ id: record.id, editForm: 'sysForm', editFormTitle: '编辑系统信息' })}>
-              取消发货
-            </a>
-            <br />
-            <a onClick={() => this.showEditForm({ id: record.id, editForm: 'sysForm', editFormTitle: '编辑系统信息' })}>
-              修改实际金额
-            </a>
-            <br />
-            <a onClick={() => this.showEditForm({ id: record.id, editForm: 'sysForm', editFormTitle: '编辑系统信息' })}>
-              重新打印快递单
-            </a>
-            <br />
             <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record)}>
-              <a>发货并打印快递单</a>
+              <a>发货</a>
             </Popconfirm>
-
+            <Divider type="vertical" />
+            {this.MoreBtn(record)}
           </Fragment>
         ),
       },
@@ -373,15 +385,17 @@ export default class OrdOrder extends SimpleMng {
           <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
           <div className={styles.tableList}>
             <Table
-              rowKey="orderId"
+              rowKey="orderCode"
               pagination={paginationProps}
               loading={loading}
               onChange={this.handleTableChange}
               dataSource={kdilogisticData}
               expandedRowRender={record => (
                 <p >
-                  <span>{'寄件人:' + record.senderName}</span>
-                  <span style={{ paddingLeft: '15px' }}>{'寄件人手机:' + record.senderMobile}</span>
+                  <span><b>收件人姓名:</b>{record.receiverName !== undefined && (record.receiverName)}</span>
+                  <span style={{ paddingLeft: '15px' }}><b>收件人手机:</b>{record.receiverMobile !== undefined && (record.receiverMobile)}</span>
+                  <span style={{ paddingLeft: '15px' }}><b>收件人地址:</b>{record.receiverProvince !== undefined && (
+                    record.receiverProvince + record.receiverCity + record.receiverExpArea)}</span>
                 </p>
               )}
               columns={columns}
