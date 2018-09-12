@@ -18,6 +18,15 @@ export async function add(params) {
   });
 }
 
+export async function modifyOrderRealMoney(params) {
+  return request('/ord-svr/ord/order', {
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
+}
+
 export async function canceldelivery(params) {
   return request('/ord-svr/ord/order/canceldelivery', {
     method: 'PUT',

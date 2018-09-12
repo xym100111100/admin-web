@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { list, getById, add, modify, del,cancel,canceldelivery } from '../services/ordorder';
+import { list, getById, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney} from '../services/ordorder';
 
 export default {
   namespace: 'ordorder',
@@ -66,6 +66,15 @@ export default {
     },
     *canceldelivery({ payload, callback }, { call }) {//取消发货
       const response = yield call(canceldelivery, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *modifyOrderRealMoney({ payload, callback }, { call }) {//修改实际金额
+      const response = yield call(modifyOrderRealMoney, payload);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);

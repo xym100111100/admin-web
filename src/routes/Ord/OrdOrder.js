@@ -1,7 +1,7 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Row, Divider, Col, Icon, Card, Form, Dropdown, Popconfirm, Input, Select, Button, Menu, Table, DatePicker } from 'antd';
+import { Row, Divider, message, Col, Icon, Card, Form, Dropdown, Popconfirm, Input, Select, Button, Menu, Table, DatePicker } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './OrdOrder.less';
 import moment from 'moment';
@@ -10,10 +10,9 @@ import OrdOrderForm from './OrdOrderForm';
 
 const { Option } = Select;
 const FormItem = Form.Item;
-const { RangePicker } = DatePicker;
-@connect(({ ordorder, loading }) => ({
-  ordorder,
-  loading: loading.models.ordorder
+@connect(({ ordorder, user, loading }) => ({
+  ordorder, user,
+  loading: loading.models.ordorder || loading.models.user
 }))
 @Form.create()
 export default class OrdOrder extends SimpleMng {
@@ -23,30 +22,39 @@ export default class OrdOrder extends SimpleMng {
     this.state.options = {
       pageNum: 1,
       pageSize: 5,
-      orderState:2,
+      orderState: 2,
     };
-
+    this.state.orderCode = undefined;
+    this.state.record = undefined;
   }
 
   //初始化
   componentDidMount() {
-    // let {user} =this.props
-    // let orgId=user.currentUser.orgId
-    //这里连调的时候先写死orgId来给下面需要的地方用
     this.state.payloads = {
       pageNum: this.state.options.pageNum,
       pageSize: this.state.options.pageSize,
-      orderState:this.state.options.orderState,
+      orderState: this.state.options.orderState,
     };
     this.props.dispatch({
       type: `${this.moduleCode}/list`,
       payload: this.state.payloads,
     });
-
   }
+
 
   //取消订单
   cancel = (record) => {
+    if (record.orderState !== 1) {
+      message.success('非已下单状态不能取消订单');
+      return;
+    }
+    let Reason = prompt('请填写取消订单原因', '用户退款');
+    if (Reason === null) {
+      return;
+    }
+    record.cancelReason = Reason;
+    const { user } = this.props;
+    record.cancelingOrderOpId = user.currentUser.userId;
     this.props.dispatch({
       type: `${this.moduleCode}/cancel`,
       payload: record,
@@ -58,6 +66,17 @@ export default class OrdOrder extends SimpleMng {
 
   //取消发货
   canceldelivery = (record) => {
+    if (record.orderState !== 2) {
+      message.success('非已支付状态不能取消发货');
+      return;
+    }
+    let Reason = prompt('请填写取消发货原因', '用户退款');
+    if (Reason === null) {
+      return;
+    }
+    record.cancelReason = Reason;
+    const { user } = this.props;
+    record.cancelingOrderOpId = user.currentUser.userId;
     this.props.dispatch({
       type: `${this.moduleCode}/canceldelivery`,
       payload: record,
@@ -66,7 +85,6 @@ export default class OrdOrder extends SimpleMng {
       },
     });
   }
-
 
   handleFormReset = () => {
     const { form } = this.props;
@@ -95,12 +113,13 @@ export default class OrdOrder extends SimpleMng {
       }
       fieldsValue.pageNum = this.state.options.pageNum;
       fieldsValue.pageSize = this.state.options.pageSize;
-      //上传上来的时间是一个数组，需要格式化
-      if (fieldsValue.orderTime !== undefined && fieldsValue.orderTime !== '' && fieldsValue.orderTime.length >= 1) {
-        fieldsValue.orderTimeEnd = fieldsValue.orderTime[1].format('YYYY-MM-DD HH:mm:ss');
-        fieldsValue.orderTimeStart = fieldsValue.orderTime[0].format('YYYY-MM-DD HH:mm:ss');
-        fieldsValue.orderTime = undefined;
-      }
+      this.setState({
+        options: {
+          pageNum: fieldsValue.pageNum,
+          pageSize: fieldsValue.pageSize,
+          orderState: fieldsValue.orderState
+        },
+      });
       this.props.dispatch({
         type: `${this.moduleCode}/list`,
         payload: fieldsValue,
@@ -113,16 +132,18 @@ export default class OrdOrder extends SimpleMng {
     const pager = { ...this.state.pagination };
     const { form } = this.props;
     pager.current = pagination.current;
-    this.setState({
-      options: {
-        pageNum: pagination.current,
-        pageSize: pagination.pageSize,
-      },
-    });
+
     form.validateFields((err, fieldsValue) => {
       if (err) return;
+      this.setState({
+        options: {
+          pageNum: pagination.current,
+          pageSize: pagination.pageSize,
+          orderState: fieldsValue.orderState
+        },
+      });
       //使用正则来判断用户输入的是什么筛选条件,默认为名字，一旦是其他的就将名字设置为undefined
-      let info = fieldsValue.receiverName;
+      let info = fieldsValue.userName;
       if (info !== undefined) {
         if (/^[0-9]+$/.test(info)) {
           fieldsValue.orderCode = info;
@@ -134,12 +155,6 @@ export default class OrdOrder extends SimpleMng {
       }
       fieldsValue.pageNum = pagination.current;
       fieldsValue.pageSize = pagination.pageSize;
-      //上传上来的时间是一个数组，需要格式化
-      if (fieldsValue.orderTime !== undefined && fieldsValue.orderTime !== '' && fieldsValue.orderTime.length >= 1) {
-        fieldsValue.orderTimeEnd = fieldsValue.orderTime[1].format('YYYY-MM-DD HH:mm:ss');
-        fieldsValue.orderTimeStart = fieldsValue.orderTime[0].format('YYYY-MM-DD HH:mm:ss');
-        fieldsValue.orderTime = undefined;
-      }
       this.props.dispatch({
         type: `${this.moduleCode}/list`,
         payload: fieldsValue,
@@ -152,6 +167,43 @@ export default class OrdOrder extends SimpleMng {
     return current && current > moment().endOf('day');
   };
 
+  showInput = (record) => {
+    if (record.orderState !== 1) {
+      message.success('非已下单状态不能修改实际金额');
+      return;
+    }
+    this.setState({
+      orderCode: record.orderCode,
+    })
+  }
+  //隐藏input且根据情况去修改实际金额
+  hidInput = (e) => {
+    this.setState({
+      orderCode: undefined,
+    })
+    if (this.state.record === undefined) return;
+    if (this.state.record.realMoney === e.target.value) return;
+
+    this.state.record.realMoney = e.target.value;
+    const { user } = this.props;
+    this.state.record.modifyRealveryMoneyOpId = user.currentUser.userId;
+    this.props.dispatch({
+      type: `${this.moduleCode}/modifyOrderRealMoney`,
+      payload: this.state.record,
+      callback: () => {
+        this.setState({
+          record: undefined,
+        })
+        this.handleReload(this.state.options);
+      },
+    });
+  }
+
+  getOrderCode = (record) => {
+    this.setState({
+      record: record
+    })
+  }
 
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
@@ -163,18 +215,7 @@ export default class OrdOrder extends SimpleMng {
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
           <Col md={6} sm={24}>
             <FormItem label="">
-              {getFieldDecorator('userName')(<Input placeholder="用户姓名/单号编号" />)}
-            </FormItem>
-          </Col>
-          <Col md={7} sm={24}>
-            <FormItem label="">
-              {getFieldDecorator('orderTime')(
-                <RangePicker
-                  disabledDate={this.disabledDate}
-                  style={{ width: '100%' }}
-                  placeholder={['下单开始日期', '下单结束日期']}
-                />
-              )}
+              {getFieldDecorator('userName')(<Input placeholder="用户名/单号编号" />)}
             </FormItem>
           </Col>
           <Col md={4} sm={24}>
@@ -222,7 +263,7 @@ export default class OrdOrder extends SimpleMng {
             </a>
         </Menu.Item>
         <Menu.Item>
-          <a onClick={() => this.showEditForm({ id: record.id, editForm: 'sysForm', editFormTitle: '编辑系统信息' })}>
+          <a onClick={() => this.showInput(record)}>
             修改实际金额
             </a>
         </Menu.Item>
@@ -245,8 +286,6 @@ export default class OrdOrder extends SimpleMng {
   render() {
     const { ordorder: { ordorder }, loading } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
-
-
 
     let orgId = 253274870;
     let ps;
@@ -301,6 +340,10 @@ export default class OrdOrder extends SimpleMng {
         title: '实际金额',
         dataIndex: 'realMoney',
         key: 'realMoney',
+        render: (text, record) => {
+          if (record.orderCode === this.state.orderCode) return (<Input onPressEnter={this.hidInput.bind(this)} onInput={() => this.getOrderCode(record)} style={{ width: 60 }} onBlur={this.hidInput.bind(this)} defaultValue={record.realMoney} autoFocus />);
+          if (record.orderCode !== this.state.orderCode) return record.realMoney;
+        },
       },
       {
         title: '状态',
