@@ -1,18 +1,18 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Row, Divider, message, Col, Icon, Card, Form, Dropdown, Popconfirm, Input, Select, Button, Menu, Table, DatePicker } from 'antd';
+import { Row, Divider, message, Col, Icon, Card, Form, Dropdown, Input, Select, Button, Menu, Table, DatePicker } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './OrdOrder.less';
 import moment from 'moment';
 import OrdOrderForm from './OrdOrderForm';
-
+const { RangePicker } = DatePicker;
 
 const { Option } = Select;
 const FormItem = Form.Item;
-@connect(({ ordorder, user, loading }) => ({
-  ordorder, user,
-  loading: loading.models.ordorder || loading.models.user
+@connect(({ ordorder, user, kdicompany, kdisender, loading }) => ({
+  ordorder, user, kdicompany, kdisender,
+  loading: loading.models.ordorder || loading.models.user || loading.models.kdicompany || loading.models.kdisender
 }))
 @Form.create()
 export default class OrdOrder extends SimpleMng {
@@ -39,6 +39,7 @@ export default class OrdOrder extends SimpleMng {
       type: `${this.moduleCode}/list`,
       payload: this.state.payloads,
     });
+
   }
 
 
@@ -111,6 +112,12 @@ export default class OrdOrder extends SimpleMng {
           fieldsValue.userName = info;
         }
       }
+      //上传上来的时间是一个数组，需要格式化
+      if (fieldsValue.orderTime !== undefined && fieldsValue.orderTime !== '' && fieldsValue.orderTime.length >= 1) {
+        fieldsValue.orderTimeEnd = fieldsValue.orderTime[1].format('YYYY-MM-DD HH:mm:ss');
+        fieldsValue.orderTimeStart = fieldsValue.orderTime[0].format('YYYY-MM-DD HH:mm:ss');
+        fieldsValue.orderTime = undefined;
+      }
       fieldsValue.pageNum = this.state.options.pageNum;
       fieldsValue.pageSize = this.state.options.pageSize;
       this.setState({
@@ -155,6 +162,12 @@ export default class OrdOrder extends SimpleMng {
       }
       fieldsValue.pageNum = pagination.current;
       fieldsValue.pageSize = pagination.pageSize;
+      //上传上来的时间是一个数组，需要格式化
+      if (fieldsValue.orderTime !== undefined && fieldsValue.orderTime !== '' && fieldsValue.orderTime.length >= 1) {
+        fieldsValue.orderTimeEnd = fieldsValue.orderTime[1].format('YYYY-MM-DD HH:mm:ss');
+        fieldsValue.orderTimeStart = fieldsValue.orderTime[0].format('YYYY-MM-DD HH:mm:ss');
+        fieldsValue.orderTime = undefined;
+      }
       this.props.dispatch({
         type: `${this.moduleCode}/list`,
         payload: fieldsValue,
@@ -205,6 +218,7 @@ export default class OrdOrder extends SimpleMng {
     })
   }
 
+
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
     const { editFormRecord } = this.state;
@@ -216,6 +230,16 @@ export default class OrdOrder extends SimpleMng {
           <Col md={6} sm={24}>
             <FormItem label="">
               {getFieldDecorator('userName')(<Input placeholder="用户名/单号编号" />)}
+            </FormItem>
+          </Col>
+          <Col md={7} sm={24}>
+            <FormItem label="">
+              {getFieldDecorator('orderTime')(
+                <RangePicker
+                  disabledDate={this.disabledDate}
+                  placeholder={['下单开始日期', '下单结束日期']}
+                />
+              )}
             </FormItem>
           </Col>
           <Col md={4} sm={24}>
@@ -284,10 +308,9 @@ export default class OrdOrder extends SimpleMng {
   }
 
   render() {
-    const { ordorder: { ordorder }, loading } = this.props;
-    const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
 
-    let orgId = 253274870;
+    const { ordorder: { ordorder }, loading, kdisender } = this.props;
+    const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
     let ps;
     if (ordorder === undefined || ordorder.pageSize === undefined) {
       ps = 5;
@@ -367,15 +390,31 @@ export default class OrdOrder extends SimpleMng {
       },
       {
         title: '操作',
-        render: (text, record) => (
-          <Fragment  >
-            <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record)}>
-              <a>发货</a>
-            </Popconfirm>
-            <Divider type="vertical" />
-            {this.MoreBtn(record)}
-          </Fragment>
-        ),
+        render: (text, record) => {
+          if (record.orderState === 1 || record.orderState === 2) {
+            return (
+              <Fragment  >
+                <a onClick={() => this.showAddForm({
+                  editFormRecord: record,
+                  editForm: 'OrdOrder',
+                  editFormTitle: '选择发货信息',
+                })} >
+                  发货
+                  </a>
+                <Divider type="vertical" />
+                {this.MoreBtn(record)}
+              </Fragment>
+            )
+          } else {
+            return (
+              <Fragment  >
+                <a style={{ color: '#C0C0C0' }}>发货</a>
+                <Divider type="vertical" />
+                {this.MoreBtn(record)}
+              </Fragment>
+            )
+          }
+        }
       },
     ];
 
@@ -402,18 +441,41 @@ export default class OrdOrder extends SimpleMng {
             />
           </div>
         </Card>
-        {editForm === 'kdiEntry' && (
+        {editForm === 'OrdOrder' && (
           <OrdOrderForm
-            width={900}
             visible
-            isShowResetButton
-            orgId={orgId}
             title={editFormTitle}
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            onNext={fields => this.handleSave({ fields })}
-            onSubmit={fields => this.handleSubmit({ fields })}
+            onSubmit={fields => {
+              let shipperInfo;
+              if (fields.shipperName !== undefined) {
+                shipperInfo = fields.shipperName.split('/');
+                fields.shipperId = shipperInfo[0];
+                fields.shipperName = shipperInfo[1];
+                fields.shipperCode = shipperInfo[2];
+              }
+              let senderInfo;
+              if (fields.senderInfo !== undefined) {
+                senderInfo = fields.senderInfo.split('/');
+                fields.senderName = senderInfo[0];
+                fields.senderMobile = senderInfo[1];
+                fields.senderProvince = senderInfo[2];
+                fields.senderCity = senderInfo[3];
+                fields.senderExpArea = senderInfo[4];
+                fields.senderPostCode = senderInfo[5];
+              }
+              
+              fields.senderInfo=undefined;
+              console.log(fields);
+              this.handleSubmit({
+                fields,
+                moduleCode: 'ordorder',
+                saveMethodName: 'shipmentconfirmation',
+                
+              });
+            }}
           />
         )}
       </PageHeaderLayout>
