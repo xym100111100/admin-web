@@ -111,6 +111,7 @@ export default class OrgMng extends SimpleMng {
       {
         title: '是否启用',
         dataIndex: 'isEnabled',
+        width: 110,
         render: (text, record) => {
           return (
             <Fragment>
@@ -127,15 +128,19 @@ export default class OrgMng extends SimpleMng {
       },
       {
         title: '操作',
+        width: 170,
         render: (text, record) => {
           return (
             <Fragment>
               <a
                 onClick={() =>
-                  this.showAddForm({
+                  this.showEditForm({
+                    // editFormRecord: record,
+                    id: record.id,
+                    moduleCode: 'sucuserorg',
+                    getByIdMethodName: 'listAddedAndUnaddedUsers',
                     editForm: 'orgUserForm',
                     editFormTitle: '设置组织的用户',
-                    editFormRecord: record,
                   })
                 }
               >
@@ -229,13 +234,12 @@ export default class OrgMng extends SimpleMng {
           //   onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'sucuser' })}
           // />
           <UserTransferForm
-            id={editFormRecord.id}
+            // id={editFormRecord.id}
             visible
             title={editFormTitle}
             width={815}
             editFormType={editFormType}
             closeModal={() => this.setState({ editForm: undefined })}
-            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'sucuser' })}
           />
         )}
       </Fragment>

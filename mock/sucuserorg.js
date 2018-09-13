@@ -47,6 +47,16 @@ export function sucUserOrgList(req, res) {
   res.json(tableListDataSource);
 }
 
+export function sucUserOrgListAdded(req, res) {
+  res.json(tableListDataSource);
+}
+export function sucUserOrgListUnadded(req, res) {
+  res.json(tableListDataSource);
+}
+export function sucUserOrgListAddedAndUnadded(req, res) {
+  res.json(tableListDataSource);
+}
+
 export function sucUserOrgGetById(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {

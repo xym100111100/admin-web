@@ -5,8 +5,28 @@ export async function list(params) {
   return request(`/suc-svr/suc/user/listbyorgid?${stringify(params)}`);
 }
 
+/**
+ * 列出已添加的用户
+ */
+export async function listAddedUsers(params) {
+  return request(`/suc-svr/suc/userorg/listaddedusers?${stringify(params)}`);
+}
+
+/**
+ * 列出未添加的用户
+ */
+export async function listUnaddedUsers(params) {
+  return request(`/suc-svr/suc/userorg/listunaddedusers?${stringify(params)}`);
+}
+
+/**
+ * 列出已添加与未添加的用户
+ */
+export async function listAddedAndUnaddedUsers(params) {
+  return request(`/suc-svr/suc/userorg/listaddedandunaddedusers?${stringify(params)}`);
+}
+
 export async function add(params) {
-  console.log(params);
   return request(`/suc-svr/suc/user/adduserorg?${stringify(params)}`, {
     method: 'PUT',
   });

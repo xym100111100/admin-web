@@ -41,7 +41,7 @@ export default class SimpleMng extends PureComponent {
       });
     } else {
       // 否则是直接传值的查询
-      this.handleReload({ params: e });
+      this.handleReload({ keys: e });
     }
   };
 
@@ -64,12 +64,12 @@ export default class SimpleMng extends PureComponent {
       editFormType: 'edit',
       editForm: undefined,
       editFormTitle: undefined,
-      isGetByIdOnInit: true, // 初始化的时候是否通过getById请求获取记录
+      getByIdMethodName: 'getById', // 初始化的时候通过getById请求获取记录，设undefined不调用
     };
-    const { id, moduleCode, isGetByIdOnInit, ...state } = Object.assign(defaultParams, params);
-    if (isGetByIdOnInit) {
+    const { id, moduleCode, getByIdMethodName, ...state } = Object.assign(defaultParams, params);
+    if (getByIdMethodName) {
       this.props.dispatch({
-        type: `${moduleCode}/getById`,
+        type: `${moduleCode}/${getByIdMethodName}`,
         payload: { id },
         callback: data => {
           state.editFormRecord = data.record || data;
@@ -90,9 +90,10 @@ export default class SimpleMng extends PureComponent {
       isReload: true, // 默认请求成功后刷新主页面（）
       isReturn: false, // 默认不返回主页面（handleSubmit后需要返回）
       isReset: false, // 默认不重置（handleNext后需要重置）
+      callback: undefined, // 保存成功后回调
     };
 
-    const { moduleCode, saveMethodName, fields, isReturn, isReset } = Object.assign(defaultParams, params);
+    const { moduleCode, saveMethodName, fields, isReturn, isReset, callback } = Object.assign(defaultParams, params);
 
     // this.setState({ editFormRecord: fields });
     let dispatchType;
@@ -116,6 +117,7 @@ export default class SimpleMng extends PureComponent {
         if (isReturn)
           // 关闭窗口
           this.setState({ editForm: undefined });
+        if (callback) callback();
       },
     });
   }

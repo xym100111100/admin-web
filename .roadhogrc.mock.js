@@ -70,11 +70,6 @@ import {
 import { pfmroleactiList, pfmroleactiModify, pfmroleactiListAll } from './mock/pfmroleacti';
 import { pfmuserroleListUserRoles, pfmuserroleListRoleUsers } from './mock/pfmuserrole';
 import { getRule, postRule } from './mock/rule';
-import { getActivities, getNotice, getFakeList } from './mock/api';
-import { getFakeChartData } from './mock/chart';
-import { getProfileBasicData } from './mock/profile';
-import { getProfileAdvancedData } from './mock/profile';
-import { getNotices } from './mock/notices';
 import { format, delay } from 'roadhog-api-doc';
 import { S_IRWXG } from 'constants';
 import {
@@ -88,7 +83,20 @@ import {
   unbindWeChat,
   unbindQQ,
 } from './mock/sucuser';
-import { sucUserOrgList, sucUserOrgGetById, sucUserOrgAdd, sucUserOrgModify } from './mock/sucuserorg';
+import {
+  sucUserOrgList,
+  sucUserOrgListAdded,
+  sucUserOrgListUnadded,
+  sucUserOrgListAddedAndUnadded,
+  sucUserOrgGetById,
+  sucUserOrgAdd,
+  sucUserOrgModify,
+} from './mock/sucuserorg';
+import { getActivities, getNotice, getFakeList } from './mock/api';
+import { getFakeChartData } from './mock/chart';
+import { getProfileBasicData } from './mock/profile';
+import { getProfileAdvancedData } from './mock/profile';
+import { getNotices } from './mock/notices';
 
 // 是否禁用代理
 const noProxy = process.env.NO_PROXY === 'true';
@@ -209,11 +217,15 @@ const proxy = {
   'PUT /suc-svr/suc/user/del/paypassword': removePayPassWord,
   'PUT /suc-svr/suc/user/unbindwechat': unbindWeChat,
   'PUT /suc-svr/suc/user/unbindqq': unbindQQ,
-  // sucuserorg
+  // sucorg
   'GET /suc-svr/suc/org': sucUserOrgList,
   'GET /suc-svr/suc/org/getbyid': sucUserOrgGetById,
   'POST /suc-svr/suc/org': sucUserOrgAdd,
   'PUT /suc-svr/suc/org': sucUserOrgModify,
+  // sucuserorg
+  'GET /suc/userorg/listaddedusers': sucUserOrgListAdded,
+  'GET /suc/userorg/listunaddedusers': sucUserOrgListUnadded,
+  'GET /suc/userorg/listaddedandunaddedusers': sucUserOrgListAddedAndUnadded,
   // pfm
   'POST /pfm-svr/user/login/by/user/name': (req, res) => {
     const { loginPswd, userName, type } = req.body;
