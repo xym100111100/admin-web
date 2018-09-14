@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { list, getById, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,shipmentconfirmation} from '../services/ordorder';
-
+import { printpage } from '../services/kdilogistic';
 export default {
   namespace: 'ordorder',
 
@@ -99,6 +99,15 @@ export default {
       } else {
         message.error(response.msg);
       }
+    },
+    *printpage({ payload, callback }, { call }) { //重新打印快递单
+      const response = yield call(printpage, payload);
+      if(response.length !==0 && response[0].printPage!==undefined){
+        if (callback) callback(response);
+      }else{
+        message.error('打印页面不存在');
+      }
+
     },
   },
 

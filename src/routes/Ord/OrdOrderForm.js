@@ -7,8 +7,8 @@ const FormItem = Form.Item;
 const { Option } = Select;
 // 添加与编辑的表单
 @connect(({ kdisender, loading }) => ({
-   kdisender,
-  loading:  loading.models.kdisender
+  kdisender,
+  loading: loading.models.kdisender
 }))
 @EditForm
 export default class OrdOrderForm extends PureComponent {
@@ -28,26 +28,28 @@ export default class OrdOrderForm extends PureComponent {
     const sender = kdisender.kdisender;
     const { ...props } = this.props;
     let defaultItems;
-    if (sender === undefined || sender.length === 0) {
+    if (sender === undefined || sender.length === 0 || sender.length === undefined) {
       return <Select placeholder="请选择发件人" />;
     }
     const listItems = sender.map(items => {
       if (items.isDefault === true) {
         defaultItems =
-           items.senderName + '/'
-          +items.senderMobile + '/'
+          items.senderName + '/'
+          + items.senderMobile + '/'
           + items.senderProvince + '/'
           + items.senderCity + '/'
           + items.senderExpArea + '/'
-          + items.senderPostCode + '/';
+          + items.senderPostCode + '/'
+          + items.senderAddress + '/';
         return (
           <Option value={
-             items.senderName + '/'
-            +items.senderMobile + '/'
+            items.senderName + '/'
+            + items.senderMobile + '/'
             + items.senderProvince + '/'
             + items.senderCity + '/'
             + items.senderExpArea + '/'
             + items.senderPostCode + '/'
+            + items.senderAddress + '/'
           }
             key={items.id.toString()}>
             {items.senderName}
@@ -57,11 +59,12 @@ export default class OrdOrderForm extends PureComponent {
         return (
           <Option value={
             items.senderName + '/'
-            +items.senderMobile + '/'
+            + items.senderMobile + '/'
             + items.senderProvince + '/'
             + items.senderCity + '/'
             + items.senderExpArea + '/'
             + items.senderPostCode + '/'
+            + items.senderAddress + '/'
           } key={items.id.toString()}>
             {items.senderName}
           </Option>
@@ -83,6 +86,17 @@ export default class OrdOrderForm extends PureComponent {
         {form.getFieldDecorator('receiverAddress')(<Input type="hidden" />)}
         {form.getFieldDecorator('receiverMobile')(<Input type="hidden" />)}
         {form.getFieldDecorator('receiverTel')(<Input type="hidden" />)}
+        {form.getFieldDecorator('receiverPostCode')(<Input type="hidden" />)}
+        {form.getFieldDecorator('senderPostCode', {
+          rules: [
+            {
+              required: true,
+              message: '请输入选择发件人发件地编码',
+            },
+          ],
+          initialValue: '000000',
+
+        })(<Input type="hidden" />)}
 
         <Form layout="inline">
           <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
