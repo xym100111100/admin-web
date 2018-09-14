@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Button, Card, Divider, Popconfirm, Switch, Table, Tabs, Tooltip } from 'antd';
+import { Button, Card, Tag, Divider, Icon, Popconfirm, Switch, Table, Tabs, Tooltip } from 'antd';
 import { connect } from 'dva';
 import DragSortTable from 'components/Rebue/DragSortTable';
 import SimpleMng from 'components/Rebue/SimpleMng';
@@ -142,7 +142,23 @@ export default class FuncMng extends SimpleMng {
       {
         title: '名称',
         dataIndex: 'name',
-        render: (text, record) => (record.type === 'func' ? `[功能]${text}` : `[动作]${text}`),
+        render: (text, record) => {
+          return (
+            <Fragment>
+              {record.type === 'func' && (
+                <Tag color="purple">
+                  功能<Icon type="tags" />
+                </Tag>
+              )}
+              {record.type === 'acti' && (
+                <Tag color="purple">
+                  动作<Icon type="tag" />
+                </Tag>
+              )}
+              {text}
+            </Fragment>
+          );
+        },
       },
       {
         title: '描述',

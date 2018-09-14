@@ -43,7 +43,7 @@ export default {
       if (callback) callback(response);
     },
     *add({ payload, callback }, { call }) {
-      let payloads = [];
+      const payloads = [];
       payloads.push({
         loginName: payload.loginName,
         loginPswd: CryptoJS.MD5(payload.loginPswd).toString(),
@@ -52,7 +52,7 @@ export default {
         mobile: payload.mobile,
         nickname: payload.nickname,
         realname: payload.realname,
-        sysId: 'pfm-admin',
+        sysId: 'damai-admin',
       });
       const response = yield call(add, payloads[0]);
       if (response.result === 1) {
