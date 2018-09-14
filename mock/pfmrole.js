@@ -29,9 +29,17 @@ const tableListDataSource = [
   {
     id: '1536131597093',
     sysId: 'damai-admin',
-    name: '大卖后台管理员',
+    name: '平台管理员',
     isEnabled: true,
     orderNo: 1,
+    remark: '管理平台的人员，主要负责平台基础信息维护，拥有最高权限',
+  },
+  {
+    id: '1536131597094',
+    sysId: 'damai-admin',
+    name: '大卖后台管理员',
+    isEnabled: true,
+    orderNo: 2,
     remark: '管理大卖相关信息的人员',
   },
 ];

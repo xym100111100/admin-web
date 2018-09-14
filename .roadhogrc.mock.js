@@ -229,7 +229,7 @@ const proxy = {
   // pfm
   'POST /pfm-svr/user/login/by/user/name': (req, res) => {
     const { loginPswd, userName, type } = req.body;
-    if (loginPswd === '21218cca77804d2ba1922c33e0151105' && userName === 'admin') {
+    if (loginPswd === '25d55ad283aa400af464c76d713c07ad' && userName === 'admin') {
       res.send({
         result: 1,
         msg: '登录成功',

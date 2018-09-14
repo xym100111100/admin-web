@@ -2,10 +2,10 @@ import { parse } from 'url';
 
 // mock tableListDataSource
 const tableListDataSource = [
-  { id: 'pfm-admin', name: '平台后台管理', remark: '平台后台管理系统'},
-  { id: 'kdi-admin', name: '快递管理', remark: '快递管理系统'},
-  { id: 'damai-admin', name: '大卖网后台管理', remark: '大卖网后台管理系统'},
-  { id: 'wbl-admin', name: '微薄利后台管理', remark: '微薄利后台管理系统'},
+  { id: 'pfm-admin', name: '平台后台管理', remark: '平台后台管理系统' },
+  { id: 'kdi-admin', name: '快递管理', remark: '快递管理系统' },
+  { id: 'damai-admin', name: '大卖网后台管理', remark: '大卖网后台管理系统' },
+  { id: 'wbl-admin', name: '微薄利后台管理', remark: '微薄利后台管理系统' },
 ];
 
 export function pfmsysList(req, res) {
