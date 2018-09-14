@@ -52,7 +52,7 @@ export default {
         mobile: payload.mobile,
         nickname: payload.nickname,
         realname: payload.realname,
-        appId: 12,
+        sysId: 'pfm-admin',
       });
       const response = yield call(add, payloads[0]);
       if (response.result === 1) {
@@ -129,7 +129,10 @@ export default {
      */
     changeAddedList(state, action) {
       const { addedSucUsers } = action.payload;
+      // console.log(state);
+      
       return {
+        ...state,
         addedSucUsers,
       };
     },
@@ -138,7 +141,9 @@ export default {
      */
     changeUnaddedList(state, action) {
       const { unaddedSucUsers } = action.payload;
+      // console.log(state);
       return {
+        ...state,
         unaddedSucUsers,
       };
     },

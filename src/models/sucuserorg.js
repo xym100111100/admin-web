@@ -1,6 +1,15 @@
 import { message } from 'antd';
 
-import { list, listAddedUsers, listUnaddedUsers, listAddedAndUnaddedUsers, add, del } from '../services/sucuserorg';
+import {
+  list,
+  listAddedUsers,
+  listUnaddedUsers,
+  listAddedAndUnaddedUsers,
+  addUsers,
+  removeUsers,
+  add,
+  del,
+} from '../services/sucuserorg';
 
 export default {
   namespace: 'sucuserorg',
@@ -51,6 +60,29 @@ export default {
       });
       if (callback) callback(response);
     },
+    /**
+     * 添加用户到组织中
+     */
+    *addUsers({ payload, callback }, { call, put }) {
+      const response = yield call(addUsers, payload);
+      yield put({
+        type: 'sucuser/changeAddedAndUnaddedList',
+        payload: response,
+      });
+      if (callback) callback(response);
+    },
+    /**
+     * 从组织中移除用户
+     */
+    *removeUsers({ payload, callback }, { call, put }) {
+      const response = yield call(removeUsers, payload);
+      yield put({
+        type: 'sucuser/changeAddedAndUnaddedList',
+        payload: response,
+      });
+      if (callback) callback(response);
+    },
+
     *add({ payload, callback }, { call }) {
       const response = yield call(add, payload);
       if (response.result === 1) {
