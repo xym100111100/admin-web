@@ -273,13 +273,33 @@ export default class OnlineMng extends SimpleMng {
       },
     ];
 
-    // 分页
+    let ps;
+    if (onlonline === undefined || onlonline.pageSize === undefined) {
+      ps = 5;
+    } else {
+      ps = onlonline.pageSize;
+    }
+    let tl;
+    if (onlonline === undefined || onlonline.total === undefined) {
+      tl = 1;
+    } else {
+      tl = Number(onlonline.total);
+    }
+    let onlonlineData;
+    if (onlonline === undefined) {
+      onlonlineData = [];
+    } else {
+      onlonlineData = onlonline.list;
+    }
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      pageSize: 5,
-      total: Number(onlonline.total),
+      pageSize: ps,
+      total: tl,
+      pageSizeOptions: ['5', '10'],
     };
+
+
 
     return (
       <PageHeaderLayout title="系统信息管理">
@@ -303,7 +323,7 @@ export default class OnlineMng extends SimpleMng {
               rowKey="id"
               pagination={paginationProps}
               onChange={this.handleTableChange}
-              dataSource={onlonline.list}
+              dataSource={onlonlineData}
               columns={columns}
               expandRowByClick={true}
             />

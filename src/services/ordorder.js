@@ -18,6 +18,17 @@ export async function add(params) {
   });
 }
 
+export async function shipmentconfirmation(params) {
+  return request('/ord-svr/ord/order/shipmentconfirmation', {
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
+}
+
+
+
 export async function modifyOrderRealMoney(params) {
   return request('/ord-svr/ord/order', {
     method: 'PUT',
