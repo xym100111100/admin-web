@@ -80,6 +80,7 @@ export default class KdiEorder extends PureComponent {
 
   kdiEorder = () => {
     const { user } = this.props;
+
     //  let orgId = user.currentUser.orgId; 使用联调的时候使用假的orgId
     let orgId = 13164165415;
     this.props.form.validateFields((err, values) => {
@@ -95,6 +96,19 @@ export default class KdiEorder extends PureComponent {
       eorderParam.shipperId = shipperInfo[0];
       eorderParam.shipperName = shipperInfo[1];
       eorderParam.shipperCode = shipperInfo[2];
+
+      eorderParam.receiverProvince = values.receiverProvince[0];
+      eorderParam.receiverCity = values.receiverProvince[1];
+      eorderParam.receiverExpArea = values.receiverProvince[2];
+      eorderParam.receiverMobile = values.receiverMobile;
+      eorderParam.receiverName = values.receiverName;
+      eorderParam.receiverTel = values.receiverTel;
+      eorderParam.receiverPostCode = values.receiverPostCode;
+      eorderParam.orderTitle = values.orderTitle;
+      eorderParam.receiverAddress = values.receiverAddress;
+
+
+
       this.SenderInfo.componentDidMount;
       this.ReceiverInfo.componentDidMount;
       this.SenderInfo.props.form.validateFields((err, sendervalues) => {
@@ -104,28 +118,20 @@ export default class KdiEorder extends PureComponent {
         sendervalues.senderExpArea = sendervalues.senderaddr[2];
         // eorderParam = { ...sendervalues };
         Object.assign(eorderParam, sendervalues);
-        this.ReceiverInfo.props.form.validateFields((err, receivervalues) => {
-          if (err) return;
-          receivervalues.receiverProvince = receivervalues.receiverProvince[0];
-          receivervalues.receiverCity = receivervalues.receiverProvince[1];
-          receivervalues.receiverExpArea = receivervalues.receiverProvince[2];
-          Object.assign(eorderParam, receivervalues);
-          let printWindow;
-          let newTimeStamp;
-
-          this.props.dispatch({
-            type: 'kdieorder/eorder',
-            payload: eorderParam,
-            callback: data => {
-              const printPage = data.printPage;
-              printWindow = window.open('', '_blank');
-              printWindow.document.body.innerHTML = printPage;
-              printWindow.print();
-              printWindow.close();
-              newTimeStamp = Date.parse(new Date());
-              this.state.orderId = newTimeStamp;
-            },
-          });
+        let printWindow;
+        let newTimeStamp;
+        this.props.dispatch({
+          type: 'kdieorder/eorder',
+          payload: eorderParam,
+          callback: data => {
+            const printPage = data.printPage;
+            printWindow = window.open('', '_blank');
+            printWindow.document.body.innerHTML = printPage;
+            printWindow.print();
+            printWindow.close();
+            newTimeStamp = Date.parse(new Date());
+            this.state.orderId = newTimeStamp;
+          },
         });
       });
     });
@@ -139,7 +145,7 @@ export default class KdiEorder extends PureComponent {
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
           <Col md={12} sm={24}>
             <Card title="寄件人信息">
-              <SenderInfoForm getSender={this.getSender} />
+              <SenderInfoForm getSender={this.getSender}  />
             </Card>
             <div style={{ marginTop: '20px', height: '1px' }}>
               <KdiSenderList />
@@ -147,7 +153,7 @@ export default class KdiEorder extends PureComponent {
           </Col>
           <Col md={12} sm={24}>
             <Card title="收件人信息" bordered={false}>
-              <ReceiverInfoForm getReceiver={this.getReceiver} />
+              <ReceiverInfoForm getReceiver={this.getReceiver} form={form} />
             </Card>
             <div style={{ marginTop: '25px' }}>
               <Card title="快递下单">

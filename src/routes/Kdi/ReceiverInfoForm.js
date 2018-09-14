@@ -8,20 +8,6 @@ import AddrRanalysis from 'components/Kdi/AddrRanalysis';
 const FormItem = Form.Item;
 
 @connect(({ kdireceiver, loading }) => ({ kdireceiver, loading: loading.models.kdireceiver }))
-@Form.create({
-  mapPropsToFields(props) {
-    const { record } = props;
-    const result = {};
-    for (const key in record) {
-      if ({}.hasOwnProperty.call(record, key)) {
-        result[key] = Form.createFormField({
-          value: record[key],
-        });
-      }
-    }
-    return result;
-  },
-})
 export default class ReceiverInfoForm extends PureComponent {
   constructor() {
     super();
