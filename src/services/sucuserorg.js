@@ -26,6 +26,29 @@ export async function listAddedAndUnaddedUsers(params) {
   return request(`/suc-svr/suc/userorg/listaddedandunaddedusers?${stringify(params)}`);
 }
 
+/**
+ * 添加用户到组织中
+ */
+export async function addUsers(params) {
+  return request('/suc-svr/suc/userorg', {
+    method: 'POST',
+    body: {
+      ...params,
+    },
+  });
+}
+/**
+ * 从组织中移除用户
+ */
+export async function removeUsers(params) {
+  return request('/suc-svr/suc/userorg', {
+    method: 'DELETE',
+    body: {
+      ...params,
+    },
+  });
+}
+
 export async function add(params) {
   return request(`/suc-svr/suc/user/adduserorg?${stringify(params)}`, {
     method: 'PUT',

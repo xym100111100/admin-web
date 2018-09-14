@@ -1,7 +1,7 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Card, Divider, Switch, Popconfirm, Form, Input, Button, Table } from 'antd';
+import { Card, Divider, Switch, Popconfirm, Form, Input, Button, Table, Spin } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './OrgMng.less';
 import OrgForm from './OrgForm';
@@ -13,7 +13,7 @@ const { Search } = Input;
 @connect(({ sucorg, loading, sucuserorg }) => ({
   sucorg,
   sucuserorg,
-  loading: loading.models.sucorg || loading.models.sucuserorg,
+  loading: loading.models.sucorg,
 }))
 @Form.create()
 export default class OrgMng extends SimpleMng {
@@ -99,6 +99,7 @@ export default class OrgMng extends SimpleMng {
   render() {
     const { sucorg: { sucorg }, loading } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
+
     const columns = [
       {
         title: '组织名称',
@@ -135,7 +136,7 @@ export default class OrgMng extends SimpleMng {
               <a
                 onClick={() =>
                   this.showEditForm({
-                    // editFormRecord: record,
+                    editFormRecord: record,
                     id: record.id,
                     moduleCode: 'sucuserorg',
                     getByIdMethodName: 'listAddedAndUnaddedUsers',
@@ -224,17 +225,9 @@ export default class OrgMng extends SimpleMng {
           />
         )}
         {editForm === 'orgUserForm' && (
-          // <OrgUserForm
-          //   visible
-          //   title={editFormTitle}
-          //   width={1200}
-          //   editFormType={editFormType}
-          //   record={editFormRecord}
-          //   closeModal={() => this.setState({ editForm: undefined })}
-          //   onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'sucuser' })}
-          // />
           <UserTransferForm
-            // id={editFormRecord.id}
+            id={editFormRecord.id}
+            modelName="sucuserorg" // 请求此model时显示loading
             visible
             title={editFormTitle}
             width={815}

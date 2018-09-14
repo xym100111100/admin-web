@@ -67,12 +67,13 @@ export default class SimpleMng extends PureComponent {
       getByIdMethodName: 'getById', // 初始化的时候通过getById请求获取记录，设undefined不调用
     };
     const { id, moduleCode, getByIdMethodName, ...state } = Object.assign(defaultParams, params);
+
     if (getByIdMethodName) {
       this.props.dispatch({
         type: `${moduleCode}/${getByIdMethodName}`,
         payload: { id },
         callback: data => {
-          state.editFormRecord = data.record || data;
+          if (!state.editFormRecord) state.editFormRecord = data.record || data;
           this.setState(state);
         },
       });
