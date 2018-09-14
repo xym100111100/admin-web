@@ -13,6 +13,10 @@ export async function getById(params) {
   return request(`/kdi-svr/kdi/logistic/getbyid?${stringify(params)}`);
 }
 
+export async function printpage(params) {
+  return request(`/kdi-svr/kdi/logistic/printpage?${stringify(params)}`);
+}
+
 export async function add(params) {
   return request('/kdi-svr/kdi/logistic', {
     method: 'POST',

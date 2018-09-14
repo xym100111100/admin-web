@@ -218,6 +218,35 @@ export default class OrdOrder extends SimpleMng {
     })
   }
 
+  printPage = (data) => {
+    let printWindow;
+    const printPage = data.printPage;
+    printWindow = window.open('', '_blank');
+    printWindow.document.body.innerHTML = printPage;
+    printWindow.print();
+    printWindow.close();
+  }
+
+  printPageAgain = (orderCode) => {
+     let printWindow;
+    this.props.dispatch({
+      type: `${this.moduleCode}/printpage`,
+      payload: { orderId: orderCode },
+      callback: data => {
+        if(data.length===0 || data[0].printPage===undefined){
+          message.success('获取失败');
+          return;
+        }
+        const printPage = data[0].printPage;
+        printWindow = window.open('', '_blank');
+        printWindow.document.body.innerHTML = printPage;
+        printWindow.print();
+        printWindow.close();
+      }
+    });
+
+  }
+
 
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
@@ -292,7 +321,7 @@ export default class OrdOrder extends SimpleMng {
             </a>
         </Menu.Item>
         <Menu.Item>
-          <a onClick={() => this.showEditForm({ id: record.id, editForm: 'sysForm', editFormTitle: '编辑系统信息' })}>
+          <a onClick={() => this.printPageAgain(record.orderCode)}>
             重新打印快递单
             </a>
         </Menu.Item>
@@ -391,12 +420,12 @@ export default class OrdOrder extends SimpleMng {
       {
         title: '操作',
         render: (text, record) => {
-          if (record.orderState === 1 || record.orderState === 2) {
+          if (record.orderState === 2) {
             return (
               <Fragment  >
                 <a onClick={() => this.showAddForm({
                   editFormRecord: record,
-                  editForm: 'OrdOrder',
+                  editForm: 'printPage',
                   editFormTitle: '选择发货信息',
                 })} >
                   发货
@@ -441,7 +470,7 @@ export default class OrdOrder extends SimpleMng {
             />
           </div>
         </Card>
-        {editForm === 'OrdOrder' && (
+        {editForm === 'printPage' && (
           <OrdOrderForm
             visible
             title={editFormTitle}
@@ -450,8 +479,8 @@ export default class OrdOrder extends SimpleMng {
             closeModal={() => this.setState({ editForm: undefined })}
             onSubmit={fields => {
               let shipperInfo;
-              if (fields.shipperName !== undefined) {
-                shipperInfo = fields.shipperName.split('/');
+              if (fields.shipperInfo !== undefined) {
+                shipperInfo = fields.shipperInfo.split('/');
                 fields.shipperId = shipperInfo[0];
                 fields.shipperName = shipperInfo[1];
                 fields.shipperCode = shipperInfo[2];
@@ -465,15 +494,17 @@ export default class OrdOrder extends SimpleMng {
                 fields.senderCity = senderInfo[3];
                 fields.senderExpArea = senderInfo[4];
                 fields.senderPostCode = senderInfo[5];
+                fields.senderAddress = senderInfo[6];
               }
-              
-              fields.senderInfo=undefined;
-              console.log(fields);
+              const { user } = this.props;
+              fields.orgId = user.currentUser.orgId;
+              fields.senderInfo = undefined;
+              let saveMethodName = editForm === 'printPage' ? 'shipmentconfirmation' : 'printpage';
               this.handleSubmit({
                 fields,
                 moduleCode: 'ordorder',
-                saveMethodName: 'shipmentconfirmation',
-                
+                saveMethodName: saveMethodName,
+                callback: this.printPage
               });
             }}
           />
