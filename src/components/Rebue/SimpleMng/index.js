@@ -110,7 +110,7 @@ export default class SimpleMng extends PureComponent {
     this.props.dispatch({
       type: dispatchType,
       payload: { ...fields },
-      callback: () => {
+      callback: data => {
         this.handleReload();
         if (isReset) {
           this.handelReset();
@@ -118,7 +118,7 @@ export default class SimpleMng extends PureComponent {
         if (isReturn)
           // 关闭窗口
           this.setState({ editForm: undefined });
-        if (callback) callback();
+        if (callback) callback(data);
       },
     });
   }
