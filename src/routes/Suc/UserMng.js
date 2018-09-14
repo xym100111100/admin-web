@@ -380,17 +380,6 @@ export default class UserMng extends SimpleMng {
             title={editFormTitle}
             editFormType={editFormType}
             closeModal={() => this.setState({ editForm: undefined })}
-            onSubmit={() =>
-              this.handleSubmit({
-                fields: {
-                  userId: editFormRecord.id,
-                  sysId: userrole.dataSource[0].sysId,
-                  roleIds: userrole.targetKeys,
-                },
-                moduleCode: 'pfmuserrole',
-                saveMethodName: 'modifyUserRoles',
-              })
-            }
           />
         )}
         {editForm === 'userOrgForm' && (

@@ -1,11 +1,11 @@
 import { message } from 'antd';
-import { listUserRoles, listRoleUsers, modifyUserRoles, modifyRoleUsers, del } from '../services/pfmuserrole';
+import { listUserRoles, listRoleUsers, addRoles, removeRoles, del } from '../services/pfmuserrole';
 
 export default {
   namespace: 'pfmuserrole',
 
   state: {
-    userrole: [],
+    userrole: { dataSource: [], targetKeys: [] },
   },
 
   effects: {
@@ -25,24 +25,29 @@ export default {
       });
       if (callback) callback(response);
     },
-    *modifyUserRoles({ payload, callback }, { call }) {
-      const response = yield call(modifyUserRoles, payload);
-      if (response.result === 1) {
-        message.success(response.msg);
-        if (callback) callback(response);
-      } else {
-        message.error(response.msg);
-      }
+    /**
+     * 添加用户到组织中
+     */
+    *addRoles({ payload, callback }, { call, put }) {
+      const response = yield call(addRoles, payload);
+      yield put({
+        type: 'changeList',
+        payload: response,
+      });
+      if (callback) callback(response);
     },
-    *modifyRoleUsers({ payload, callback }, { call }) {
-      const response = yield call(modifyRoleUsers, payload);
-      if (response.result === 1) {
-        message.success(response.msg);
-        if (callback) callback(response);
-      } else {
-        message.error(response.msg);
-      }
+    /**
+     * 从组织中移除用户
+     */
+    *removeRoles({ payload, callback }, { call, put }) {
+      const response = yield call(removeRoles, payload);
+      yield put({
+        type: 'changeList',
+        payload: response,
+      });
+      if (callback) callback(response);
     },
+
     *del({ payload, callback }, { call }) {
       const response = yield call(del, payload);
       if (response.result === 1) {

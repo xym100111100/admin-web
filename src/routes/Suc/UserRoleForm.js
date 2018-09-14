@@ -41,16 +41,33 @@ export default class UserRoleForm extends PureComponent {
     });
   }
 
-  // 切换系统
+  /**
+   *  切换系统
+   */
   switchSys = activeKey => {
     const { userId } = this.props;
     this.handleReload({ sysId: activeKey, userId });
   };
 
-  handleChange = targetKeys => {
-    const { pfmuserrole: { userrole } } = this.props;
-    userrole.targetKeys = targetKeys;
-    this.forceUpdate();
+  /**
+   * 处理两栏之间转移角色
+   */
+  handleRolesMove = (targetKeys1, direction, moveKeys) => {
+    // const { pfmuserrole: { userrole } } = this.props;
+    // userrole.targetKeys = targetKeys;
+    // this.forceUpdate();
+    const { dispatch, userId, pfmuserrole: { dataSource, targetKeys } } = this.props;
+    const { sysId } = this.state.options;
+    console.log(sysId);
+
+    // 调用的model
+    const type = direction === 'left' ? 'pfmuserrole/removeRoles' : 'pfmuserrole/addRoles';
+    const payload = { userId, sysId, moveIds: moveKeys };
+    // 发出请求
+    dispatch({
+      type,
+      payload,
+    });
   };
 
   renderItem = item => {
@@ -77,7 +94,7 @@ export default class UserRoleForm extends PureComponent {
                   width: 310,
                   height: 310,
                 }}
-                onChange={this.handleChange}
+                onChange={this.handleRolesMove}
                 render={this.renderItem}
               />
             </TabPane>
