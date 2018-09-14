@@ -31,8 +31,8 @@ export default {
       //处理数据
       //这里其实传上来的shipperName中已经包含了shipperId和shipperCode，且用/隔开，所有这里要处理数据。
       let shipperInfo;
-      if (payload.shipperName !== undefined) {
-        shipperInfo = payload.shipperName.split('/');
+      if (payload.shipperInfo !== undefined) {
+        shipperInfo = payload.shipperInfo.split('/');
         payload.shipperId = shipperInfo[0];
         payload.shipperName = shipperInfo[1];
         payload.shipperCode = shipperInfo[2];

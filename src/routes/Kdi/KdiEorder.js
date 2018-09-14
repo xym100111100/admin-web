@@ -91,7 +91,7 @@ export default class KdiEorder extends PureComponent {
         orderId: this.state.orderId,
         orgId: orgId,
       };
-      let shipperInfo = values.shipperName.split('/');
+      let shipperInfo = values.shipperInfo.split('/');
       eorderParam.shipperId = shipperInfo[0];
       eorderParam.shipperName = shipperInfo[1];
       eorderParam.shipperCode = shipperInfo[2];
