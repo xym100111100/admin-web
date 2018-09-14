@@ -57,7 +57,7 @@ export default class KdiCompany extends PureComponent {
     });
     return (
       <FormItem label="快递公司" style={FormItemStyle}>
-        {form.getFieldDecorator('shipperName', {
+        {form.getFieldDecorator('shipperInfo', {
           rules: [
             {
               required: true,
