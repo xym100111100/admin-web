@@ -3,7 +3,7 @@ import request from '../utils/request';
 
 /**
  * 获取用户的角色列表
- * @param {{sysId:String,userId:String}} params 系统ID和用户ID
+ * @param {{sysId:String,userId:Number}} params 系统ID和用户ID
  */
 export async function listUserRoles(params) {
   return request(`/pfm-svr/pfm/userrole?${stringify(params)}`);
