@@ -4,7 +4,7 @@ import { connect } from 'dva';
 import { Row, Col, Radio, Form, Card, Button, message } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import TreeUtils from '../../utils/TreeUtils';
-import styles from './PfmScript.less';
+import styles from './scriptMng.less';
 //引入复制插件，报错需要yarn install
 import copy from 'copy-to-clipboard';
 const RadioGroup = Radio.Group;
@@ -30,7 +30,7 @@ const FormItem = Form.Item;
     loading.models.pfmactimenu ||
     loading.models.pfmroleacti,
 }))
-export default class PfmScript extends SimpleMng {
+export default class scriptMng extends SimpleMng {
   constructor() {
     super();
     this.moduleCode = 'pfmscript';
