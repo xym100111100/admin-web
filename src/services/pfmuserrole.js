@@ -18,6 +18,27 @@ export async function listRoleUsers(params) {
 }
 
 /**
+ * 查询已添加的用户
+ */
+export async function listAddedUsers(params) {
+  return request(`/pfm-svr/pfm/userrole/listaddedusers?${stringify(params)}`);
+}
+
+/**
+ * 查询未添加的用户
+ */
+export async function listUnaddedUsers(params) {
+  return request(`/pfm-svr/pfm/userrole/listunaddedusers?${stringify(params)}`);
+}
+
+/**
+ * 查询已添加与未添加的用户
+ */
+export async function listAddedAndUnaddedUsers(params) {
+  return request(`/pfm-svr/pfm/userrole/listaddedandunaddedusers?${stringify(params)}`);
+}
+
+/**
  * 给用户添加角色
  */
 export async function addRoles(params) {

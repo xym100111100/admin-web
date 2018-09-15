@@ -5,7 +5,6 @@ import { Card, Divider, Switch, Popconfirm, Form, Input, Button, Table, Spin } f
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './OrgMng.less';
 import OrgForm from './OrgForm';
-// import OrgUserForm from './OrgUserForm';
 import UserTransferForm from './UserTransferForm';
 
 const { Search } = Input;

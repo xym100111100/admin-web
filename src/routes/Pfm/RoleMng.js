@@ -7,6 +7,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import RoleForm from './RoleForm';
 import RoleActiForm from './RoleActiForm';
 import RoleUserForm from './RoleUserForm';
+import UserTransferForm from '../Suc/UserTransferForm';
 import styles from './RoleMng.less';
 
 const { TabPane } = Tabs;
@@ -133,8 +134,8 @@ export default class RoleMng extends SimpleMng {
   // }
 
   render() {
-    const { pfmsys: { pfmsys }, pfmrole: { pfmrole }, loading, pfmsysloading, pfmuserrole: { userrole } } = this.props;
-    const { isDrag, editForm, editFormType, editFormTitle, editFormRecord, options, selectedRows } = this.state;
+    const { pfmsys: { pfmsys }, pfmrole: { pfmrole }, loading, pfmsysloading } = this.props;
+    const { isDrag, editForm, editFormType, editFormTitle, editFormRecord, options } = this.state;
     const { sysId } = options;
     const columns = [
       {
@@ -185,12 +186,12 @@ export default class RoleMng extends SimpleMng {
               <a
                 onClick={() =>
                   this.showEditForm({
+                    editFormRecord: record,
                     id: record.id,
-                    // sysId: record.sysId,
-                    moduleCode: 'sucuser',
+                    moduleCode: 'pfmuserrole',
+                    getByIdMethodName: 'listAddedAndUnaddedUsers',
                     editForm: 'roleUserForm',
                     editFormTitle: '设置角色的用户',
-                    editFormRecord: record,
                   })
                 }
               >
@@ -214,92 +215,43 @@ export default class RoleMng extends SimpleMng {
       },
     ];
 
-    // const userColumns = [
-    //   {
-    //     title: '登录名称',
-    //     dataIndex: 'loginName',
-    //   },
-    //   {
-    //     title: '昵称',
-    //     dataIndex: 'nickname',
-    //   },
-    //   {
-    //     title: 'QQ昵称',
-    //     dataIndex: 'qqNickname',
-    //   },
-    //   {
-    //     title: '微信昵称',
-    //     dataIndex: 'wxNickname',
-    //   },
-    //   {
-    //     title: '真实姓名',
-    //     dataIndex: 'realname',
-    //   },
-    //   {
-    //     title: '操作',
-    //     render: (text, record) => {
-    //       if (isDrag) return null;
-    //       return (
-    //         <Fragment>
-    //           <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDelUser(record)}>
-    //             <a>删除</a>
-    //           </Popconfirm>
-    //         </Fragment>
-    //       );
-    //     },
-    //   },
-    // ];
-
-    // const rowSelection = {
-    //   onChange: (selectedRowKeys, selectedRows) => {
-    //     this.handleUserReload(selectedRows);
-    //   },
-    //   type: 'radio',
-    // };
-
-    // // 分页
-    // const paginationProps = {
-    //   showSizeChanger: true,
-    //   showQuickJumper: true,
-    //   pageSize: 5,
-    //   total: userrole.total - 0,
-    // };
-
     return (
-      <PageHeaderLayout>
-        <Card loading={pfmsysloading}>
-          <div className={styles.tableList}>
-            <div className={styles.tableListOperator}>
-              <Tabs onChange={this.switchSys}>{pfmsys.map(sys => <TabPane tab={sys.name} key={sys.id} />)}</Tabs>
-              <Button
-                icon="plus"
-                type="primary"
-                disabled={isDrag}
-                onClick={() =>
-                  this.showAddForm({ editForm: 'roleForm', editFormTitle: '添加新角色', editFormRecord: { sysId } })
-                }
-              >
-                添加
-              </Button>
-              <Divider type="vertical" />
-              拖拽排序:&nbsp;&nbsp;
-              <Switch
-                checked={isDrag}
-                checkedChildren="开启"
-                unCheckedChildren="禁止"
-                loading={loading}
-                onChange={::this.switchDrag}
-              />
-              <Divider type="vertical" />
-              <Button icon="reload" onClick={() => this.handleReload()}>
-                刷新
-              </Button>
+      <Fragment>
+        <PageHeaderLayout>
+          <Card loading={pfmsysloading}>
+            <div className={styles.tableList}>
+              <div className={styles.tableListOperator}>
+                <Tabs onChange={this.switchSys}>{pfmsys.map(sys => <TabPane tab={sys.name} key={sys.id} />)}</Tabs>
+                <Button
+                  icon="plus"
+                  type="primary"
+                  disabled={isDrag}
+                  onClick={() =>
+                    this.showAddForm({ editForm: 'roleForm', editFormTitle: '添加新角色', editFormRecord: { sysId } })
+                  }
+                >
+                  添加
+                </Button>
+                <Divider type="vertical" />
+                拖拽排序:&nbsp;&nbsp;
+                <Switch
+                  checked={isDrag}
+                  checkedChildren="开启"
+                  unCheckedChildren="禁止"
+                  loading={loading}
+                  onChange={::this.switchDrag}
+                />
+                <Divider type="vertical" />
+                <Button icon="reload" onClick={() => this.handleReload()}>
+                  刷新
+                </Button>
+              </div>
+              <DragWrapper isDrag={isDrag} compare={::this.compareDragRecordAndDropRecord} onDrop={::this.handleDrop}>
+                <Table rowKey="id" pagination={false} loading={loading} dataSource={pfmrole} columns={columns} />
+              </DragWrapper>
             </div>
-            <DragWrapper isDrag={isDrag} compare={::this.compareDragRecordAndDropRecord} onDrop={::this.handleDrop}>
-              <Table rowKey="id" pagination={false} loading={loading} dataSource={pfmrole} columns={columns} />
-            </DragWrapper>
-          </div>
-        </Card>
+          </Card>
+        </PageHeaderLayout>,
         {editForm === 'roleForm' && (
           <RoleForm
             visible
@@ -323,17 +275,26 @@ export default class RoleMng extends SimpleMng {
           />
         )}
         {editForm === 'roleUserForm' && (
-          <RoleUserForm
+          // <RoleUserForm
+          //   visible
+          //   title={editFormTitle}
+          //   editFormType={editFormType}
+          //   record={editFormRecord}
+          //   // width={960}
+          //   closeModal={() => this.setState({ editForm: undefined })}
+          //   onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'pfmuserrole' })}
+          // />
+          <UserTransferForm
+            id={editFormRecord.id}
+            modelName="pfmuserrole" // 请求此model时显示loading
             visible
             title={editFormTitle}
+            width={815}
             editFormType={editFormType}
-            record={editFormRecord}
-            // width={960}
             closeModal={() => this.setState({ editForm: undefined })}
-            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'pfmuserrole' })}
           />
         )}
-      </PageHeaderLayout>
+      </Fragment>
     );
   }
 }

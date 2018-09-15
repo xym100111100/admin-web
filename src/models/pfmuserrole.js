@@ -1,4 +1,12 @@
-import { listUserRoles, listRoleUsers, addRoles, delRoles } from '../services/pfmuserrole';
+import {
+  listUserRoles,
+  listRoleUsers,
+  listAddedUsers,
+  listUnaddedUsers,
+  listAddedAndUnaddedUsers,
+  addRoles,
+  delRoles,
+} from '../services/pfmuserrole';
 
 export default {
   namespace: 'pfmuserrole',
@@ -26,6 +34,39 @@ export default {
       const response = yield call(listRoleUsers, payload);
       yield put({
         type: 'changeUsers',
+        payload: response,
+      });
+      if (callback) callback(response);
+    },
+    /**
+     * 查询已添加的用户
+     */
+    *listAddedUsers({ payload, callback }, { call, put }) {
+      const response = yield call(listAddedUsers, payload);
+      yield put({
+        type: 'sucuser/changeAddedList',
+        payload: response,
+      });
+      if (callback) callback(response);
+    },
+    /**
+     * 查询未添加的用户
+     */
+    *listUnaddedUsers({ payload, callback }, { call, put }) {
+      const response = yield call(listUnaddedUsers, payload);
+      yield put({
+        type: 'sucuser/changeUnaddedList',
+        payload: response,
+      });
+      if (callback) callback(response);
+    },
+    /**
+     * 查询已添加与未添加的用户
+     */
+    *listAddedAndUnaddedUsers({ payload, callback }, { call, put }) {
+      const response = yield call(listAddedAndUnaddedUsers, payload);
+      yield put({
+        type: 'sucuser/changeAddedAndUnaddedList',
         payload: response,
       });
       if (callback) callback(response);

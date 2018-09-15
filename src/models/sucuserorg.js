@@ -1,7 +1,6 @@
 import { message } from 'antd';
 
 import {
-  list,
   listAddedUsers,
   listUnaddedUsers,
   listAddedAndUnaddedUsers,
@@ -17,16 +16,16 @@ export default {
   },
 
   effects: {
-    *list({ payload, callback }, { call, put }) {
-      const response = yield call(list, payload);
-      yield put({
-        type: 'changeList',
-        payload: response,
-      });
-      if (callback) callback(response);
-    },
+    // *list({ payload, callback }, { call, put }) {
+    //   const response = yield call(list, payload);
+    //   yield put({
+    //     type: 'changeList',
+    //     payload: response,
+    //   });
+    //   if (callback) callback(response);
+    // },
     /**
-     * 列出已添加的用户
+     * 查询已添加的用户
      */
     *listAddedUsers({ payload, callback }, { call, put }) {
       const response = yield call(listAddedUsers, payload);
@@ -37,7 +36,7 @@ export default {
       if (callback) callback(response);
     },
     /**
-     * 列出未添加的用户
+     * 查询未添加的用户
      */
     *listUnaddedUsers({ payload, callback }, { call, put }) {
       const response = yield call(listUnaddedUsers, payload);
@@ -48,7 +47,7 @@ export default {
       if (callback) callback(response);
     },
     /**
-     * 列出已添加与未添加的用户
+     * 查询已添加与未添加的用户
      */
     *listAddedAndUnaddedUsers({ payload, callback }, { call, put }) {
       const response = yield call(listAddedAndUnaddedUsers, payload);
