@@ -97,11 +97,11 @@ export default class RnaRealname extends SimpleMng {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 6, lg: 24, xl: 24 }}>
           <Col md={8} sm={24}  >
-            <FormItem style={{ float: 'left' }}>
+            <FormItem   >
               {getFieldDecorator('applyState', {
                 initialValue: '1',
               })(
-                <RadioGroup>
+                <RadioGroup style={{width:280}} > 
                   <RadioButton onClick={() => this.listState('')} value="">
                     全部
                   </RadioButton>
