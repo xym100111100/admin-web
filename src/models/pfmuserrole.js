@@ -1,80 +1,76 @@
-import { message } from 'antd';
-import { listUserRoles, listRoleUsers, addRoles, removeRoles, del } from '../services/pfmuserrole';
+import { listUserRoles, listRoleUsers, addRoles, delRoles } from '../services/pfmuserrole';
 
 export default {
   namespace: 'pfmuserrole',
 
   state: {
-    userrole: { dataSource: [], targetKeys: [] },
+    userrole: { roles: [], existIds: [] },
   },
 
   effects: {
+    /**
+     * 查询用户的角色列表
+     */
     *listUserRoles({ payload, callback }, { call, put }) {
       const response = yield call(listUserRoles, payload);
       yield put({
-        type: 'changeList',
-        payload: response,
-      });
-      if (callback) callback(response);
-    },
-    *listRoleUsers({ payload, callback }, { call, put }) {
-      const response = yield call(listRoleUsers, payload);
-      yield put({
-        type: 'changeLists',
+        type: 'changeRoles',
         payload: response,
       });
       if (callback) callback(response);
     },
     /**
-     * 添加用户到组织中
+     * 查询角色的用户列表
+     */
+    *listRoleUsers({ payload, callback }, { call, put }) {
+      const response = yield call(listRoleUsers, payload);
+      yield put({
+        type: 'changeUsers',
+        payload: response,
+      });
+      if (callback) callback(response);
+    },
+    /**
+     * 给用户添加角色
      */
     *addRoles({ payload, callback }, { call, put }) {
       const response = yield call(addRoles, payload);
       yield put({
-        type: 'changeList',
+        type: 'changeRoles',
         payload: response,
       });
       if (callback) callback(response);
     },
     /**
-     * 从组织中移除用户
+     * 移除用户的角色
      */
-    *removeRoles({ payload, callback }, { call, put }) {
-      const response = yield call(removeRoles, payload);
+    *delRoles({ payload, callback }, { call, put }) {
+      const response = yield call(delRoles, payload);
       yield put({
-        type: 'changeList',
+        type: 'changeRoles',
         payload: response,
       });
       if (callback) callback(response);
     },
-
-    *del({ payload, callback }, { call }) {
-      const response = yield call(del, payload);
-      if (response.result === 1) {
-        message.success(response.msg);
-        if (callback) callback(response);
-      } else {
-        message.error(response.msg);
-      }
-    },
+    // *del({ payload, callback }, { call }) {
+    //   const response = yield call(del, payload);
+    //   if (response.result === 1) {
+    //     message.success(response.msg);
+    //     if (callback) callback(response);
+    //   } else {
+    //     message.error(response.msg);
+    //   }
+    // },
   },
 
   reducers: {
-    changeList(state, action) {
+    changeRoles(state, action) {
       const { roles, existIds } = action.payload;
-      const dataSource = [];
-      for (const role of roles) {
-        dataSource.push({
-          key: role.id,
-          title: role.name,
-          description: role.remark,
-        });
-      }
       return {
-        userrole: { dataSource, targetKeys: existIds },
+        userrole: { roles, existIds },
       };
     },
-    changeLists(state, action) {
+    changeUsers(state, action) {
       return {
         userrole: action.payload,
       };

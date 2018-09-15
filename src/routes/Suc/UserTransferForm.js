@@ -5,7 +5,6 @@ import React, { PureComponent, Fragment } from 'react';
 import { Icon, Popover, Transfer, Pagination, Spin } from 'antd';
 import { connect } from 'dva';
 import EditForm from 'components/Rebue/EditForm';
-import styles from './UserTransferForm.less';
 
 /**
  * 获取显示用户简介的渲染内容
@@ -44,12 +43,12 @@ export default class UserTransferForm extends PureComponent {
    * 处理两栏之间转移用户
    */
   handleUsersMove = (targetKeys, direction, moveKeys) => {
-    const { dispatch, id, sucuser: { addedSucUsers, unaddedSucUsers } } = this.props;
+    const { dispatch, id, sucuser: { addedUsers, unaddedUsers } } = this.props;
     // 调用的model
-    const type = direction === 'left' ? 'sucuserorg/removeUsers' : 'sucuserorg/addUsers';
+    const type = direction === 'left' ? 'sucuserorg/delUsers' : 'sucuserorg/addUsers';
     // 已添加和未添加查询的页码
-    const addedPageNum = addedSucUsers.pageNum;
-    const unaddedPageNum = unaddedSucUsers.pageNum;
+    const addedPageNum = addedUsers.pageNum;
+    const unaddedPageNum = unaddedUsers.pageNum;
     const payload = { id, addedPageNum, unaddedPageNum, moveIds: moveKeys };
     // 已添加和未添加用户模糊查询的关键字
     const addedKeys = this.state.rightKeys;
@@ -113,12 +112,12 @@ export default class UserTransferForm extends PureComponent {
    * 渲染底部分页
    */
   renderFooter = props => {
-    const { sucuser: { addedSucUsers, unaddedSucUsers } } = this.props;
+    const { sucuser: { addedUsers, unaddedUsers } } = this.props;
     const { filter, titleText } = props;
 
     // 判断左边框还是右边框
     const direction = titleText === '未添加用户' ? 'left' : 'right';
-    const users = direction === 'left' ? unaddedSucUsers : addedSucUsers;
+    const users = direction === 'left' ? unaddedUsers : addedUsers;
 
     // 获取总记录数
     const total = users.total - 0;
@@ -140,16 +139,16 @@ export default class UserTransferForm extends PureComponent {
   };
 
   render() {
-    const { sucuser: { addedSucUsers, unaddedSucUsers }, loading, modelName } = this.props;
+    const { sucuser: { addedUsers, unaddedUsers }, loading, modelName } = this.props;
 
     const dataSource = [];
     const targetKeys = [];
 
-    for (const user of addedSucUsers.list) {
+    for (const user of addedUsers.list) {
       dataSource.push(getUserItem(user));
       targetKeys.push(user.id);
     }
-    for (const user of unaddedSucUsers.list) {
+    for (const user of unaddedUsers.list) {
       dataSource.push(getUserItem(user));
     }
 

@@ -128,33 +128,33 @@ export default {
      * 已添加的用户列表
      */
     changeAddedList(state, action) {
-      const { addedSucUsers } = action.payload;
+      const { addedUsers } = action.payload;
       // console.log(state);
       
       return {
         ...state,
-        addedSucUsers,
+        addedUsers,
       };
     },
     /**
      * 未添加的用户列表
      */
     changeUnaddedList(state, action) {
-      const { unaddedSucUsers } = action.payload;
+      const { unaddedUsers } = action.payload;
       // console.log(state);
       return {
         ...state,
-        unaddedSucUsers,
+        unaddedUsers,
       };
     },
     /**
      * 已添加与未添加的用户列表
      */
     changeAddedAndUnaddedList(state, action) {
-      const { addedSucUsers, unaddedSucUsers } = action.payload;
+      const { addedUsers, unaddedUsers } = action.payload;
       return {
-        addedSucUsers,
-        unaddedSucUsers,
+        addedUsers,
+        unaddedUsers,
       };
     },
   },

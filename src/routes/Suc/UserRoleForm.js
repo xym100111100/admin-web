@@ -56,12 +56,12 @@ export default class UserRoleForm extends PureComponent {
     // const { pfmuserrole: { userrole } } = this.props;
     // userrole.targetKeys = targetKeys;
     // this.forceUpdate();
-    const { dispatch, userId, pfmuserrole: { dataSource, targetKeys } } = this.props;
+    const { dispatch, userId } = this.props;
     const { sysId } = this.state.options;
     console.log(sysId);
 
     // 调用的model
-    const type = direction === 'left' ? 'pfmuserrole/removeRoles' : 'pfmuserrole/addRoles';
+    const type = direction === 'left' ? 'pfmuserrole/delRoles' : 'pfmuserrole/addRoles';
     const payload = { userId, sysId, moveIds: moveKeys };
     // 发出请求
     dispatch({
@@ -70,6 +70,9 @@ export default class UserRoleForm extends PureComponent {
     });
   };
 
+  /**
+   * 渲染每一个item
+   */
   renderItem = item => {
     const customLabel = <Tooltip title={item.description}>{item.title}</Tooltip>;
     return {
@@ -81,6 +84,16 @@ export default class UserRoleForm extends PureComponent {
   render() {
     const { pfmsys: { pfmsys }, pfmuserrole: { userrole } } = this.props;
 
+    // 将model中的roles转成穿梭框需要的dataSource
+    const dataSource = [];
+    for (const role of userrole.roles) {
+      dataSource.push({
+        key: role.id,
+        title: role.name,
+        description: role.remark,
+      });
+    }
+
     return (
       <div className={styles.tableList}>
         <Tabs onChange={this.switchSys} defaultActiveKey="1">
@@ -88,8 +101,8 @@ export default class UserRoleForm extends PureComponent {
             <TabPane tab={sys.name} key={sys.id}>
               <Transfer
                 titles={['未添加角色', '已添加角色']}
-                dataSource={userrole.dataSource}
-                targetKeys={userrole.targetKeys}
+                dataSource={dataSource}
+                targetKeys={userrole.existIds}
                 listStyle={{
                   width: 310,
                   height: 310,

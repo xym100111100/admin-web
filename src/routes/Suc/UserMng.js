@@ -137,7 +137,7 @@ export default class UserMng extends SimpleMng {
   }
 
   render() {
-    const { sucuser: { sucuser }, pfmuserrole: { userrole }, loading } = this.props;
+    const { sucuser: { sucuser }, loading } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
     const columns = [
       {
@@ -181,7 +181,6 @@ export default class UserMng extends SimpleMng {
               <a
                 onClick={() =>
                   this.showEditForm({
-                    getByIdMethodName: undefined, // 初始化的时候调用getById
                     editForm: 'userRoleForm',
                     editFormTitle: '设置用户的角色',
                     editFormRecord: record, // 不设置ID不请求，直接设置状态的editFormRecord（供设置组件属性时使用）
@@ -194,7 +193,6 @@ export default class UserMng extends SimpleMng {
               <a
                 onClick={() =>
                   this.showEditForm({
-                    getByIdMethodName: undefined, // 初始化的时候调用getById
                     editForm: 'userOrgForm',
                     editFormTitle: '设置用户的组织',
                     editFormRecord: record, // 不设置ID不请求，直接设置状态的editFormRecord（供设置组件属性时使用）

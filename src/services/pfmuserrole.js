@@ -18,10 +18,10 @@ export async function listRoleUsers(params) {
 }
 
 /**
- * 添加角色到用户中
+ * 给用户添加角色
  */
 export async function addRoles(params) {
-  return request('/pfm-svr/pfm/roleuser', {
+  return request('/pfm-svr/pfm/userrole', {
     method: 'POST',
     body: {
       ...params,
@@ -30,10 +30,10 @@ export async function addRoles(params) {
 }
 
 /**
- * 从用户中移除角色
+ * 移除用户的角色
  */
-export async function removeRoles(params) {
-  return request('/pfm-svr/pfm/roleuser', {
+export async function delRoles(params) {
+  return request('/pfm-svr/pfm/userrole', {
     method: 'DELETE',
     body: {
       ...params,
@@ -41,11 +41,11 @@ export async function removeRoles(params) {
   });
 }
 
-export async function del(params) {
-  return request(`/pfm-svr/pfm/userrole`, {
-    method: 'DELETE',
-    body: {
-      ...params,
-    },
-  });
-}
+// export async function del(params) {
+//   return request(`/pfm-svr/pfm/userrole`, {
+//     method: 'DELETE',
+//     body: {
+//       ...params,
+//     },
+//   });
+// }
