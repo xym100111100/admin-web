@@ -113,7 +113,7 @@ export const getRouterData = app => {
       component: dynamicWrapper(
         app,
         ['kdicompany', 'pfmroleacti', 'pfmscript', 'user','pfmactimenu', 'pfmactiurn', 'pfmsys', 'pfmrole', 'pfmfunc'],
-        () => import('../routes/Pfm/PfmScript')
+        () => import('../routes/Pfm/scriptMng')
       ),
     },
     '/pfm/role-mng': {
