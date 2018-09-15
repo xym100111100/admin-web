@@ -184,7 +184,7 @@ export default class UserMng extends SimpleMng {
                     getByIdMethodName: undefined, // 初始化的时候调用getById
                     editForm: 'userRoleForm',
                     editFormTitle: '设置用户的角色',
-                    editFormRecord: record, // 不请求，直接设置状态的editFormRecord（供设置组件属性时使用）
+                    editFormRecord: record, // 不设置ID不请求，直接设置状态的editFormRecord（供设置组件属性时使用）
                   })
                 }
               >
@@ -197,7 +197,7 @@ export default class UserMng extends SimpleMng {
                     getByIdMethodName: undefined, // 初始化的时候调用getById
                     editForm: 'userOrgForm',
                     editFormTitle: '设置用户的组织',
-                    editFormRecord: record, // 不请求，直接设置状态的editFormRecord（供设置组件属性时使用）
+                    editFormRecord: record, // 不设置ID不请求，直接设置状态的editFormRecord（供设置组件属性时使用）
                   })
                 }
               >
