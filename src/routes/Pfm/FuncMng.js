@@ -237,8 +237,7 @@ export default class FuncMng extends SimpleMng {
                   <a
                     onClick={() =>
                       this.showEditForm({
-                        id: record.id, // 通过id调用getById方法请求获取记录并设置状态的editFormRecord
-                        moduleCode: 'pfmactimenu',
+                        editFormRecord: record,
                         editForm: 'actiMenuForm',
                         editFormTitle: '设置动作的菜单',
                       })
@@ -250,8 +249,7 @@ export default class FuncMng extends SimpleMng {
                   <a
                     onClick={() =>
                       this.showEditForm({
-                        id: record.id, // 通过id调用getById方法请求获取记录并设置状态的editFormRecord
-                        moduleCode: 'pfmactiurn',
+                        editFormRecord: record,
                         editForm: 'actiUrnForm',
                         editFormTitle: '设置动作的链接',
                       })
