@@ -149,17 +149,6 @@ export default class KdiLogistic extends SimpleMng {
     return (
       <Form onSubmit={this.list} layout="inline">
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
-          <Col md={6} sm={24} style={{ marginBottom: 20 }}>
-            <Button
-              icon="plus"
-              type="primary"
-              onClick={() => this.showAddForm({ orgId: orgId, editForm: 'kdiEntry', editFormTitle: '快递录入' })}
-            >
-              快递录入
-            </Button>
-          </Col>
-        </Row>
-        <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
           <Col md={6} sm={24}>
             <FormItem label="">
               {getFieldDecorator('receiverName')(<Input placeholder="收件人姓名/手机/快递单号" />)}
@@ -199,6 +188,17 @@ export default class KdiLogistic extends SimpleMng {
                 重置
               </Button>
             </span>
+          </Col>
+        </Row>
+        <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
+          <Col md={6} sm={24} style={{ marginBottom: 20 }}>
+            <Button
+              icon="plus"
+              type="primary"
+              onClick={() => this.showAddForm({ orgId: orgId, editForm: 'kdiEntry', editFormTitle: '快递录入' })}
+            >
+              快递录入
+            </Button>
           </Col>
         </Row>
       </Form>
@@ -293,7 +293,7 @@ export default class KdiLogistic extends SimpleMng {
               expandedRowRender={record => (
                 <p style={{ margin: 0 }}>
                   <span><b>寄件人:</b>{record.senderName}</span>
-                  <span style={{ paddingLeft: '15px' }}><b>寄件人手机:</b>{ record.senderMobile}</span>
+                  <span style={{ paddingLeft: '15px' }}><b>寄件人手机:</b>{record.senderMobile}</span>
                 </p>
               )}
               columns={columns}

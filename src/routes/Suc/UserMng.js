@@ -9,6 +9,7 @@ import styles from './UserMng.less';
 import UserRoleForm from './UserRoleForm';
 import UserRegForm from './UserRegForm';
 import UserOrgForm from './UserOrgForm';
+const { Search } = Input;
 
 const FormItem = Form.Item;
 const { Description } = DescriptionList;
@@ -110,26 +111,26 @@ export default class UserMng extends SimpleMng {
     });
   }
 
-  // 搜索
+  // 搜索  原先的input查询参数为users
   renderSearchForm() {
-    const { getFieldDecorator } = this.props.form;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
-          <Col md={6} sm={24}>
-            <FormItem label="">
-              {getFieldDecorator('users')(<Input placeholder="登录账号/昵称/微信昵称/QQ昵称/手机号码/QQ邮箱" />)}
-            </FormItem>
+          <Col md={16} sm={24} >
+            <Button
+              icon="plus"
+              type="primary"
+              onClick={() => this.showAddForm({ editForm: 'userRegForm', editFormTitle: '添加新用户' })}
+            >
+              添加
+                </Button>
+            <Divider type="vertical" />
+            <Button icon="reload" onClick={() => this.handleReload()}>
+              刷新
+            </Button>
           </Col>
-          <Col md={6} sm={24}>
-            <span style={{ float: 'left', marginBottom: 24 }}>
-              <Button type="primary" htmlType="submit">
-                查询
-              </Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-                重置
-              </Button>
-            </span>
+          <Col md={8} sm={24} >
+            <Search placeholder="登录账号/昵称/微信昵称/QQ昵称/手机号码" onSearch={this.handleSearch} />
           </Col>
         </Row>
       </Form>
@@ -235,8 +236,8 @@ export default class UserMng extends SimpleMng {
       const menu = (
         <Menu>
           <Menu.Item>
-            <Popconfirm title="是否解除此账号的登录密码？" onConfirm={() => this.removeLoginPassWord(record)}>
-              <a>解除登录密码</a>
+            <Popconfirm title="是否重置此账号的登录密码？" onConfirm={() => this.removeLoginPassWord(record)}>
+              <a>重置登录密码</a>
             </Popconfirm>
           </Menu.Item>
           <Menu.Item>
@@ -277,19 +278,6 @@ export default class UserMng extends SimpleMng {
           <Card bordered={false}>
             <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
             <div className={styles.tableList}>
-              <div className={styles.tableListOperator}>
-                <Button
-                  icon="plus"
-                  type="primary"
-                  onClick={() => this.showAddForm({ editForm: 'userRegForm', editFormTitle: '添加新用户' })}
-                >
-                  添加
-                </Button>
-                <Divider type="vertical" />
-                <Button icon="reload" onClick={() => this.handleReload()}>
-                  刷新
-                </Button>
-              </div>
               <Table
                 rowKey="id"
                 pagination={paginationProps}
