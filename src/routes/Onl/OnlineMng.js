@@ -60,7 +60,20 @@ export default class OnlineMng extends SimpleMng {
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
-          <Col md={6} sm={24}>
+          <Col md={6} sm={24} >
+            <Button
+              icon="plus"
+              type="primary"
+              onClick={() => this.showAddForm({ editForm: 'onlineForm', editFormTitle: '商品上线' })}
+            >
+              添加
+              </Button>
+            <Divider type="vertical" />
+            <Button icon="reload" onClick={() => this.handleReload()}>
+              刷新
+              </Button>
+          </Col>
+          <Col md={6} sm={24} >
             <FormItem label="上线标题">{getFieldDecorator('onlineTitle')(<Input placeholder="上线标题" />)}</FormItem>
           </Col>
           <Col md={6} sm={24}>
@@ -146,21 +159,21 @@ export default class OnlineMng extends SimpleMng {
               </Popconfirm>
             </Menu.Item>
           ) : (
-            <Menu.Item>
-              <a
-                onClick={() =>
-                  this.showAddForm({
-                    id: record.id,
-                    editForm: 'onlOnlinePromotionForm',
-                    editFormRecord: record,
-                    editFormTitle: '商品推广',
-                  })
-                }
-              >
-                商品推广
+              <Menu.Item>
+                <a
+                  onClick={() =>
+                    this.showAddForm({
+                      id: record.id,
+                      editForm: 'onlOnlinePromotionForm',
+                      editFormRecord: record,
+                      editFormTitle: '商品推广',
+                    })
+                  }
+                >
+                  商品推广
               </a>
-            </Menu.Item>
-          )}
+              </Menu.Item>
+            )}
           <Menu.Item>
             <a
               onClick={() =>
@@ -306,19 +319,6 @@ export default class OnlineMng extends SimpleMng {
         <Card bordered={false}>
           <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
           <div className={styles.tableList}>
-            <div className={styles.tableListOperator}>
-              <Button
-                icon="plus"
-                type="primary"
-                onClick={() => this.showAddForm({ editForm: 'onlineForm', editFormTitle: '商品上线' })}
-              >
-                添加
-              </Button>
-              <Divider type="vertical" />
-              <Button icon="reload" onClick={() => this.handleReload()}>
-                刷新
-              </Button>
-            </div>
             <Table
               rowKey="id"
               pagination={paginationProps}
