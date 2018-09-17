@@ -1,5 +1,5 @@
 import { parse } from 'url';
-
+import IdUtils from '../src/utils/IdUtils';
 // mock tableListDataSource
 const tableListDataSource = [
   { id: '1536131597087',funcId: '1536131597087',isAuth: false, sysId: 'damai-admin', name: '查看', isEnabled: true, orderNo: 1, remark: '查看系统的基础信息'},
@@ -41,7 +41,7 @@ export function pfmactiGetById(req, res, u) {
 export function pfmactiAdd(req, res, u, b) {
   const record = (b && b.body) || req.body;
   if (Math.random() >= 0.495) {
-    record.id = new Date().getTime();
+    record.id = IdUtils.genId();
     record.orderNo = tableListDataSource.length;
     tableListDataSource.push(record);
     tableListDataSource.sort((item1, item2) => item1.orderNo > item2.orderNo);

@@ -1,5 +1,5 @@
 import { parse } from 'url';
-
+import IdUtils from '../src/utils/IdUtils'; 
 // mock tableListDataSource
 const tableListDataSource = [
   {id:'1536131597087',actiId:'1536131597087',urn:'GET:/pfm-svr/sys'},
@@ -68,7 +68,7 @@ export function pfmactiurnModify(req, res, u, b) {
   if (body.urns) {
     for (const urn of body.urns) {
       const actiUrn = {};
-      actiUrn.id = new Date().getTime();
+      actiUrn.id = IdUtils.genId();
       actiUrn.actiId = body.actiId;
       actiUrn.urn = urn;
       tableListDataSource.push(actiUrn);

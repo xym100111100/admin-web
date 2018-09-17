@@ -6,6 +6,7 @@ import DragSortTable from 'components/Rebue/DragSortTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import TreeUtils from '../../utils/TreeUtils';
 import styles from './MenuMng.less';
+import IdUtils from '../../utils/IdUtils';
 
 const { TabPane } = Tabs;
 
@@ -106,7 +107,7 @@ export default class MenuMng extends EditMng {
     const newList = this.cloneList();
     // 创建新记录
     const newRecord = {
-      id: new Date().getTime(),
+      id: IdUtils.genId(),
       sysId,
       code,
       path: undefined,
@@ -140,7 +141,7 @@ export default class MenuMng extends EditMng {
     }
     // 创建新记录
     const newRecord = {
-      id: new Date().getTime(),
+      id: IdUtils.genId(),
       sysId,
       code,
       path: undefined,

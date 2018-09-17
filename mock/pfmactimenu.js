@@ -1,4 +1,5 @@
 import { parse } from 'url';
+import IdUtils from '../src/utils/IdUtils';
 
 // mock tableListDataSource
 const tableListDataSource = [
@@ -42,7 +43,7 @@ export function pfmactimenuModify(req, res, u, b) {
   if (body.menuIds) {
     for (const id of body.menuIds) {
       const actiMenu = {};
-      actiMenu.id = new Date().getTime();
+      actiMenu.id = IdUtils.genId();
       actiMenu.actiId = body.actiId;
       actiMenu.menuId = id;
       tableListDataSource.push(actiMenu);

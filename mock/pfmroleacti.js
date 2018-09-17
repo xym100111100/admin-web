@@ -1,5 +1,5 @@
 import { parse } from 'url';
-
+import IdUtils from '../src/utils/IdUtils';
 // mock tableListDataSource
 const tableListDataSource = [
   {id:'1536131597087',roleId:'1536131597094',actiId:'1536131597087'},
@@ -50,7 +50,7 @@ export function pfmroleactiModify(req, res, u, b) {
   if (body.actiIds) {
     for (const id of body.actiIds) {
       const actiMenu = {};
-      actiMenu.id = new Date().getTime();
+      actiMenu.id = IdUtils.genId();
       actiMenu.roleId = body.roleId;
       actiMenu.actiId = id;
       tableListDataSource.push(actiMenu);

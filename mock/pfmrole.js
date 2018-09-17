@@ -1,5 +1,5 @@
 import { parse } from 'url';
-
+import IdUtils from '../src/utils/IdUtils';
 // mock tableListDataSource
 const tableListDataSource = [
   {
@@ -95,7 +95,7 @@ export function pfmroleList2(sysId) {
 export function pfmroleAdd(req, res, u, b) {
   const record = (b && b.body) || req.body;
   if (Math.random() >= 0.495) {
-    record.id = new Date().getTime();
+    record.id = IdUtils.genId();
     record.orderNo = tableListDataSource.length + 1;
     tableListDataSource.push(record);
     tableListDataSource.sort((item1, item2) => item1.orderNo > item2.orderNo);
