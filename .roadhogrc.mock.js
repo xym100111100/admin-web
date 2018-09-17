@@ -107,7 +107,7 @@ const currentUser = {
   face: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
   notifyCount: 12,
   orgId: '4513464',
-  menus: getMenuData(),
+  menus: getMenuData('damai-admin'),
 };
 
 // 代码中会兼容本地 service mock 以及部署站点的静态数据
@@ -355,13 +355,13 @@ if (noProxy) {
   // addProxy('suc-svr', 'http://127.0.0.1:9100/');
   // addProxy('pfm-svr', 'http://127.0.0.1:8080/pfm-svr');
   // addProxy('suc-svr', 'http://127.0.0.1:8080/suc-svr/');
-  addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr');
-  addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
-  addProxy('rna-svr', 'http://127.0.0.1:20088/');
-  addProxy('kdi-svr', 'http://127.0.0.1:20080/');
-  addProxy('onl-svr', 'http://127.0.0.1:9100/');
-  addProxy('ise-svr', 'http://127.0.0.1:20180/');
-  addProxy('ord-svr', 'http://127.0.0.1:20280/');
+  // addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr');
+  // addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
+  // addProxy('rna-svr', 'http://127.0.0.1:20088/');
+  // addProxy('kdi-svr', 'http://127.0.0.1:20080/');
+  // addProxy('onl-svr', 'http://127.0.0.1:9100/');
+  // addProxy('ise-svr', 'http://127.0.0.1:20180/');
+  // addProxy('ord-svr', 'http://127.0.0.1:20280/');
 }
 
 // 响应请求不延迟
