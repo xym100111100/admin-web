@@ -44,21 +44,34 @@ export default class TreeUtils {
    */
   static convertFlatToTree(flatArray) {
     const result = [];
+    const codeIndexMap = new Map();
     flatArray.forEach(item => {
       const { code } = item;
       const { length } = code;
+
       if (length === 2) {
         result.push(item);
+        // 记录code的index
+        codeIndexMap.set(item.code, result.length - 1);
       } else {
         const count = length / 2;
-        let sEval = `result[${getIndexAtLevel(code, 1)}]`;
+        const rootCode = item.code.substr(0, 2);
+        const rootIndex = codeIndexMap.get(rootCode);
+
+        let sEval = `result[${rootIndex}]`;
         for (let level = 2; level < count; level++) {
-          const index = getIndexAtLevel(code, level);
-          sEval += `.children[${index}]`;
+          const currentCode = item.code.substr(0, 2 * 2);
+          const currentIndex = codeIndexMap.get(currentCode);
+          sEval += `.children[${currentIndex}]`;
         }
         sEval += `.children`;
+
+        // 如果是第一个子节点初始化数组
         eval(`if (!${sEval}) ${sEval}=[];`);
+        // 添加子节点
         eval(`${sEval}.push(item);`);
+        // 记录code的index
+        eval(`codeIndexMap.set(item.code, ${sEval}.length - 1);`);
       }
     });
     return result;
@@ -129,9 +142,9 @@ export default class TreeUtils {
 
 /**
  * 得到在第几级上的索引
- * @param {*} code 树编码
- * @param {*} level 第几级(1..n)
- * @param {*} levelLength 第一级的长度，默认为2
+ * @param {String} code 树编码
+ * @param {Number} level 第几级(1..n)
+ * @param {Number} levelLength 每一级的长度，默认为2
  */
 function getIndexAtLevel(code, level, levelLength = 2) {
   return code.substr((level - 1) * 2, levelLength) - 0;
