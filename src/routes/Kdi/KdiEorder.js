@@ -57,8 +57,7 @@ export default class KdiEorder extends PureComponent {
   // 获取默认发件人
   getDefaultSender() {
     const { user } = this.props;
-    // let orgId = user.currentUser.orgId;
-    let orgId = '253274870';
+    let orgId = user.currentUser.orgId;
     // 刷新
     this.props.dispatch({
       type: `kdisender/getDefaultSender`,
@@ -81,8 +80,7 @@ export default class KdiEorder extends PureComponent {
   kdiEorder = () => {
     const { user } = this.props;
 
-    //  let orgId = user.currentUser.orgId; 使用联调的时候使用假的orgId
-    let orgId = 13164165415;
+     let orgId = user.currentUser.orgId; 
     this.props.form.validateFields((err, values) => {
       if (err) return;
       let eorderParam = {

@@ -251,8 +251,8 @@ export default class OrdOrder extends SimpleMng {
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
     const { editFormRecord } = this.state;
-    const orgId = 253274870;
-    editFormRecord.orgId = orgId;
+    const { user } = this.props;
+    editFormRecord.orgId =  user.currentUser.orgId;
     return (
       <Form onSubmit={this.list} layout="inline">
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>

@@ -65,8 +65,10 @@ export function pfmactiurnModify(req, res, u, b) {
       tableListDataSource.splice(index, 1);
     }
   }
+
   if (body.urns) {
-    for (const urn of body.urns) {
+     let dataArray=body.urns[0].split("\n")
+    for (const urn of dataArray) {
       const actiUrn = {};
       actiUrn.id = IdUtils.genId();
       actiUrn.actiId = body.actiId;

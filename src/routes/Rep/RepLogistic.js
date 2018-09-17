@@ -16,9 +16,8 @@ import 'echarts/lib/component/title';
 import 'echarts/lib/component/legend';
 //引入时间处理插件
 import moment from 'moment';
-const orgId=253274870;
 @Form.create()
-@connect(({ replogistic, loading }) => ({ replogistic, loading: loading.models.replogistic }))
+@connect(({ replogistic, user, loading }) => ({ replogistic,user, loading: loading.models.replogistic || loading.models.user}))
 export default class RepLogistic extends SimpleMng {
   constructor() {
     super();
@@ -40,6 +39,9 @@ export default class RepLogistic extends SimpleMng {
   }
 
   componentWillMount() {
+    const { user } = this.props;
+    let orgId = user.currentUser.orgId;
+
     //默认获取当前时间和前六天的发单量
     let date = new Date().getTime();
     let date2 = new Date().getTime() - 1000 * 60 * 60 * 24 * 6;
@@ -152,7 +154,8 @@ export default class RepLogistic extends SimpleMng {
    */
   onChanges = () => {
     const { form } = this.props;
-
+    const { user } = this.props;
+    let orgId = user.currentUser.orgId;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       if (

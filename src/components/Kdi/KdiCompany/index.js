@@ -14,10 +14,8 @@ export default class KdiCompany extends PureComponent {
   }
 
   componentDidMount() {
-    // let {user} =this.props
-    // let orgId=user.currentUser.orgId
-    //这里连调的时候先写死orgId
-    let orgId = 253274870;
+    let {user} =this.props
+    let orgId=user.currentUser.orgId
     //初始化的时候加载快递公司
     this.props.dispatch({
       type: `kdicompany/list`,

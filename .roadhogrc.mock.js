@@ -106,7 +106,7 @@ const currentUser = {
   nickname: '超级管理员',
   face: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
   notifyCount: 12,
-  orgId: '4513464',
+  orgId: '253274870',
   menus: getMenuData('damai-admin'),
 };
 
@@ -358,10 +358,10 @@ if (noProxy) {
   // addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr');
   // addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
   // addProxy('rna-svr', 'http://127.0.0.1:20088/');
-  // addProxy('kdi-svr', 'http://127.0.0.1:20080/');
+  addProxy('kdi-svr', 'http://127.0.0.1:20080/');
   // addProxy('onl-svr', 'http://127.0.0.1:9100/');
   // addProxy('ise-svr', 'http://127.0.0.1:20180/');
-  // addProxy('ord-svr', 'http://127.0.0.1:20280/');
+  addProxy('ord-svr', 'http://127.0.0.1:20180/');
 }
 
 // 响应请求不延迟

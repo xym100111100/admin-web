@@ -10,10 +10,11 @@ import KdiEntryForm from './KdiEntryForm';
 const { Option } = Select;
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
-@connect(({ kdilogistic, KdiEntry, loading }) => ({
+@connect(({ kdilogistic,user, KdiEntry, loading }) => ({
   kdilogistic,
   KdiEntry,
-  loading: loading.models.kdilogistic || loading.models.KdiEntry,
+  user,
+  loading: loading.models.kdilogistic || loading.models.KdiEntry || loading.models.user
 }))
 @Form.create()
 export default class KdiLogistic extends SimpleMng {
@@ -28,11 +29,10 @@ export default class KdiLogistic extends SimpleMng {
 
   //初始化
   componentDidMount() {
-    // let {user} =this.props
-    // let orgId=user.currentUser.orgId
-    //这里连调的时候先写死orgId来给下面需要的地方用
+     let {user} =this.props
+    let orgId=user.currentUser.orgId
     this.state.payloads = {
-      orgId: 253274870,
+      orgId: orgId,
       pageNum: this.state.options.pageNum,
       pageSize: this.state.options.pageSize,
     };
@@ -54,10 +54,7 @@ export default class KdiLogistic extends SimpleMng {
 
   //点击submit查询
   list = () => {
-    // let {user} =this.props
-    // let orgId=user.currentUser.orgId
-    //这里连调的时候先写死orgId
-    let orgId = 253274870;
+
     const { form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -76,7 +73,7 @@ export default class KdiLogistic extends SimpleMng {
       }
       fieldsValue.pageNum = this.state.options.pageNum;
       fieldsValue.pageSize = this.state.options.pageSize;
-      fieldsValue.orgId = orgId;
+      fieldsValue.orgId = this.state.payloads.orgId;
       //上传上来的时间是一个数组，需要格式化
       if (fieldsValue.orderTime !== undefined && fieldsValue.orderTime !== '' && fieldsValue.orderTime.length >= 1) {
         fieldsValue.orderTimeEnd = fieldsValue.orderTime[1].format('YYYY-MM-DD HH:mm:ss');
@@ -92,10 +89,7 @@ export default class KdiLogistic extends SimpleMng {
 
   //改变页数查询
   handleTableChange = pagination => {
-    // let {user} =this.props
-    // let orgId=user.currentUser.orgId
-    //这里连调的时候先写死orgId
-    let orgId = 253274870;
+
     const pager = { ...this.state.pagination };
     const { form } = this.props;
     pager.current = pagination.current;
@@ -122,7 +116,7 @@ export default class KdiLogistic extends SimpleMng {
       }
       fieldsValue.pageNum = pagination.current;
       fieldsValue.pageSize = pagination.pageSize;
-      fieldsValue.orgId = orgId;
+      fieldsValue.orgId = this.state.payloads.orgId;
       //上传上来的时间是一个数组，需要格式化
       if (fieldsValue.orderTime !== undefined && fieldsValue.orderTime !== '' && fieldsValue.orderTime.length >= 1) {
         fieldsValue.orderTimeEnd = fieldsValue.orderTime[1].format('YYYY-MM-DD HH:mm:ss');
@@ -144,7 +138,8 @@ export default class KdiLogistic extends SimpleMng {
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
     const { editFormRecord } = this.state;
-    const orgId = 253274870;
+    const {user}=this.props;
+    let orgId =user.currentUser.orgId;
     editFormRecord.orgId = orgId;
     return (
       <Form onSubmit={this.list} layout="inline">
@@ -206,9 +201,9 @@ export default class KdiLogistic extends SimpleMng {
   }
 
   render() {
-    const { kdilogistic: { kdilogistic }, loading } = this.props;
+    const { user,kdilogistic: { kdilogistic }, loading } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
-    let orgId = 253274870;
+    let orgId =user.currentUser.orgId;
     let ps;
     if (kdilogistic === undefined || kdilogistic.pageSize === undefined) {
       ps = 5;

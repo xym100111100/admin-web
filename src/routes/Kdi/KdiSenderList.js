@@ -24,8 +24,7 @@ export default class KdiSenderList extends PureComponent {
 
   handleReload() {
     const { user } = this.props;
-    // let orgId = user.currentUser.orgId;
-    let orgId = '253274870';
+     let orgId = user.currentUser.orgId;
     this.props.dispatch({
       type: `kdisender/listSenderByOrgId`,
       payload: { orgId: orgId },

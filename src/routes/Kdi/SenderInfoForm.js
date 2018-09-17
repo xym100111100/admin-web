@@ -56,9 +56,7 @@ export default class SenderInfoForm extends PureComponent {
       payload.senderProvince = payload.senderaddr[0];
       payload.senderCity = payload.senderaddr[1];
       payload.senderExpArea = payload.senderaddr[2];
-      // payload.orgId = user.currentUser.orgId;
-      payload.orgId = 123;
-      console.info(payload);
+       payload.orgId = user.currentUser.orgId;
       this.props.dispatch({
         type: 'kdisender/addSender',
         payload,

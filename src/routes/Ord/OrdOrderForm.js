@@ -6,16 +6,16 @@ import { connect } from 'dva';
 const FormItem = Form.Item;
 const { Option } = Select;
 // 添加与编辑的表单
-@connect(({ kdisender, loading }) => ({
-  kdisender,
-  loading: loading.models.kdisender
+@connect(({ kdisender,user, loading }) => ({
+  kdisender,user,
+  loading: loading.models.kdisender ||  loading.models.user
 }))
 @EditForm
 export default class OrdOrderForm extends PureComponent {
   //初始化
   componentDidMount() {
-    //这里连调的时候先写死orgId
-    let orgId = 253274870;
+    const { user } = this.props;
+    let orgId = user.currentUser.orgId;
     this.props.dispatch({
       type: `kdisender/list`,
       payload: { orgId: orgId },
