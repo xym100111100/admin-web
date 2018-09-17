@@ -62,6 +62,29 @@ export async function delRoles(params) {
   });
 }
 
+/**
+ * 添加用户到角色中
+ */
+export async function addUsers(params) {
+  return request('/pfm-svr/pfm/roleuser', {
+    method: 'POST',
+    body: {
+      ...params,
+    },
+  });
+}
+/**
+ * 从角色中移除用户
+ */
+export async function delUsers(params) {
+  return request('/pfm-svr/pfm/roleuser', {
+    method: 'DELETE',
+    body: {
+      ...params,
+    },
+  });
+}
+
 // export async function del(params) {
 //   return request(`/pfm-svr/pfm/userrole`, {
 //     method: 'DELETE',

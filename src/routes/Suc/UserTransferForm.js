@@ -43,13 +43,13 @@ export default class UserTransferForm extends PureComponent {
    * 处理两栏之间转移用户
    */
   handleUsersMove = (targetKeys, direction, moveKeys) => {
-    const { dispatch, id, sucuser: { addedUsers, unaddedUsers } } = this.props;
+    const { dispatch, id, sucuser: { addedUsers, unaddedUsers }, modelName, movePayload } = this.props;
     // 调用的model
-    const type = direction === 'left' ? 'sucuserorg/delUsers' : 'sucuserorg/addUsers';
+    const type = direction === 'left' ? `${modelName}/delUsers` : `${modelName}/addUsers`;
     // 已添加和未添加查询的页码
     const addedPageNum = addedUsers.pageNum;
     const unaddedPageNum = unaddedUsers.pageNum;
-    const payload = { id, addedPageNum, unaddedPageNum, moveIds: moveKeys };
+    const payload = { id, addedPageNum, unaddedPageNum, moveIds: moveKeys, ...movePayload };
     // 已添加和未添加用户模糊查询的关键字
     const addedKeys = this.state.rightKeys;
     const unaddedKeys = this.state.leftKeys;
@@ -69,8 +69,8 @@ export default class UserTransferForm extends PureComponent {
    * @param {Number} pageNum 第几页
    */
   handleSearch = (direction, keys, pageNum) => {
-    const { dispatch, id } = this.props;
-    const type = direction === 'left' ? 'sucuserorg/listUnaddedUsers' : 'sucuserorg/listAddedUsers';
+    const { dispatch, id, modelName } = this.props;
+    const type = direction === 'left' ? `${modelName}/listUnaddedUsers` : `${modelName}/listAddedUsers`;
     const payload = { id, keys, pageNum };
     dispatch({
       type,

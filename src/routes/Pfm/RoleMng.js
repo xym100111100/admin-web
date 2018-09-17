@@ -6,7 +6,6 @@ import DragSortTable from 'components/Rebue/DragSortTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import RoleForm from './RoleForm';
 import RoleActiForm from './RoleActiForm';
-import RoleUserForm from './RoleUserForm';
 import UserTransferForm from '../Suc/UserTransferForm';
 import styles from './RoleMng.less';
 
@@ -79,59 +78,6 @@ export default class RoleMng extends SimpleMng {
       },
     });
   };
-
-  // 分页翻页
-  // handleTableChange = pagination => {
-  //   const { selectedRows } = this.state;
-  //   if (selectedRows === undefined) {
-  //     return;
-  //   }
-  //   this.props.dispatch({
-  //     type: 'userrole/userList',
-  //     payload: {
-  //       pageNum: pagination.current,
-  //       pageSize: pagination.pageSize,
-  //       sysId: selectedRows[0].sysId,
-  //       roleId: selectedRows[0].id,
-  //     },
-  //     callback: () => {
-  //       this.setState();
-  //     },
-  //   });
-  // };
-
-  // 删除用户
-  // handleDelUser(record) {
-  //   const { selectedRows } = this.state;
-  //   this.props.dispatch({
-  //     type: `userrole/del`,
-  //     payload: {
-  //       userId: record.id,
-  //       roleId: selectedRows[0].id,
-  //       sysId: selectedRows[0].sysId,
-  //     },
-  //     callback: () => {
-  //       this.handleUserReload(selectedRows);
-  //     },
-  //   });
-  // }
-
-  // // 刷新用户列表
-  // handleUserReload(selectedRows) {
-  //   // 加载用户信息
-  //   this.props.dispatch({
-  //     type: 'userrole/userList',
-  //     payload: {
-  //       pageNum: 1,
-  //       pageSize: 5,
-  //       sysId: selectedRows[0].sysId,
-  //       roleId: selectedRows[0].id,
-  //     },
-  //     callback: () => {
-  //       this.setState({ selectedRows });
-  //     },
-  //   });
-  // }
 
   render() {
     const { pfmsys: { pfmsys }, pfmrole: { pfmrole }, loading, pfmsysloading } = this.props;
@@ -275,18 +221,10 @@ export default class RoleMng extends SimpleMng {
           />
         )}
         {editForm === 'roleUserForm' && (
-          // <RoleUserForm
-          //   visible
-          //   title={editFormTitle}
-          //   editFormType={editFormType}
-          //   record={editFormRecord}
-          //   // width={960}
-          //   closeModal={() => this.setState({ editForm: undefined })}
-          //   onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'pfmuserrole' })}
-          // />
           <UserTransferForm
             id={editFormRecord.id}
-            modelName="pfmuserrole" // 请求此model时显示loading
+            movePayload={{ sysId: editFormRecord.sysId }} // 传输框转移时的追加的请求参数
+            modelName="pfmuserrole"
             visible
             title={editFormTitle}
             width={815}

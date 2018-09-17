@@ -226,7 +226,7 @@ export default class OrgMng extends SimpleMng {
         {editForm === 'orgUserForm' && (
           <UserTransferForm
             id={editFormRecord.id}
-            modelName="sucuserorg" // 请求此model时显示loading
+            modelName="sucuserorg" //
             visible
             title={editFormTitle}
             width={815}

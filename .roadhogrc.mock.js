@@ -351,8 +351,12 @@ function addProxy(key, value) {
 }
 
 if (noProxy) {
-  addProxy('pfm-svr', 'http://127.0.0.1:20182/');
-  addProxy('suc-svr', 'http://127.0.0.1:9100/');
+  // addProxy('pfm-svr', 'http://127.0.0.1:20182/');
+  // addProxy('suc-svr', 'http://127.0.0.1:9100/');
+  // addProxy('pfm-svr', 'http://127.0.0.1:8080/pfm-svr');
+  // addProxy('suc-svr', 'http://127.0.0.1:8080/suc-svr/');
+  addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr');
+  addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
   addProxy('rna-svr', 'http://127.0.0.1:20088/');
   addProxy('kdi-svr', 'http://127.0.0.1:20080/');
   addProxy('onl-svr', 'http://127.0.0.1:9100/');

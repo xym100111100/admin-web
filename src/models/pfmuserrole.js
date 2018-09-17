@@ -6,6 +6,8 @@ import {
   listAddedAndUnaddedUsers,
   addRoles,
   delRoles,
+  addUsers,
+  delUsers,
 } from '../services/pfmuserrole';
 
 export default {
@@ -93,6 +95,29 @@ export default {
       });
       if (callback) callback(response);
     },
+    /**
+     * 添加用户到角色中
+     */
+    *addUsers({ payload, callback }, { call, put }) {
+      const response = yield call(addUsers, payload);
+      yield put({
+        type: 'sucuser/changeAddedAndUnaddedList',
+        payload: response,
+      });
+      if (callback) callback(response);
+    },
+    /**
+     * 从角色中移除用户
+     */
+    *delUsers({ payload, callback }, { call, put }) {
+      const response = yield call(delUsers, payload);
+      yield put({
+        type: 'sucuser/changeAddedAndUnaddedList',
+        payload: response,
+      });
+      if (callback) callback(response);
+    },
+
     // *del({ payload, callback }, { call }) {
     //   const response = yield call(del, payload);
     //   if (response.result === 1) {
