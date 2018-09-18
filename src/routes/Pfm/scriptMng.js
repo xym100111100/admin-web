@@ -11,17 +11,19 @@ const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const FormItem = Form.Item;
 
-@connect(({ pfmsys, pfmroleacti, pfmfunc, pfmscript, user, pfmrole,pfmactimenu, pfmactiurn, loading }) => ({
+@connect(({ pfmsys,pfmmenu, pfmroleacti, pfmfunc, pfmscript, user, pfmrole, pfmactimenu, pfmactiurn, loading }) => ({
   pfmscript,
+  pfmmenu,
   pfmsys,
   pfmroleacti,
   pfmfunc,
   pfmrole,
   user,
-  pfmactimenu, 
+  pfmactimenu,
   pfmactiurn,
   loading:
     loading.models.pfmscript ||
+    loading.models.pfmmenu ||
     loading.models.pfmsys ||
     loading.models.pfmfunc ||
     loading.models.pfmrole ||
@@ -48,22 +50,32 @@ export default class scriptMng extends SimpleMng {
   componentDidMount() {
     this.props.dispatch({
       type: `pfmsys/list`,
+      callback: data => {
+        this.getSysScriptText(data);
+      }
     });
     this.props.dispatch({
-      type: `pfmrole/listAll`,
+      type: `pfmrole/list`,
     });
+    this.props.dispatch({
+      type: 'pfmroleacti/list',
+    });
+    this.props.dispatch({
+      type: 'pfmmenu/list',
+      payload:{sysId:'damai-admin'}
+    });
+
     this.props.dispatch({
       type: `pfmfunc/list`,
     });
+
     this.props.dispatch({
-      type: 'pfmroleacti/listAll',
+      type: 'pfmactimenu/list',
     });
     this.props.dispatch({
-      type: 'pfmactimenu/listAll',
+      type: 'pfmactiurn/list',
     });
-    this.props.dispatch({
-      type: 'pfmactiurn/listAll',
-    });
+
   }
 
   /**
@@ -72,7 +84,7 @@ export default class scriptMng extends SimpleMng {
    */
   getMenuSql(dataArray) {
     const sqlArray = TreeUtils.convertTreeToFlat(dataArray);
-    let menuSql = '';
+    let menuSql = 'delete from  `PFM_MENU`  where 1=1;\n';
     for (const item of sqlArray) {
       item.icon = item.icon == null ? null : "'" + item.icon + "'";
       item.title = item.title == null ? null : "'" + item.title + "'";
@@ -110,7 +122,7 @@ export default class scriptMng extends SimpleMng {
    */
   getSysSql(dataArray) {
     const sqlArray = TreeUtils.convertTreeToFlat(dataArray);
-    let sysSql = '';
+    let sysSql = 'delete from `PFM_SYS` where 1=1;\n';
     for (const item of sqlArray) {
       sysSql +=
         "INSERT INTO `PFM_SYS`(`ID`,`NAME`,`REMARK`) values ('" +
@@ -135,6 +147,7 @@ export default class scriptMng extends SimpleMng {
   getFuncScriptSql(dataArray) {
     const ActiSql = this.getActiSql(dataArray);
     let funcSql = '-- 功能sql--\n';
+    funcSql+='delete from `PFM_FUNC` where 1=1;\n'
     for (const item of dataArray) {
       funcSql +=
         'INSERT INTO `PFM_FUNC`(`ID`,`SYS_ID`,`NAME`,`IS_ENABLED`,`ORDER_NO`,`REMARK`) values (' +
@@ -151,7 +164,7 @@ export default class scriptMng extends SimpleMng {
         item.remark +
         "');\n";
     }
-    funcSql +='\n'+ ActiSql;
+    funcSql += '\n' + ActiSql;
     //设置状态值以便复制
     this.setState({
       funcSql: funcSql,
@@ -166,6 +179,7 @@ export default class scriptMng extends SimpleMng {
   getRoleScriptSql(dataArray) {
     const sqlArray = TreeUtils.convertTreeToFlat(dataArray);
     let roleSql = '-- 角色sql \n';
+    roleSql+='delete from `PFM_ROLE` where 1=1;\n'
     for (const item of sqlArray) {
       roleSql +=
         'INSERT INTO `PFM_ROLE`(`ID`,`SYS_ID`,`NAME`,`IS_ENABLED`,`ORDER_NO`,`REMARK`) values (' +
@@ -182,7 +196,7 @@ export default class scriptMng extends SimpleMng {
         item.remark +
         "');\n";
     }
-    roleSql += '\n' +this.getRoleActiSql()+'\n';
+    roleSql += '\n' + this.getRoleActiSql() + '\n';
 
     //设置状态值以便复制
     this.setState({
@@ -325,8 +339,8 @@ export default class scriptMng extends SimpleMng {
         "'},\n";
     }
     roleScriptText += '\n';
-    roleScriptText +=this.getRoleActiScriptTest()+'\n';
-    //设置状态值以便复制
+    roleScriptText += this.getRoleActiScriptTest() + '\n';
+   // 设置状态值以便复制
     this.setState({
       roleScriptText: roleScriptText,
     });
@@ -374,8 +388,8 @@ export default class scriptMng extends SimpleMng {
         "'},\n";
     }
     actiScriptText += '\n';
-    actiScriptText+=this.getActiMenuScriptTest()+'\n';
-    actiScriptText+=this.getActiUrlScriptTest()+'\n';
+    actiScriptText += this.getActiMenuScriptTest() + '\n';
+    actiScriptText += this.getActiUrlScriptTest() + '\n';
     return actiScriptText;
   };
 
@@ -392,6 +406,7 @@ export default class scriptMng extends SimpleMng {
       }
     }
     let actiSql = '-- 动作sql--\n';
+    actiSql+='delete from `PFM_ACTI` where 1=1;\n'
     for (const item of array) {
       actiSql +=
         'INSERT INTO `PFM_ACTI`(`ID`,`FUNC_ID`,`IS_AUTH`,`SYS_ID`,`NAME`,`IS_ENABLED`,`ORDER_NO`,`REMARK`) values (' +
@@ -412,9 +427,9 @@ export default class scriptMng extends SimpleMng {
         item.remark +
         "');\n";
     }
-   
-    actiSql +='\n'+this.getActiMenuSql()+'\n';
-    actiSql += this.getActiUrnSql()+'\n';
+
+    actiSql += '\n' + this.getActiMenuSql() + '\n';
+    actiSql += this.getActiUrnSql() + '\n';
     return actiSql;
   };
 
@@ -424,6 +439,7 @@ export default class scriptMng extends SimpleMng {
   getRoleActiSql = () => {
     const { pfmroleacti } = this.props;
     let roleActiSql = '-- 角色动作sql--\n';
+    roleActiSql +='delete from `PFM_ROLE_ACTI` where 1=1;\n'
     for (const item of pfmroleacti.pfmroleacti) {
       roleActiSql +=
         'INSERT INTO `PFM_ROLE_ACTI`(`ID`,`ROLE_ID`,`ACTI_ID`) values (' +
@@ -436,50 +452,51 @@ export default class scriptMng extends SimpleMng {
     }
     return roleActiSql;
   };
-  
+
 
   /**
    * 获取角色动作script
    */
-  getRoleActiScriptTest=()=> {
+  getRoleActiScriptTest = () => {
     const { pfmroleacti } = this.props;
     let roleActiScript = '// 角色动作\n';
     for (const item of pfmroleacti.pfmroleacti) {
       roleActiScript +=
-      "{id:'" +item.id+
-      "',roleId:'"+item.roleId+
-      "',actiId:'"+item.actiId+
-      "'},\n";
+        "{id:'" + item.id +
+        "',roleId:'" + item.roleId +
+        "',actiId:'" + item.actiId +
+        "'},\n";
     }
 
     return roleActiScript;
   }
-  
-  getActiMenuScriptTest=()=>{
+
+  getActiMenuScriptTest = () => {
     const { pfmactimenu } = this.props;
     let menuActiScript = '// 菜单动作\n';
     for (const item of pfmactimenu.pfmactimenu) {
       menuActiScript +=
-      "{id:'" +item.id+
-      "',menuId:'"+item.menuId+
-      "',actiId:'"+item.actiId+
-      "'},\n"
+        "{id:'" + item.id +
+        "',menuId:'" + item.menuId +
+        "',actiId:'" + item.actiId +
+        "'},\n"
     }
     return menuActiScript;
   }
 
-  getActiMenuSql=()=>{
+  getActiMenuSql = () => {
     const { pfmactimenu } = this.props;
     let menuActiSql = '-- 动作菜单sql\n';
+    menuActiSql+='delete from  `PFM_ACTI_MENU`  where 1=1;\n'
     for (const item of pfmactimenu.pfmactimenu) {
       menuActiSql +=
-      'INSERT INTO `PFM_ACTI_MENU`(`ID`,`MENU_ID`,`ACTI_ID`) values (' +
-      item.id +
-      ',' +
-      item.menuId +
-      ',' +
-      item.actiId +
-      ');\n';
+        'INSERT INTO `PFM_ACTI_MENU`(`ID`,`MENU_ID`,`ACTI_ID`) values (' +
+        item.id +
+        ',' +
+        item.menuId +
+        ',' +
+        item.actiId +
+        ');\n';
     }
     return menuActiSql;
   }
@@ -487,66 +504,127 @@ export default class scriptMng extends SimpleMng {
   /**
    * 获取动作urn
    */
-  getActiUrlScriptTest=()=>{
+  getActiUrlScriptTest = () => {
     const { pfmactiurn } = this.props;
     let actiUrlScript = '// 动作urn\n';
     for (const item of pfmactiurn.pfmactiurn) {
       actiUrlScript +=
-      "{id:'" +item.id+
-      "',actiId:'"+item.actiId+
-      "',urn:'"+item.urn+
-      "'},\n"
+        "{id:'" + item.id +
+        "',actiId:'" + item.actiId +
+        "',urn:'" + item.urn +
+        "'},\n"
     }
     return actiUrlScript;
   }
 
-  getActiUrnSql=()=>{
+  getActiUrnSql = () => {
     const { pfmactiurn } = this.props;
     let actiUrlSql = '-- 动作urnSql\n';
+    actiUrlSql +='delete from `PFM_ACTI_URN` where 1=1;\n'
     for (const item of pfmactiurn.pfmactiurn) {
       actiUrlSql +=
-      'INSERT INTO `PFM_ACTI_URN`(`ID`,`ACTI_ID`,`URN`) values (' +
-      item.id +
-      ',' +
-      item.actiId +
-      ",'" +
-      item.urn +
-      "');\n";
+        'INSERT INTO `PFM_ACTI_URN`(`ID`,`ACTI_ID`,`URN`) values (' +
+        item.id +
+        ',' +
+        item.actiId +
+        ",'" +
+        item.urn +
+        "');\n";
     }
     return actiUrlSql;
   }
 
 
   select = obj => {
+    const {  pfmfunc, pfmsys, pfmrole ,pfmmenu} = this.props;
+    const menus =  pfmmenu.pfmmenu
     if (obj === 1) {
+      this.props.dispatch({
+        type: `pfmrole/list`,
+
+      });
+      this.props.dispatch({
+        type: 'pfmroleacti/list',
+      });
+        
       this.setState({
         option: 'roleScriptText',
       });
+
+      this.getRoleScriptText(pfmrole.pfmrole)
+
     } else if (obj === 2) {
+      this.props.dispatch({
+        type: `pfmfunc/list`,
+      });
+
+      this.props.dispatch({
+        type: 'pfmactimenu/list',
+      });
+      this.props.dispatch({
+        type: 'pfmactiurn/list',
+      });
+      this.getFuncScriptText(pfmfunc.pfmfunc)
       this.setState({
         option: 'funcScriptText',
       });
     } else if (obj === 3) {
+      this.props.dispatch({
+        type: `pfmsys/list`,
+      });
+      this.getSysScriptText(pfmsys.pfmsys)
       this.setState({
         option: 'sysScriptText',
       });
     } else if (obj === 4) {
+      this.props.dispatch({
+        type: 'pfmmenu/list',
+        payload:{sysId:'damai-admin'}
+      });
+      this.getMenuScriptText(menus)
       this.setState({
         option: 'menuScriptText',
       });
     } else if (obj === 5) {
+      this.props.dispatch({
+        type: `pfmfunc/list`,
+      });
+
+      this.props.dispatch({
+        type: 'pfmactimenu/list',
+      });
+      this.props.dispatch({
+        type: 'pfmactiurn/list',
+      });
+      this.getFuncScriptSql(pfmfunc.pfmfunc)
       this.setState({
         option: 'funcSql',
       });
     } else if (obj === 6) {
+      this.props.dispatch({
+        type: `pfmsys/list`,
+      });
+      this.getSysSql(pfmsys.pfmsys)
       this.setState({
         option: 'sysSql',
       });
     } else if (obj === 7) {
+      this.props.dispatch({
+        type: `pfmrole/list`,
+      });
+      this.props.dispatch({
+        type: 'pfmroleacti/list',
+      });
+      this.getRoleScriptSql(pfmrole.pfmrole)
       this.setState({
         option: 'roleSql',
       });
     } else if (obj === 8) {
+      this.props.dispatch({
+        type: 'pfmmenu/list',
+        payload:{sysId:'damai-admin'}
+      });
+      this.getMenuSql(menus)
       this.setState({
         option: 'menuSql',
       });
@@ -631,10 +709,10 @@ export default class scriptMng extends SimpleMng {
             {this.state.option === 'menuSql' && (
               <Col md={24} sm={24}>
                 <textarea
-                  value={this.state.menuSql}
+                  defaultValue={this.state.menuSql}
                   style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
                 >
-                  {this.getMenuSql(menus)}
+
                 </textarea>
               </Col>
             )}
@@ -651,60 +729,60 @@ export default class scriptMng extends SimpleMng {
             {this.state.option === 'funcScriptText' && (
               <Col md={24} sm={24}>
                 <textarea
-                  value={this.state.funcScriptText}
+                  defaultValue={this.state.funcScriptText}
                   style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
                 >
-                  {this.getFuncScriptText(pfmfunc.pfmfunc)}
+
                 </textarea>
               </Col>
             )}
             {this.state.option === 'funcSql' && (
               <Col md={24} sm={24}>
                 <textarea
-                  value={this.state.funcSql}
+                  defaultValue={this.state.funcSql}
                   style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
                 >
-                  {this.getFuncScriptSql(pfmfunc.pfmfunc)}
+
                 </textarea>
               </Col>
             )}
             {this.state.option === 'roleScriptText' && (
               <Col md={24} sm={24}>
                 <textarea
-                  value={this.state.roleScriptText}
+                  defaultValue={this.state.roleScriptText}
                   style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
                 >
-                  {this.getRoleScriptText(pfmrole.pfmrole)}
+
                 </textarea>
               </Col>
             )}
             {this.state.option === 'roleSql' && (
               <Col md={24} sm={24}>
                 <textarea
-                  value={this.state.roleSql}
+                  defaultValue={this.state.roleSql}
                   style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
                 >
-                  {this.getRoleScriptSql(pfmrole.pfmrole)}
+
                 </textarea>
               </Col>
             )}
             {this.state.option === 'menuScriptText' && (
               <Col md={24} sm={24}>
                 <textarea
-                  value={this.state.menuScriptText}
+                  defaultValue={this.state.menuScriptText}
                   style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
                 >
-                  {this.getMenuScriptText(menus)}
+
                 </textarea>
               </Col>
             )}
             {this.state.option === 'sysSql' && (
               <Col md={24} sm={24}>
                 <textarea
-                  value={this.state.sysSql}
+                  defaultValue={this.state.sysSql}
                   style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
                 >
-                  {this.getSysSql(pfmsys.pfmsys)}
+
                 </textarea>
               </Col>
             )}
