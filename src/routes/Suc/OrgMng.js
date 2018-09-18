@@ -169,12 +169,32 @@ export default class OrgMng extends SimpleMng {
       },
     ];
 
+    let ps;
+    if (sucorg === undefined || sucorg.pageSize === undefined) {
+      ps = 5;
+    } else {
+      ps = sucorg.pageSize;
+    }
+    let tl;
+    if (sucorg === undefined || sucorg.total === undefined) {
+      tl = 1;
+    } else {
+      tl = Number(sucorg.total);
+    }
+    let sucorgData;
+    if (sucorg === undefined) {
+      sucorgData = [];
+    } else {
+      sucorgData = sucorg.list;
+    }
+
     // 分页
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      pageSize: 5,
-      total: Number(sucorg.total),
+      pageSize: ps,
+      total: tl,
+      pageSizeOptions: ['5', '10'],
     };
 
     return (
@@ -205,7 +225,7 @@ export default class OrgMng extends SimpleMng {
                 rowKey="id"
                 pagination={paginationProps}
                 loading={loading}
-                dataSource={sucorg.list}
+                dataSource={sucorgData}
                 columns={columns}
                 onChange={this.handleTableChange}
               />
