@@ -56,7 +56,7 @@ export default class RnaRealname extends SimpleMng {
   inspect(fields, where) {
     if (where === 3) {
       let Reason = prompt('请填写拒绝原因', '身份信息不符合');
-      if (Reason === null) {
+      if (Reason === null || Reason==="") {
         return;
       }
       fields.rejectReason = Reason;

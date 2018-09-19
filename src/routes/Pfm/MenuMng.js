@@ -204,6 +204,14 @@ export default class MenuMng extends EditMng {
     });
   };
 
+  deleteMenu=(record)=>{
+     if(record.children !== undefined){
+      message.error('请先删除子菜单');
+      return;
+     }
+     this.handleDel(record)
+  }
+
   render() {
     const { pfmsys: { pfmsys }, pfmmenu: { pfmmenu }, loading, pfmsysloading } = this.props;
     const { expandedRowKeys, editType, isDrag } = this.state;
@@ -342,7 +350,7 @@ export default class MenuMng extends EditMng {
                   <Divider type="vertical" />
                 </Col>
                 <Col xs={24} xxl={5}>
-                  <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record)}>
+                  <Popconfirm title="是否要删除此行？" onConfirm={() => this.deleteMenu(record)}>
                     <a>删除</a>
                   </Popconfirm>
                 </Col>
