@@ -49,14 +49,14 @@ export async function delUsers(params) {
   });
 }
 
-// export async function add(params) {
-//   return request(`/suc-svr/suc/user/adduserorg?${stringify(params)}`, {
-//     method: 'PUT',
-//   });
-// }
+export async function add(params) {
+  return request(`/suc-svr/suc/user/adduserorg?${stringify(params)}`, {
+    method: 'PUT',
+  });
+}
 
-// export async function del(params) {
-//   return request(`/suc-svr/suc/user/deluserorgbyid?${stringify(params)}`, {
-//     method: 'PUT',
-//   });
-// }
+export async function del(params) {
+  return request(`/suc-svr/suc/user/deluserorgbyid?${stringify(params)}`, {
+    method: 'PUT',
+  });
+}

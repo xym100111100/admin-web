@@ -1,7 +1,7 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Divider, Popconfirm, Form, Input, Button, Table, Switch, Menu, Dropdown, Icon } from 'antd';
+import { Row,message, Col, Card, Divider, Popconfirm, Form, Input, Button, Table, Switch, Menu, Dropdown, Icon } from 'antd';
 import DescriptionList from 'components/DescriptionList';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import UserForm from './UserForm';
@@ -17,7 +17,7 @@ const { Description } = DescriptionList;
   sucuser,
   sucorg,
   pfmuserrole,
-  loading: loading.models.sucuser,
+  loading: loading.models.sucuser 
 }))
 @Form.create()
 export default class UserMng extends SimpleMng {
@@ -47,6 +47,22 @@ export default class UserMng extends SimpleMng {
 
   // 锁定/解锁用户
   handleEnable(record) {
+    let Reason=null;
+    if(record.isLock ===false){
+      Reason= prompt('请填写锁定原因');
+    }else{
+      Reason= prompt('请填写解锁原因');
+    }
+    if (Reason === null ) {
+      return;
+    }
+    if(Reason==="" && record.isLock ===false){
+      message.error("锁定原因不能为空");
+      return;
+    }else if(Reason==="" && record.isLock ===true){
+      message.error("解锁原因不能为空");
+      return;
+    }
     this.props.dispatch({
       type: 'sucuser/enable',
       payload: { id: record.id, isLock: !record.isLock },
@@ -204,7 +220,7 @@ export default class UserMng extends SimpleMng {
               <Divider type="vertical" />
               <a
                 onClick={() =>
-                  this.showEditForm({
+                  this.showAddForm({
                     editForm: 'userOrgForm',
                     editFormTitle: '设置用户的组织',
                     editFormRecord: record, // 不设置ID不请求，直接设置状态的editFormRecord（供设置组件属性时使用）
