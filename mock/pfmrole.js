@@ -51,6 +51,10 @@ export function pfmroleList(req, res, u) {
   }
   const params = parse(url, true).query;
   const list = [];
+  if(params.sysId===undefined){
+    res.json(tableListDataSource);
+    return;
+  }
   for (const item of tableListDataSource) {
     if (item.sysId === params.sysId) list.push(item);
   }

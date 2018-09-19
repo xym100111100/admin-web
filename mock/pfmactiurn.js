@@ -47,6 +47,9 @@ export function pfmactiurnList(req, res, u) {
   }
   const params = parse(url, true).query;
   const result = [];
+  if(params.actiId===undefined){
+      return  res.json(tableListDataSource);
+  }
   for (const item of tableListDataSource) {
     if (item.actiId === params.actiId) {
       result.push(item);

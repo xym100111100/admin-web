@@ -223,12 +223,32 @@ export default class UserMng extends SimpleMng {
       },
     ];
 
+    let ps;
+    if (sucuser === undefined || sucuser.pageSize === undefined) {
+      ps = 5;
+    } else {
+      ps = sucuser.pageSize;
+    }
+    let tl;
+    if (sucuser === undefined || sucuser.total === undefined) {
+      tl = 1;
+    } else {
+      tl = Number(sucuser.total);
+    }
+    let sucuserData;
+    if (sucuser === undefined) {
+      sucuserData = [];
+    } else {
+      sucuserData = sucuser.list;
+    }
+
     // 分页
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      pageSize: 5,
-      total: Number(sucuser.total),
+      pageSize: ps,
+      total: tl,
+      pageSizeOptions: ['5', '10'],
     };
 
     const MoreBtn = props => {
@@ -282,7 +302,7 @@ export default class UserMng extends SimpleMng {
                 rowKey="id"
                 pagination={paginationProps}
                 loading={loading}
-                dataSource={sucuser.list}
+                dataSource={sucuserData}
                 columns={columns}
                 onChange={this.handleTableChange}
                 expandedRowRender={record => (

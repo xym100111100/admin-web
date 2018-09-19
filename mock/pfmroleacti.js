@@ -28,6 +28,9 @@ export function pfmroleactiList(req, res, u) {
   }
   const params = parse(url, true).query;
   const result = [];
+  if(params.roleId===undefined){
+   return res.json(tableListDataSource);
+  }
   for (const item of tableListDataSource) {
     if (item.roleId === params.roleId) {
       result.push(item);
