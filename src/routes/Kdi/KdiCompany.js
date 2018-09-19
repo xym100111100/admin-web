@@ -19,10 +19,8 @@ export default class KdiCompany extends SimpleMng {
   }
   //初始化
   componentDidMount() {
-    // let {user} =this.props
-    // let orgId=user.currentUser.orgId
-    //这里连调的时候先写死orgId
-    let orgId = 253274870;
+    let {user} =this.props
+     let orgId=user.currentUser.orgId
     this.props.dispatch({
       type: `${this.moduleCode}/list`,
       payload: { orgId: orgId },
@@ -30,10 +28,8 @@ export default class KdiCompany extends SimpleMng {
   }
   // 刷新
   handleReload() {
-    // let {user} =this.props
-    // let orgId=user.currentUser.orgId
-    //这里连调的时候先写死orgId
-    let orgId = 253274870;
+    let {user} =this.props
+    let orgId=user.currentUser.orgId
     this.props.dispatch({
       type: `${this.moduleCode}/list`,
       payload: { orgId: orgId },
@@ -54,8 +50,7 @@ export default class KdiCompany extends SimpleMng {
   render() {
     const { kdicompany: { kdicompany }, loading, user } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
-    //  const orgId=user.currentUser.orgId; 不是连调的时候应该把这里放开获取动态的orgId
-    const orgId = 253274870;
+     const orgId=user.currentUser.orgId; 
     editFormRecord.orgId = orgId;
     const columns = [
       {

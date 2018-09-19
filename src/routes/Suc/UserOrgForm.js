@@ -72,7 +72,7 @@ export default class OrgUserForm extends PureComponent {
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
           <Col md={12} sm={24}>
             <FormItem label="">
-              {getFieldDecorator('name')(<Input placeholder="登录账号/昵称/微信昵称/QQ昵称/手机号码/QQ邮箱" />)}
+              {getFieldDecorator('name')(<Input placeholder="输入组织名字" />)}
             </FormItem>
           </Col>
           <Col md={12} sm={24}>
@@ -111,7 +111,7 @@ export default class OrgUserForm extends PureComponent {
                 />
               </List.Item>
             )}
-          />,
+          />
         </div>
       </div>
     );

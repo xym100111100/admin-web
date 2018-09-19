@@ -111,6 +111,17 @@ export default class UserMng extends SimpleMng {
     });
   }
 
+  selectUser=(e)=>{
+    let paload={};
+    paload.users=e;
+    paload.pageNum=this.state.options.pageNum;
+    paload.pageSize=this.state.options.pageSize;
+    this.props.dispatch({
+      type: `${this.moduleCode}/list`,
+      payload: paload,
+    });
+  }
+
   // 搜索  原先的input查询参数为users
   renderSearchForm() {
     return (
@@ -130,7 +141,7 @@ export default class UserMng extends SimpleMng {
             </Button>
           </Col>
           <Col md={8} sm={24} >
-            <Search placeholder="登录账号/昵称/微信昵称/QQ昵称/手机号码" onSearch={this.handleSearch} />
+            <Search placeholder="登录账号/昵称/微信昵称/QQ昵称/手机号码" onSearch={this.selectUser} />
           </Col>
         </Row>
       </Form>
