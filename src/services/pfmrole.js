@@ -6,7 +6,7 @@ export async function list(params) {
 }
 
 export async function listAll() {
-  return request(`/pfm-svr/pfm/role/ListAll`);
+  return request(`/pfm-svr/pfm/role/listAll`);
 }
 
 export async function getById(params) {

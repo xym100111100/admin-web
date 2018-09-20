@@ -55,7 +55,7 @@ export default class scriptMng extends SimpleMng {
       }
     });
     this.props.dispatch({
-      type: `pfmrole/list`,
+      type: `pfmrole/listAll`,
     });
     this.props.dispatch({
       type: 'pfmroleacti/list',
@@ -540,7 +540,7 @@ export default class scriptMng extends SimpleMng {
     const menus =  pfmmenu.pfmmenu
     if (obj === 1) {
       this.props.dispatch({
-        type: `pfmrole/list`,
+        type: `pfmrole/listAll`,
 
       });
       this.props.dispatch({
@@ -610,7 +610,7 @@ export default class scriptMng extends SimpleMng {
       });
     } else if (obj === 7) {
       this.props.dispatch({
-        type: `pfmrole/list`,
+        type: `pfmrole/listAll`,
       });
       this.props.dispatch({
         type: 'pfmroleacti/list',
