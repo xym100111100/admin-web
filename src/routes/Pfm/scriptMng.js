@@ -4,14 +4,14 @@ import { connect } from 'dva';
 import { Row, Col, Radio, Form, Card, Button, message } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import TreeUtils from '../../utils/TreeUtils';
-import styles from './scriptMng.less';
+import styles from './ScriptMng.less';
 //引入复制插件，报错需要yarn install
 import copy from 'copy-to-clipboard';
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const FormItem = Form.Item;
 
-@connect(({ pfmsys,pfmmenu, pfmroleacti, pfmfunc, pfmscript, user, pfmrole, pfmactimenu, pfmactiurn, loading }) => ({
+@connect(({ pfmsys, pfmmenu, pfmroleacti, pfmfunc, pfmscript, user, pfmrole, pfmactimenu, pfmactiurn, loading }) => ({
   pfmscript,
   pfmmenu,
   pfmsys,
@@ -32,7 +32,7 @@ const FormItem = Form.Item;
     loading.models.pfmactimenu ||
     loading.models.pfmroleacti,
 }))
-export default class scriptMng extends SimpleMng {
+export default class ScriptMng extends SimpleMng {
   constructor() {
     super();
     this.moduleCode = 'pfmscript';
@@ -52,7 +52,7 @@ export default class scriptMng extends SimpleMng {
       type: `pfmsys/list`,
       callback: data => {
         this.getSysScriptText(data);
-      }
+      },
     });
     this.props.dispatch({
       type: `pfmrole/listAll`,
@@ -62,7 +62,7 @@ export default class scriptMng extends SimpleMng {
     });
     this.props.dispatch({
       type: 'pfmmenu/list',
-      payload:{sysId:'damai-admin'}
+      payload: { sysId: 'damai-admin' },
     });
 
     this.props.dispatch({
@@ -75,7 +75,6 @@ export default class scriptMng extends SimpleMng {
     this.props.dispatch({
       type: 'pfmactiurn/list',
     });
-
   }
 
   /**
@@ -147,7 +146,7 @@ export default class scriptMng extends SimpleMng {
   getFuncScriptSql(dataArray) {
     const ActiSql = this.getActiSql(dataArray);
     let funcSql = '-- 功能sql--\n';
-    funcSql+='delete from `PFM_FUNC` where 1=1;\n'
+    funcSql += 'delete from `PFM_FUNC` where 1=1;\n';
     for (const item of dataArray) {
       funcSql +=
         'INSERT INTO `PFM_FUNC`(`ID`,`SYS_ID`,`NAME`,`IS_ENABLED`,`ORDER_NO`,`REMARK`) values (' +
@@ -179,7 +178,7 @@ export default class scriptMng extends SimpleMng {
   getRoleScriptSql(dataArray) {
     const sqlArray = TreeUtils.convertTreeToFlat(dataArray);
     let roleSql = '-- 角色sql \n';
-    roleSql+='delete from `PFM_ROLE` where 1=1;\n'
+    roleSql += 'delete from `PFM_ROLE` where 1=1;\n';
     for (const item of sqlArray) {
       roleSql +=
         'INSERT INTO `PFM_ROLE`(`ID`,`SYS_ID`,`NAME`,`IS_ENABLED`,`ORDER_NO`,`REMARK`) values (' +
@@ -244,7 +243,7 @@ export default class scriptMng extends SimpleMng {
         ',' +
         'icon: ' +
         item.icon +
-        "," +
+        ',' +
         "remark: '" +
         item.remark +
         "'});\n";
@@ -340,7 +339,7 @@ export default class scriptMng extends SimpleMng {
     }
     roleScriptText += '\n';
     roleScriptText += this.getRoleActiScriptTest() + '\n';
-   // 设置状态值以便复制
+    // 设置状态值以便复制
     this.setState({
       roleScriptText: roleScriptText,
     });
@@ -406,7 +405,7 @@ export default class scriptMng extends SimpleMng {
       }
     }
     let actiSql = '-- 动作sql--\n';
-    actiSql+='delete from `PFM_ACTI` where 1=1;\n'
+    actiSql += 'delete from `PFM_ACTI` where 1=1;\n';
     for (const item of array) {
       actiSql +=
         'INSERT INTO `PFM_ACTI`(`ID`,`FUNC_ID`,`IS_AUTH`,`SYS_ID`,`NAME`,`IS_ENABLED`,`ORDER_NO`,`REMARK`) values (' +
@@ -439,7 +438,7 @@ export default class scriptMng extends SimpleMng {
   getRoleActiSql = () => {
     const { pfmroleacti } = this.props;
     let roleActiSql = '-- 角色动作sql--\n';
-    roleActiSql +='delete from `PFM_ROLE_ACTI` where 1=1;\n'
+    roleActiSql += 'delete from `PFM_ROLE_ACTI` where 1=1;\n';
     for (const item of pfmroleacti.pfmroleacti) {
       roleActiSql +=
         'INSERT INTO `PFM_ROLE_ACTI`(`ID`,`ROLE_ID`,`ACTI_ID`) values (' +
@@ -453,7 +452,6 @@ export default class scriptMng extends SimpleMng {
     return roleActiSql;
   };
 
-
   /**
    * 获取角色动作script
    */
@@ -461,33 +459,25 @@ export default class scriptMng extends SimpleMng {
     const { pfmroleacti } = this.props;
     let roleActiScript = '// 角色动作\n';
     for (const item of pfmroleacti.pfmroleacti) {
-      roleActiScript +=
-        "{id:'" + item.id +
-        "',roleId:'" + item.roleId +
-        "',actiId:'" + item.actiId +
-        "'},\n";
+      roleActiScript += "{id:'" + item.id + "',roleId:'" + item.roleId + "',actiId:'" + item.actiId + "'},\n";
     }
 
     return roleActiScript;
-  }
+  };
 
   getActiMenuScriptTest = () => {
     const { pfmactimenu } = this.props;
     let menuActiScript = '// 菜单动作\n';
     for (const item of pfmactimenu.pfmactimenu) {
-      menuActiScript +=
-        "{id:'" + item.id +
-        "',menuId:'" + item.menuId +
-        "',actiId:'" + item.actiId +
-        "'},\n"
+      menuActiScript += "{id:'" + item.id + "',menuId:'" + item.menuId + "',actiId:'" + item.actiId + "'},\n";
     }
     return menuActiScript;
-  }
+  };
 
   getActiMenuSql = () => {
     const { pfmactimenu } = this.props;
     let menuActiSql = '-- 动作菜单sql\n';
-    menuActiSql+='delete from  `PFM_ACTI_MENU`  where 1=1;\n'
+    menuActiSql += 'delete from  `PFM_ACTI_MENU`  where 1=1;\n';
     for (const item of pfmactimenu.pfmactimenu) {
       menuActiSql +=
         'INSERT INTO `PFM_ACTI_MENU`(`ID`,`MENU_ID`,`ACTI_ID`) values (' +
@@ -499,7 +489,7 @@ export default class scriptMng extends SimpleMng {
         ');\n';
     }
     return menuActiSql;
-  }
+  };
 
   /**
    * 获取动作urn
@@ -508,19 +498,15 @@ export default class scriptMng extends SimpleMng {
     const { pfmactiurn } = this.props;
     let actiUrlScript = '// 动作urn\n';
     for (const item of pfmactiurn.pfmactiurn) {
-      actiUrlScript +=
-        "{id:'" + item.id +
-        "',actiId:'" + item.actiId +
-        "',urn:'" + item.urn +
-        "'},\n"
+      actiUrlScript += "{id:'" + item.id + "',actiId:'" + item.actiId + "',urn:'" + item.urn + "'},\n";
     }
     return actiUrlScript;
-  }
+  };
 
   getActiUrnSql = () => {
     const { pfmactiurn } = this.props;
     let actiUrlSql = '-- 动作urnSql\n';
-    actiUrlSql +='delete from `PFM_ACTI_URN` where 1=1;\n'
+    actiUrlSql += 'delete from `PFM_ACTI_URN` where 1=1;\n';
     for (const item of pfmactiurn.pfmactiurn) {
       actiUrlSql +=
         'INSERT INTO `PFM_ACTI_URN`(`ID`,`ACTI_ID`,`URN`) values (' +
@@ -532,27 +518,24 @@ export default class scriptMng extends SimpleMng {
         "');\n";
     }
     return actiUrlSql;
-  }
-
+  };
 
   select = obj => {
-    const {  pfmfunc, pfmsys, pfmrole ,pfmmenu} = this.props;
-    const menus =  pfmmenu.pfmmenu
+    const { pfmfunc, pfmsys, pfmrole, pfmmenu } = this.props;
+    const menus = pfmmenu.pfmmenu;
     if (obj === 1) {
       this.props.dispatch({
         type: `pfmrole/listAll`,
-
       });
       this.props.dispatch({
         type: 'pfmroleacti/list',
       });
-        
+
       this.setState({
         option: 'roleScriptText',
       });
 
-      this.getRoleScriptText(pfmrole.pfmrole)
-
+      this.getRoleScriptText(pfmrole.pfmrole);
     } else if (obj === 2) {
       this.props.dispatch({
         type: `pfmfunc/list`,
@@ -564,7 +547,7 @@ export default class scriptMng extends SimpleMng {
       this.props.dispatch({
         type: 'pfmactiurn/list',
       });
-      this.getFuncScriptText(pfmfunc.pfmfunc)
+      this.getFuncScriptText(pfmfunc.pfmfunc);
       this.setState({
         option: 'funcScriptText',
       });
@@ -572,16 +555,16 @@ export default class scriptMng extends SimpleMng {
       this.props.dispatch({
         type: `pfmsys/list`,
       });
-      this.getSysScriptText(pfmsys.pfmsys)
+      this.getSysScriptText(pfmsys.pfmsys);
       this.setState({
         option: 'sysScriptText',
       });
     } else if (obj === 4) {
       this.props.dispatch({
         type: 'pfmmenu/list',
-        payload:{sysId:'damai-admin'}
+        payload: { sysId: 'damai-admin' },
       });
-      this.getMenuScriptText(menus)
+      this.getMenuScriptText(menus);
       this.setState({
         option: 'menuScriptText',
       });
@@ -596,7 +579,7 @@ export default class scriptMng extends SimpleMng {
       this.props.dispatch({
         type: 'pfmactiurn/list',
       });
-      this.getFuncScriptSql(pfmfunc.pfmfunc)
+      this.getFuncScriptSql(pfmfunc.pfmfunc);
       this.setState({
         option: 'funcSql',
       });
@@ -604,7 +587,7 @@ export default class scriptMng extends SimpleMng {
       this.props.dispatch({
         type: `pfmsys/list`,
       });
-      this.getSysSql(pfmsys.pfmsys)
+      this.getSysSql(pfmsys.pfmsys);
       this.setState({
         option: 'sysSql',
       });
@@ -615,16 +598,16 @@ export default class scriptMng extends SimpleMng {
       this.props.dispatch({
         type: 'pfmroleacti/list',
       });
-      this.getRoleScriptSql(pfmrole.pfmrole)
+      this.getRoleScriptSql(pfmrole.pfmrole);
       this.setState({
         option: 'roleSql',
       });
     } else if (obj === 8) {
       this.props.dispatch({
         type: 'pfmmenu/list',
-        payload:{sysId:'damai-admin'}
+        payload: { sysId: 'damai-admin' },
       });
-      this.getMenuSql(menus)
+      this.getMenuSql(menus);
       this.setState({
         option: 'menuSql',
       });
@@ -711,9 +694,7 @@ export default class scriptMng extends SimpleMng {
                 <textarea
                   defaultValue={this.state.menuSql}
                   style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
-                >
-
-                </textarea>
+                />
               </Col>
             )}
             {this.state.option === 'sysScriptText' && (
@@ -731,9 +712,7 @@ export default class scriptMng extends SimpleMng {
                 <textarea
                   defaultValue={this.state.funcScriptText}
                   style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
-                >
-
-                </textarea>
+                />
               </Col>
             )}
             {this.state.option === 'funcSql' && (
@@ -741,9 +720,7 @@ export default class scriptMng extends SimpleMng {
                 <textarea
                   defaultValue={this.state.funcSql}
                   style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
-                >
-
-                </textarea>
+                />
               </Col>
             )}
             {this.state.option === 'roleScriptText' && (
@@ -751,9 +728,7 @@ export default class scriptMng extends SimpleMng {
                 <textarea
                   defaultValue={this.state.roleScriptText}
                   style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
-                >
-
-                </textarea>
+                />
               </Col>
             )}
             {this.state.option === 'roleSql' && (
@@ -761,9 +736,7 @@ export default class scriptMng extends SimpleMng {
                 <textarea
                   defaultValue={this.state.roleSql}
                   style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
-                >
-
-                </textarea>
+                />
               </Col>
             )}
             {this.state.option === 'menuScriptText' && (
@@ -771,9 +744,7 @@ export default class scriptMng extends SimpleMng {
                 <textarea
                   defaultValue={this.state.menuScriptText}
                   style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
-                >
-
-                </textarea>
+                />
               </Col>
             )}
             {this.state.option === 'sysSql' && (
@@ -781,9 +752,7 @@ export default class scriptMng extends SimpleMng {
                 <textarea
                   defaultValue={this.state.sysSql}
                   style={{ width: '100%', whiteSpace: 'pre', overflow: 'scroll', height: 500 }}
-                >
-
-                </textarea>
+                />
               </Col>
             )}
           </Row>

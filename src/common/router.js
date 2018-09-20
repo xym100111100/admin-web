@@ -72,7 +72,7 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['rnarealname'], () => import('../routes/Rna/RnaRealname')),
     },
     '/rep/rep-logistic': {
-      component: dynamicWrapper(app, ['replogistic','user'], () => import('../routes/Rep/RepLogistic')),
+      component: dynamicWrapper(app, ['replogistic', 'user'], () => import('../routes/Rep/RepLogistic')),
     },
     '/kdi/kdi-mng': {
       component: dynamicWrapper(app, ['kdilogistic', 'kdientry', 'kdicompany'], () =>
@@ -91,7 +91,9 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['kdisender'], () => import('../routes/Kdi/KdiSenderCfg')),
     },
     '/ord/ord-order': {
-      component: dynamicWrapper(app, ['ordorder','kdicompany','user','kdisender'], () => import('../routes/Ord/OrdOrder')),
+      component: dynamicWrapper(app, ['ordorder', 'kdicompany', 'user', 'kdisender'], () =>
+        import('../routes/Ord/OrdOrder')
+      ),
     },
     '/onl/onl-mng': {
       component: dynamicWrapper(app, ['sucuser', 'pfmsys', 'pfmuserrole', 'sucorg', 'sucuserorg'], () =>
@@ -112,8 +114,19 @@ export const getRouterData = app => {
     '/pfm/script-mng': {
       component: dynamicWrapper(
         app,
-        ['kdicompany', 'pfmroleacti', 'pfmscript', 'pfmmenu','user','pfmactimenu', 'pfmactiurn', 'pfmsys', 'pfmrole', 'pfmfunc'],
-        () => import('../routes/Pfm/scriptMng')
+        [
+          'kdicompany',
+          'pfmroleacti',
+          'pfmscript',
+          'pfmmenu',
+          'user',
+          'pfmactimenu',
+          'pfmactiurn',
+          'pfmsys',
+          'pfmrole',
+          'pfmfunc',
+        ],
+        () => import('../routes/Pfm/ScriptMng')
       ),
     },
     '/pfm/role-mng': {
