@@ -364,7 +364,7 @@ export default class OnlineForm extends React.Component {
             {
               <div className="clearfix">
                 <Upload
-                  action="http://127.0.0.1:20180/ise/upload"
+                  action="/ise-svr/ise/upload"
                   listType="picture-card"
                   fileList={fileList}
                   name="multipartFile"
@@ -388,7 +388,7 @@ export default class OnlineForm extends React.Component {
             {
               <div className="clearfix">
                 <Upload
-                  action="http://127.0.0.1:20180/ise/upload"
+                  action="/ise-svr/ise/upload"
                   listType="picture-card"
                   fileList={fileLists}
                   name="multipartFile"
