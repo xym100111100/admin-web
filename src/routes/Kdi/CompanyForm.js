@@ -48,12 +48,12 @@ export default class CompanyForm extends PureComponent {
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          style={{ marginLeft: 20, width: '76%' }}
+          style={{ marginLeft: 26, width: '76%' }}
           label="密码"
         >
           {form.getFieldDecorator('companyPwd', {
             rules: [{ required: true, message: '请输入快递公司密码' }],
-          })(<Input style={{ width: '290px' }} placeholder="请输入快递公司密码" {...types} />)}
+          })(<Input style={{ width: '294px' }} placeholder="请输入快递公司密码" {...types} />)}
         </FormItem>
         <a onClick={() => this.show()} style={{ float: 'right', marginTop: -55, marginRight: 60 }}>
           <Icon type="eye" />
