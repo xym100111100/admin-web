@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { list, getById, modify, del } from '../services/kdilogistic';
+import { list, reportOrderCountInPeriod, getById, modify, del } from '../services/kdilogistic';
 import { add } from '../services/kdientry';
 
 export default {
@@ -76,14 +76,6 @@ export default {
       } else {
         message.error(response.msg);
       }
-    },
-    *report({ payload, callback }, { call, put }) {
-      const response = yield call(list, payload);
-      yield put({
-        type: 'changeList',
-        payload: response,
-      });
-      if (callback) callback(response);
     },
   },
 

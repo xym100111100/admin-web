@@ -1,62 +1,52 @@
-import { message } from 'antd';
-import {  getById, add, modify, del } from '../services/replogistic';
-import {report, } from '../services/kdilogistic';
+// 引入时间处理插件
+import moment from 'moment';
+import MomentUtils from '../utils/MomentUtils';
+import ArrayUtils from '../utils/ArrayUtils';
+import { reportOrderCountInPeriod } from '../services/kdilogistic';
+
 export default {
   namespace: 'replogistic',
 
   state: {
-    replogistic: [],
+    replogistic: {
+      dateArr: ['00-00', '00-00', '00-00', '00-00', '00-00', '00-00', '00-00'],
+      dataArr: [0, 0, 0, 0, 0, 0, 0],
+    },
   },
 
   effects: {
-    *report({ payload, callback }, { call, put }) {
-      const response = yield call(report, payload);
+    /**
+     * 统计本组织一段时间内的下单量
+     */
+    *reportOrderCountInPeriod({ payload, callback }, { call, put }) {
+      const { orderTimeStartDate, orderTimeEndDate } = payload;
+      const response = yield call(reportOrderCountInPeriod, payload);
+
+      // 初始化数组
+      const dateArr = [];
+      const dataArr = [];
+      const days = MomentUtils.getDaysInPeriod(moment(orderTimeStartDate), moment(orderTimeEndDate));
+      for (const day of days) {
+        dateArr.push(day.format('MM-DD'));
+        dataArr.push(0);
+      }
+
+      // 将响应回来的数据转化成报表需要的数据
+      for (const item of response) {
+        const index = ArrayUtils.find(item.updateTime);
+        dataArr[index] = item.total;
+      }
+
       yield put({
-        type: 'changeList',
-        payload: response,
+        type: 'changOrderCountInPeriodReport',
+        payload: { dateArr, dataArr },
       });
       if (callback) callback(response);
-    },
-    *getById({ payload, callback }, { call }) {
-      const response = yield call(getById, payload);
-      if (response.result === 1) {
-        message.success(response.msg);
-        if (callback) callback(response);
-      } else {
-        message.error(response.msg);
-      }
-    },
-    *add({ payload, callback }, { call }) {
-      const response = yield call(add, payload);
-      if (response.result === 1) {
-        message.success(response.msg);
-        if (callback) callback(response);
-      } else {
-        message.error(response.msg);
-      }
-    },
-    *modify({ payload, callback }, { call }) {
-      const response = yield call(modify, payload);
-      if (response.result === 1) {
-        message.success(response.msg);
-        if (callback) callback(response);
-      } else {
-        message.error(response.msg);
-      }
-    },
-    *del({ payload, callback }, { call }) {
-      const response = yield call(del, payload);
-      if (response.result === 1) {
-        message.success(response.msg);
-        if (callback) callback(response);
-      } else {
-        message.error(response.msg);
-      }
     },
   },
 
   reducers: {
-    changeList(state, action) {
+    changOrderCountInPeriodReport(state, action) {
       return {
         replogistic: action.payload,
       };

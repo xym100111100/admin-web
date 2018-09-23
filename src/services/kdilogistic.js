@@ -5,8 +5,11 @@ export async function list(params) {
   return request(`/kdi-svr/kdi/logistic?${stringify(params)}`);
 }
 
-export async function report(params) {
-  return request(`/kdi-svr/kdi/logistic/report?${stringify(params)}`);
+/**
+ * 统计本组织一段时间内的下单量
+ */
+export async function reportOrderCountInPeriod(params) {
+  return request(`/kdi-svr/kdi/logistic/report/ordercountinperiod?${stringify(params)}`);
 }
 
 export async function getById(params) {

@@ -1,11 +1,7 @@
-import SimpleMng from 'components/Rebue/SimpleMng';
+import ReportMng from 'components/Rebue/ReportMng';
 import React from 'react';
 import { connect } from 'dva';
-import { Row, Col, Form, DatePicker, Card } from 'antd';
-import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import styles from './RepLogistic.less';
-const FormItem = Form.Item;
-const { RangePicker } = DatePicker;
+import { Row, Col, Form, DatePicker, Card, Spin } from 'antd';
 // 引入 ECharts 主模块,报错需要使用命令来安装echarts
 import echarts from 'echarts/lib/echarts';
 // 引入柱状图
@@ -14,96 +10,66 @@ import 'echarts/lib/chart/bar';
 import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 import 'echarts/lib/component/legend';
-//引入时间处理插件
+// 引入时间处理插件
 import moment from 'moment';
+
+import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import styles from './RepLogistic.less';
+
+const { RangePicker } = DatePicker;
+
 @Form.create()
-@connect(({ replogistic, user, loading }) => ({ replogistic,user, loading: loading.models.replogistic || loading.models.user}))
-export default class RepLogistic extends SimpleMng {
-  constructor() {
-    super();
+@connect(({ replogistic, user, loading }) => ({
+  replogistic,
+  user,
+  loading: loading.models.replogistic,
+}))
+export default class RepLogistic extends ReportMng {
+  componentWillMount() {
+    const { user: { currentUser: { orgId } } } = this.props;
+
+    // 查询报表的model名称
     this.moduleCode = 'replogistic';
-    this.state.dateArr = ['00-00', '00-00', '00-00', '00-00', '00-00', '00-00', '00-00'];
-    this.state.dataArr = [1, 2, 3, 4, 5, 6, 7];
-    //这个状态的意义只是为了使页面数据和实际数据一致
-    this.state.aa = '';
-    this.state.select = false;
-    //为了固定moment的值为当前点击时间
-    this.state.momentStr = '';
+    // 调用查询报表的model中的方法名称
+    this.reportMethod = 'reportOrderCountInPeriod';
+
+    // 默认获取当前时间和前六天的发单量
+    const today = moment();
+    const orderTimeEndDate = today.format('YYYY-MM-DD');
+    const orderTimeStartDate = today.clone().add(-6, 'd').format('YYYY-MM-DD');
+
+    this.state.options = { orgId, orderTimeStartDate, orderTimeEndDate };
   }
 
   componentDidMount() {
-    // 基于准备好的dom，初始化echarts实例
-    let myChart = echarts.init(document.getElementById('main'));
-    // 绘制图表
-    myChart.setOption(this.echartsData(this.state.dateArr, this.state.dataArr));
+    this.initECharts();
+    super.componentDidMount();
   }
 
-  componentWillMount() {
-    const { user } = this.props;
-    let orgId = user.currentUser.orgId;
-
-    //默认获取当前时间和前六天的发单量
-    let date = new Date().getTime();
-    let date2 = new Date().getTime() - 1000 * 60 * 60 * 24 * 6;
-    let orderTimeEnd = this.format(date);
-    let orderTimeStart = this.format(date2);
-    this.props.dispatch({
-      type: `${this.moduleCode}/report`,
-      payload: { orderTimeEnd: orderTimeEnd, orderTimeStart: orderTimeStart ,orgId:orgId},
-      callback: data => {
-        this.initData(data);
-      },
-    });
+  componentDidUpdate() {
+    this.initECharts();
   }
 
   /**
-   * 格式化时间
+   * 初始化百度的echarts组件
    */
-  format(date) {
-    //date是整数，否则要parseInt转换
-    let time = new Date(date);
-    let y = time.getFullYear();
-    let m = time.getMonth() + 1;
-    let d = time.getDate();
-    let h = time.getHours();
-    let mm = time.getMinutes();
-    let s = time.getSeconds();
-    return y + '-' + this.add0(m) + '-' + this.add0(d) + ' ' + this.add0(h) + ':' + this.add0(mm) + ':' + this.add0(s);
-  }
+  initECharts() {
+    const { replogistic: { replogistic: { dateArr, dataArr } } } = this.props;
 
-  /**
-   * 时间补0
-   * @param {} m
-   */
-  add0(m) {
-    return m < 10 ? '0' + m : m;
-  }
-
-  /**
-   * 整理查询回来的数据
-   * @param {*} data
-   */
-  initData(data) {
-    let dateArr = [];
-    let dataArr = [];
-    for (let i = 0; i < data.length; i++) {
-      dateArr[i] = data[i].updateTime;
-      dataArr[i] = data[i].total;
+    let myChart = echarts.getInstanceByDom(this.echartsDom);
+    if (myChart === undefined) {
+      // 基于准备好的dom，初始化echarts实例
+      myChart = echarts.init(this.echartsDom);
     }
-    this.setState(
-      {
-        dateArr: dateArr,
-        dataArr: dataArr,
-      },
-      () => this.componentDidMount()
-    );
+    myChart.setOption(this.echartsData(dateArr, dataArr));
   }
 
   /**
    * 图表数据
-   * @param {*} dateArr
+   * @param {Array} dateArr
+   * @param {Array} dataArr
    */
-  echartsData(dateArr, dataArr) {
+  echartsData = (dateArr, dataArr) => {
     return {
       tooltip: {},
       legend: {
@@ -121,10 +87,10 @@ export default class RepLogistic extends SimpleMng {
           itemStyle: {
             normal: {
               label: {
-                show: true, //开启显示
-                position: 'top', //在上方显示
+                show: true, // 开启显示
+                position: 'top', // 在上方显示
                 textStyle: {
-                  //数值样式
+                  // 数值样式
                   color: 'black',
                   fontSize: 16,
                 },
@@ -134,88 +100,55 @@ export default class RepLogistic extends SimpleMng {
         },
       ],
     };
-  }
-
-  /**
-   * 因为点击之后就要去查询，而form会得到上次的数据，
-   * 所有这里为了数据同步将执行setState后再执行查询
-   */
-  headonChange = () => {
-    this.setState(
-      {
-        aa: 'a',
-      },
-      () => this.onChanges()
-    );
   };
 
+  /**
+   * 设置禁止选择的日期
+   */
+  disabledDate = current => {
+    if (this.selectedFirstDate) {
+      const diff = current.diff(this.selectedFirstDate, 'd');
+      // 相差不能超过10天
+      if (diff > 9 || diff < -9) {
+        return true;
+      }
+    }
+
+    // 不能选择今天之后
+    return current.isAfter(moment().endOf('day'));
+  };
+
+  handelRangePickerCalendarChange = dates => {
+    if (dates.length == 1) {
+      this.selectedFirstDate = dates[0];
+    } else {
+      this.selectedFirstDate = undefined;
+    }
+  };
   /**
    * 根据改变的日期查询发单量
    */
-  onChanges = () => {
-    const { form } = this.props;
-    const { user } = this.props;
-    let orgId = user.currentUser.orgId;
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-      if (
-        fieldsValue.orderTimeStart !== undefined &&
-        fieldsValue.orderTimeStart !== '' &&
-        fieldsValue.orderTimeStart.length >= 1
-      ) {
-        fieldsValue.orderTimeEnd = fieldsValue.orderTimeStart[1].format('YYYY-MM-DD HH:mm:ss');
-        fieldsValue.orderTimeStart = fieldsValue.orderTimeStart[0].format('YYYY-MM-DD HH:mm:ss');
-      }
-      fieldsValue.orgId=orgId;
-      this.props.dispatch({
-        type: `${this.moduleCode}/report`,
-        payload: fieldsValue,
-        callback: data => {
-          this.initData(data);
-        },
-      });
-    });
+  handelRangePickerChange = dates => {
+    const orderTimeStartDate = dates[0].format('YYYY-MM-DD');
+    const orderTimeEndDate = dates[1].format('YYYY-MM-DD');
+    this.handleReload({ orderTimeStartDate, orderTimeEndDate });
   };
 
   /**
-   * 日期选择的自定义规则
+   * 渲染搜索表单
    */
-  provinceInfo = (rule, value, callback) => {
-    if (value[0] && (value[1]._d.getTime() - value[0]._d.getTime()) / 1000 / 60 / 60 / 24 > 10) {
-      callback('请选择间隔小于十天的日期');
-    } else {
-      callback();
-    }
-  };
-
-
-  //禁止选择当前日期后的
-  disabledDate = (current) => {
-      return current > moment().endOf('day');
-  }
-
   renderSearchForm() {
-    const { getFieldDecorator } = this.props.form;
     return (
-      <Form layout="inline" hideRequiredMark={true}>
+      <Form layout="inline" hideRequiredMark>
         <Row gutter={{ md: 6, lg: 24, xl: 0 }}>
           <Col push={6} md={12} sm={24}>
-            <FormItem label="选择查看日期">
-              {getFieldDecorator('orderTimeStart', {
-                rules: [
-                  {
-                    required: true,
-                    message: ' ',
-                  },
-                  {
-                    validator: this.provinceInfo,
-                  },
-                ],
-              })(<RangePicker
-                disabledDate={this.disabledDate}
-                onChange={this.headonChange}
-              />)}
-            </FormItem>
+            <RangePicker
+              // defaultValue={rangeDates}
+              allowClear={false}
+              disabledDate={this.disabledDate}
+              onCalendarChange={this.handelRangePickerCalendarChange}
+              onChange={this.handelRangePickerChange}
+            />
           </Col>
         </Row>
       </Form>
@@ -223,14 +156,22 @@ export default class RepLogistic extends SimpleMng {
   }
 
   render() {
+    const { loading } = this.props;
     return (
-      <PageHeaderLayout title="物流报表">
+      <PageHeaderLayout>
         <Card bordered={false}>
           <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
           <div style={{ background: 'white' }}>
             <Row gutter={{ md: 1, lg: 4, xl: 2 }}>
               <Col md={24} sm={24}>
-                <div id="main" style={{ width: 700, height: 500, margin: '0 auto' }} />
+                <Spin spinning={loading}>
+                  <div
+                    ref={c => {
+                      this.echartsDom = c;
+                    }}
+                    style={{ width: 700, height: 500, margin: '0 auto' }}
+                  />
+                </Spin>
               </Col>
             </Row>
           </div>
