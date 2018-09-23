@@ -14,7 +14,7 @@ export default class MomentUtils {
     const endDay = this.getDayOfTime(endTime);
     while (!day.isAfter(endDay)) {
       result.push(day);
-      day = day.add(1, 'd').clone(); // 加一天
+      day = day.clone().add(1, 'd'); // 加一天
     }
     return result;
   }
