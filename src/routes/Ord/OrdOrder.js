@@ -227,11 +227,11 @@ export default class OrdOrder extends SimpleMng {
     printWindow.close();
   }
 
-  printPageAgain = (orderCode) => {
+  printPageAgain = (id) => {
      let printWindow;
     this.props.dispatch({
       type: `${this.moduleCode}/printpage`,
-      payload: { orderId: orderCode },
+      payload: { orderId: id },
       callback: data => {
         if(data.length===0 || data[0].printPage===undefined){
           message.success('获取失败');
@@ -321,7 +321,7 @@ export default class OrdOrder extends SimpleMng {
             </a>
         </Menu.Item>
         <Menu.Item>
-          <a onClick={() => this.printPageAgain(record.orderCode)}>
+          <a onClick={() => this.printPageAgain(record.id)}>
             重新打印快递单
             </a>
         </Menu.Item>
