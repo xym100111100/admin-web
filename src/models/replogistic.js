@@ -33,7 +33,9 @@ export default {
 
       // 将响应回来的数据转化成报表需要的数据
       for (const item of response) {
-        const index = ArrayUtils.find(item.updateTime);
+        console.log(item.updateTime.substr(5));
+        
+        const index = ArrayUtils.find(dateArr, item.updateTime.substr(5));
         dataArr[index] = item.total;
       }
 

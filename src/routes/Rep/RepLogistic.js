@@ -118,6 +118,9 @@ export default class RepLogistic extends ReportMng {
     return current.isAfter(moment().endOf('day'));
   };
 
+  /**
+   * 点击选择到一个日期时
+   */
   handelRangePickerCalendarChange = dates => {
     if (dates.length == 1) {
       this.selectedFirstDate = dates[0];
