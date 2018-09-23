@@ -28,8 +28,7 @@ export default class OnlOnlinePromotionForm extends PureComponent {
             initialValue: '2',
           })(
             <Select style={{ width: 120 }} onChange={this.handleChange}>
-              <Option value="2">热销商品</Option>
-              <Option value="3">热销</Option>
+              <Option value="1">每日热门</Option>
             </Select>
           )}
         </FormItem>
