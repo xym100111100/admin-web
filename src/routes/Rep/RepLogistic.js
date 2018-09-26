@@ -25,8 +25,9 @@ const { RangePicker } = DatePicker;
   loading: loading.models.replogistic,
 }))
 export default class RepLogistic extends ReportMng {
-  componentWillMount() {
-    const { user: { currentUser: { orgId } } } = this.props;
+  constructor(props) {
+    super(props);
+    const { user: { currentUser: { orgId } } } = props;
 
     // 查询报表的model名称
     this.moduleCode = 'replogistic';
@@ -36,7 +37,10 @@ export default class RepLogistic extends ReportMng {
     // 默认获取当前时间和前六天的发单量
     const today = moment();
     const orderTimeEndDate = today.format('YYYY-MM-DD');
-    const orderTimeStartDate = today.clone().add(-6, 'd').format('YYYY-MM-DD');
+    const orderTimeStartDate = today
+      .clone()
+      .add(-6, 'd')
+      .format('YYYY-MM-DD');
 
     this.state.options = { orgId, orderTimeStartDate, orderTimeEndDate };
   }

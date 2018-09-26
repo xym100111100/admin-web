@@ -25,7 +25,7 @@ export default class OnlOnlinePromotionForm extends PureComponent {
         </FormItem>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="推广类型">
           {form.getFieldDecorator('promotionType', {
-            initialValue: '2',
+            initialValue: '1',
           })(
             <Select style={{ width: 120 }} onChange={this.handleChange}>
               <Option value="1">每日热门</Option>

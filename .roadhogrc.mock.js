@@ -98,7 +98,7 @@ import { getProfileBasicData } from './mock/profile';
 import { getProfileAdvancedData } from './mock/profile';
 import { getNotices } from './mock/notices';
 
-// 是否禁用代理
+// 根据环境变量判断是否禁用代理（禁用代理将直接请求真实的服务）
 const noProxy = process.env.NO_PROXY === 'true';
 
 const currentUser = {
@@ -110,7 +110,7 @@ const currentUser = {
   menus: getMenuData('damai-admin'),
 };
 
-// 代码中会兼容本地 service mock 以及部署站点的静态数据
+// 配置mock代理的请求
 const proxy = {
   //kdisender
   'GET /kdi-svr/kdi/sender': kdiSenderList,
@@ -332,8 +332,8 @@ const proxy = {
 /**
  * 添加联调的微服务
  *
- * @param {string} key 微服务的名称
- * @param {string} value 微服务启动的地址
+ * @param {String} key 微服务的名称
+ * @param {String} value 微服务启动的地址
  */
 function addProxy(key, value) {
   // 先删除旧的
@@ -350,19 +350,25 @@ function addProxy(key, value) {
   proxy[`DELETE /${key}/(.*)`] = value;
 }
 
+// 禁用代理的时候，配置直接请求服务的映射
 if (noProxy) {
-  // addProxy('pfm-svr', 'http://127.0.0.1:20182/');
-  // addProxy('suc-svr', 'http://127.0.0.1:9100/');
+  addProxy('pfm-svr', 'http://127.0.0.1:20182/');
+  addProxy('suc-svr', 'http://127.0.0.1:9100/');
+  addProxy('rna-svr', 'http://127.0.0.1:20088/');
+  addProxy('kdi-svr', 'http://127.0.0.1:20080/');
+  addProxy('onl-svr', 'http://127.0.0.1:9100/');
+  addProxy('ise-svr', 'http://127.0.0.1:20180/');
+  addProxy('ord-svr', 'http://127.0.0.1:20180/');
+
   // addProxy('pfm-svr', 'http://127.0.0.1:8080/pfm-svr');
   // addProxy('suc-svr', 'http://127.0.0.1:8080/suc-svr/');
+
   // addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr');
   // addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
-  // addProxy('rna-svr', 'http://127.0.0.1:20088/');
-  // addProxy('kdi-svr', 'http://127.0.0.1:20080/');
-  addProxy('kdi-svr', 'https://www.duamai.com/kdi-svr/');
-  // addProxy('onl-svr', 'http://127.0.0.1:9100/');
-  // addProxy('ise-svr', 'http://127.0.0.1:20180/');
-  // addProxy('ord-svr', 'http://127.0.0.1:20180/');
+
+  // addProxy('rna-svr', 'https://www.duamai.com/rna-svr/');
+  // addProxy('kdi-svr', 'https://www.duamai.com/kdi-svr/');
+  // addProxy('ise-svr', 'https://www.duamai.com/ise-svr/');
 }
 
 // 响应请求不延迟

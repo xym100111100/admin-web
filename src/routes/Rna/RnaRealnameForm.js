@@ -24,10 +24,26 @@ export default class RnaRealnameForm extends PureComponent {
           </Fragment>
         </div>
         <div style={{ marginTop: -40 }}>
-          <img style={{ height: 300, width: 450, margin: 5 }} src={'ise-svr' + form.getFieldValue('picOne')} />
-          <img style={{ height: 300, width: 450, margin: 5 }} src={'ise-svr' + form.getFieldValue('picTwo')} />
-          <img style={{ height: 300, width: 450, margin: 5 }} src={'ise-svr' + form.getFieldValue('picThree')} />
-          <img style={{ height: 300, width: 450, margin: 5 }} src={'ise-svr' + form.getFieldValue('picFour')} />
+          <img
+            alt="身份证正反面及手持身份证正反面"
+            style={{ height: 300, width: 450, margin: 5 }}
+            src={`/ise-svr/files${form.getFieldValue('picOne')}`}
+          />
+          <img
+            alt="身份证正反面及手持身份证正反面"
+            style={{ height: 300, width: 450, margin: 5 }}
+            src={`/ise-svr/files${form.getFieldValue('picTwo')}`}
+          />
+          <img
+            alt="身份证正反面及手持身份证正反面"
+            style={{ height: 300, width: 450, margin: 5 }}
+            src={`/ise-svr/files${form.getFieldValue('picThree')}`}
+          />
+          <img
+            alt="身份证正反面及手持身份证正反面"
+            style={{ height: 300, width: 450, margin: 5 }}
+            src={`/ise-svr/files${form.getFieldValue('picFour')}`}
+          />
         </div>
       </div>
     );

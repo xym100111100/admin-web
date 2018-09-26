@@ -95,11 +95,6 @@ export const getRouterData = app => {
         import('../routes/Ord/OrdOrder')
       ),
     },
-    '/onl/onl-mng': {
-      component: dynamicWrapper(app, ['sucuser', 'pfmsys', 'pfmuserrole', 'sucorg', 'sucuserorg'], () =>
-        import('../routes/Onl/OnlineMng')
-      ),
-    },
     '/pfm/sys-mng': {
       component: dynamicWrapper(app, ['pfmsys'], () => import('../routes/Pfm/SysMng')),
     },
