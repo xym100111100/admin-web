@@ -27,6 +27,8 @@ const EditForm = DivInfo => {
     };
     handleSave = () => {
       const { form, onSave } = this.props;
+      const { beforeSave } = this.refs.divInfo;
+      if (beforeSave) beforeSave();
       form.validateFieldsAndScroll((err, fields) => {
         if (err) return;
         onSave(fields);
@@ -41,6 +43,8 @@ const EditForm = DivInfo => {
     };
     handleSubmit = () => {
       const { form, onSubmit } = this.props;
+      const { beforeSave } = this.refs.divInfo;
+      if (beforeSave) beforeSave();
       form.validateFieldsAndScroll((err, fields) => {
         if (err) return;
         onSubmit(fields);
@@ -61,6 +65,7 @@ const EditForm = DivInfo => {
         width = 520,
         ...restProps
       } = this.props;
+
       return (
         <Modal
           visible={visible}
@@ -101,7 +106,7 @@ const EditForm = DivInfo => {
             ),
           ]}
         >
-          <DivInfo form={form} {...restProps} />
+          <DivInfo form={form} {...restProps} ref="divInfo" />
         </Modal>
       );
     }
