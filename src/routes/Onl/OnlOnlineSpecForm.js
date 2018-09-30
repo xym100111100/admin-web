@@ -26,7 +26,7 @@ export default class OnlOnlineSpecForm extends PureComponent {
         id: this.props.id,
       },
       callback: onlonline => {
-        let fileLists = new Array();
+        let fileLists = new Array(); 
         let mainImageUrl;
         for (const pic of onlonline.record.onlinePicList) {
           if (pic.picType === 1) {

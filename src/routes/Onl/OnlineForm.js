@@ -372,7 +372,7 @@ export default class OnlineForm extends React.Component {
                   <img alt="example" style={{ width: '100%' }} src={previewImage} />
                 </Modal>
               </div>
-            }
+            } 
           </FormItem>
         </Col>
         <Col span={24}>

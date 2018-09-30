@@ -28,7 +28,7 @@ export default {
         message.success(response.msg);
         if (callback) callback(response);
       } else {
-        message.error(response.msg);
+        message.error(response.msg); 
       }
     },
     *cancelPromotion({ payload, callback }, { call }) {

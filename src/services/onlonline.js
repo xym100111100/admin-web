@@ -12,7 +12,7 @@ export async function getById(params) {
 export async function add(params) {
   return request('/onl-svr/onl/online', {
     method: 'POST',
-    body: {
+    body: { 
       ...params,
     },
   });

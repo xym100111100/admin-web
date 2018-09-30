@@ -296,7 +296,7 @@ export default class OnlineMng extends SimpleMng {
               dataSource={onlonlineData}
               columns={columns}
               expandRowByClick={true}
-            />
+            /> 
           </div>
         </Card>
         {editForm === 'onlineForm' && (
