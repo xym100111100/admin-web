@@ -19,7 +19,7 @@ export default class EditPwForm extends PureComponent {
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="登录名称">
           {form.getFieldDecorator('loginPswd', {
             rules: [{ required: true, message: '请输入用户登录密码' }],
-          })(<Input  placeholder="请输入用户登录密码" />)}
+          })(<Input type="password"  placeholder="请输入用户登录密码" />)}
         </FormItem>
       </Fragment>
     );
