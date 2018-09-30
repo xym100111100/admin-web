@@ -12,6 +12,7 @@ import {
   removePayPassWord,
   unbindWeChat,
   unbindQQ,
+  setLoginPw
 } from '../services/sucuser';
 
 export default {
@@ -64,6 +65,18 @@ export default {
     },
     *modify({ payload, callback }, { call }) {
       const response = yield call(modify, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *setLoginPw({ payload, callback }, { call }) {
+      let pm = {};
+      pm.id=payload.id
+      pm.loginPswd=CryptoJS.MD5(payload.loginPswd).toString()
+      const response = yield call(setLoginPw, pm);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);

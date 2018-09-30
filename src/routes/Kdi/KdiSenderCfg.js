@@ -128,7 +128,7 @@ export default class KdiSenderCfg extends SimpleMng {
                 icon="plus"
                 type="primary"
                 onClick={() =>
-                  this.showAddForm({ orgId: orgId, editForm: 'kdiSender', editFormTitle: '添加新快递公司' })
+                  this.showAddForm({ orgId: orgId, editForm: 'kdiSender', editFormTitle: '添加新发件人' })
                 }
               >
                 添加
