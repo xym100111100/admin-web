@@ -60,7 +60,7 @@ export default class OnlOnlineSpecForm extends PureComponent {
       },
       {
         title: '上线数量',
-        dataIndex: 'saleCount',
+        dataIndex: 'currentOnlineCount',
       },
       {
         title: '单位',

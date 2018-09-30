@@ -60,20 +60,20 @@ export default class OnlineMng extends SimpleMng {
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
-          <Col md={6} sm={24} >
+          <Col md={6} sm={24}>
             <Button
               icon="plus"
               type="primary"
               onClick={() => this.showAddForm({ editForm: 'onlineForm', editFormTitle: '商品上线' })}
             >
               添加
-              </Button>
+            </Button>
             <Divider type="vertical" />
             <Button icon="reload" onClick={() => this.handleReload()}>
               刷新
-              </Button>
+            </Button>
           </Col>
-          <Col md={6} sm={24} >
+          <Col md={6} sm={24}>
             <FormItem label="上线标题">{getFieldDecorator('onlineTitle')(<Input placeholder="上线标题" />)}</FormItem>
           </Col>
           <Col md={6} sm={24}>
@@ -138,20 +138,6 @@ export default class OnlineMng extends SimpleMng {
       const { record } = props;
       const menu = (
         <Menu>
-          <Menu.Item>
-            <a
-              onClick={() =>
-                this.showAddForm({
-                  id: record.id,
-                  editForm: 'onlineForm',
-                  editFormRecord: record,
-                  editFormTitle: '复制上线',
-                })
-              }
-            >
-              复制上线
-            </a>
-          </Menu.Item>
           {record.id === record.onlineId ? (
             <Menu.Item>
               <Popconfirm title="是否要取消此商品的推广？" onConfirm={() => this.cancelPromotion(record)}>
@@ -159,21 +145,21 @@ export default class OnlineMng extends SimpleMng {
               </Popconfirm>
             </Menu.Item>
           ) : (
-              <Menu.Item>
-                <a
-                  onClick={() =>
-                    this.showAddForm({
-                      id: record.id,
-                      editForm: 'onlOnlinePromotionForm',
-                      editFormRecord: record,
-                      editFormTitle: '商品推广',
-                    })
-                  }
-                >
-                  商品推广
+            <Menu.Item>
+              <a
+                onClick={() =>
+                  this.showAddForm({
+                    id: record.id,
+                    editForm: 'onlOnlinePromotionForm',
+                    editFormRecord: record,
+                    editFormTitle: '商品推广',
+                  })
+                }
+              >
+                商品推广
               </a>
-              </Menu.Item>
-            )}
+            </Menu.Item>
+          )}
           <Menu.Item>
             <a
               onClick={() =>
@@ -186,20 +172,6 @@ export default class OnlineMng extends SimpleMng {
               }
             >
               查询规格信息
-            </a>
-          </Menu.Item>
-          <Menu.Item>
-            <a
-              onClick={() =>
-                this.showAddForm({
-                  id: record.id,
-                  editForm: 'onlOnlineNumberForm',
-                  editFormRecord: record,
-                  editFormTitle: '追加上线数量',
-                })
-              }
-            >
-              追加上线数量
             </a>
           </Menu.Item>
         </Menu>
@@ -258,19 +230,6 @@ export default class OnlineMng extends SimpleMng {
                   onClick={() =>
                     this.showAddForm({
                       id: record.id,
-                      editForm: 'onlineForm',
-                      editFormRecord: record,
-                      editFormTitle: '复制上线',
-                    })
-                  }
-                >
-                  复制上线
-                </a>
-                <Divider type="vertical" />
-                <a
-                  onClick={() =>
-                    this.showAddForm({
-                      id: record.id,
                       editForm: 'onlOnlineSpecForm',
                       editFormRecord: record,
                       editFormTitle: '规格信息',
@@ -278,6 +237,19 @@ export default class OnlineMng extends SimpleMng {
                   }
                 >
                   查询规格信息
+                </a>
+                <Divider type="vertical" />
+                <a
+                  onClick={() =>
+                    this.showAddForm({
+                      id: record.id,
+                      editForm: 'onlineForm',
+                      editFormRecord: record,
+                      editFormTitle: '重新上线',
+                    })
+                  }
+                >
+                  重新上线
                 </a>
               </Fragment>
             );
@@ -312,8 +284,6 @@ export default class OnlineMng extends SimpleMng {
       pageSizeOptions: ['5', '10'],
     };
 
-
-
     return (
       <PageHeaderLayout title="系统信息管理">
         <Card bordered={false}>
@@ -339,6 +309,13 @@ export default class OnlineMng extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
+            onSubmit={fields =>
+              this.handleSubmit({
+                fields,
+                moduleCode: 'onlonline',
+                saveMethodName: editFormTitle !== '重新上线' ? 'add' : 'reOnline',
+              })
+            }
           />
         )}
         {editForm === 'onlOnlinePromotionForm' && (

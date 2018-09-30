@@ -38,3 +38,12 @@ export async function append(params) {
     },
   });
 }
+
+export async function reOnline(params) {
+  return request('/onl-svr/onl/online/reonline', {
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
+}

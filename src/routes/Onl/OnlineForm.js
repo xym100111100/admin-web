@@ -1,11 +1,13 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Card, message, Button, Input, Form, Col, Table, Upload, Icon, Modal, Radio } from 'antd';
-import OnlyPopupForm from 'components/Rebue/OnlyPopupForm';
+import { Card, message, Input, Form, Col, Table, Upload, Icon, Modal, Radio } from 'antd';
+// import OnlyPopupForm from 'components/Rebue/OnlyPopupForm';
+import EditForm from 'components/Rebue/EditForm';
 import EditableTable from 'components/Rebue/EditableTable';
-// 引入编辑器以及编辑器样式
-import BraftEditor from 'braft-editor';
-import 'braft-editor/dist/braft.css';
+// 引入编辑器以及EditorState子模块
+import BraftEditor, { EditorState } from 'braft-editor';
+// 引入编辑器样式
+import 'braft-editor/dist/index.css';
 
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
@@ -14,7 +16,8 @@ const FormItem = Form.Item;
   onlonline,
 }))
 @Form.create()
-@OnlyPopupForm
+// @OnlyPopupForm
+@EditForm
 export default class OnlineForm extends React.Component {
   componentWillMount() {
     const { id } = this.props;
@@ -30,6 +33,8 @@ export default class OnlineForm extends React.Component {
     fileLists: [],
     subjectType: 0,
     onlOnlineSpec: [],
+    // 创建一个空的editorState作为初始值
+    editorState: EditorState.createFrom(''),
   };
 
   // 获取上线信息包括：上线信息、规格信息、图片信息等
@@ -71,7 +76,7 @@ export default class OnlineForm extends React.Component {
           previewVisibles: false,
           previewImages: '',
           fileLists: fileLists,
-          onlineDetail: onlineDetail,
+          onlineDetail: EditorState.createFrom(onlineDetail),
         });
       },
     });
@@ -115,79 +120,6 @@ export default class OnlineForm extends React.Component {
     });
   };
 
-  // 获取富文本编辑框onHTMLChange事件
-  editorOnHTMLChange = e => {
-    // 去除div开始
-    let detailHtml = e.replace(/<div\/?.+?>/g, '');
-    let onlineDetail = detailHtml.replace(/<\/div>/g, '');
-    // 去除div结束
-    this.setState({ onlineDetail });
-  };
-
-  addOnline = () => {
-    const { record } = this.props;
-    // 产品id
-    let productId = record.productId === undefined ? 0 : record.productId;
-    // 上线商品名称
-    let onlineName = undefined;
-    this.props.form.validateFields((err, values) => {
-      onlineName = values.onlineName;
-    });
-    if (onlineName === undefined || onlineName === null || onlineName === '') return message.error('请输入商品名称');
-
-    const { fileList, fileLists, onlineDetail, subjectType } = this.state;
-    // 上线规格信息
-    const onlineSpecs = this.refs.editableTable.getRecords();
-    if (onlineSpecs === undefined || onlineSpecs.length === 0) return message.error('请输入商品规格信息');
-
-    if (fileList === undefined || fileList.length === 0) return message.error('请上传商品主图');
-
-    if (fileLists === undefined || fileLists.length === 0) return message.error('请上传至少一张商品轮播图');
-
-    if (onlineDetail === undefined || onlineDetail === '' || onlineDetail === null)
-      return message.error('商品详情不能为空');
-    if (onlineDetail.length > 2400) return message.error('商品详情字数不能大于2400个字');
-
-    let qsmm = fileList[0].response === undefined ? fileList[0].name : fileLists[0].response.filePaths[0];
-    let slideshows = new Array();
-    for (let i = 0; i < fileLists.length; i++) {
-      let slideshow = fileLists[i].response === undefined ? fileLists[i].name : fileLists[i].response.filePaths[0];
-      slideshows.push({
-        slideshow: slideshow,
-      });
-    }
-    this.props.dispatch({
-      type: `onlonline/add`,
-      payload: {
-        onlineName: onlineName,
-        subjectType: subjectType,
-        onlineSpecs: onlineSpecs,
-        goodsQsmm: qsmm,
-        slideshow: slideshows,
-        onlineDetail: onlineDetail,
-        productId: productId,
-      },
-      callback: e => {
-        if (e.result === 1) {
-          // 清空form
-          this.props.form.resetFields();
-          // 清空富文本框
-          this.editorInstance.clear();
-          this.setState({
-            previewVisible: false,
-            previewImage: '',
-            fileList: [],
-            previewVisibles: false,
-            previewImages: '',
-            fileLists: [],
-            subjectType: 0,
-            onlOnlineSpec: [],
-          });
-        }
-      },
-    });
-  };
-
   handleCheck = record => {
     // 验证价格是否大于0
     const reg = /^([1-9]\d*(\.\d*[1-9])?)|(0\.\d*[1-9])$/;
@@ -210,7 +142,7 @@ export default class OnlineForm extends React.Component {
       }
     }
 
-    if (!record.saleCount) {
+    if (!record.currentOnlineCount) {
       message.error('请输入上线数量');
       return false;
     }
@@ -225,20 +157,81 @@ export default class OnlineForm extends React.Component {
 
     // 验证是否为正整数
     const regs = /^[1-9]\d*$/;
-    if (!regs.test(record.saleCount)) {
+    if (!regs.test(record.currentOnlineCount)) {
       message.error('上线数量只能为正整数且不能为0');
       return false;
     }
     return true;
   };
 
+  // 选择板块类型事件
   onChangeRadio = e => {
     this.setState({
       subjectType: e.target.value,
     });
   };
 
+  // 富文本框编辑事件
+  handleEditorChange = editorState => {
+    this.setState({ onlineDetail: editorState });
+  };
+
+  // 提交前事件
+  beforeSave = () => {
+    const { form, record, id } = this.props;
+    // 产品id
+    let productId = record.productId === undefined ? 0 : record.productId;
+    // 上线商品名称
+    let onlineName = undefined;
+    form.validateFields((err, values) => {
+      onlineName = values.onlineName;
+    });
+    const { fileList, fileLists, onlineDetail, subjectType } = this.state;
+    let detailHtml = onlineDetail.toHTML().replace(/<div\/?.+?>/g, '');
+    let onlineDetails = detailHtml.replace(/<\/div>/g, '');
+    if (onlineName === undefined || onlineName === null || onlineName === '') return message.error('请输入商品名称');
+
+    // 上线规格信息
+    const onlineSpecs = this.refs.editableTable.getRecords();
+    if (onlineSpecs === undefined || onlineSpecs.length === 0) return message.error('请输入商品规格信息');
+
+    if (fileList === undefined || fileList.length === 0) return message.error('请上传商品主图');
+
+    if (fileLists === undefined || fileLists.length === 0) return message.error('请上传至少一张商品轮播图');
+
+    if (onlineDetail === undefined || onlineDetail === '' || onlineDetail === null)
+      return message.error('商品详情不能为空');
+    if (onlineDetail.length > 2400) return message.error('商品详情字数不能大于2400个字');
+
+    let qsmm = fileList[0].response === undefined ? fileList[0].name : fileLists[0].response.filePaths[0];
+    let slideshows = new Array();
+    for (let i = 0; i < fileLists.length; i++) {
+      let slideshow = fileLists[i].response === undefined ? fileLists[i].name : fileLists[i].response.filePaths[0];
+      slideshows.push({
+        slideshow: slideshow,
+      });
+    }
+    form.getFieldDecorator('subjectType');
+    form.getFieldDecorator('onlineSpecs');
+    form.getFieldDecorator('goodsQsmm');
+    form.getFieldDecorator('slideshow');
+    form.getFieldDecorator('onlineDetail');
+    form.getFieldDecorator('productId');
+    form.getFieldDecorator('onlineId');
+    form.setFieldsValue({
+      onlineId: id,
+      onlineName: onlineName,
+      subjectType: subjectType,
+      onlineSpecs: onlineSpecs,
+      goodsQsmm: qsmm,
+      slideshow: slideshows,
+      onlineDetail: onlineDetails,
+      productId: productId,
+    });
+  };
+
   render() {
+    console.log(this.props);
     const { loading, form } = this.props;
     const {
       previewVisible,
@@ -281,10 +274,10 @@ export default class OnlineForm extends React.Component {
       },
 
       {
-        title: '上线数量',
-        dataIndex: 'saleCount',
+        title: '本次上线数量',
+        dataIndex: 'currentOnlineCount',
         align: 'center',
-        width: '110px',
+        width: '120px',
       },
       {
         title: '单位',
@@ -297,16 +290,15 @@ export default class OnlineForm extends React.Component {
     if (subjectType === 1) {
       columns.splice(2, 1);
     }
-
     // 富文本框功能配置
     const editorProps = {
-      contentFormat: 'html',
-      initialContent: onlineDetail || '',
-      onHTMLChange: this.editorOnHTMLChange,
+      value: onlineDetail,
+      onChange: this.handleEditorChange,
       media: {
         allowPasteImage: false, // 是否允许直接粘贴剪贴板图片（例如QQ截图等）到编辑器
         uploadFn: this.uploadFn,
-        externalMedias: {
+        textAligns: ['center'],
+        externals: {
           image: false,
           audio: false,
           video: false,
@@ -415,14 +407,6 @@ export default class OnlineForm extends React.Component {
               </div>
             }
           </FormItem>
-        </Col>
-        <Col span={2} />
-        <Col span={22}>
-          <div>
-            <Button type="primary" block onClick={() => this.addOnline()}>
-              确认
-            </Button>
-          </div>
         </Col>
       </Card>
     );

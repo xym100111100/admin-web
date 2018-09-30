@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { list, getById, add, cancelPromotion, tapeOut, append } from '../services/onlonline';
+import { list, getById, add, cancelPromotion, tapeOut, append, reOnline } from '../services/onlonline';
 
 export default {
   namespace: 'onlonline',
@@ -23,6 +23,7 @@ export default {
     },
     *add({ payload, callback }, { call }) {
       const response = yield call(add, payload);
+      console.log(response);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);
@@ -50,6 +51,16 @@ export default {
     },
     *append({ payload, callback }, { call }) {
       const response = yield call(append, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *reOnline({ payload, callback }, { call }) {
+      const response = yield call(reOnline, payload);
+      console.log(response);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);
