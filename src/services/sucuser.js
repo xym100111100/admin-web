@@ -30,6 +30,14 @@ export async function modify(params) {
     },
   });
 }
+export async function setLoginPw(params) {
+  return request('/suc-svr/suc/user/setloginpw', {
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
+}
 
 export async function enable(params) {
   return request('/suc-svr/suc/user/enable', {

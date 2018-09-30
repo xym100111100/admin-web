@@ -1,7 +1,7 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Row,message, Col, Card, Divider, Popconfirm, Form, Input, Button, Table, Switch, Menu, Dropdown, Icon } from 'antd';
+import { Row, message, Col, Card, Divider, Popconfirm, Form, Input, Button, Table, Switch, Menu, Dropdown, Icon } from 'antd';
 import DescriptionList from 'components/DescriptionList';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import UserForm from './UserForm';
@@ -9,6 +9,7 @@ import styles from './UserMng.less';
 import UserRoleForm from './UserRoleForm';
 import UserRegForm from './UserRegForm';
 import UserOrgForm from './UserOrgForm';
+import EditPwForm from './EditPwForm';
 const { Search } = Input;
 
 const FormItem = Form.Item;
@@ -17,7 +18,7 @@ const { Description } = DescriptionList;
   sucuser,
   sucorg,
   pfmuserrole,
-  loading: loading.models.sucuser 
+  loading: loading.models.sucuser
 }))
 @Form.create()
 export default class UserMng extends SimpleMng {
@@ -47,19 +48,19 @@ export default class UserMng extends SimpleMng {
 
   // 锁定/解锁用户
   handleEnable(record) {
-    let Reason=null;
-    if(record.isLock ===false){
-      Reason= prompt('请填写锁定原因');
-    }else{
-      Reason= prompt('请填写解锁原因');
+    let Reason = null;
+    if (record.isLock === false) {
+      Reason = prompt('请填写锁定原因');
+    } else {
+      Reason = prompt('请填写解锁原因');
     }
-    if (Reason === null ) {
+    if (Reason === null) {
       return;
     }
-    if(Reason==="" && record.isLock ===false){
+    if (Reason === "" && record.isLock === false) {
       message.error("锁定原因不能为空");
       return;
-    }else if(Reason==="" && record.isLock ===true){
+    } else if (Reason === "" && record.isLock === true) {
       message.error("解锁原因不能为空");
       return;
     }
@@ -127,11 +128,11 @@ export default class UserMng extends SimpleMng {
     });
   }
 
-  selectUser=(e)=>{
-    let paload={};
-    paload.users=e;
-    paload.pageNum=this.state.options.pageNum;
-    paload.pageSize=this.state.options.pageSize;
+  selectUser = (e) => {
+    let paload = {};
+    paload.users = e;
+    paload.pageNum = this.state.options.pageNum;
+    paload.pageSize = this.state.options.pageSize;
     this.props.dispatch({
       type: `${this.moduleCode}/list`,
       payload: paload,
@@ -162,6 +163,23 @@ export default class UserMng extends SimpleMng {
         </Row>
       </Form>
     );
+  }
+
+
+  /**
+   * 设置用户登录密码
+   */
+  setLoginPw = (record, wxOpenid) => {
+    if (wxOpenid !== undefined) {
+      message.error("用户绑定了微信,请该用户在微信自行修改");
+      return;
+    }
+    this.showEditForm({
+      moduleCode: 'sucuser',
+      editForm: 'EditPwForm',
+      editFormTitle: '输入用户登录密码',
+      editFormRecord: record,
+    })
   }
 
   render() {
@@ -288,9 +306,7 @@ export default class UserMng extends SimpleMng {
             </Popconfirm>
           </Menu.Item>
           <Menu.Item>
-            <Popconfirm title="是否解除此账号的支付密码？" onConfirm={() => this.removePayPassWord(record)}>
-              <a>解除支付密码</a>
-            </Popconfirm>
+            <a onClick={() => this.setLoginPw(record, record.wxOpenid)} >设置登录密码</a>
           </Menu.Item>
           <Menu.Item>
             <Popconfirm title="是否解除此账号的微信绑定？" onConfirm={() => this.unbindWeChat(record)}>
@@ -430,6 +446,23 @@ export default class UserMng extends SimpleMng {
                   orgId: fields.id,
                 },
                 moduleCode: 'sucuserorg',
+              })
+            }
+          />
+        )}
+        {editForm === "EditPwForm" && (
+          <EditPwForm
+            record={editFormRecord}
+            visible
+            title={editFormTitle}
+            width={600}
+            editFormType={editFormType}
+            closeModal={() => this.setState({ editForm: undefined })}
+            onSubmit={fields =>
+              this.handleSubmit({
+                fields,
+                saveMethodName: 'setLoginPw',
+                moduleCode: 'sucuser',
               })
             }
           />
