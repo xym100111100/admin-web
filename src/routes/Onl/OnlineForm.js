@@ -187,6 +187,7 @@ export default class OnlineForm extends React.Component {
       onlineName = values.onlineName;
     });
     const { fileList, fileLists, onlineDetail, subjectType } = this.state;
+    console.log(fileLists);
     let detailHtml = onlineDetail.toHTML().replace(/<div\/?.+?>/g, '');
     let onlineDetails = detailHtml.replace(/<\/div>/g, '');
     if (onlineName === undefined || onlineName === null || onlineName === '') return message.error('请输入商品名称');
@@ -203,7 +204,7 @@ export default class OnlineForm extends React.Component {
       return message.error('商品详情不能为空');
     if (onlineDetail.length > 2400) return message.error('商品详情字数不能大于2400个字');
 
-    let qsmm = fileList[0].response === undefined ? fileList[0].name : fileLists[0].response.filePaths[0];
+    let qsmm = fileList[0].response === undefined ? fileList[0].name : fileList[0].response.filePaths[0];
     let slideshows = new Array();
     for (let i = 0; i < fileLists.length; i++) {
       let slideshow = fileLists[i].response === undefined ? fileLists[i].name : fileLists[i].response.filePaths[0];
@@ -231,7 +232,6 @@ export default class OnlineForm extends React.Component {
   };
 
   render() {
-    console.log(this.props);
     const { loading, form } = this.props;
     const {
       previewVisible,
@@ -372,7 +372,7 @@ export default class OnlineForm extends React.Component {
                   <img alt="example" style={{ width: '100%' }} src={previewImage} />
                 </Modal>
               </div>
-            } 
+            }
           </FormItem>
         </Col>
         <Col span={24}>
