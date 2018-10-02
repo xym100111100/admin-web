@@ -95,6 +95,11 @@ export const getRouterData = app => {
         import('../routes/Ord/OrdOrder')
       ),
     },
+    '/ord/ord-return': {
+      component: dynamicWrapper(app, ['ordreturn'], () =>
+        import('../routes/Ord/OrdReturn')
+      ),
+    },
     '/pfm/sys-mng': {
       component: dynamicWrapper(app, ['pfmsys'], () => import('../routes/Pfm/SysMng')),
     },
