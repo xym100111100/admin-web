@@ -96,7 +96,7 @@ export const getRouterData = app => {
       ),
     },
     '/ord/ord-return': {
-      component: dynamicWrapper(app, ['ordreturn'], () =>
+      component: dynamicWrapper(app, ['ordreturn', 'user'], () =>
         import('../routes/Ord/OrdReturn')
       ),
     },

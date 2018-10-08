@@ -1,18 +1,19 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Row, Divider, message, Col, Icon, Card, Form, Dropdown, Input, Select, Button, Menu, Table, DatePicker } from 'antd';
+import { Row, message, Col, Card, Form, Input, Select, Button, Table, DatePicker } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './OrdReturn.less';
 import moment from 'moment';
 const { RangePicker } = DatePicker;
 import OrdReturnForm from './OrdReturnForm';
+import OrdRejectForm from './OrdRejectForm';
 
 const { Option } = Select;
 const FormItem = Form.Item;
-@connect(({ ordreturn, loading }) => ({
-    ordreturn,
-    loading: loading.models.ordreturn
+@connect(({ ordreturn,user, loading }) => ({
+    ordreturn,user,
+    loading: loading.models.ordreturn || loading.models.user
 }))
 @Form.create()
 export default class OrdReturn extends SimpleMng {
@@ -143,6 +144,8 @@ export default class OrdReturn extends SimpleMng {
 
         const { ordreturn: { ordreturn }, loading, } = this.props;
         const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
+        const { user } = this.props;
+        editFormRecord.rejectOpId = user.currentUser.userId;
         let ps;
         if (ordreturn === undefined || ordreturn.pageSize === undefined) {
             ps = 5;
@@ -198,11 +201,11 @@ export default class OrdReturn extends SimpleMng {
                 title: '状态',
                 dataIndex: 'refundState',
                 render: (text, record) => {
-                    if (record.returnType === -1) return '已取消';
-                    if (record.returnType === 1) return '待审核';
-                    if (record.returnType === 2) return '退货中';
-                    if (record.returnType === 3) return '已退货';
-                    if (record.returnType === 4) return '已拒绝';
+                    if (record.applicationState === -1) return '已取消';
+                    if (record.applicationState === 1) return '待审核';
+                    if (record.applicationState === 2) return '退货中';
+                    if (record.applicationState === 3) return '已退货';
+                    if (record.applicationState === 4) return '已拒绝';
                 },
             },
 
@@ -214,18 +217,30 @@ export default class OrdReturn extends SimpleMng {
                 title: '操作',
                 width: 100,
                 render: (text, record) => {
-                    return (
-                        <Fragment>
-                            <a
-                                onClick={() =>
-                                    this.showEditForm({ id: record.id, editForm: 'OrdReturn', editFormTitle: '同意退款' })
-                                }
-                            >同意退款</a>
-                        </Fragment>
-                    )
-
+                    if (record.applicationState !== 1) {
+                        return (
+                            <Fragment>
+                                <a style={{ color: '#C0C0C0' }} >同意退款</a>
+                                <a style={{ color: '#C0C0C0' }} >拒绝退款</a>
+                            </Fragment>
+                        )
+                    } else {
+                        return (
+                            <Fragment>
+                                <a
+                                    onClick={() =>
+                                        this.showEditForm({ id: record.id, editForm: 'OrdReturn', editFormTitle: '同意退款' })
+                                    }
+                                >同意退款</a>
+                                <a
+                                    onClick={() =>
+                                        this.showEditForm({ id: record.id, editForm: 'OrdReject', editFormTitle: '拒绝退款' })
+                                    }
+                                >拒绝退款</a>
+                            </Fragment>
+                        )
+                    }
                 },
-
             },
         ];
 
@@ -254,6 +269,21 @@ export default class OrdReturn extends SimpleMng {
                         onSubmit={fields => {
                             this.handleSubmit({
                                 fields,
+                            });
+                        }}
+                    />
+                )}
+                {editForm === 'OrdReject' && (
+                    <OrdRejectForm
+                        visible
+                        title={editFormTitle}
+                        editFormType={editFormType}
+                        record={editFormRecord}
+                        closeModal={() => this.setState({ editForm: undefined })}
+                        onSubmit={fields => {
+                            this.handleSubmit({
+                                fields,
+                                saveMethodName: 'reject',
                             });
                         }}
                     />

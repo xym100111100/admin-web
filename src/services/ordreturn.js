@@ -14,6 +14,16 @@ export async function modify(params) {
   });
 }
 
+export async function reject(params) {
+  return request('/ord-svr/ord/return/reject', {
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
+}
+
+
 export async function getById(params) {
   return request(`/ord-svr/ord/return/getbyid?${stringify(params)}`);
 }
