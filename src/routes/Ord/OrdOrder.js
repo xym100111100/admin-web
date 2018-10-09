@@ -26,6 +26,10 @@ export default class OrdOrder extends SimpleMng {
     };
     this.state.orderCode = undefined;
     this.state.record = undefined;
+    this.state.expand = {
+      expand: '',
+      orderId: 0
+    }
   }
 
   //初始化
@@ -228,12 +232,12 @@ export default class OrdOrder extends SimpleMng {
   }
 
   printPageAgain = (id) => {
-     let printWindow;
+    let printWindow;
     this.props.dispatch({
       type: `${this.moduleCode}/printpage`,
       payload: { orderId: id },
       callback: data => {
-        if(data.length===0 || data[0].printPage===undefined){
+        if (data.length === 0 || data[0].printPage === undefined) {
           message.success('获取失败');
           return;
         }
@@ -246,19 +250,119 @@ export default class OrdOrder extends SimpleMng {
     });
 
   }
+  /**
+   * 获取订单详情
+   */
+  expand = (expanded, record) => {
+    if (expanded) {
+      this.props.dispatch({
+        type: `${this.moduleCode}/detail`,
+        payload: { orderId: record.id },
+        callback: data => {
+          if (data.length !== 0 && data !== undefined) {
+            this.setState({
+              expand: {
+                expand: data,
+                orderId: data[0].orderId
+              }
+            })
+          }
+        }
+      });
+    }
+  }
+
+  showExpand = (data) => {
+    const listItems = data.map(items => {
+      let color;
+      if (items.returnState === 1 ||items.returnState === 2 ||items.returnState === 3 || items.returnState==='退货中'||items.returnState==='已退货'||items.returnState==='部分已退') {
+        color = {
+          'color': 'rgba(255, 0, 0, 0.85)',
+          'paddingRight': 8,
+        }
+      } else {
+        color = {
+          'color': 'rgba(0, 0, 0, 0.85)',
+          'paddingRight': 8,
+        }
+      }
+      if (items.returnState === 0) items.returnState = '未退货';
+      if (items.returnState === 1) items.returnState = '退货中';
+      if (items.returnState === 2) items.returnState = '已退货';
+      if (items.returnState === 3) items.returnState = '部分已退';
+      if (items.subjectType === 0) items.subjectType = '普通';
+      if (items.subjectType === 1) items.subjectType = '全返';
+
+      return (
+        <div key={items.id.toString()} >
+          <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
+            <Col md={5} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>商品 :</span>{items.onlineTitle !== undefined && (items.onlineTitle)}
+            </Col>
+            <Col md={6} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>规格 :</span>{items.specName !== undefined && (items.specName)}
+            </Col>
+            <Col md={5} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>数量 :</span>{items.buyCount !== undefined && (items.buyCount)}
+            </Col>
+            <Col md={5} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>单价 :</span>{items.buyPrice !== undefined && (items.buyPrice)}
+            </Col>
+          </Row>
+          <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
+            <Col md={5} sm={24}>
+              <span style={color}>状态 :</span>{items.returnState !== undefined && (items.returnState)}
+            </Col>
+            <Col md={6} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>类型 :</span>{items.subjectType !== undefined && (items.subjectType)}
+            </Col>
+            <Col md={24} sm={24}>
+              <Divider />
+            </Col>
+          </Row>
+        </div>
+      )
+    });
+    return listItems;
+  }
+
+
+  showReceiverInfo = (record) => {
+    return (
+      <Row gutter={{ md: 6, lg: 24, xl: 48 }} >
+        <Col md={24} sm={24}>
+          <h4>收件人信息</h4>
+        </Col>
+        <Col md={5} sm={24}>
+          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>收件人名字:</span>{record.receiverName !== undefined && (record.receiverName)}
+        </Col>
+        <Col md={6} sm={24}>
+          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>收件人手机:</span>{record.receiverMobile !== undefined && (record.receiverMobile)}
+        </Col>
+        <Col md={12} sm={24}>
+          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>收件人地址:</span>{record.receiverProvince !== undefined && (
+            record.receiverProvince + record.receiverCity + record.receiverExpArea + record.receiverAddress)}
+        </Col>
+        <Col md={24} sm={24}>
+          <Divider />
+        </Col>
+      </Row>
+    )
+
+  }
 
 
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
     const { editFormRecord } = this.state;
     const { user } = this.props;
-    editFormRecord.orgId =  user.currentUser.orgId;
+    editFormRecord.orgId = user.currentUser.orgId;
     return (
       <Form onSubmit={this.list} layout="inline">
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
           <Col md={6} sm={24}>
             <FormItem label="">
-              {getFieldDecorator('userName')(<Input placeholder="用户名/单号编号" />)}
+              {getFieldDecorator('userName')(<Input placeholder="用户名/订单编号" />)}
             </FormItem>
           </Col>
           <Col md={7} sm={24}>
@@ -453,18 +557,22 @@ export default class OrdOrder extends SimpleMng {
           <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
           <div className={styles.tableList}>
             <Table
+              onExpand={this.expand}
               rowKey="orderCode"
               pagination={paginationProps}
               loading={loading}
               onChange={this.handleTableChange}
               dataSource={kdilogisticData}
               expandedRowRender={record => (
-                <p >
-                  <span><b>收件人姓名:</b>{record.receiverName !== undefined && (record.receiverName)}</span>
-                  <span style={{ paddingLeft: '15px' }}><b>收件人手机:</b>{record.receiverMobile !== undefined && (record.receiverMobile)}</span>
-                  <span style={{ paddingLeft: '15px' }}><b>收件人地址:</b>{record.receiverProvince !== undefined && (
-                    record.receiverProvince + record.receiverCity + record.receiverExpArea)}</span>
-                </p>
+                <div >
+                  {this.showReceiverInfo(record)}
+                  <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
+                    <Col md={24} sm={24}>
+                      <h4>订单详情</h4>
+                    </Col>
+                  </Row>
+                  {this.state.expand.orderId === record.id && (this.showExpand(this.state.expand.expand))}
+                </div>
               )}
               columns={columns}
             />

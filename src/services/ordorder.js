@@ -5,6 +5,10 @@ export async function list(params) {
   return request(`/ord-svr/ord/order?${stringify(params)}`);
 }
 
+export async function detail(params) {
+  return request(`/ord-svr/ord/orderdetail/info?${stringify(params)}`);
+}
+
 export async function getById(params) {
   return request(`/ord-svr/ord/order/getbyid?${stringify(params)}`);
 }

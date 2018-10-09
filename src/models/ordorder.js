@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { list, getById, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,shipmentconfirmation} from '../services/ordorder';
+import { list, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,shipmentconfirmation} from '../services/ordorder';
 import { printpage } from '../services/kdilogistic';
 export default {
   namespace: 'ordorder',
@@ -17,6 +17,11 @@ export default {
         type: 'changeList',
         payload: response,
       });
+      if (callback) callback(response);
+    },
+
+    *detail({ payload, callback }, { call, put }) {
+      const response = yield call(detail, payload);
       if (callback) callback(response);
     },
     *textMeshod({ payload, callback }, { call, put }) {
