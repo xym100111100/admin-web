@@ -173,13 +173,16 @@ export default class OrdReturn extends SimpleMng {
         };
         const columns = [
             {
-                title: '订单号',
-                dataIndex: 'orderId',
-                width: 170,
+                title: '用户名',
+                dataIndex: 'userName',
+                width: 100,
             },
             {
-                title: '上线标题',
+                title: '商品',
                 dataIndex: 'onlineTitle',
+                render: (text, record) => {
+                    return(record.onlineTitle+"("+record.specName+")");
+                },
             },
             {
                 title: '数量',
