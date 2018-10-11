@@ -251,15 +251,30 @@ export default class OrdOrder extends SimpleMng {
 
   }
   /**
-   * 获取订单详情
+   * 获取订单详情和购买关系
    */
   expand = (expanded, record) => {
     if (expanded) {
       this.props.dispatch({
-        type: `${this.moduleCode}/detail`,
+        type: `${this.moduleCode}/buyrelation`,
         payload: { orderId: record.id },
         callback: data => {
+          console.log(data)
           if (data.length !== 0 && data !== undefined) {
+            for (let i = 0; i < data.length; i++) {
+              if (data[i].relationSource === 1) data[i].relationSource = '自己匹配自己';
+              if (data[i].relationSource === 2) data[i].relationSource = '购买关系';
+              if (data[i].relationSource === 3) data[i].relationSource = '邀请关系';
+              if (data[i].relationSource === 4) data[i].relationSource = '差一人且邀请一人';
+              if (data[i].relationSource === 5) data[i].relationSource = '差两人';
+              if (data[i].relationSource === 6) data[i].relationSource = '差一人';
+              if (data[i].relationSource2 === 1) data[i].relationSource2 = '自己匹配自己';
+              if (data[i].relationSource2 === 2) data[i].relationSource2 = '购买关系';
+              if (data[i].relationSource2 === 3) data[i].relationSource2 = '邀请关系';
+              if (data[i].relationSource2 === 4) data[i].relationSource2 = '差一人且邀请一人';
+              if (data[i].relationSource2 === 5) data[i].relationSource2 = '差两人';
+              if (data[i].relationSource2 === 6) data[i].relationSource2 = '差一人';
+            }
             this.setState({
               expand: {
                 expand: data,
@@ -275,7 +290,7 @@ export default class OrdOrder extends SimpleMng {
   showExpand = (data) => {
     const listItems = data.map(items => {
       let color;
-      if (items.returnState === 1 ||items.returnState === 2 ||items.returnState === 3 || items.returnState==='退货中'||items.returnState==='已退货'||items.returnState==='部分已退') {
+      if (items.returnState === 1 || items.returnState === 2 || items.returnState === 3 || items.returnState === '退货中' || items.returnState === '已退货' || items.returnState === '部分已退') {
         color = {
           'color': 'rgba(255, 0, 0, 0.85)',
           'paddingRight': 8,
@@ -293,6 +308,7 @@ export default class OrdOrder extends SimpleMng {
       if (items.subjectType === 0) items.subjectType = '普通';
       if (items.subjectType === 1) items.subjectType = '全返';
 
+
       return (
         <div key={items.id.toString()} >
           <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
@@ -302,10 +318,10 @@ export default class OrdOrder extends SimpleMng {
             <Col md={6} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>规格 :</span>{items.specName !== undefined && (items.specName)}
             </Col>
-            <Col md={5} sm={24}>
+            <Col md={6} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>数量 :</span>{items.buyCount !== undefined && (items.buyCount)}
             </Col>
-            <Col md={5} sm={24}>
+            <Col md={7} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>单价 :</span>{items.buyPrice !== undefined && (items.buyPrice)}
             </Col>
           </Row>
@@ -316,9 +332,18 @@ export default class OrdOrder extends SimpleMng {
             <Col md={6} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>类型 :</span>{items.subjectType !== undefined && (items.subjectType)}
             </Col>
-            <Col md={24} sm={24}>
-              <Divider />
+            <Col md={6} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>下家1 :</span>{items.downlineUserName !== undefined && (items.downlineUserName + '(' + items.relationSource + ')')}
             </Col>
+            <Col md={7} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>下家2 :</span>{items.downlineUserName2 !== undefined && (items.downlineUserName2 + '(' + items.relationSource2 + ')')}
+            </Col>
+          </Row>
+          <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
+            <Col md={6} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>上家 :</span>{items.uplineUserName !== undefined && (items.uplineUserName + '(' + items.relationSource + ')')}
+            </Col>
+            <Divider />
           </Row>
         </div>
       )

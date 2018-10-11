@@ -5,6 +5,10 @@ export async function list(params) {
   return request(`/ord-svr/ord/order?${stringify(params)}`);
 }
 
+export async function buyrelation(params) {
+  return request(`/ord-svr/ord/buyrelation/info?${stringify(params)}`);
+}
+
 export async function detail(params) {
   return request(`/ord-svr/ord/orderdetail/info?${stringify(params)}`);
 }

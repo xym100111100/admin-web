@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { list, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,shipmentconfirmation} from '../services/ordorder';
+import { buyrelation,list, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,shipmentconfirmation} from '../services/ordorder';
 import { printpage } from '../services/kdilogistic';
 export default {
   namespace: 'ordorder',
@@ -24,6 +24,12 @@ export default {
       const response = yield call(detail, payload);
       if (callback) callback(response);
     },
+
+    *buyrelation({ payload, callback }, { call, put }) {
+      const response = yield call(buyrelation, payload);
+      if (callback) callback(response);
+    },
+
     *textMeshod({ payload, callback }, { call, put }) {
       console.log("models");
       const response = yield call(textMeshod, payload);
