@@ -30,7 +30,7 @@ export default class OrdRejectForm extends PureComponent {
                                             message: '请输入拒绝原因',
                                         },
                                     ],
-                                })(<Input placeholder="请输入退款到余额的金额" />)}
+                                })(<Input placeholder="请输入拒绝原因" />)}
 
                             </FormItem>
                         </Col>
