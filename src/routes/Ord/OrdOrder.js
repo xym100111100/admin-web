@@ -259,8 +259,7 @@ export default class OrdOrder extends SimpleMng {
         type: `${this.moduleCode}/buyrelation`,
         payload: { orderId: record.id },
         callback: data => {
-          console.log(data)
-          if (data.length !== 0 && data !== undefined) {
+          if (data !== undefined &&  data.length !== 0 ) {
             for (let i = 0; i < data.length; i++) {
               if (data[i].relationSource === 1) data[i].relationSource = '自己匹配自己';
               if (data[i].relationSource === 2) data[i].relationSource = '购买关系';
