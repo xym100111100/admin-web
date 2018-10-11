@@ -71,6 +71,7 @@ export default class OrdOrder extends SimpleMng {
 
   //取消发货
   canceldelivery = (record) => {
+
     if (record.orderState !== 2) {
       message.success('非已支付状态不能取消发货');
       return;
@@ -465,6 +466,33 @@ export default class OrdOrder extends SimpleMng {
       </Dropdown>
     )
   }
+  /**
+   * 发货
+   */
+  send=(record)=>{
+
+    this.props.dispatch({
+      type: `${this.moduleCode}/detail`,
+      payload: { orderId: record.id },
+      callback: data => {
+        if(data !==undefined && data.length !==0){
+            for (let i = 0; i < data.length; i++) {
+              if(data[i].returnState!==0){
+                message.error('有订单详情处于退货状态，不能发货');
+                return;
+              }
+            }
+            this.showAddForm({
+              editFormRecord: record,
+              editForm: 'printPage',
+              editFormTitle: '选择发货信息',
+            })
+        }
+      }
+    })
+
+
+  }
 
   render() {
 
@@ -553,11 +581,7 @@ export default class OrdOrder extends SimpleMng {
           if (record.orderState === 2) {
             return (
               <Fragment  >
-                <a onClick={() => this.showAddForm({
-                  editFormRecord: record,
-                  editForm: 'printPage',
-                  editFormTitle: '选择发货信息',
-                })} >
+                <a onClick={() => this.send(record)} >
                   发货
                   </a>
                 <Divider type="vertical" />
