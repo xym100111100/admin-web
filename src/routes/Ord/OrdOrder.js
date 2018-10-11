@@ -261,12 +261,14 @@ export default class OrdOrder extends SimpleMng {
         callback: data => {
           if (data !== undefined &&  data.length !== 0 ) {
             for (let i = 0; i < data.length; i++) {
+              if (data[i].relationSource === 0) data[i].relationSource = '未知来源';
               if (data[i].relationSource === 1) data[i].relationSource = '自己匹配自己';
               if (data[i].relationSource === 2) data[i].relationSource = '购买关系';
               if (data[i].relationSource === 3) data[i].relationSource = '邀请关系';
               if (data[i].relationSource === 4) data[i].relationSource = '差一人且邀请一人';
               if (data[i].relationSource === 5) data[i].relationSource = '差两人';
               if (data[i].relationSource === 6) data[i].relationSource = '差一人';
+              if (data[i].relationSource2 === 0) data[i].relationSource2= '未知来源';
               if (data[i].relationSource2 === 1) data[i].relationSource2 = '自己匹配自己';
               if (data[i].relationSource2 === 2) data[i].relationSource2 = '购买关系';
               if (data[i].relationSource2 === 3) data[i].relationSource2 = '邀请关系';
