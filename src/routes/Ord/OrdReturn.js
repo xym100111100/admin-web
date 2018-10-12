@@ -11,8 +11,8 @@ import OrdRejectForm from './OrdRejectForm';
 
 const { Option } = Select;
 const FormItem = Form.Item;
-@connect(({ ordreturn,user, loading }) => ({
-    ordreturn,user,
+@connect(({ ordreturn, user, loading }) => ({
+    ordreturn, user,
     loading: loading.models.ordreturn || loading.models.user
 }))
 @Form.create()
@@ -23,7 +23,7 @@ export default class OrdReturn extends SimpleMng {
         this.state.options = {
             pageNum: 1,
             pageSize: 5,
-            returnState: 2,
+            applicationState: 1,
         };
         this.state.returnCode = undefined;
         this.state.record = undefined;
@@ -34,7 +34,7 @@ export default class OrdReturn extends SimpleMng {
         this.state.payloads = {
             pageNum: this.state.options.pageNum,
             pageSize: this.state.options.pageSize,
-            returnState: this.state.options.returnState,
+            applicationState: this.state.options.applicationState,
         };
         this.props.dispatch({
             type: `${this.moduleCode}/list`,
@@ -56,19 +56,68 @@ export default class OrdReturn extends SimpleMng {
 
     //点击submit查询
     list = () => {
+        const { form } = this.props;
+        form.validateFields((err, fieldsValue) => {
+            if (err) return;
+            fieldsValue.pageNum = this.state.options.pageNum;
+            fieldsValue.pageSize = this.state.options.pageSize;
+            let info = fieldsValue.userName;
+            this.setState({
+                options: {
+                  pageNum: fieldsValue.pageNum,
+                  pageSize: fieldsValue.pageSize,
+                  applicationState: fieldsValue.applicationState
+                },
+              });
+            if (info !== undefined) {
+                if (/^[0-9]+$/.test(info)) {
+                    fieldsValue.orderCode = info;
+                    fieldsValue.userName = undefined;
+                } else {
+                    fieldsValue.orderCode = undefined;
+                    fieldsValue.userName = info;
+                }
+            }
+            this.props.dispatch({
+                type: `${this.moduleCode}/list`,
+                payload: fieldsValue,
+            });
+        })
+
     };
 
     //改变页数查询
     handleTableChange = pagination => {
         const pager = { ...this.state.pagination };
         pager.current = pagination.current;
-        const fieldsValue = {};
-        fieldsValue.pageNum = pagination.current;
-        fieldsValue.pageSize = pagination.pageSize;
-        this.props.dispatch({
-            type: `${this.moduleCode}/list`,
-            payload: fieldsValue,
-        });
+        const { form } = this.props;
+        form.validateFields((err, fieldsValue) => {
+            if (err) return;
+            this.setState({
+                options: {
+                  pageNum: pagination.current,
+                  pageSize: pagination.pageSize,
+                  applicationState: fieldsValue.applicationState
+                },
+              });
+            fieldsValue.pageNum = pagination.current;
+            fieldsValue.pageSize = pagination.pageSize;
+            let info = fieldsValue.userName;
+            if (info !== undefined) {
+                if (/^[0-9]+$/.test(info)) {
+                    fieldsValue.orderCode = info;
+                    fieldsValue.userName = undefined;
+                } else {
+                    fieldsValue.orderCode = undefined;
+                    fieldsValue.userName = info;
+                }
+            }
+            this.props.dispatch({
+                type: `${this.moduleCode}/list`,
+                payload: fieldsValue,
+            });
+        })
+
     };
 
     //禁止选择当前日期后的
@@ -96,22 +145,12 @@ export default class OrdReturn extends SimpleMng {
                 <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
                     <Col md={6} sm={24}>
                         <FormItem label="">
-                            {getFieldDecorator('userName')(<Input placeholder="用户名/单号编号" />)}
-                        </FormItem>
-                    </Col>
-                    <Col md={7} sm={24}>
-                        <FormItem label="">
-                            {getFieldDecorator('returnTime')(
-                                <RangePicker
-                                    disabledDate={this.disabledDate}
-                                    placeholder={['申请开始日期', '申请结束日期']}
-                                />
-                            )}
+                            {getFieldDecorator('userName')(<Input placeholder="用户名/订单编号" />)}
                         </FormItem>
                     </Col>
                     <Col md={4} sm={24}>
                         <FormItem label="">
-                            {getFieldDecorator('returnState', {
+                            {getFieldDecorator('applicationState', {
                                 initialValue: '1'
                             })(
                                 <Select placeholder="申请状态" style={{ width: '100%' }}>
@@ -178,10 +217,14 @@ export default class OrdReturn extends SimpleMng {
                 width: 100,
             },
             {
+                title: '订单编号',
+                dataIndex: 'orderCode',
+            },
+            {
                 title: '商品',
                 dataIndex: 'onlineTitle',
                 render: (text, record) => {
-                    return(record.onlineTitle+"("+record.specName+")");
+                    return (record.onlineTitle + "(" + record.specName + ")");
                 },
             },
             {
@@ -202,7 +245,7 @@ export default class OrdReturn extends SimpleMng {
             },
             {
                 title: '状态',
-                dataIndex: 'refundState',
+                dataIndex: 'applicationState',
                 render: (text, record) => {
                     if (record.applicationState === -1) return '已取消';
                     if (record.applicationState === 1) return '待审核';
@@ -210,11 +253,6 @@ export default class OrdReturn extends SimpleMng {
                     if (record.applicationState === 3) return '已退货';
                     if (record.applicationState === 4) return '已拒绝';
                 },
-            },
-
-            {
-                title: '申请时间',
-                dataIndex: 'applicationTime',
             },
             {
                 title: '操作',
