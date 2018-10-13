@@ -257,25 +257,32 @@ export default class OrdOrder extends SimpleMng {
   expand = (expanded, record) => {
     if (expanded) {
       this.props.dispatch({
-        type: `${this.moduleCode}/buyrelation`,
+        type: `${this.moduleCode}/detail`,
         payload: { orderId: record.id },
         callback: data => {
           if (data !== undefined &&  data.length !== 0 ) {
             for (let i = 0; i < data.length; i++) {
-              if (data[i].relationSource === 0) data[i].relationSource = '未知来源';
-              if (data[i].relationSource === 1) data[i].relationSource = '自己匹配自己';
-              if (data[i].relationSource === 2) data[i].relationSource = '购买关系';
-              if (data[i].relationSource === 3) data[i].relationSource = '邀请关系';
-              if (data[i].relationSource === 4) data[i].relationSource = '差一人且邀请一人';
-              if (data[i].relationSource === 5) data[i].relationSource = '差两人';
-              if (data[i].relationSource === 6) data[i].relationSource = '差一人';
-              if (data[i].relationSource2 === 0) data[i].relationSource2= '未知来源';
-              if (data[i].relationSource2 === 1) data[i].relationSource2 = '自己匹配自己';
-              if (data[i].relationSource2 === 2) data[i].relationSource2 = '购买关系';
-              if (data[i].relationSource2 === 3) data[i].relationSource2 = '邀请关系';
-              if (data[i].relationSource2 === 4) data[i].relationSource2 = '差一人且邀请一人';
-              if (data[i].relationSource2 === 5) data[i].relationSource2 = '差两人';
-              if (data[i].relationSource2 === 6) data[i].relationSource2 = '差一人';
+              if (data[i].downlineRelationSource1 === 0) data[i].downlineRelationSource1 = '未知来源';
+              if (data[i].downlineRelationSource1 === 1) data[i].downlineRelationSource1 = '自己匹配自己';
+              if (data[i].downlineRelationSource1 === 2) data[i].downlineRelationSource1 = '购买关系';
+              if (data[i].downlineRelationSource1 === 3) data[i].downlineRelationSource1 = '邀请关系';
+              if (data[i].downlineRelationSource1 === 4) data[i].downlineRelationSource1 = '差一人且邀请一人';
+              if (data[i].downlineRelationSource1 === 5) data[i].downlineRelationSource1 = '差两人';
+              if (data[i].downlineRelationSource1 === 6) data[i].downlineRelationSource1 = '差一人';
+              if (data[i].downlineRelationSource2 === 0) data[i].downlineRelationSource2= '未知来源';
+              if (data[i].downlineRelationSource2 === 1) data[i].downlineRelationSource2 = '自己匹配自己';
+              if (data[i].downlineRelationSource2 === 2) data[i].downlineRelationSource2 = '购买关系';
+              if (data[i].downlineRelationSource2 === 3) data[i].downlineRelationSource2 = '邀请关系';
+              if (data[i].downlineRelationSource2 === 4) data[i].downlineRelationSource2 = '差一人且邀请一人';
+              if (data[i].downlineRelationSource2 === 5) data[i].downlineRelationSource2 = '差两人';
+              if (data[i].downlineRelationSource2 === 6) data[i].downlineRelationSource2 = '差一人';
+              if (data[i].uplineRelationSource === 0) data[i].uplineRelationSource= '未知来源';
+              if (data[i].uplineRelationSource === 1) data[i].uplineRelationSource = '自己匹配自己';
+              if (data[i].uplineRelationSource === 2) data[i].uplineRelationSource = '购买关系';
+              if (data[i].uplineRelationSource === 3) data[i].uplineRelationSource = '邀请关系';
+              if (data[i].uplineRelationSource === 4) data[i].uplineRelationSource = '差一人且邀请一人';
+              if (data[i].uplineRelationSource === 5) data[i].uplineRelationSource = '差两人';
+              if (data[i].uplineRelationSource === 6) data[i].uplineRelationSource = '差一人';
             }
             this.setState({
               expand: {
@@ -335,15 +342,15 @@ export default class OrdOrder extends SimpleMng {
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>类型 :</span>{items.subjectType !== undefined && (items.subjectType)}
             </Col>
             <Col md={6} sm={24}>
-              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>下家1 :</span>{items.downlineUserName !== undefined && (items.downlineUserName + '(' + items.relationSource + ')')}
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>下家1 :</span>{items.downlineUserName1 !== undefined && (items.downlineUserName1 + '(' + items.downlineRelationSource1 + ')')}
             </Col>
             <Col md={7} sm={24}>
-              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>下家2 :</span>{items.downlineUserName2 !== undefined && (items.downlineUserName2 + '(' + items.relationSource2 + ')')}
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>下家2 :</span>{items.downlineUserName2 !== undefined && (items.downlineUserName2 + '(' + items.downlineRelationSource2 + ')')}
             </Col>
           </Row>
           <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
             <Col md={6} sm={24}>
-              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>上家 :</span>{items.uplineUserName !== undefined && (items.uplineUserName + '(' + items.relationSource + ')')}
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>上家 :</span>{items.uplineUserName !== undefined && (items.uplineUserName + '(' + items.uplineRelationSource + ')')}
             </Col>
             <Divider />
           </Row>
