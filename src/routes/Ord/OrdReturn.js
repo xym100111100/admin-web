@@ -231,6 +231,7 @@ export default class OrdReturn extends SimpleMng {
                 title: '数量',
                 dataIndex: 'returnCount',
             },
+            
             {
                 title: '金额',
                 dataIndex: 'returnRental',
@@ -253,6 +254,10 @@ export default class OrdReturn extends SimpleMng {
                     if (record.applicationState === 3) return '已退货';
                     if (record.applicationState === 4) return '已拒绝';
                 },
+            },
+            {
+                title: '完成时间',
+                dataIndex: 'finishTime',
             },
             {
                 title: '操作',
