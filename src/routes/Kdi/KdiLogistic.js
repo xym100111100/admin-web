@@ -289,6 +289,7 @@ export default class KdiLogistic extends SimpleMng {
                 <p style={{ margin: 0 }}>
                   <span><b>寄件人:</b>{record.senderName}</span>
                   <span style={{ paddingLeft: '15px' }}><b>寄件人手机:</b>{record.senderMobile}</span>
+                  <span style={{ paddingLeft: '15px' }}><b>收件人地址:</b>{record.receiverProvince+record.receiverCity+record.receiverExpArea+record.receiverAddress}</span>
                 </p>
               )}
               columns={columns}
