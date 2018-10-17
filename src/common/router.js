@@ -121,6 +121,11 @@ export const getRouterData = app => {
         import('../routes/Afc/WithdrawMng')
       ),
     },
+    '/afc/afc-withdrawaccount-mng': {
+      component: dynamicWrapper(app, ['afcwithdrawaccount'], () =>
+        import('../routes/Afc/WithdrawAccountMng')
+      ),
+    },
     '/pfm/script-mng': {
       component: dynamicWrapper(
         app,

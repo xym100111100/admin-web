@@ -122,27 +122,29 @@ export default class ApplyWithdrawAccountMng extends SimpleMng {
         title: '操作',
         width: 170,
         render: (text, record) => {
-          return (
-            <Fragment>
-              <a
-                onClick={() =>
-                  this.showAddForm({
-                    id: record.id,
-                    editFormRecord: record,
-                    moduleCode: 'afcapplywithdrawaccount',
-                    editForm: 'applyWithdrawAccountForm',
-                    editFormTitle: '拒绝通过',
-                  })
-                }
-              >
-                拒绝
-              </a>
-              <Divider type="vertical" />
-              <Popconfirm title="是否要通过此申请审核？" onConfirm={() => this.reviewThrough(record)}>
-                <a>审核</a>
-              </Popconfirm>
-            </Fragment>
-          );
+          if (record.flowState === 1) {
+            return (
+              <Fragment>
+                <a
+                  onClick={() =>
+                    this.showAddForm({
+                      id: record.id,
+                      editFormRecord: record,
+                      moduleCode: 'afcapplywithdrawaccount',
+                      editForm: 'applyWithdrawAccountForm',
+                      editFormTitle: '拒绝通过',
+                    })
+                  }
+                >
+                  拒绝
+                </a>
+                <Divider type="vertical" />
+                <Popconfirm title="是否要通过此申请审核？" onConfirm={() => this.reviewThrough(record)}>
+                  <a>审核</a>
+                </Popconfirm>
+              </Fragment>
+            );
+          }
         },
       },
     ];
