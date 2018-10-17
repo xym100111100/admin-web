@@ -61,6 +61,10 @@ menuData.push({ id: '1536131597139', sysId: 'damai-admin', code: '1300', title: 
 menuData.push({ id: '1536131597140', sysId: 'damai-admin', code: '1301', title: '注册', name: '注册', path: 'register', isEnabled: true, icon: null, remark: '注册相关业务' });
 menuData.push({ id: '1536131597141', sysId: 'damai-admin', code: '1302', title: '注册结果', name: '注册结果', path: 'register-result', isEnabled: true, icon: null, remark: '注册结果相关业务' });
 
+menuData.push({ id: '1536131597143', sysId: 'damai-admin', code: '14', title: null, name: 'v支付管理', path: 'afc', isEnabled: true, icon: 'pay-circle', remark: 'v支付相关业务' });
+menuData.push({ id: '1536131597144', sysId: 'damai-admin', code: '1400', title: '提现账号申请管理', name: '提现账号申请管理', path: 'afc-applywithdrawaccount-mng', isEnabled: true, icon: null, remark: '申请提现账号相关业务' });
+menuData.push({ id: '1536131597145', sysId: 'damai-admin', code: '1401', title: '提现管理', name: '提现管理', path: 'afc-withdraw-mng', isEnabled: true, icon: null, remark: '提现相关业务' });
+
 function sort(list) {
   return list.sort((item1, item2) => {
     const code1 = item1.code;

@@ -111,6 +111,16 @@ export const getRouterData = app => {
         import('../routes/Pfm/FuncMng')
       ),
     },
+    '/afc/afc-applywithdrawaccount-mng': {
+      component: dynamicWrapper(app, ['afcapplywithdrawaccount'], () =>
+        import('../routes/Afc/ApplyWithdrawAccountMng')
+      ),
+    },
+    '/afc/afc-withdraw-mng': {
+      component: dynamicWrapper(app, ['afcwithdraw'], () =>
+        import('../routes/Afc/WithdrawMng')
+      ),
+    },
     '/pfm/script-mng': {
       component: dynamicWrapper(
         app,
