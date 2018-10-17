@@ -11,8 +11,7 @@ const FormItem = Form.Item;
 @EditForm
 export default class OrdReturnForm extends PureComponent {
     render() {
-        const { form,ordreturn } = this.props;
-        console.log(this.props);
+        const { form } = this.props;
         return (
             <Fragment>
                 <Form layout="inline">
