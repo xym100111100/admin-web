@@ -1,7 +1,7 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Row, message, Col, Card, Form, Input, Select, Button, Table, DatePicker } from 'antd';
+import { Row, message, Col, Card, Divider, Form, Input, Select, Button, Table, DatePicker } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './OrdReturn.less';
 import moment from 'moment';
@@ -27,6 +27,10 @@ export default class OrdReturn extends SimpleMng {
         };
         this.state.returnCode = undefined;
         this.state.record = undefined;
+        this.state.expand = {
+            expand: '',
+            orderId: 0
+        }
     }
 
     //初始化
@@ -64,11 +68,11 @@ export default class OrdReturn extends SimpleMng {
             let info = fieldsValue.userName;
             this.setState({
                 options: {
-                  pageNum: fieldsValue.pageNum,
-                  pageSize: fieldsValue.pageSize,
-                  applicationState: fieldsValue.applicationState
+                    pageNum: fieldsValue.pageNum,
+                    pageSize: fieldsValue.pageSize,
+                    applicationState: fieldsValue.applicationState
                 },
-              });
+            });
             if (info !== undefined) {
                 if (/^[0-9]+$/.test(info)) {
                     fieldsValue.orderCode = info;
@@ -95,11 +99,11 @@ export default class OrdReturn extends SimpleMng {
             if (err) return;
             this.setState({
                 options: {
-                  pageNum: pagination.current,
-                  pageSize: pagination.pageSize,
-                  applicationState: fieldsValue.applicationState
+                    pageNum: pagination.current,
+                    pageSize: pagination.pageSize,
+                    applicationState: fieldsValue.applicationState
                 },
-              });
+            });
             fieldsValue.pageNum = pagination.current;
             fieldsValue.pageSize = pagination.pageSize;
             let info = fieldsValue.userName;
@@ -119,6 +123,71 @@ export default class OrdReturn extends SimpleMng {
         })
 
     };
+    /**
+ * 获取订单详情和购买关系
+ */
+    expand = (expanded, record) => {
+        if (expanded) {
+            this.props.dispatch({
+                type: `${this.moduleCode}/detail`,
+                payload: { orderId: record.orderId },
+                callback: data => {
+                    if (data !== undefined && data.length !== 0) {
+                        for (let i = 0; i < data.length; i++) {
+                            if (data[i].downlineRelationSource1 === 0) data[i].downlineRelationSource1 = '未知来源';
+                            if (data[i].downlineRelationSource1 === 1) data[i].downlineRelationSource1 = '自己匹配自己';
+                            if (data[i].downlineRelationSource1 === 2) data[i].downlineRelationSource1 = '购买关系';
+                            if (data[i].downlineRelationSource1 === 3) data[i].downlineRelationSource1 = '邀请关系';
+                            if (data[i].downlineRelationSource1 === 4) data[i].downlineRelationSource1 = '差一人且邀请一人';
+                            if (data[i].downlineRelationSource1 === 5) data[i].downlineRelationSource1 = '差两人';
+                            if (data[i].downlineRelationSource1 === 6) data[i].downlineRelationSource1 = '差一人';
+                            if (data[i].downlineRelationSource2 === 0) data[i].downlineRelationSource2 = '未知来源';
+                            if (data[i].downlineRelationSource2 === 1) data[i].downlineRelationSource2 = '自己匹配自己';
+                            if (data[i].downlineRelationSource2 === 2) data[i].downlineRelationSource2 = '购买关系';
+                            if (data[i].downlineRelationSource2 === 3) data[i].downlineRelationSource2 = '邀请关系';
+                            if (data[i].downlineRelationSource2 === 4) data[i].downlineRelationSource2 = '差一人且邀请一人';
+                            if (data[i].downlineRelationSource2 === 5) data[i].downlineRelationSource2 = '差两人';
+                            if (data[i].downlineRelationSource2 === 6) data[i].downlineRelationSource2 = '差一人';
+                            if (data[i].uplineRelationSource === 0) data[i].uplineRelationSource = '未知来源';
+                            if (data[i].uplineRelationSource === 1) data[i].uplineRelationSource = '自己匹配自己';
+                            if (data[i].uplineRelationSource === 2) data[i].uplineRelationSource = '购买关系';
+                            if (data[i].uplineRelationSource === 3) data[i].uplineRelationSource = '邀请关系';
+                            if (data[i].uplineRelationSource === 4) data[i].uplineRelationSource = '差一人且邀请一人';
+                            if (data[i].uplineRelationSource === 5) data[i].uplineRelationSource = '差两人';
+                            if (data[i].uplineRelationSource === 6) data[i].uplineRelationSource = '差一人';
+                        }
+                        this.setState({
+                            expand: {
+                                expand: data,
+                                orderId: data[0].orderId
+                            }
+                        })
+                    }
+                }
+            });
+        }
+    }
+
+    showExpand = (record) => {  
+       if(record.orderState===-1)record.orderState='作废';
+       if(record.orderState===1)record.orderState='已下单';
+       if(record.orderState===2)record.orderState='已支付';
+       if(record.orderState===3)record.orderState='已发货';
+       if(record.orderState===4)record.orderState='已签收';
+       if(record.orderState===5)record.orderState='已结算';
+        return (
+            <div >
+                <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
+                    <Col md={5} sm={24}>
+                         <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >订单状态 :</span>{record.orderState}
+                    </Col>
+                    <Col md={8} sm={24}>
+                        <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >完成时间 :</span>{record.finishTime}
+                    </Col>
+                </Row>
+            </div>
+        )
+    }
 
     //禁止选择当前日期后的
     disabledDate = current => {
@@ -215,14 +284,17 @@ export default class OrdReturn extends SimpleMng {
                 title: '用户名',
                 dataIndex: 'userName',
                 width: 100,
+                key: 'userName',
             },
             {
                 title: '订单编号',
                 dataIndex: 'orderCode',
+                key: 'orderCode',
             },
             {
                 title: '商品',
                 dataIndex: 'onlineTitle',
+                key: 'onlineTitle',
                 render: (text, record) => {
                     return (record.onlineTitle + "(" + record.specName + ")");
                 },
@@ -230,15 +302,18 @@ export default class OrdReturn extends SimpleMng {
             {
                 title: '数量',
                 dataIndex: 'returnCount',
+                key: 'returnCount',
             },
-            
+
             {
                 title: '金额',
                 dataIndex: 'returnRental',
+                key: 'returnRental',
             },
             {
                 title: '类型',
                 dataIndex: 'returnType',
+                key: 'returnType',
                 render: (text, record) => {
                     if (record.returnType === 1) return '仅退款';
                     if (record.returnType === 2) return '退货并退款';
@@ -247,6 +322,7 @@ export default class OrdReturn extends SimpleMng {
             {
                 title: '状态',
                 dataIndex: 'applicationState',
+                key: 'applicationState',
                 render: (text, record) => {
                     if (record.applicationState === -1) return '已取消';
                     if (record.applicationState === 1) return '待审核';
@@ -256,8 +332,9 @@ export default class OrdReturn extends SimpleMng {
                 },
             },
             {
-                title: '完成时间',
-                dataIndex: 'finishTime',
+                title: '申请时间',
+                dataIndex: 'applicationTime',
+                key: 'applicationTime',
             },
             {
                 title: '操作',
@@ -302,6 +379,8 @@ export default class OrdReturn extends SimpleMng {
                             onChange={this.handleTableChange}
                             dataSource={kdilogisticData}
                             columns={columns}
+                            onExpand={this.expand}
+                            expandedRowRender={record => this.showExpand(record)}
                         />
                     </div>
                 </Card>
