@@ -11,7 +11,8 @@ const FormItem = Form.Item;
 @EditForm
 export default class OrdReturnForm extends PureComponent {
     render() {
-        const { form } = this.props;
+        const { form,ordreturn } = this.props;
+        console.log(this.props);
         return (
             <Fragment>
                 <Form layout="inline">
@@ -29,6 +30,7 @@ export default class OrdReturnForm extends PureComponent {
                                             message: '请输入退款到余额的金额',
                                         },
                                     ],
+                                    initialValue: this.props.record.returnRental,
                                 })(<Input placeholder="请输入退款到余额的金额" />)}
 
                             </FormItem>
@@ -40,6 +42,7 @@ export default class OrdReturnForm extends PureComponent {
                                             message: '请输入退款到返现金的金额',
                                         },
                                     ],
+                                    initialValue: 0,
                                 })(<Input placeholder="请输入退款到返现金的金额" />)}
                             </FormItem>
                         </Col>
