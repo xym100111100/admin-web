@@ -290,6 +290,7 @@ export default class OrdReturn extends SimpleMng {
                 title: '订单编号',
                 dataIndex: 'orderCode',
                 key: 'orderCode',
+                width: 150,
             },
             {
                 title: '商品',
@@ -303,17 +304,20 @@ export default class OrdReturn extends SimpleMng {
                 title: '数量',
                 dataIndex: 'returnCount',
                 key: 'returnCount',
+                width: 80,
             },
 
             {
                 title: '金额',
                 dataIndex: 'returnRental',
                 key: 'returnRental',
+                width: 50,
             },
             {
                 title: '类型',
                 dataIndex: 'returnType',
                 key: 'returnType',
+                width: 80,
                 render: (text, record) => {
                     if (record.returnType === 1) return '仅退款';
                     if (record.returnType === 2) return '退货并退款';
@@ -323,6 +327,7 @@ export default class OrdReturn extends SimpleMng {
                 title: '状态',
                 dataIndex: 'applicationState',
                 key: 'applicationState',
+                width: 80,
                 render: (text, record) => {
                     if (record.applicationState === -1) return '已取消';
                     if (record.applicationState === 1) return '待审核';
@@ -335,6 +340,7 @@ export default class OrdReturn extends SimpleMng {
                 title: '申请时间',
                 dataIndex: 'applicationTime',
                 key: 'applicationTime',
+                width: 100,
             },
             {
                 title: '操作',
