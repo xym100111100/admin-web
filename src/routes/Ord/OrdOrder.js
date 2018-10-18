@@ -6,6 +6,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './OrdOrder.less';
 import moment from 'moment';
 import OrdOrderForm from './OrdOrderForm';
+import ModifyOrderShippingAddress from './ModifyOrderShippingAddress';
 const { RangePicker } = DatePicker;
 
 const { Option } = Select;
@@ -463,6 +464,20 @@ export default class OrdOrder extends SimpleMng {
             重新打印快递单
             </a>
         </Menu.Item>
+        <Menu.Item>
+          <a  onClick={() =>
+              this.showAddForm({
+                id: record.id,
+                moduleCode: 'sucorg',
+                editFormRecord: record,
+                editForm: 'modifyOrderShippingAddress',
+                editFormTitle: '修改收货地址',
+              })
+            }
+          >
+            修改收货地址
+            </a>
+        </Menu.Item>
       </Menu>
     );
     return (
@@ -677,6 +692,17 @@ export default class OrdOrder extends SimpleMng {
                 callback: this.printPage
               });
             }}
+          />
+        )} 
+        {editForm === 'modifyOrderShippingAddress' && (
+          <ModifyOrderShippingAddress
+            id={editFormRecord.id}
+            visible
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'ordorder', saveMethodName: 'modifyOrderShippingAddress'})}
           />
         )}
       </PageHeaderLayout>

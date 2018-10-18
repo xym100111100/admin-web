@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { buyrelation,list, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,shipmentconfirmation} from '../services/ordorder';
+import { buyrelation,list, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,shipmentconfirmation, modifyOrderShippingAddress } from '../services/ordorder';
 import { printpage } from '../services/kdilogistic';
 export default {
   namespace: 'ordorder',
@@ -118,7 +118,15 @@ export default {
       }else{
         message.error('打印页面不存在');
       }
-
+    },
+    *modifyOrderShippingAddress({ payload, callback }, { call }) {//修改实际金额
+      const response = yield call(modifyOrderShippingAddress, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
     },
   },
 

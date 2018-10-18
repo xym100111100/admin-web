@@ -78,3 +78,9 @@ export async function del(params) {
     method: 'DELETE',
   });
 }
+
+export async function modifyOrderShippingAddress(params) {
+  return request(`/ord-svr/ord/order/modifyreceiverinfo?${stringify(params)}`, {
+    method: 'PUT',
+  });
+}
