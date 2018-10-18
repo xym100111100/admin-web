@@ -1,7 +1,7 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Card, Divider, Switch, Popconfirm, Form, Input, Button, Table, Spin } from 'antd';
+import { Card, Form, Input, Button, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DescriptionList from 'components/DescriptionList';
 import styles from './WithdrawAccountMng.less';
@@ -69,6 +69,18 @@ export default class WithdrawAccountMng extends SimpleMng {
     });
   };
 
+  // 查询
+  selectWithdrawAccount = (e) => {
+    let paload = {};
+    paload.bankAccountName = e;
+    paload.pageNum = this.state.options.pageNum;
+    paload.pageSize = this.state.options.pageSize;
+    this.props.dispatch({
+      type: `${this.moduleCode}/list`,
+      payload: paload,
+    });
+  }
+
   render() {
     const { withdrawaccount: { withdrawaccount }, loading } = this.props;
 
@@ -91,7 +103,7 @@ export default class WithdrawAccountMng extends SimpleMng {
         dataIndex: 'bankAccountNo',
       },
       {
-        title: '银行账号名称',
+        title: '银行账户名称',
         dataIndex: 'bankAccountName',
       },
       {
@@ -136,21 +148,11 @@ export default class WithdrawAccountMng extends SimpleMng {
             <div className={styles.tableList}>
               <div className={styles.tableListOperator}>
                 <div style={{ flexGrow: 1 }}>
-                  <Button
-                    icon="plus"
-                    type="primary"
-                    onClick={() => this.showAddForm({ editForm: 'orgForm', editFormTitle: '添加新组织' })}
-                  >
-                    添加
-                  </Button>
-                  <Divider type="vertical" />
                   <Button icon="reload" onClick={() => this.handleReload()}>
                     刷新
                   </Button>
-                  <Divider type="vertical" />
                 </div>
-                <Divider type="vertical" />
-                <Search style={{ width: 220 }} placeholder="组织名称/描述" onSearch={this.handleSearch} />
+                <Search style={{ width: 220 }} placeholder="银行账户名称" onSearch={this.selectWithdrawAccount} />
               </div>
               <Table
                 rowKey="id"
