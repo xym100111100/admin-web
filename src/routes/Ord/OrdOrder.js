@@ -535,6 +535,7 @@ export default class OrdOrder extends SimpleMng {
         title: '订单编号',
         dataIndex: 'orderCode',
         key: 'orderCode',
+        width: 150,
       },
       {
         title: '用户名',
@@ -546,17 +547,19 @@ export default class OrdOrder extends SimpleMng {
         title: '商品',
         dataIndex: 'orderTitle',
         key: 'orderTitle',
-        width: 150,
+        
       },
       {
         title: '下单金额',
         dataIndex: 'orderMoney',
         key: 'orderMoney',
+        width: 100,
       },
       {
         title: '实际金额',
         dataIndex: 'realMoney',
         key: 'realMoney',
+        width: 100,
         render: (text, record) => {
           if (record.orderCode === this.state.orderCode) return (<Input onPressEnter={this.hidInput.bind(this)} onInput={() => this.getOrderCode(record)} style={{ width: 60 }} onBlur={this.hidInput.bind(this)} defaultValue={record.realMoney} autoFocus />);
           if (record.orderCode !== this.state.orderCode) return record.realMoney;
@@ -566,6 +569,7 @@ export default class OrdOrder extends SimpleMng {
         title: '状态',
         dataIndex: 'orderState',
         key: 'orderState',
+        width: 100,
         render: (text, record) => {
           if (record.orderState === -1) return '做废';
           if (record.orderState === 1) return '已下单';
@@ -584,6 +588,7 @@ export default class OrdOrder extends SimpleMng {
       },
       {
         title: '操作',
+        width: 120,
         render: (text, record) => {
           if (record.orderState === 2) {
             return (
