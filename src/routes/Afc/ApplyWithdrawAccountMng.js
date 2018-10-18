@@ -1,7 +1,7 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Card, Divider, Switch, Popconfirm, Form, Input, Button, Table, Spin } from 'antd';
+import { Card, Divider, Popconfirm, Form, Input, Button, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DescriptionList from 'components/DescriptionList';
 import styles from './ApplyWithdrawAccountMng.less';
@@ -78,6 +78,18 @@ export default class ApplyWithdrawAccountMng extends SimpleMng {
       callback: () => {
         this.handleReload();
       },
+    });
+  }
+
+  // 查询
+  selectApplyWithdrawAccount = (e) => {
+    let paload = {};
+    paload.bankAccountName = e;
+    paload.pageNum = this.state.options.pageNum;
+    paload.pageSize = this.state.options.pageSize;
+    this.props.dispatch({
+      type: `${this.moduleCode}/list`,
+      payload: paload,
     });
   }
 
@@ -185,21 +197,11 @@ export default class ApplyWithdrawAccountMng extends SimpleMng {
             <div className={styles.tableList}>
               <div className={styles.tableListOperator}>
                 <div style={{ flexGrow: 1 }}>
-                  <Button
-                    icon="plus"
-                    type="primary"
-                    onClick={() => this.showAddForm({ editForm: 'orgForm', editFormTitle: '添加新组织' })}
-                  >
-                    添加
-                  </Button>
-                  <Divider type="vertical" />
                   <Button icon="reload" onClick={() => this.handleReload()}>
                     刷新
                   </Button>
-                  <Divider type="vertical" />
                 </div>
-                <Divider type="vertical" />
-                <Search style={{ width: 220 }} placeholder="组织名称/描述" onSearch={this.handleSearch} />
+                <Search style={{ width: 220 }} placeholder="银行账户名称" onSearch={this.selectApplyWithdrawAccount} />
               </div>
               <Table
                 rowKey="id"
