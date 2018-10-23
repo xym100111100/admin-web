@@ -1,20 +1,22 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
-import React from 'react';
+import React, { Fragment }  from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card, Form, Input, Select, Button, Table, DatePicker } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './KdiLogistic.less';
 import moment from 'moment';
 import KdiEntryForm from './KdiEntryForm';
+import KdiLogisticForm from './KdiLogisticForm';
 
 const { Option } = Select;
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
-@connect(({ kdilogistic,user, KdiEntry, loading }) => ({
+@connect(({ kdilogistic,user, KdiEntry,kdicompany, loading }) => ({
   kdilogistic,
+  kdicompany,
   KdiEntry,
   user,
-  loading: loading.models.kdilogistic || loading.models.KdiEntry || loading.models.user
+  loading: loading.models.kdilogistic || loading.models.KdiEntry || loading.models.user|| loading.models.kdicompany
 }))
 @Form.create()
 export default class KdiLogistic extends SimpleMng {
@@ -24,8 +26,24 @@ export default class KdiLogistic extends SimpleMng {
     this.state.options = {
       pageNum: 1,
       pageSize: 5,
+
     };
   }
+
+    // 刷新
+    handleReload() {
+      let {user} =this.props
+      let orgId=user.currentUser.orgId
+      this.state.payloads = {
+        orgId: orgId,
+        pageNum: this.state.options.pageNum,
+        pageSize: this.state.options.pageSize,
+      };
+      this.props.dispatch({
+        type: `${this.moduleCode}/list`,
+        payload: this.state.payloads,
+      });
+    }
 
   //初始化
   componentDidMount() {
@@ -234,16 +252,19 @@ export default class KdiLogistic extends SimpleMng {
         title: '快递单号',
         dataIndex: 'logisticCode',
         key: 'logisticCode',
+        width: 150,
       },
       {
         title: '快递公司',
         dataIndex: 'shipperName',
         key: 'shipperName',
+        width: 100,
       },
       {
         title: '状态',
         dataIndex: 'logisticStatus',
         key: 'logisticStatus',
+        width: 100,
         render: (text, record) => {
           if (record.logisticStatus === '0') return '无轨迹';
           if (record.logisticStatus === '1') return '已揽收';
@@ -256,11 +277,13 @@ export default class KdiLogistic extends SimpleMng {
         title: '收件人',
         dataIndex: 'receiverName',
         key: 'receiverName',
+        width: 100,
       },
       {
         title: '收件人手机',
         dataIndex: 'receiverMobile',
         key: 'receiverMobile',
+        width: 100,
       },
       {
         title: '商品内容',
@@ -268,9 +291,33 @@ export default class KdiLogistic extends SimpleMng {
         key: 'orderTitle',
       },
       {
-        title: '下单时间',
+        title: '录入时间',
         dataIndex: 'orderTime',
         key: 'orderTime',
+        width: 100,
+      },
+      {
+        title: '操作',
+        width: 100,
+        render: (text, record) => {
+          if (record.entryType === 1) {
+            return (
+              <Fragment  >
+                <a   onClick={() =>
+                    this.showEditForm({ id: record.id, editForm: 'KdiLogistic', editFormTitle: '编辑物流信息' })
+                  }>
+                  修改
+                  </a>
+              </Fragment>
+            )
+          } else {
+            return (
+              <Fragment  >
+                <a style={{ color: '#C0C0C0' }}>修改</a>
+              </Fragment>
+            )
+          }
+        }
       },
     ];
 
@@ -307,6 +354,18 @@ export default class KdiLogistic extends SimpleMng {
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
             onNext={fields => this.handleSave({ fields })}
+            onSubmit={fields => this.handleSubmit({ fields })}
+          />
+        )}
+         {editForm === 'KdiLogistic' && (
+          <KdiLogisticForm
+            width={900}
+            visible
+            orgId={orgId}
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
             onSubmit={fields => this.handleSubmit({ fields })}
           />
         )}

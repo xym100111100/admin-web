@@ -90,6 +90,8 @@ export default class KdiEorder extends PureComponent {
         orderId: this.state.orderId,
         orgId: orgId,
       };
+      //将录入类型设置为手动 1:手动 2:自动
+      eorderParam.entryType=1;
       let shipperInfo = values.shipperInfo.split('/');
       eorderParam.shipperId = shipperInfo[0];
       eorderParam.shipperName = shipperInfo[1];
