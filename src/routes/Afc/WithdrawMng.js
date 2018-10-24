@@ -1,7 +1,7 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Card, Divider, Form, Input, Button, Table } from 'antd';
+import { Card, Divider, Form, Input, Button, Table, Popconfirm,Row, Col, Select } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DescriptionList from 'components/DescriptionList';
 import styles from './WithdrawMng.less';
@@ -9,6 +9,8 @@ import WithdrawReviewForm from './WithdrawReviewForm';
 import WithdrawCancelForm from './WithdrawCancelForm';
 
 const { Search } = Input;
+const FormItem = Form.Item;
+const Option = Select.Option;
 
 const { Description } = DescriptionList;
 @connect(({ withdraw, loading }) => ({
@@ -83,6 +85,59 @@ export default class WithdrawMng extends SimpleMng {
     });
   }
 
+  // 重置from
+  handleFormReset = () => {
+    this.props.form.resetFields();
+  };
+
+  renderSearchForm() {
+    const { getFieldDecorator } = this.props.form;
+    return (
+      <Form onSubmit={this.handleSearch} layout="inline">
+        <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
+          <Col md={6} sm={24}>
+            <FormItem label="银行账户名称">{getFieldDecorator('bankAccountName')(<Input placeholder="银行账户名称" />)}</FormItem>
+          </Col>
+          <Col md={4} sm={24}>
+            <FormItem label="">
+              {getFieldDecorator('withdrawState', {
+                initialValue: '1'
+              })(
+                <Select placeholder="提现状态" style={{ width: '100%' }}>
+                  <Option value="-1">已作废</Option>
+                  <Option value="1">申请中</Option>
+                  <Option value="2">处理中</Option>
+                  <Option value="3">已提现</Option>
+                </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col md={6} sm={24}>
+            <span>
+              <Button type="primary" htmlType="submit">
+                查询
+              </Button>
+              <Button style={{ marginLeft: 20 }} onClick={this.handleFormReset}>
+                重置
+              </Button>
+            </span>
+          </Col>
+        </Row>
+      </Form>
+    );
+  }
+
+  // 处理提现
+  deal = e => {
+    this.props.dispatch({
+      type: `withdraw/deal`,
+      payload: { id: e.id },
+      callback: () => {
+        this.handleReload();
+      },
+    });
+  }
+
   render() {
     const { withdraw: { withdraw }, loading } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
@@ -110,7 +165,7 @@ export default class WithdrawMng extends SimpleMng {
         dataIndex: 'seviceCharge',
       },
       {
-        title: '提现状态状态',
+        title: '提现状态',
         dataIndex: 'withdrawState',
         render: (text, record) => {
           let withdrawState;
@@ -134,6 +189,29 @@ export default class WithdrawMng extends SimpleMng {
         title: '操作',
         width: 170,
         render: (text, record) => {
+          if (record.withdrawState === 1) {
+            return (
+              <Fragment>
+                <a
+                  onClick={() =>
+                    this.showAddForm({
+                      id: record.id,
+                      editFormRecord: record,
+                      moduleCode: 'withdraw',
+                      editForm: 'withdrawCancelForm',
+                      editFormTitle: '拒绝通过',
+                    })
+                  }
+                >
+                  拒绝
+                </a>
+                <Divider type="vertical" />
+                <Popconfirm title="是否要处理该提现？" onConfirm={() => this.deal(record)}>
+                  <a>处理</a>
+                </Popconfirm>
+              </Fragment>
+            );
+          }
           if (record.withdrawState === 2) {
             return (
               <Fragment>
@@ -158,14 +236,14 @@ export default class WithdrawMng extends SimpleMng {
                       editFormRecord: record,
                       moduleCode: 'withdraw',
                       editForm: 'withdrawReviewForm',
-                      editFormTitle: '审核通过',
+                      editFormTitle: '提现成功',
                     })
                   }
                 >
-                  审核
+                  提现成功
                 </a>
               </Fragment>
-            );
+            )
           }
         },
       },
@@ -205,14 +283,7 @@ export default class WithdrawMng extends SimpleMng {
           <Card bordered={false}>
             <div className={styles.tableListForm} />
             <div className={styles.tableList}>
-              <div className={styles.tableListOperator}>
-                <div style={{ flexGrow: 1 }}>
-                  <Button icon="reload" onClick={() => this.handleReload()}>
-                    刷新
-                  </Button>
-                </div>
-                <Search style={{ width: 220 }} placeholder="银行账户名称" onSearch={this.selectWithdraw} />
-              </div>
+              <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
               <Table
                 rowKey="id"
                 pagination={paginationProps}

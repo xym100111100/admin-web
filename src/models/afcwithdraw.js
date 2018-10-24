@@ -1,6 +1,6 @@
 import { message } from 'antd';
 
-import { list, getById, cancel, review } from '../services/afcwithdraw';
+import { list, getById, cancel, review, deal } from '../services/afcwithdraw';
 
 export default {
   namespace: 'withdraw',
@@ -12,7 +12,6 @@ export default {
   effects: {
     *list({ payload, callback }, { call, put }) {
       const response = yield call(list, payload);
-      console.log(response);
       yield put({
         type: 'changeList',
         payload: response,
@@ -34,6 +33,15 @@ export default {
     },
     *review({ payload, callback }, { call }) {
       const response = yield call(review, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *deal({ payload, callback }, { call }) {
+      const response = yield call(deal, payload);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);

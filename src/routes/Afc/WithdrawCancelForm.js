@@ -9,7 +9,6 @@ const { TextArea } = Input;
 export default class WithdrawCancelForm extends PureComponent {
   render() {
     const { form, record } = this.props;
-    console.log(record)
     return (
       <Fragment>
         {form.getFieldDecorator('id')(<Input type="hidden" />)}
