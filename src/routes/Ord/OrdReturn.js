@@ -1,7 +1,7 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Row, message, Col, Card, Divider, Form, Input, Select, Button, Table, DatePicker } from 'antd';
+import { Popover, Row, message, Col, Card, Divider, Form, Input, Select, Button, Table, DatePicker } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './OrdReturn.less';
 import moment from 'moment';
@@ -27,10 +27,6 @@ export default class OrdReturn extends SimpleMng {
         };
         this.state.returnCode = undefined;
         this.state.record = undefined;
-        this.state.expand = {
-            expand: '',
-            orderId: 0
-        }
     }
 
     //初始化
@@ -123,71 +119,173 @@ export default class OrdReturn extends SimpleMng {
         })
 
     };
-    /**
- * 获取订单详情和购买关系
- */
-    expand = (expanded, record) => {
-        if (expanded) {
-            this.props.dispatch({
-                type: `${this.moduleCode}/detail`,
-                payload: { orderId: record.orderId },
-                callback: data => {
-                    if (data !== undefined && data.length !== 0) {
-                        for (let i = 0; i < data.length; i++) {
-                            if (data[i].downlineRelationSource1 === 0) data[i].downlineRelationSource1 = '未知来源';
-                            if (data[i].downlineRelationSource1 === 1) data[i].downlineRelationSource1 = '自己匹配自己';
-                            if (data[i].downlineRelationSource1 === 2) data[i].downlineRelationSource1 = '购买关系';
-                            if (data[i].downlineRelationSource1 === 3) data[i].downlineRelationSource1 = '邀请关系';
-                            if (data[i].downlineRelationSource1 === 4) data[i].downlineRelationSource1 = '差一人且邀请一人';
-                            if (data[i].downlineRelationSource1 === 5) data[i].downlineRelationSource1 = '差两人';
-                            if (data[i].downlineRelationSource1 === 6) data[i].downlineRelationSource1 = '差一人';
-                            if (data[i].downlineRelationSource2 === 0) data[i].downlineRelationSource2 = '未知来源';
-                            if (data[i].downlineRelationSource2 === 1) data[i].downlineRelationSource2 = '自己匹配自己';
-                            if (data[i].downlineRelationSource2 === 2) data[i].downlineRelationSource2 = '购买关系';
-                            if (data[i].downlineRelationSource2 === 3) data[i].downlineRelationSource2 = '邀请关系';
-                            if (data[i].downlineRelationSource2 === 4) data[i].downlineRelationSource2 = '差一人且邀请一人';
-                            if (data[i].downlineRelationSource2 === 5) data[i].downlineRelationSource2 = '差两人';
-                            if (data[i].downlineRelationSource2 === 6) data[i].downlineRelationSource2 = '差一人';
-                            if (data[i].uplineRelationSource === 0) data[i].uplineRelationSource = '未知来源';
-                            if (data[i].uplineRelationSource === 1) data[i].uplineRelationSource = '自己匹配自己';
-                            if (data[i].uplineRelationSource === 2) data[i].uplineRelationSource = '购买关系';
-                            if (data[i].uplineRelationSource === 3) data[i].uplineRelationSource = '邀请关系';
-                            if (data[i].uplineRelationSource === 4) data[i].uplineRelationSource = '差一人且邀请一人';
-                            if (data[i].uplineRelationSource === 5) data[i].uplineRelationSource = '差两人';
-                            if (data[i].uplineRelationSource === 6) data[i].uplineRelationSource = '差一人';
-                        }
-                        this.setState({
-                            expand: {
-                                expand: data,
-                                orderId: data[0].orderId
-                            }
-                        })
-                    }
-                }
-            });
-        }
-    }
 
-    showExpand = (record) => {  
-       if(record.orderState===-1)record.orderState='作废';
-       if(record.orderState===1)record.orderState='已下单';
-       if(record.orderState===2)record.orderState='已支付';
-       if(record.orderState===3)record.orderState='已发货';
-       if(record.orderState===4)record.orderState='已签收';
-       if(record.orderState===5)record.orderState='已结算';
+    showExpand = (record) => {
+
+
+        if (record.orderState === -1) record.orderState = '作废';
+        if (record.orderState === 1) record.orderState = '已下单';
+        if (record.orderState === 2) record.orderState = '已支付';
+        if (record.orderState === 3) record.orderState = '已发货';
+        if (record.orderState === 4) record.orderState = '已签收';
+        if (record.orderState === 5) record.orderState = '已结算';
+        if (record.subjectType === 0) record.subjectType = '普通';
+        if (record.subjectType === 1) record.subjectType = '全返';
+        if (record.commissionState === 0) record.commissionState = '匹配中';
+        if (record.commissionState === 1) record.commissionState = '待返';
+        if (record.commissionState === 2) record.commissionState = '已返';
         return (
             <div >
                 <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
-                    <Col md={5} sm={24}>
-                         <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >订单状态 :</span>{record.orderState}
+                    <Col md={12} sm={24}>
+                        <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >退货原因 :</span>{record.returnReason}
                     </Col>
-                    <Col md={8} sm={24}>
-                        <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >完成时间 :</span>{record.finishTime}
+                    {this.showFinishTime(record)}
+                    {this.showRejectReason(record)}
+                    <Col md={6} sm={24}>
+                        <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >订单状态 :</span>{record.orderState}
+                    </Col>
+                    {this.showAmount(record)}
+                    <Col md={6} sm={24}>
+                        <Col md={9} sm={24}>
+                            <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >退货图片 :</span>
+                        </Col>
+                        {this.showReturnPci(record)}
+                    </Col>
+                    <Col md={24} sm={24}>
+                        <h4 style={{ paddingTop: 8 }} >订单详情信息</h4>
+                    </Col>
+                    <Col md={6} sm={24}>
+                        <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >购买价格 :</span>{record.buyPrice}
+                    </Col>
+                    <Col md={6} sm={24}>
+                        <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >购买数量 :</span>{record.buyCount}
+                    </Col>
+                    <Col md={6} sm={24}>
+                        <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >购买总价 :</span>{record.buyCount * record.buyPrice}
+                    </Col>
+                    <Col md={6} sm={24}>
+                        <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >版块类型 :</span>{record.subjectType}
+                    </Col>
+                    <Col md={6} sm={24}>
+                        <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >返佣金名额 :</span>{record.commissionSlot}
+                    </Col>
+                    <Col md={6} sm={24}>
+                        <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >返佣金状态 :</span>{record.commissionState}
                     </Col>
                 </Row>
             </div>
         )
     }
+    /**
+     * 显示退货图片
+     */
+    showReturnPci = (record) => {
+        let content1 = '';
+        if (record.picList[0] !== undefined) {
+            content1 = (
+                <img
+                    alt="退货图片1"
+                    style={{ height: 300, width: 300 }}
+                    src={'/ise-svr/files' + record.picList[0].picPath}
+                />
+            );
+        }
+        let content2 = '';
+        if (record.picList[1] !== undefined) {
+            content2 = (
+                <img
+                    alt="退货图片2"
+                    style={{ height: 300, width: 300 }}
+                    src={'/ise-svr/files' + record.picList[1].picPath}
+                />
+            );
+        }
+        let content3 = '';
+        if (record.picList[2] !== undefined) {
+            content3 = (
+                <img
+                    alt="退货图片3"
+                    style={{ height: 300, width: 300 }}
+                    src={'/ise-svr/files' + record.picList[2].picPath}
+                />
+            );
+        }
+        return (
+            <Col md={15} sm={24}>
+                {record.picList[1] !== undefined && (
+                    <Col md={8} sm={24}>
+                        <Popover content={content1} placement={'left'} >
+                            <div style={{ cursor: 'hand', cursor: 'pointer', width: 20, height: 20, backgroundImage: '/ise-svr/files' + record.picList[0].picPath }} ></div>
+                        </Popover>
+                    </Col>
+                )}
+                {record.picList[1] !== undefined && (
+                    <Col md={8} sm={24}>
+                        <Popover content={content2} placement={'left'} >
+                            <div style={{ cursor: 'hand', cursor: 'pointer', width: 20, height: 20, backgroundImage: '/ise-svr/files' + record.picList[0].picPath }} ></div>
+                        </Popover>
+                    </Col>
+                )}
+                {record.picList[2] !== undefined && (
+                    <Popover content={content3} placement={'left'} >
+                        <Col md={8} sm={24}>
+                            <div style={{ cursor: 'hand', cursor: 'pointer', width: 20, height: 20, backgroundImage: '/ise-svr/files' + record.picList[0].picPath }} ></div>
+                        </Col>
+                    </Popover>
+                )}
+            </Col>
+        )
+    }
+    /**
+     * 根据是否有退款金额来决定显示退款金额
+     */
+    showAmount = (record) => {
+        if (record.returnAmount1 === undefined) {
+            return
+        } else {
+            return (
+                <Col md={12} sm={24}>
+                    <Col md={12} sm={24}>
+                        <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >退货余额 :</span>{record.returnAmount1}
+                    </Col>
+                    <Col md={12} sm={24}>
+                        <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >退货返现金 :</span>{record.returnAmount2}
+                    </Col>
+                </Col>
+            )
+        }
+    }
+
+    /**
+     * 根据是否有退货原因来决定是否显示退货原因
+     */
+    showRejectReason = (record) => {
+        if (record.rejectReason === undefined) {
+            return
+        } else {
+            return (
+                <Col md={12} sm={24}>
+                    <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >拒绝原因 :</span>{record.rejectReason}
+                </Col>
+            )
+        }
+    }
+    /**
+     * 根据是否有完成时间来决定是否显示完成时间
+     */
+    showFinishTime = (record) => {
+        if (record.finishTime === undefined) {
+            return
+        } else {
+            return (
+                <Col md={12} sm={24}>
+                    <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >完成时间 :</span>{record.finishTime}
+                </Col>
+            )
+        }
+    }
+
 
     //禁止选择当前日期后的
     disabledDate = current => {
@@ -296,9 +394,6 @@ export default class OrdReturn extends SimpleMng {
                 title: '商品',
                 dataIndex: 'onlineTitle',
                 key: 'onlineTitle',
-                render: (text, record) => {
-                    return (record.onlineTitle + "(" + record.specName + ")");
-                },
             },
             {
                 title: '数量',
@@ -385,7 +480,6 @@ export default class OrdReturn extends SimpleMng {
                             onChange={this.handleTableChange}
                             dataSource={kdilogisticData}
                             columns={columns}
-                            onExpand={this.expand}
                             expandedRowRender={record => this.showExpand(record)}
                         />
                     </div>
