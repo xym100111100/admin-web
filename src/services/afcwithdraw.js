@@ -20,3 +20,9 @@ export async function review(params) {
     method: 'PUT',
   });
 }
+
+export async function deal(params) {
+  return request(`/afc-svr/withdraw/deal?${stringify(params)}`, {
+    method: 'PUT',
+  });
+}

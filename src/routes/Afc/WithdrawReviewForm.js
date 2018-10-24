@@ -8,7 +8,6 @@ const FormItem = Form.Item;
 export default class WithdrawReviewForm extends PureComponent {
   render() {
     const { form, record } = this.props;
-    console.log(record)
     return (
       <Fragment>
         {form.getFieldDecorator('id')(<Input type="hidden" />)}
