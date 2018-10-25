@@ -126,6 +126,11 @@ export const getRouterData = app => {
         import('../routes/Afc/WithdrawAccountMng')
       ),
     },
+    '/prm/prm-partner-mng': {
+      component: dynamicWrapper(app, ['prmpartner'], () =>
+        import('../routes/Prm/PartnerMng')
+      ),
+    },
     '/pfm/script-mng': {
       component: dynamicWrapper(
         app,

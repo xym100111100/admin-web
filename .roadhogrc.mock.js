@@ -92,11 +92,19 @@ import {
   sucUserOrgAdd,
   sucUserOrgModify,
 } from './mock/sucuserorg';
+import {
+  prmPartnerList,
+  prmPartnerGetById,
+  prmPartnerAdd,
+  prmPartnerModify,
+  prmPartnerDel,
+} from './mock/prmpartner'
 import { getActivities, getNotice, getFakeList } from './mock/api';
 import { getFakeChartData } from './mock/chart';
 import { getProfileBasicData } from './mock/profile';
 import { getProfileAdvancedData } from './mock/profile';
 import { getNotices } from './mock/notices';
+import { from } from 'rxjs/observable/from';
 
 // 根据环境变量判断是否禁用代理（禁用代理将直接请求真实的服务）
 const noProxy = process.env.NO_PROXY === 'true';
@@ -226,6 +234,12 @@ const proxy = {
   'GET /suc/userorg/listaddedusers': sucUserOrgListAdded,
   'GET /suc/userorg/listunaddedusers': sucUserOrgListUnadded,
   'GET /suc/userorg/listaddedandunaddedusers': sucUserOrgListAddedAndUnadded,
+  // prmpartner
+  'GET /prm-svr/prm/partner': prmPartnerList,
+  'GET /prm-svr/prm/partnergetbyid': prmPartnerGetById,
+  'POST /prm-svr/prm/partner': prmPartnerAdd,
+  'PUT /prm-svr/prm/partner': prmPartnerModify,
+  'DELETE /prm-svr/prm/partner': prmPartnerDel,
   // pfm
   'POST /pfm-svr/user/login/by/user/name': (req, res) => {
     const { loginPswd, userName, type } = req.body;
@@ -353,12 +367,16 @@ function addProxy(key, value) {
 // 禁用代理的时候，配置直接请求服务的映射
 if (noProxy) {
   addProxy('pfm-svr', 'http://127.0.0.1:20182/');
-  addProxy('suc-svr', 'http://127.0.0.1:9100/');
+  // addProxy('pfm-svr', 'http://192.168.1.37:20182/');
+  /*
+   addProxy('suc-svr', 'http://127.0.0.1:9100/');
   addProxy('rna-svr', 'http://127.0.0.1:20088/');
   addProxy('kdi-svr', 'http://127.0.0.1:20080/');
   addProxy('onl-svr', 'http://127.0.0.1:9100/');
-  addProxy('ise-svr', 'http://127.0.0.1:20180/');
-  addProxy('ord-svr', 'http://127.0.0.1:20180/');
+  addProxy('ise-svr', 'http://127.0.0.1:20180/');*/
+  /* addProxy('ord-svr', 'http://127.0.0.1:20180/');  */
+ /*  addProxy('afc-svr', 'http://192.168.1.37:9300/'); */
+ /*  addProxy('prm-svr', 'http://192.168.1.37:20110/'); */
 
   // addProxy('pfm-svr', 'http://127.0.0.1:8080/pfm-svr');
   // addProxy('suc-svr', 'http://127.0.0.1:8080/suc-svr/');

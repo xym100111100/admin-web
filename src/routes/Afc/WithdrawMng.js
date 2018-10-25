@@ -25,6 +25,7 @@ export default class WithdrawMng extends SimpleMng {
     this.state.options = {
       pageNum: 1,
       pageSize: 5,
+      withdrawState: 1,
     };
   }
 
@@ -84,6 +85,7 @@ export default class WithdrawMng extends SimpleMng {
       payload: paload,
     });
   }
+
 
   // 重置from
   handleFormReset = () => {
