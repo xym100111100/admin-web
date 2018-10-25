@@ -35,6 +35,15 @@ export async function shipmentconfirmation(params) {
   });
 }
 
+export async function sendBySupplier(params) {
+  return request('/ord-svr/ord/order/sendBySupplier', {
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
+}
+
 
 
 export async function modifyOrderRealMoney(params) {

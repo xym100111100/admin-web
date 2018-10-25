@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { buyrelation,list, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,shipmentconfirmation, modifyOrderShippingAddress } from '../services/ordorder';
+import { buyrelation,list,sendBySupplier, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,shipmentconfirmation, modifyOrderShippingAddress } from '../services/ordorder';
 import { printpage } from '../services/kdilogistic';
 export default {
   namespace: 'ordorder',
@@ -104,6 +104,15 @@ export default {
     },
     *shipmentconfirmation({ payload, callback }, { call }) {//确认发货并打印快递单
       const response = yield call(shipmentconfirmation, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *sendBySupplier({ payload, callback }, { call }) {//供应商确认发货并打印快递单
+      const response = yield call(sendBySupplier, payload);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);

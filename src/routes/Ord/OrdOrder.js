@@ -1,11 +1,12 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Row, Divider, message, Col, Icon, Card, Form, Dropdown, Input, Select, Button, Menu, Table, DatePicker } from 'antd';
+import { Row, Divider, Popover, message, Col, Icon, Card, Form, Dropdown, Input, Select, Button, Menu, Table, DatePicker } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './OrdOrder.less';
 import moment from 'moment';
 import OrdOrderForm from './OrdOrderForm';
+import SendBySupplierForm from './SendBySupplierForm';
 import ModifyOrderShippingAddress from './ModifyOrderShippingAddress';
 const { RangePicker } = DatePicker;
 
@@ -29,8 +30,8 @@ export default class OrdOrder extends SimpleMng {
     this.state.record = undefined;
     this.state.expand = {
       expand: '',
-      orderId: 0
     }
+
   }
 
   //初始化
@@ -252,50 +253,6 @@ export default class OrdOrder extends SimpleMng {
     });
 
   }
-  /**
-   * 获取订单详情和购买关系
-   */
-  expand = (expanded, record) => {
-    if (expanded) {
-      this.props.dispatch({
-        type: `${this.moduleCode}/detail`,
-        payload: { orderId: record.id },
-        callback: data => {
-          if (data !== undefined &&  data.length !== 0 ) {
-            for (let i = 0; i < data.length; i++) {
-              if (data[i].downlineRelationSource1 === 0) data[i].downlineRelationSource1 = '未知来源';
-              if (data[i].downlineRelationSource1 === 1) data[i].downlineRelationSource1 = '自己匹配自己';
-              if (data[i].downlineRelationSource1 === 2) data[i].downlineRelationSource1 = '购买关系';
-              if (data[i].downlineRelationSource1 === 3) data[i].downlineRelationSource1 = '邀请关系';
-              if (data[i].downlineRelationSource1 === 4) data[i].downlineRelationSource1 = '差一人且邀请一人';
-              if (data[i].downlineRelationSource1 === 5) data[i].downlineRelationSource1 = '差两人';
-              if (data[i].downlineRelationSource1 === 6) data[i].downlineRelationSource1 = '差一人';
-              if (data[i].downlineRelationSource2 === 0) data[i].downlineRelationSource2= '未知来源';
-              if (data[i].downlineRelationSource2 === 1) data[i].downlineRelationSource2 = '自己匹配自己';
-              if (data[i].downlineRelationSource2 === 2) data[i].downlineRelationSource2 = '购买关系';
-              if (data[i].downlineRelationSource2 === 3) data[i].downlineRelationSource2 = '邀请关系';
-              if (data[i].downlineRelationSource2 === 4) data[i].downlineRelationSource2 = '差一人且邀请一人';
-              if (data[i].downlineRelationSource2 === 5) data[i].downlineRelationSource2 = '差两人';
-              if (data[i].downlineRelationSource2 === 6) data[i].downlineRelationSource2 = '差一人';
-              if (data[i].uplineRelationSource === 0) data[i].uplineRelationSource= '未知来源';
-              if (data[i].uplineRelationSource === 1) data[i].uplineRelationSource = '自己匹配自己';
-              if (data[i].uplineRelationSource === 2) data[i].uplineRelationSource = '购买关系';
-              if (data[i].uplineRelationSource === 3) data[i].uplineRelationSource = '邀请关系';
-              if (data[i].uplineRelationSource === 4) data[i].uplineRelationSource = '差一人且邀请一人';
-              if (data[i].uplineRelationSource === 5) data[i].uplineRelationSource = '差两人';
-              if (data[i].uplineRelationSource === 6) data[i].uplineRelationSource = '差一人';
-            }
-            this.setState({
-              expand: {
-                expand: data,
-                orderId: data[0].orderId
-              }
-            })
-          }
-        }
-      });
-    }
-  }
 
   showExpand = (data) => {
     const listItems = data.map(items => {
@@ -307,7 +264,7 @@ export default class OrdOrder extends SimpleMng {
         }
       } else {
         color = {
-          'color': 'rgba(0, 0, 0, 0.85)',
+          'color': 'rgba(24, 144, 255, 0.85)',
           'paddingRight': 8,
         }
       }
@@ -322,37 +279,54 @@ export default class OrdOrder extends SimpleMng {
       return (
         <div key={items.id.toString()} >
           <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
-            <Col md={5} sm={24}>
+            <Col md={12} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>商品 :</span>{items.onlineTitle !== undefined && (items.onlineTitle)}
             </Col>
-            <Col md={6} sm={24}>
+            <Col md={12} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>规格 :</span>{items.specName !== undefined && (items.specName)}
             </Col>
-            <Col md={6} sm={24}>
-              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>数量 :</span>{items.buyCount !== undefined && (items.buyCount)}
-            </Col>
-            <Col md={7} sm={24}>
+            <Col md={4} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>单价 :</span>{items.buyPrice !== undefined && (items.buyPrice)}
             </Col>
-          </Row>
-          <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
-            <Col md={5} sm={24}>
-              <span style={color}>状态 :</span>{items.returnState !== undefined && (items.returnState)}
+            <Col md={3} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>数量 :</span>{items.buyCount !== undefined && (items.buyCount)}
             </Col>
-            <Col md={6} sm={24}>
+            <Col md={4} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>总价 :</span>{items.buyPrice !== undefined && (items.buyPrice * items.buyCount)}
+            </Col>
+            <Col md={4} sm={24}>
+              <span >状态 :</span><span style={color}>{items.returnState !== undefined && (items.returnState)}</span>
+            </Col>
+            <Col md={4} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>类型 :</span>{items.subjectType !== undefined && (items.subjectType)}
             </Col>
-            <Col md={6} sm={24}>
-              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>下家1 :</span>{items.downlineUserName1 !== undefined && (items.downlineUserName1 + '(' + items.downlineRelationSource1 + ')')}
+          </Row>
+          <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
+            <Col md={9} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>上家 :</span>{items.uplineUserName !== undefined && (items.uplineUserName + '(' + items.uplineRelationSource + ')')}
             </Col>
-            <Col md={7} sm={24}>
-              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>下家2 :</span>{items.downlineUserName2 !== undefined && (items.downlineUserName2 + '(' + items.downlineRelationSource2 + ')')}
+            <Col md={9} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>是否签收 :</span>{items.uplineIsSignIn !== undefined && (items.uplineIsSignIn)}
             </Col>
           </Row>
           <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
-            <Col md={6} sm={24}>
-              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>上家 :</span>{items.uplineUserName !== undefined && (items.uplineUserName + '(' + items.uplineRelationSource + ')')}
+            <Col md={9} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>下家1 :</span>{items.downlineUserName1 !== undefined && (items.downlineUserName1 + '(' + items.downlineRelationSource1 + ')')}
             </Col>
+            <Col md={9} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>是否签收 :</span>{items.downlineIsSignIn1 !== undefined && (items.downlineIsSignIn1)}
+            </Col>
+          </Row>
+          <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
+            <Col md={9} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>下家2 :</span>{items.downlineUserName2 !== undefined && (items.downlineUserName2 + '(' + items.downlineRelationSource2 + ')')}
+            </Col>
+            <Col md={9} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>是否签收 :</span>{items.downlineIsSignIn2 !== undefined && (items.downlineIsSignIn2)}
+            </Col>
+          </Row>
+          <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
+
             <Divider />
           </Row>
         </div>
@@ -368,16 +342,21 @@ export default class OrdOrder extends SimpleMng {
         <Col md={24} sm={24}>
           <h4>收件人信息</h4>
         </Col>
-        <Col md={5} sm={24}>
+        <Col md={12} sm={24}>
           <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>收件人名字:</span>{record.receiverName !== undefined && (record.receiverName)}
         </Col>
-        <Col md={6} sm={24}>
+        <Col md={12} sm={24}>
           <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>收件人手机:</span>{record.receiverMobile !== undefined && (record.receiverMobile)}
         </Col>
-        <Col md={12} sm={24}>
+        <Col md={24} sm={24}>
           <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>收件人地址:</span>{record.receiverProvince !== undefined && (
             record.receiverProvince + record.receiverCity + record.receiverExpArea + record.receiverAddress)}
         </Col>
+        {this.showPayTime(record)}
+        {this.showSendTime(record)}
+        {this.showReceivedTime(record)}
+        {this.showCloseTime(record)}
+        {this.showCancelTime(record)}
         <Col md={24} sm={24}>
           <Divider />
         </Col>
@@ -385,6 +364,82 @@ export default class OrdOrder extends SimpleMng {
     )
 
   }
+
+  /**
+ * 根据是否有支付时间来支付时间
+ */
+  showPayTime = (record) => {
+    if (record.payTime === undefined) {
+      return
+    } else {
+      return (
+        <Col md={8} sm={24}>
+          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>支付时间:</span>{record.payTime !== undefined && (record.payTime)}
+        </Col>
+      )
+    }
+  }
+
+  /**
+* 根据是否有发货时间来显示发货时间
+*/
+  showSendTime = (record) => {
+    if (record.sendTime === undefined) {
+      return
+    } else {
+      return (
+        <Col md={8} sm={24}>
+          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>发货时间:</span>{record.sendTime !== undefined && (record.sendTime)}
+        </Col>
+      )
+    }
+  }
+  /**
+ * 根据是否有签收时间来签收时间
+ */
+  showReceivedTime = (record) => {
+    if (record.receivedTime === undefined) {
+      return
+    } else {
+      return (
+        <Col md={8} sm={24}>
+          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>签收时间:</span>{record.receivedTime !== undefined && (record.receivedTime)}
+        </Col>
+      )
+    }
+  }
+  /**
+ * 根据是否有结算时间来结算时间
+ */
+  showCloseTime = (record) => {
+    if (record.closeTime === undefined) {
+      return
+    } else {
+      return (
+        <Col md={8} sm={24}>
+          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>结算时间:</span>{record.closeTime !== undefined && (record.closeTime)}
+        </Col>
+      )
+    }
+  }
+
+  /**
+ * 根据是否有作废时间来作废时间
+ */
+  showCancelTime = (record) => {
+    if (record.cancelTime === undefined) {
+      return
+    } else {
+      return (
+        <Col md={8} sm={24}>
+          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>作废时间:</span>{record.cancelTime !== undefined && (record.cancelTime)}
+        </Col>
+      )
+    }
+  }
+
+
+
 
 
   renderSearchForm() {
@@ -465,15 +520,15 @@ export default class OrdOrder extends SimpleMng {
             </a>
         </Menu.Item>
         <Menu.Item>
-          <a  onClick={() =>
-              this.showAddForm({
-                id: record.id,
-                moduleCode: 'sucorg',
-                editFormRecord: record,
-                editForm: 'modifyOrderShippingAddress',
-                editFormTitle: '修改收货地址',
-              })
-            }
+          <a onClick={() =>
+            this.showAddForm({
+              id: record.id,
+              moduleCode: 'sucorg',
+              editFormRecord: record,
+              editForm: 'modifyOrderShippingAddress',
+              editFormTitle: '修改收货地址',
+            })
+          }
           >
             修改收货地址
             </a>
@@ -483,7 +538,7 @@ export default class OrdOrder extends SimpleMng {
     return (
       <Dropdown overlay={menu}>
         <a>
-          更多 <Icon type="down" />
+          更多操作 <Icon type="down" />
         </a>
       </Dropdown>
     )
@@ -491,32 +546,119 @@ export default class OrdOrder extends SimpleMng {
   /**
    * 发货
    */
-  send=(record)=>{
+  send = (record) => {
 
     this.props.dispatch({
       type: `${this.moduleCode}/detail`,
       payload: { orderId: record.id },
       callback: data => {
-        if(data !==undefined && data.length !==0){
-            for (let i = 0; i < data.length; i++) {
-              if(data[i].returnState!==0){
-                message.error('有订单详情处于退货状态，不能发货');
-                return;
-              }
+        if (data !== undefined && data.length !== 0) {
+          for (let i = 0; i < data.length; i++) {
+            if (data[i].returnState !== 0) {
+              message.error('有订单详情处于退货状态，不能发货');
+              return;
             }
-            this.showAddForm({
-              editFormRecord: record,
-              editForm: 'printPage',
-              editFormTitle: '选择发货信息',
-            })
+          }
+          this.showAddForm({
+            editFormRecord: record,
+            editForm: 'printPage',
+            editFormTitle: '选择发货信息',
+          })
         }
       }
     })
-
-
   }
 
+  /**
+ * 供应商发货
+ */
+  send2 = (record) => {
+
+    this.props.dispatch({
+      type: `${this.moduleCode}/detail`,
+      payload: { orderId: record.id },
+      callback: data => {
+        if (data !== undefined && data.length !== 0) {
+          for (let i = 0; i < data.length; i++) {
+            if (data[i].returnState !== 0) {
+              message.error('有订单详情处于退货状态，不能发货');
+              return;
+            }
+          }
+          this.showAddForm({
+            editFormRecord: record,
+            editForm: 'printPage2',
+            editFormTitle: '选择发货信息',
+          })
+        }
+      }
+    })
+  }
+
+
+
+  showOrderInfo = (record) => {
+    console.log(record);
+    this.props.dispatch({
+      type: `${this.moduleCode}/detail`,
+      payload: { orderId: record.id },
+      callback: data => {
+        if (data !== undefined && data.length !== 0) {
+          for (let i = 0; i < data.length; i++) {
+            if (data[i].downlineRelationSource1 === 0) data[i].downlineRelationSource1 = '未知来源';
+            if (data[i].downlineRelationSource1 === 1) data[i].downlineRelationSource1 = '自己匹配自己';
+            if (data[i].downlineRelationSource1 === 2) data[i].downlineRelationSource1 = '购买关系';
+            if (data[i].downlineRelationSource1 === 3) data[i].downlineRelationSource1 = '邀请关系';
+            if (data[i].downlineRelationSource1 === 4) data[i].downlineRelationSource1 = '差一人且邀请一人';
+            if (data[i].downlineRelationSource1 === 5) data[i].downlineRelationSource1 = '差两人';
+            if (data[i].downlineRelationSource1 === 6) data[i].downlineRelationSource1 = '差一人';
+            if (data[i].downlineIsSignIn1 === true) data[i].downlineIsSignIn1 = '已签收';
+            if (data[i].downlineIsSignIn1 === false) data[i].downlineIsSignIn1 = '未签收';
+            if (data[i].downlineRelationSource2 === 0) data[i].downlineRelationSource2 = '未知来源';
+            if (data[i].downlineRelationSource2 === 1) data[i].downlineRelationSource2 = '自己匹配自己';
+            if (data[i].downlineRelationSource2 === 2) data[i].downlineRelationSource2 = '购买关系';
+            if (data[i].downlineRelationSource2 === 3) data[i].downlineRelationSource2 = '邀请关系';
+            if (data[i].downlineRelationSource2 === 4) data[i].downlineRelationSource2 = '差一人且邀请一人';
+            if (data[i].downlineRelationSource2 === 5) data[i].downlineRelationSource2 = '差两人';
+            if (data[i].downlineRelationSource2 === 6) data[i].downlineRelationSource2 = '差一人';
+            if (data[i].downlineIsSignIn2 === true) data[i].downlineIsSignIn2 = '已签收';
+            if (data[i].downlineIsSignIn2 === false) data[i].downlineIsSignIn2 = '未签收';
+            if (data[i].uplineRelationSource === 0) data[i].uplineRelationSource = '未知来源';
+            if (data[i].uplineRelationSource === 1) data[i].uplineRelationSource = '自己匹配自己';
+            if (data[i].uplineRelationSource === 2) data[i].uplineRelationSource = '购买关系';
+            if (data[i].uplineRelationSource === 3) data[i].uplineRelationSource = '邀请关系';
+            if (data[i].uplineRelationSource === 4) data[i].uplineRelationSource = '差一人且邀请一人';
+            if (data[i].uplineRelationSource === 5) data[i].uplineRelationSource = '差两人';
+            if (data[i].uplineRelationSource === 6) data[i].uplineRelationSource = '差一人';
+            if (data[i].uplineIsSignIn === true) data[i].uplineIsSignIn = '已签收';
+            if (data[i].uplineIsSignIn === false) data[i].uplineIsSignIn = '未签收';
+          }
+          data.orderInfo = record;
+          this.setState({
+            expand: {
+              expand: data,
+            }
+          })
+        }
+      }
+    });
+  }
+
+
   render() {
+
+
+    const content = (
+      <div>
+        {this.state.expand.expand !== '' && this.showReceiverInfo(this.state.expand.expand.orderInfo)}
+        <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
+          <Col md={24} sm={24}>
+            <h4>订单详情</h4>
+          </Col>
+        </Row>
+        {this.state.expand.expand !== '' && this.showExpand(this.state.expand.expand)}
+      </div>
+    );
 
     const { ordorder: { ordorder }, loading, kdisender } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
@@ -551,6 +693,13 @@ export default class OrdOrder extends SimpleMng {
         dataIndex: 'orderCode',
         key: 'orderCode',
         width: 150,
+        render: (text, record) => {
+          return (
+            <Popover autoAdjustOverflow={true} trigger='click' placement='right' onVisibleChange={(visible) => !visible || this.showOrderInfo(record)} content={content} title="查看订单信息" >
+              <a>  {record.orderCode}</a>
+            </Popover>
+          );
+        },
       },
       {
         title: '用户名',
@@ -562,7 +711,7 @@ export default class OrdOrder extends SimpleMng {
         title: '商品',
         dataIndex: 'orderTitle',
         key: 'orderTitle',
-        
+
       },
       {
         title: '下单金额',
@@ -609,17 +758,23 @@ export default class OrdOrder extends SimpleMng {
             return (
               <Fragment  >
                 <a onClick={() => this.send(record)} >
-                  发货
+                  本店发货
                   </a>
-                <Divider type="vertical" />
+                <br />
+                <a onClick={() => this.send2(record)} >
+                  非本店发货
+                  </a>
+                <br />
                 {this.MoreBtn(record)}
               </Fragment>
             )
           } else {
             return (
               <Fragment  >
-                <a style={{ color: '#C0C0C0' }}>发货</a>
-                <Divider type="vertical" />
+                <a style={{ color: '#C0C0C0' }}>本店发货</a>
+                <br />
+                <a style={{ color: '#C0C0C0' }}>非本店发货</a>
+                <br />
                 {this.MoreBtn(record)}
               </Fragment>
             )
@@ -634,23 +789,11 @@ export default class OrdOrder extends SimpleMng {
           <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
           <div className={styles.tableList}>
             <Table
-              onExpand={this.expand}
               rowKey="orderCode"
               pagination={paginationProps}
               loading={loading}
               onChange={this.handleTableChange}
               dataSource={kdilogisticData}
-              expandedRowRender={record => (
-                <div >
-                  {this.showReceiverInfo(record)}
-                  <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
-                    <Col md={24} sm={24}>
-                      <h4>订单详情</h4>
-                    </Col>
-                  </Row>
-                  {this.state.expand.orderId === record.id && (this.showExpand(this.state.expand.expand))}
-                </div>
-              )}
               columns={columns}
             />
           </div>
@@ -693,7 +836,44 @@ export default class OrdOrder extends SimpleMng {
               });
             }}
           />
-        )} 
+        )}
+        {editForm === 'printPage2' && (
+          <SendBySupplierForm
+            visible
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            onSubmit={fields => {
+              let shipperInfo;
+              if (fields.shipperInfo !== undefined) {
+                shipperInfo = fields.shipperInfo.split('/');
+                fields.shipperId = shipperInfo[0];
+                fields.shipperName = shipperInfo[1];
+                fields.shipperCode = shipperInfo[2];
+              }
+              let senderInfo;
+              if (fields.senderInfo !== undefined) {
+                senderInfo = fields.senderInfo.split('/');
+                fields.senderName = senderInfo[0];
+                fields.senderMobile = senderInfo[1];
+                fields.senderProvince = senderInfo[2];
+                fields.senderCity = senderInfo[3];
+                fields.senderExpArea = senderInfo[4];
+                fields.senderPostCode = senderInfo[5];
+                fields.senderAddress = senderInfo[6];
+              }
+              const { user } = this.props;
+              fields.orgId = user.currentUser.orgId;
+              fields.senderInfo = undefined;
+              this.handleSubmit({
+                fields,
+                moduleCode: 'ordorder',
+                saveMethodName: 'sendBySupplier',
+              });
+            }}
+          />
+        )}
         {editForm === 'modifyOrderShippingAddress' && (
           <ModifyOrderShippingAddress
             id={editFormRecord.id}
@@ -702,7 +882,7 @@ export default class OrdOrder extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'ordorder', saveMethodName: 'modifyOrderShippingAddress'})}
+            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'ordorder', saveMethodName: 'modifyOrderShippingAddress' })}
           />
         )}
       </PageHeaderLayout>
