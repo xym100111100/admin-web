@@ -213,7 +213,7 @@ export default class OrdReturn extends SimpleMng {
         }
         return (
             <Col md={15} sm={24}>
-                {record.picList[1] !== undefined && (
+                {record.picList[0] !== undefined && (
                     <Col md={8} sm={24}>
                         <Popover content={content1} placement={'left'} >
                             <div style={{ cursor: 'hand', cursor: 'pointer', width: 20, height: 20, backgroundImage: '/ise-svr/files' + record.picList[0].picPath }} ></div>
@@ -223,14 +223,14 @@ export default class OrdReturn extends SimpleMng {
                 {record.picList[1] !== undefined && (
                     <Col md={8} sm={24}>
                         <Popover content={content2} placement={'left'} >
-                            <div style={{ cursor: 'hand', cursor: 'pointer', width: 20, height: 20, backgroundImage: '/ise-svr/files' + record.picList[0].picPath }} ></div>
+                            <div style={{ cursor: 'hand', cursor: 'pointer', width: 20, height: 20, backgroundImage: '/ise-svr/files' + record.picList[1].picPath }} ></div>
                         </Popover>
                     </Col>
                 )}
                 {record.picList[2] !== undefined && (
                     <Popover content={content3} placement={'left'} >
                         <Col md={8} sm={24}>
-                            <div style={{ cursor: 'hand', cursor: 'pointer', width: 20, height: 20, backgroundImage: '/ise-svr/files' + record.picList[0].picPath }} ></div>
+                            <div style={{ cursor: 'hand', cursor: 'pointer', width: 20, height: 20, backgroundImage: '/ise-svr/files' + record.picList[2].picPath }} ></div>
                         </Col>
                     </Popover>
                 )}
