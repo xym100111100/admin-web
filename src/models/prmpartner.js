@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { list, getById, add } from '../services/prmpartner';
+import { list, getById, add, enable, modify } from '../services/prmpartner';
 
 export default {
   namespace: 'prmpartner',
@@ -29,6 +29,25 @@ export default {
         if (callback) callback(response);
       } else {
         message.error(response.msg); 
+      }
+    },
+    *modify({ payload, callback }, { call }) {
+      const response = yield call(modify, payload);
+      console.log(response);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg); 
+      }
+    },
+    *enable({ payload, callback }, { call }) {
+      const response = yield call(enable, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
       }
     },
   },

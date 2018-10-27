@@ -10,15 +10,26 @@ export async function getById(params) {
 }
 
 export async function add(params) {
-  console.log(params);
-
   return request('/prm-svr/prm/partner', {
     method: 'POST',
     body: {
       ...params,
     },
   });
-  // return request(`/prm-svr/prm/partner?${stringify(params)}`, {
-  //   method: 'POST'
-  // });
 }
+
+export async function modify(params) {
+  return request('/prm-svr/prm/partner', {
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
+}
+
+export async function enable(params) {
+  return request(`/prm-svr/prm/partner/enable?${stringify(params)}`, {
+    method: 'PUT',
+  });
+}
+

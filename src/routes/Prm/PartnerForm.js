@@ -14,9 +14,11 @@ const Option = Select.Option;
 export default class PartnerForm extends PureComponent {
 
     render() {
-        const { form, editFormType, record } = this.props;
+        const { form, record } = this.props;
         return (
             <Fragment>
+                {form.getFieldDecorator('id')(<Input type="hidden" />)}
+                {form.getFieldDecorator('orgId')(<Input type="hidden" />)}
                 <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="伙伴名称">
                     {form.getFieldDecorator('partnerName', {
                         rules: [{ required: true, message: '请输入伙伴的名称' }],
@@ -34,12 +36,12 @@ export default class PartnerForm extends PureComponent {
                 </FormItem>
                 <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="伙伴类型">
                     {form.getFieldDecorator('partnerType', {
-                        rules: [{ required: true, message: '请选择伙伴的类型' }],
+                        rules: [{ required: true, message: '请选择伙伴的类型' }], 
                         initialValue: record.partnerType === undefined ? 1 : record.partnerType,
                     })(
                         <Select style={{ width: 120 }} >
-                            <Option value="1">供应商</Option>
-                            <Option value="2">经销商</Option>
+                            <Option value={1}>供应商</Option>
+                            <Option value={2}>经销商</Option>
                         </Select>
                     )}
                 </FormItem>
@@ -47,7 +49,7 @@ export default class PartnerForm extends PureComponent {
                     {form.getFieldDecorator('remark', { initialValue: record.remark })(<Input placeholder="备注(选填)" />)}
                 </FormItem>
                 <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="所属业务员">
-                    {form.getFieldDecorator('salesmanId', { initialValue: record.remark })(<Input placeholder="所属业务员(选填)" />)}
+                    {form.getFieldDecorator('salesmanId', { initialValue: record.salesmanName })(<Input placeholder="所属业务员(选填)" />)}
                 </FormItem>
             </Fragment>
         );

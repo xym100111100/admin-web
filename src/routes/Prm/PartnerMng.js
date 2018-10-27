@@ -91,23 +91,19 @@ export default class PartnerMng extends SimpleMng {
         );
     }
 
-    // 下线
-    tapeOut = record => {
+    // 是否启用
+    handleEnable = record => {
         this.props.dispatch({
-            type: `onlonline/tapeOut`,
-            payload: {
-                id: record.id,
-                onlineState: 0,
-            },
+            type: `prmpartner/enable`,
+            payload: { id: record.id, isEnabled: !record.isEnabled, orgId: record.orgId },
             callback: () => {
                 this.handleReload();
             },
         });
-    };
+    }
 
     render() {
         const { prmpartner: { prmpartner } } = this.props;
-        console.log(prmpartner)
         const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
 
         const columns = [
@@ -118,6 +114,14 @@ export default class PartnerMng extends SimpleMng {
             {
                 title: '伙伴类型',
                 dataIndex: 'partnerType',
+                render: (text, record) => {
+                    if (text === 1) {
+                        return ("供应商");
+                    }
+                    if (text === 2) {
+                        return ("经销商");
+                    }
+                }
             },
             {
                 title: '是否启用',
@@ -144,15 +148,18 @@ export default class PartnerMng extends SimpleMng {
                 render: (text, record) => {
                     return (
                         <Fragment>
-                            <Divider type="vertical" />
-                            <List.Item
-                                actions={[
-                                    <Popconfirm title="是否要下线此商品？" onConfirm={() => this.tapeOut(record)}>
-                                        <a>下线</a>
-                                    </Popconfirm>,
-                                ]}
-                            />
-                            <Divider type="vertical" />
+                            <a
+                                onClick={() =>
+                                    this.showAddForm({
+                                        id: record.id,
+                                        editForm: 'partnerForm',
+                                        editFormRecord: record,
+                                        editFormTitle: '修改伙伴信息',
+                                    })
+                                }
+                            >
+                                修改
+                            </a>
                         </Fragment>
                     );
                 },
@@ -222,55 +229,7 @@ export default class PartnerMng extends SimpleMng {
                             this.handleSubmit({
                                 fields,
                                 moduleCode: 'prmpartner',
-                                saveMethodName: 'add',
-                            })
-                        }
-                    />
-                )}
-                {editForm === 'onlOnlinePromotionForm' && (
-                    <OnlOnlinePromotionForm
-                        visible
-                        title={editFormTitle}
-                        width={700}
-                        id={editFormRecord.id}
-                        editFormType={editFormType}
-                        record={editFormRecord}
-                        closeModal={() => this.setState({ editForm: undefined })}
-                        onSubmit={fields =>
-                            this.handleSubmit({
-                                fields: { onlineId: editFormRecord.id, promotionType: fields.promotionType },
-                                moduleCode: 'onlonlineporomotion',
-                            })
-                        }
-                    />
-                )}
-                {editForm === 'onlOnlineSpecForm' && (
-                    <OnlOnlineSpecForm
-                        visible
-                        title={editFormTitle}
-                        width={1000}
-                        height={490}
-                        id={editFormRecord.id}
-                        editFormType={editFormType}
-                        record={editFormRecord}
-                        closeModal={() => this.setState({ editForm: undefined })}
-                    />
-                )}
-                {editForm === 'onlOnlineNumberForm' && (
-                    <OnlOnlineNumberForm
-                        visible
-                        title={editFormTitle}
-                        width={700}
-                        height={490}
-                        id={editFormRecord.id}
-                        editFormType={editFormType}
-                        record={editFormRecord}
-                        closeModal={() => this.setState({ editForm: undefined })}
-                        onSubmit={fields =>
-                            this.handleSubmit({
-                                fields: { onlineId: editFormRecord.id, appends: fields },
-                                moduleCode: 'onlonline',
-                                saveMethodName: 'append',
+                                saveMethodName: editFormTitle === "添加伙伴" ? 'add' : 'modify',
                             })
                         }
                     />
