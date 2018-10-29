@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Card, message, Input, Form, Col, Table, Upload, Icon, Modal, Radio } from 'antd';
+import { Card, message, Input, Form, Col, Table, Upload, Icon, Modal, Radio, Select } from 'antd';
 // import OnlyPopupForm from 'components/Rebue/OnlyPopupForm';
 import EditForm from 'components/Rebue/EditForm';
 import EditableTable from 'components/Rebue/EditableTable';
@@ -11,9 +11,12 @@ import 'braft-editor/dist/index.css';
 
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
-@connect(({ onlonline, BraftEditorUpload }) => ({
+const Option = Select.Option;
+
+@connect(({ onlonline, BraftEditorUpload, prmpartner }) => ({
   BraftEditorUpload,
   onlonline,
+  prmpartner,
 }))
 @Form.create()
 // @OnlyPopupForm
@@ -22,6 +25,7 @@ export default class OnlineForm extends React.Component {
   componentWillMount() {
     const { id } = this.props;
     if (id !== undefined) this.getOnlines(id);
+    this.partnerSearch();
   }
 
   state = {
@@ -33,6 +37,7 @@ export default class OnlineForm extends React.Component {
     fileLists: [],
     subjectType: 0,
     onlOnlineSpec: [],
+    partnerData: [],
     // 创建一个空的editorState作为初始值
     editorState: EditorState.createFrom(''),
   };
@@ -164,6 +169,27 @@ export default class OnlineForm extends React.Component {
     return true;
   };
 
+  // 搜索伙伴
+  partnerSearch = e => {
+    this.props.dispatch({
+      type: `prmpartner/list`,
+      payload: {
+        pageNum: 1,
+        pageSize: 5,
+        partnerName: e,
+      },
+      callback: partner => {
+        this.setState({
+          partnerData: partner.list === undefined ? [] : partner.list
+        })
+      },
+    });
+  }
+
+  partnerChange = e => {
+    console.log(e)
+  }
+
   // 选择板块类型事件
   onChangeRadio = e => {
     this.setState({
@@ -243,7 +269,9 @@ export default class OnlineForm extends React.Component {
       onlOnlineSpec,
       onlineDetail,
       subjectType,
+      partnerData,
     } = this.state;
+    const options = partnerData.map(d => <Option key={d.id}>{d.partnerName}</Option>);
 
     // 商品主图、轮播图上传图标
     const uploadButton = (
@@ -321,6 +349,26 @@ export default class OnlineForm extends React.Component {
           <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="商品名称">
             {form.getFieldDecorator('onlineName', {})(
               <Input style={{ width: '500px' }} placeholder="请输入商品的名称" />
+            )}
+          </FormItem>
+        </Col>
+        <Col span={24} style={{ width: '100%' }}>
+          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="伙伴名称">
+            {form.getFieldDecorator('partnerName', {})(
+              <Select
+              showSearch
+              //value={this.state.value}
+              placeholder="请输入伙伴名称"
+              style={{width: 300}}
+              defaultActiveFirstOption={false}
+              showArrow={false}
+              filterOption={false}
+              onSearch={this.partnerSearch}
+              onChange={this.partnerChange}
+              notFoundContent={null}
+            >
+              {options}
+            </Select>
             )}
           </FormItem>
         </Col>

@@ -72,7 +72,7 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['rnarealname'], () => import('../routes/Rna/RnaRealname')),
     },
     '/rep/rep-logistic': {
-      component: dynamicWrapper(app, ['replogistic','kdicompany', 'user'], () => import('../routes/Rep/RepLogistic')),
+      component: dynamicWrapper(app, ['replogistic', 'kdicompany', 'user'], () => import('../routes/Rep/RepLogistic')),
     },
     '/kdi/kdi-mng': {
       component: dynamicWrapper(app, ['kdilogistic', 'kdientry', 'kdicompany'], () =>
@@ -163,7 +163,7 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['sucuser', 'sucorg', 'sucuserorg'], () => import('../routes/Suc/OrgMng')),
     },
     '/onl/onl-mng': {
-      component: dynamicWrapper(app, ['onlonline', 'BraftEditorUpload', 'onlonlineporomotion'], () =>
+      component: dynamicWrapper(app, ['onlonline', 'BraftEditorUpload', 'onlonlineporomotion', 'prmpartner'], () =>
         import('../routes/Onl/OnlineMng')
       ),
     },
