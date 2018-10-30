@@ -5,6 +5,10 @@ export async function list(params) {
   return request(`/kdi-svr/kdi/logistic?${stringify(params)}`);
 }
 
+export async function logisticList(params) {
+  return request(`/kdi-svr/kdi/logistic/list?${stringify(params)}`);
+}
+
 /**
  * 统计本组织一段时间内的下单量
  */

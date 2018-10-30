@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { buyrelation,list,sendBySupplier, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,shipmentconfirmation, modifyOrderShippingAddress } from '../services/ordorder';
-import { printpage } from '../services/kdilogistic';
+import { printpage ,logisticList} from '../services/kdilogistic';
 export default {
   namespace: 'ordorder',
 
@@ -17,6 +17,11 @@ export default {
         type: 'changeList',
         payload: response,
       });
+      if (callback) callback(response);
+    },
+
+    *logisticList({ payload, callback }, { call, put }) {
+      const response = yield call(logisticList, payload);
       if (callback) callback(response);
     },
 

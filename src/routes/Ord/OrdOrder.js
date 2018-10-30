@@ -1,7 +1,7 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Row, Divider, Popover, message, Col, Icon, Card, Form, Dropdown, Input, Select, Button, Menu, Table, DatePicker } from 'antd';
+import { Row, Timeline, Divider, Popover, message, Col, Icon, Card, Form, Dropdown, Input, Select, Button, Menu, Table, DatePicker } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './OrdOrder.less';
 import moment from 'moment';
@@ -31,7 +31,8 @@ export default class OrdOrder extends SimpleMng {
     this.state.expand = {
       expand: '',
     }
-
+    this.state.trace = '';
+    this.state.LogisticInfo = '';
   }
 
   //初始化
@@ -543,6 +544,8 @@ export default class OrdOrder extends SimpleMng {
       </Dropdown>
     )
   }
+
+
   /**
    * 发货
    */
@@ -598,7 +601,6 @@ export default class OrdOrder extends SimpleMng {
 
 
   showOrderInfo = (record) => {
-    console.log(record);
     this.props.dispatch({
       type: `${this.moduleCode}/detail`,
       payload: { orderId: record.id },
@@ -644,9 +646,78 @@ export default class OrdOrder extends SimpleMng {
     });
   }
 
+  /**
+   * 获取物流信息
+   */
+  getLogisticInfo = (record) => {
+    this.props.dispatch({
+      type: `${this.moduleCode}/logisticList`,
+      payload: { orderId: record.id },
+      callback: data => {
+        if(data[0] !== undefined && data[0].kdiTrace !==undefined){
+          this.setState({
+            trace: data[0].kdiTrace,
+          })
+        }else{
+          this.setState({
+            trace: '',
+          })
+        }
+        if(data[0] !==undefined){
+          this.setState({
+            LogisticInfo: data[0],
+          })
+        }else{
+          this.setState({
+            LogisticInfo: '',
+          })
+        }
+
+      }
+    })
+  }
+
+  showTrace = (data) => {
+    const listItems = data.map(items => {
+      return (
+        <Timeline.Item dot={<Icon type="clock-circle-o" style={{ fontSize: '16px' }} />} key={items.id.toString()} color="green">{items.happenTime}<Icon type="arrow-right" theme="outlined" />{items.traceDesc}</Timeline.Item>
+      )
+    });
+    return listItems;
+  }
+
+
+  showLogisticInfo = (data) => {
+    if (data.shipperName !== undefined) {
+      return (
+        <Row gutter={{ md: 6, lg: 24, xl: 48 }} style={{width:300}}  >
+          <Col md={12} sm={24}>
+            <span>快递公司  </span>
+          </Col>
+          <Col md={12} sm={24}>
+            {data.shipperName}
+          </Col>
+          <Col md={12} sm={24}>
+            <span>快递单号  </span>
+          </Col>
+          <Col md={12} sm={24}>
+            {data.logisticCode}
+          </Col>
+          <Col md={24} sm={24}>
+            <Divider style={{width:300}} />
+          </Col>
+
+        </Row>
+      )
+    }else{
+      return(
+        <div>content</div>
+      )
+    }
+    
+  }
 
   render() {
-
 
     const content = (
       <div>
@@ -659,6 +730,15 @@ export default class OrdOrder extends SimpleMng {
         {this.state.expand.expand !== '' && this.showExpand(this.state.expand.expand)}
       </div>
     );
+
+    const LogisticInfo = (
+      <div>
+        {this.state.LogisticInfo !== '' && this.showLogisticInfo(this.state.LogisticInfo)}
+        <Timeline mode="alternate" style={{ width: 300 }} >
+          {this.state.trace !== '' && this.showTrace(this.state.trace)}
+        </Timeline>
+      </div>
+    )
 
     const { ordorder: { ordorder }, loading, kdisender } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
@@ -738,9 +818,33 @@ export default class OrdOrder extends SimpleMng {
           if (record.orderState === -1) return '做废';
           if (record.orderState === 1) return '已下单';
           if (record.orderState === 2) return '已支付';
-          if (record.orderState === 3) return '已发货';
-          if (record.orderState === 4) return '已签收';
-          if (record.orderState === 5) return '已结算';
+          if (record.orderState === 3) return (
+            <div>
+              <span>已发货</span>
+              <br />
+              <Popover autoAdjustOverflow={true} trigger='click' placement='left' onVisibleChange={(visible) => !visible || this.getLogisticInfo(record)} content={LogisticInfo} title="查看物流信息" >
+                <a>物流信息</a>
+              </Popover>
+            </div>
+          );
+          if (record.orderState === 4) return (
+            <div>
+              <span>已签收</span>
+              <br />
+              <Popover autoAdjustOverflow={true} trigger='click' placement='left' onVisibleChange={(visible) => !visible || this.getLogisticInfo(record)} content={LogisticInfo} title="查看物流信息" >
+                <a>物流信息</a>
+              </Popover>
+            </div>
+          )
+          if (record.orderState === 5) return (
+            <div>
+              <span>已结算</span>
+              <br />
+              <Popover autoAdjustOverflow={true} trigger='click' placement='left' onVisibleChange={(visible) => !visible || this.getLogisticInfo(record)} content={LogisticInfo} title="查看物流信息" >
+                <a>物流信息</a>
+              </Popover>
+            </div>
+          )
         },
       },
 
