@@ -78,6 +78,7 @@ export default class OrdOrderForm extends PureComponent {
       <Fragment>
         {form.getFieldDecorator('id')(<Input type="hidden" />)}
         {form.getFieldDecorator('orderCode')(<Input type="hidden" />)}
+        {form.getFieldDecorator('orderState')(<Input type="hidden" />)}
         {form.getFieldDecorator('orderTitle')(<Input type="hidden" />)}
         {form.getFieldDecorator('receiverName')(<Input type="hidden" />)}
         {form.getFieldDecorator('receiverProvince')(<Input type="hidden" />)}

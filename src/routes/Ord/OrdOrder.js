@@ -497,9 +497,20 @@ export default class OrdOrder extends SimpleMng {
     );
   }
 
+  addNewLogistic=(record)=>{
+      if(record.orderState===3){
+          return(
+            <a onClick={() => this.send(record)} >添加新快递单</a>
+          )
+      }
+  }
+
   MoreBtn = (record) => {
     const menu = (
       <Menu>
+        <Menu.Item>
+          {this.addNewLogistic(record)}
+        </Menu.Item>
         <Menu.Item>
           <a onClick={() => this.cancel(record)}>
             取消订单
@@ -515,11 +526,12 @@ export default class OrdOrder extends SimpleMng {
             修改实际金额
             </a>
         </Menu.Item>
-        <Menu.Item>
+        {/* <Menu.Item>  这个功能需要物流表中有唯一的orderId，否则将获取不到准确的数据。
+                          在目前orderId可以重复的结构下这个功能将失去意义。
           <a onClick={() => this.printPageAgain(record.id)}>
             重新打印快递单
             </a>
-        </Menu.Item>
+        </Menu.Item> */}
         <Menu.Item>
           <a onClick={() =>
             this.showAddForm({
@@ -654,20 +666,20 @@ export default class OrdOrder extends SimpleMng {
       type: `${this.moduleCode}/logisticList`,
       payload: { orderId: record.id },
       callback: data => {
-        if(data[0] !== undefined && data[0].kdiTrace !==undefined){
+        if (data[0] !== undefined && data[0].kdiTrace !== undefined) {
           this.setState({
             trace: data[0].kdiTrace,
           })
-        }else{
+        } else {
           this.setState({
             trace: '',
           })
         }
-        if(data[0] !==undefined){
+        if (data[0] !== undefined) {
           this.setState({
             LogisticInfo: data[0],
           })
-        }else{
+        } else {
           this.setState({
             LogisticInfo: '',
           })
@@ -690,7 +702,7 @@ export default class OrdOrder extends SimpleMng {
   showLogisticInfo = (data) => {
     if (data.shipperName !== undefined) {
       return (
-        <Row gutter={{ md: 6, lg: 24, xl: 48 }} style={{width:300}}  >
+        <Row gutter={{ md: 6, lg: 24, xl: 48 }} style={{ width: 300 }}  >
           <Col md={12} sm={24}>
             <span>快递公司  </span>
           </Col>
@@ -704,17 +716,17 @@ export default class OrdOrder extends SimpleMng {
             {data.logisticCode}
           </Col>
           <Col md={24} sm={24}>
-            <Divider style={{width:300}} />
+            <Divider style={{ width: 300 }} />
           </Col>
 
         </Row>
       )
-    }else{
-      return(
+    } else {
+      return (
         <div>content</div>
       )
     }
-    
+
   }
 
   render() {
@@ -822,7 +834,8 @@ export default class OrdOrder extends SimpleMng {
             <div>
               <span>已发货</span>
               <br />
-              <Popover autoAdjustOverflow={true} trigger='click' placement='left' onVisibleChange={(visible) => !visible || this.getLogisticInfo(record)} content={LogisticInfo} title="查看物流信息" >
+                {/* <a href="#/kdi/kdi-trace?maomi=1234545" >物流信息</a> */}
+                <Popover autoAdjustOverflow={true} trigger='click' placement='left' onVisibleChange={(visible) => !visible || this.getLogisticInfo(record)} content={LogisticInfo} title="查看物流信息" >
                 <a>物流信息</a>
               </Popover>
             </div>
