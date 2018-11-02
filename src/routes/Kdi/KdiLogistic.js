@@ -327,7 +327,7 @@ export default class KdiLogistic extends SimpleMng {
           <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
           <div className={styles.tableList}>
             <Table
-              rowKey="orderId"
+              rowKey="id"
               pagination={paginationProps}
               loading={loading}
               onChange={this.handleTableChange}
