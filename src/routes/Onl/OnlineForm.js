@@ -36,6 +36,7 @@ export default class OnlineForm extends React.Component {
     previewImages: '',
     fileLists: [],
     subjectType: 0,
+    supplierSettleType: 1,
     onlOnlineSpec: [],
     partnerData: [],
     // 创建一个空的editorState作为初始值
@@ -74,6 +75,7 @@ export default class OnlineForm extends React.Component {
         form.setFieldsValue({ onlineName: onlonline.record.onlineTitle });
         this.setState({
           subjectType: onlonline.record.subjectType,
+          supplierSettleType: onlonline.record.supplierSettleType,
           onlOnlineSpec: Array.from(onlonline.record.onlineSpecList),
           previewVisible: false,
           previewImage: '',
@@ -186,16 +188,19 @@ export default class OnlineForm extends React.Component {
     });
   }
 
-  partnerChange = e => {
-    console.log(e)
-  }
-
   // 选择板块类型事件
   onChangeRadio = e => {
     this.setState({
       subjectType: e.target.value,
     });
   };
+
+  // 选择供应商结算类型事件
+  onChangeSettletTypeRadio = e => {
+    this.setState({
+      supplierSettleType: e.target.value,
+    });
+  }
 
   // 富文本框编辑事件
   handleEditorChange = editorState => {
@@ -209,14 +214,17 @@ export default class OnlineForm extends React.Component {
     let productId = record.productId === undefined ? 0 : record.productId;
     // 上线商品名称
     let onlineName = undefined;
+    let supplierId = undefined;
     form.validateFields((err, values) => {
       onlineName = values.onlineName;
+      supplierId = values.supplierId;
     });
-    const { fileList, fileLists, onlineDetail, subjectType } = this.state;
-    console.log(fileLists);
+    if (onlineName === undefined || onlineName === null || onlineName === '') return message.error('请输入商品名称');
+    if (supplierId === undefined || supplierId === null || supplierId === '') return message.error('请选择供应商');
+
+    const { fileList, fileLists, onlineDetail, subjectType, supplierSettleType } = this.state;
     let detailHtml = onlineDetail.toHTML().replace(/<div\/?.+?>/g, '');
     let onlineDetails = detailHtml.replace(/<\/div>/g, '');
-    if (onlineName === undefined || onlineName === null || onlineName === '') return message.error('请输入商品名称');
 
     // 上线规格信息
     const onlineSpecs = this.refs.editableTable.getRecords();
@@ -245,6 +253,8 @@ export default class OnlineForm extends React.Component {
     form.getFieldDecorator('onlineDetail');
     form.getFieldDecorator('productId');
     form.getFieldDecorator('onlineId');
+    form.getFieldDecorator('supplierId');
+    form.getFieldDecorator('supplierSettleType');
     form.setFieldsValue({
       onlineId: id,
       onlineName: onlineName,
@@ -254,11 +264,13 @@ export default class OnlineForm extends React.Component {
       slideshow: slideshows,
       onlineDetail: onlineDetails,
       productId: productId,
+      supplierId: supplierId,
+      supplierSettleType: supplierSettleType,
     });
   };
 
   render() {
-    const { loading, form } = this.props;
+    const { loading, form, record } = this.props;
     const {
       previewVisible,
       previewImage,
@@ -271,8 +283,7 @@ export default class OnlineForm extends React.Component {
       subjectType,
       partnerData,
     } = this.state;
-    const options = partnerData.map(d => <Option key={d.id}>{d.partnerName}</Option>);
-
+    // const options = partnerData.map(d => <Option key={d.id}>{d.partnerName}</Option>);
     // 商品主图、轮播图上传图标
     const uploadButton = (
       <div>
@@ -295,12 +306,17 @@ export default class OnlineForm extends React.Component {
         width: '110px',
       },
       {
+        title: '成本价格',
+        dataIndex: 'costPrice',
+        align: 'center',
+        width: '110px',
+      },
+      {
         title: '返现金额',
         dataIndex: 'cashbackAmount',
         align: 'center',
         width: '110px',
       },
-
       {
         title: '本次上线数量',
         dataIndex: 'currentOnlineCount',
@@ -316,7 +332,7 @@ export default class OnlineForm extends React.Component {
     ];
 
     if (subjectType === 1) {
-      columns.splice(2, 1);
+      columns.splice(3, 1);
     }
     // 富文本框功能配置
     const editorProps = {
@@ -353,23 +369,39 @@ export default class OnlineForm extends React.Component {
           </FormItem>
         </Col>
         <Col span={24} style={{ width: '100%' }}>
-          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="伙伴名称">
-            {form.getFieldDecorator('partnerName', {})(
+          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="供应商名称">
+            {form.getFieldDecorator('supplierId', {
+              rules: [{ required: true, message: "请选择供应商"}],
+              initialValue: record.supplierId
+            })(
               <Select
-              showSearch
-              //value={this.state.value}
-              placeholder="请输入伙伴名称"
-              style={{width: 300}}
-              defaultActiveFirstOption={false}
-              showArrow={false}
-              filterOption={false}
-              onSearch={this.partnerSearch}
-              onChange={this.partnerChange}
-              notFoundContent={null}
-            >
-              {options}
-            </Select>
+                showSearch
+                disabled={record.supplierName === undefined ? false : true}
+                placeholder={record.supplierName === undefined ? "请输入供应商名称" : record.supplierName}
+                style={{ width: 300 }}
+                defaultActiveFirstOption={false}
+                showArrow={false}
+                filterOption={false}
+                onSearch={this.partnerSearch}
+                notFoundContent="没有可选择的供应商"
+              >
+                {partnerData.map(d => <Option key={d.id}>{d.partnerName}</Option>)}
+              </Select>
             )}
+          </FormItem>
+        </Col>
+        <Col span={24} style={{ width: '100%' }}>
+          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="结算类型">
+            {
+              <RadioGroup
+                defaultValue={record.supplierSettleType === undefined ? 1 : record.supplierSettleType}
+                value={this.state.supplierSettleType}
+                onChange={this.onChangeSettletTypeRadio}
+              >
+                <Radio value={1}>结算到余额</Radio>
+                <Radio value={2}>结算到货款</Radio>
+              </RadioGroup>
+            }
           </FormItem>
         </Col>
         <Col span={24} style={{ width: '100%' }}>
@@ -404,7 +436,7 @@ export default class OnlineForm extends React.Component {
             {
               <div className="clearfix">
                 <Upload
-                  action="/ise-svr/ise/upload"
+                  action="http://192.168.1.203:34360/ise/upload"
                   listType="picture-card"
                   fileList={fileList}
                   name="multipartFile"
@@ -428,7 +460,7 @@ export default class OnlineForm extends React.Component {
             {
               <div className="clearfix">
                 <Upload
-                  action="/ise-svr/ise/upload"
+                  action="http://192.168.1.203:34360/ise/upload"
                   listType="picture-card"
                   fileList={fileLists}
                   name="multipartFile"

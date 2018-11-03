@@ -202,6 +202,21 @@ export default class OnlineMng extends SimpleMng {
         },
       },
       {
+        title: '供应商名称',
+        dataIndex: 'supplierName',
+      },
+      {
+        title: '结算类型',
+        dataIndex: 'supplierSettleType',
+        render: (text, record) => {
+          if (record.supplierSettleType === 1) {
+            return '结算到余额';
+          } else {
+            return '结算到货款';
+          }
+        },
+      },
+      {
         title: '上线时间',
         dataIndex: 'onlineTime',
       },

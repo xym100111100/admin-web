@@ -59,6 +59,10 @@ export default class OnlOnlineSpecForm extends PureComponent {
         dataIndex: 'salePrice',
       },
       {
+        title: '成本价格',
+        dataIndex: 'costPrice',
+      },
+      {
         title: '上线数量',
         dataIndex: 'currentOnlineCount',
       },
@@ -69,7 +73,7 @@ export default class OnlOnlineSpecForm extends PureComponent {
     ];
 
     if (record.subjectType === '0' || record.subjectType === 0) {
-      columns.splice(2, 0, { title: '返现金额', dataIndex: 'cashbackAmount' });
+      columns.splice(3, 0, { title: '返现金额', dataIndex: 'cashbackAmount' });
     }
     return (
       <Fragment>
