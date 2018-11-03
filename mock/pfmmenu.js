@@ -18,6 +18,8 @@ menuData.push({ id: '1536131597100', sysId: 'damai-admin', code: '03', title: nu
 menuData.push({ id: '1536131597101', sysId: 'damai-admin', code: '0300', title: '订单管理', name: '订单管理', path: 'ord-order', isEnabled: true, icon: null, remark: '订单管理' });
 menuData.push({ id: '1536131597142', sysId: 'damai-admin', code: '0301', title: '退货管理', name: '退货管理', path: 'ord-return', isEnabled: true, icon: null, remark: '退货管理' });
 
+menuData.push({ id: '1536131597149', sysId: 'damai-admin', code: '0003', title: '物流信息', name: '物流信息', path: 'kdi-trace', isEnabled: false, icon: null, remark: '物流信息' });
+
 menuData.push({ id: '1536131597098', sysId: 'damai-admin', code: '04', title: null, name: '统计报表', path: 'rep', isEnabled: true, icon: 'table', remark: '报表相关业务' });
 menuData.push({ id: '1536131597099', sysId: 'damai-admin', code: '0400', title: '物流报表', name: '物流报表', path: 'rep-logistic', isEnabled: true, icon: null, remark: '报表相关业务' });
 menuData.push({ id: '1536131597102', sysId: 'damai-admin', code: '05', title: null, name: '用户中心', path: 'suc', isEnabled: true, icon: 'team', remark: '用户相关业务' });

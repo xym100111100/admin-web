@@ -834,10 +834,10 @@ export default class OrdOrder extends SimpleMng {
             <div>
               <span>已发货</span>
               <br />
-                {/* <a href="#/kdi/kdi-trace?maomi=1234545" >物流信息</a> */}
-                <Popover autoAdjustOverflow={true} trigger='click' placement='left' onVisibleChange={(visible) => !visible || this.getLogisticInfo(record)} content={LogisticInfo} title="查看物流信息" >
+                <a href={"#/kdi/kdi-trace?maomi="+record.id} >物流信息</a>
+                {/* <Popover autoAdjustOverflow={true} trigger='click' placement='left' onVisibleChange={(visible) => !visible || this.getLogisticInfo(record)} content={LogisticInfo} title="查看物流信息" >
                 <a>物流信息</a>
-              </Popover>
+              </Popover> */}
             </div>
           );
           if (record.orderState === 4) return (
