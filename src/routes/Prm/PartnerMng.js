@@ -112,18 +112,6 @@ export default class PartnerMng extends SimpleMng {
                 dataIndex: 'partnerName',
             },
             {
-                title: '伙伴类型',
-                dataIndex: 'partnerType',
-                render: (text, record) => {
-                    if (text === 1) {
-                        return ("供应商");
-                    }
-                    if (text === 2) {
-                        return ("经销商");
-                    }
-                }
-            },
-            {
                 title: '是否启用',
                 dataIndex: 'isEnabled',
                 render: (text, record) => {

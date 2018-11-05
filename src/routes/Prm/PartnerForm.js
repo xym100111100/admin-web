@@ -34,17 +34,6 @@ export default class PartnerForm extends PureComponent {
                         initialValue: record.contact,
                     })(<Input placeholder="请输入伙伴的联系方式(名字+号码/号码)" />)}
                 </FormItem>
-                <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="伙伴类型">
-                    {form.getFieldDecorator('partnerType', {
-                        rules: [{ required: true, message: '请选择伙伴的类型' }], 
-                        initialValue: record.partnerType === undefined ? 1 : record.partnerType,
-                    })(
-                        <Select style={{ width: 120 }} >
-                            <Option value={1}>供应商</Option>
-                            <Option value={2}>经销商</Option>
-                        </Select>
-                    )}
-                </FormItem>
                 <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="备注">
                     {form.getFieldDecorator('remark', { initialValue: record.remark })(<Input placeholder="备注(选填)" />)}
                 </FormItem>

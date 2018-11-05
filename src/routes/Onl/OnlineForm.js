@@ -36,7 +36,7 @@ export default class OnlineForm extends React.Component {
     previewImages: '',
     fileLists: [],
     subjectType: 0,
-    supplierSettleType: 1,
+    pledgeType: 1,
     onlOnlineSpec: [],
     partnerData: [],
     // 创建一个空的editorState作为初始值
@@ -75,7 +75,7 @@ export default class OnlineForm extends React.Component {
         form.setFieldsValue({ onlineName: onlonline.record.onlineTitle });
         this.setState({
           subjectType: onlonline.record.subjectType,
-          supplierSettleType: onlonline.record.supplierSettleType,
+          pledgeType: onlonline.record.pledgeType,
           onlOnlineSpec: Array.from(onlonline.record.onlineSpecList),
           previewVisible: false,
           previewImage: '',
@@ -198,7 +198,7 @@ export default class OnlineForm extends React.Component {
   // 选择供应商结算类型事件
   onChangeSettletTypeRadio = e => {
     this.setState({
-      supplierSettleType: e.target.value,
+      pledgeType: e.target.value,
     });
   }
 
@@ -222,7 +222,7 @@ export default class OnlineForm extends React.Component {
     if (onlineName === undefined || onlineName === null || onlineName === '') return message.error('请输入商品名称');
     if (supplierId === undefined || supplierId === null || supplierId === '') return message.error('请选择供应商');
 
-    const { fileList, fileLists, onlineDetail, subjectType, supplierSettleType } = this.state;
+    const { fileList, fileLists, onlineDetail, subjectType, pledgeType } = this.state;
     let detailHtml = onlineDetail.toHTML().replace(/<div\/?.+?>/g, '');
     let onlineDetails = detailHtml.replace(/<\/div>/g, '');
 
@@ -254,7 +254,7 @@ export default class OnlineForm extends React.Component {
     form.getFieldDecorator('productId');
     form.getFieldDecorator('onlineId');
     form.getFieldDecorator('supplierId');
-    form.getFieldDecorator('supplierSettleType');
+    form.getFieldDecorator('pledgeType');
     form.setFieldsValue({
       onlineId: id,
       onlineName: onlineName,
@@ -265,7 +265,7 @@ export default class OnlineForm extends React.Component {
       onlineDetail: onlineDetails,
       productId: productId,
       supplierId: supplierId,
-      supplierSettleType: supplierSettleType,
+      pledgeType: pledgeType,
     });
   };
 
@@ -391,15 +391,15 @@ export default class OnlineForm extends React.Component {
           </FormItem>
         </Col>
         <Col span={24} style={{ width: '100%' }}>
-          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="结算类型">
+          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="押货类型">
             {
               <RadioGroup
-                defaultValue={record.supplierSettleType === undefined ? 1 : record.supplierSettleType}
-                value={this.state.supplierSettleType}
+                disabled={record.pledgeType === undefined ? false : true}
+                value={this.state.pledgeType}
                 onChange={this.onChangeSettletTypeRadio}
               >
-                <Radio value={1}>结算到余额</Radio>
-                <Radio value={2}>结算到货款</Radio>
+                <Radio value={1}>押货</Radio>
+                <Radio value={2}>供应商发货</Radio>
               </RadioGroup>
             }
           </FormItem>
@@ -436,7 +436,7 @@ export default class OnlineForm extends React.Component {
             {
               <div className="clearfix">
                 <Upload
-                  action="http://192.168.1.203:34360/ise/upload"
+                  action="http://192.168.1.203:34862/ise/upload"
                   listType="picture-card"
                   fileList={fileList}
                   name="multipartFile"
@@ -460,7 +460,7 @@ export default class OnlineForm extends React.Component {
             {
               <div className="clearfix">
                 <Upload
-                  action="http://192.168.1.203:34360/ise/upload"
+                  action="http://192.168.1.203:34862/ise/upload"
                   listType="picture-card"
                   fileList={fileLists}
                   name="multipartFile"
