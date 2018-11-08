@@ -1,12 +1,12 @@
 import { message } from 'antd';
-import { list, getById, add, modify, del, setDefaultTrace } from '../services/kditrace';
+import { list, getById, add, modify, del, setDefaultTrace } from '../services/ordtrace';
 import { logisticList} from '../services/kdilogistic';
 
 export default {
-  namespace: 'kditrace',
+  namespace: 'ordtrace',
 
   state: {
-    kditrace: [],
+    ordtrace: [],
   },
 
   effects: {
@@ -100,7 +100,7 @@ export default {
   reducers: {
     changeList(state, action) {
       return {
-        kditrace: action.payload,
+        ordtrace: action.payload,
       };
     },
   },

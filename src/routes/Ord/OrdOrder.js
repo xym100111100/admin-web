@@ -834,30 +834,23 @@ export default class OrdOrder extends SimpleMng {
             <div>
               <span>已发货</span>
               <br />
-                <a href={"#/kdi/kdi-trace?maomi="+record.id} >物流信息</a>
-                {/* <Popover autoAdjustOverflow={true} trigger='click' placement='left' onVisibleChange={(visible) => !visible || this.getLogisticInfo(record)} content={LogisticInfo} title="查看物流信息" >
-                <a>物流信息</a>
-              </Popover> */}
+                <a href={"#/ord/ord-trace?orderId="+record.id} >物流信息</a>
             </div>
           );
           if (record.orderState === 4) return (
             <div>
               <span>已签收</span>
               <br />
-              <Popover autoAdjustOverflow={true} trigger='click' placement='left' onVisibleChange={(visible) => !visible || this.getLogisticInfo(record)} content={LogisticInfo} title="查看物流信息" >
-                <a>物流信息</a>
-              </Popover>
+                <a href={"#/ord/ord-trace?orderId="+record.id} >物流信息</a>
             </div>
-          )
+          );
           if (record.orderState === 5) return (
             <div>
               <span>已结算</span>
               <br />
-              <Popover autoAdjustOverflow={true} trigger='click' placement='left' onVisibleChange={(visible) => !visible || this.getLogisticInfo(record)} content={LogisticInfo} title="查看物流信息" >
-                <a>物流信息</a>
-              </Popover>
+                <a href={"#/ord/ord-trace?orderId="+record.id} >物流信息</a>
             </div>
-          )
+          );
         },
       },
 

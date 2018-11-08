@@ -66,7 +66,6 @@ export default class KdiCompany extends PureComponent {
         })(
           <Select
             {...props}
-            dropdownStyle={{ height: 100, overflow: 'scroll' }}
             style={SelectStyle}
             placeholder="请选择快递公司"
           >

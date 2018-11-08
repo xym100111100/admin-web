@@ -2,23 +2,22 @@ import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
 import { Radio, Row, Col, Timeline, Icon, Card } from 'antd';
-import EditForm from 'components/Rebue/EditForm';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 
-@connect(({ kditrace, user, login, loading }) => ({
-  kditrace,
+@connect(({ ordtrace, user, login, loading }) => ({
+  ordtrace,
   user,
   login,
-  loading: loading.models.kditrace || loading.models.user || loading.models.login,
+  loading: loading.models.ordtrace || loading.models.user || loading.models.login,
 }))
-export default class KdiTrace extends SimpleMng {
+export default class OrdTrace extends SimpleMng {
   constructor(props) {
     super(props);
-    this.moduleCode = 'kditrace';
+    this.moduleCode = 'ordtrace';
     this.state.logisticName = '';
-    this.state.id ="";
+    this.state.logisticId ='2';
     this.state.trace = '';
     this.state.logisticInfo = '';
   }
@@ -43,15 +42,10 @@ export default class KdiTrace extends SimpleMng {
       callback: data => {
         this.setState({
           logisticName: data[0].kdiLogistic,
-        })
-        this.setState({
-          id: data[0].kdiLogistic[0].id,
-        })
-        this.setState({
+          logisticId: data[0].kdiLogistic[0].id,
           trace: data[0].kdiTrace,
-        })
-        this.setState({
           logisticInfo: [data[0].kdiLogistic[0].shipperName, data[0].kdiLogistic[0].logisticCode],
+
         })
       }
     })
@@ -106,9 +100,8 @@ export default class KdiTrace extends SimpleMng {
       callback: data => {
         this.setState({
           logisticInfo: [data[0].kdiLogistic[0].shipperName, data[0].kdiLogistic[0].logisticCode],
-        })
-        this.setState({
           trace: data[0].kdiTrace,
+          logisticId: data[0].kdiLogistic[0].id,
         })
       }
     })
@@ -131,8 +124,7 @@ export default class KdiTrace extends SimpleMng {
 
 
   render() {
-    const { kditrace: { kditrace }, loading, user } = this.props;
-
+    const { ordtrace: { ordtrace }, loading, user } = this.props;
     return (
       <PageHeaderLayout title="物流信息">
         <Card bordered={false}>
@@ -142,13 +134,14 @@ export default class KdiTrace extends SimpleMng {
               <Col md={5} sm={24} >
                 <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
                   <Col md={15} sm={24}>
-                    <RadioGroup onChange={this.getLogisticInfo} defaultValue={this.state.id}>
+                    <RadioGroup onChange={this.getLogisticInfo} value={this.state.logisticId}>
                       {this.state.logisticName !== '' && this.showLogisticName(this.state.logisticName)}
                     </RadioGroup>
                   </Col>
                 </Row>
               </Col>
               <Col md={15} sm={24}  >
+              <p>物流信息</p>
                 <Timeline >
                   {this.state.trace !== '' && this.showTrace(this.state.trace)}
                 </Timeline>
