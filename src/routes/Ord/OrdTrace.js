@@ -40,13 +40,16 @@ export default class OrdTrace extends SimpleMng {
       type: `${this.moduleCode}/logisticList`,
       payload: { orderId: orderId },
       callback: data => {
-        this.setState({
-          logisticName: data[0].kdiLogistic,
-          logisticId: data[0].kdiLogistic[0].id,
-          trace: data[0].kdiTrace,
-          logisticInfo: [data[0].kdiLogistic[0].shipperName, data[0].kdiLogistic[0].logisticCode],
+        if(data!==undefined &&  data.length !==0  ){
+          this.setState({
+            logisticName: data[0].kdiLogistic,
+            logisticId: data[0].kdiLogistic[0].id,
+            trace: data[0].kdiTrace,
+            logisticInfo: [data[0].kdiLogistic[0].shipperName, data[0].kdiLogistic[0].logisticCode],
+  
+          })
+        }
 
-        })
       }
     })
   }
