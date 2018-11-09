@@ -79,10 +79,6 @@ export const getRouterData = app => {
         import('../routes/Kdi/KdiLogistic')
       ),
     },
-    '/ord/ord-trace': {
-      component: dynamicWrapper(app, ['ordtrace'], () => import('../routes/Ord/OrdTrace')
-      ),
-    },
     '/kdi/kdi-eorder': {
       component: dynamicWrapper(app, ['kdieorder', 'kdisender', 'user', 'kdireceiver', 'kdicompany'], () =>
         import('../routes/Kdi/KdiEorder')

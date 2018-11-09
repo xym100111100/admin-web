@@ -6,6 +6,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './OrdOrder.less';
 import moment from 'moment';
 import OrdOrderForm from './OrdOrderForm';
+import OrdTraceForm from './OrdTraceForm';
 import SendBySupplierForm from './SendBySupplierForm';
 import ModifyOrderShippingAddress from './ModifyOrderShippingAddress';
 const { RangePicker } = DatePicker;
@@ -497,12 +498,12 @@ export default class OrdOrder extends SimpleMng {
     );
   }
 
-  addNewLogistic=(record)=>{
-      if(record.orderState===3){
-          return(
-            <a onClick={() => this.send(record)} >添加新快递单</a>
-          )
-      }
+  addNewLogistic = (record) => {
+    if (record.orderState === 3) {
+      return (
+        <a onClick={() => this.send(record)} >添加新快递单</a>
+      )
+    }
   }
 
   MoreBtn = (record) => {
@@ -834,21 +835,27 @@ export default class OrdOrder extends SimpleMng {
             <div>
               <span>已发货</span>
               <br />
-                <a href={"#/ord/ord-trace?orderId="+record.id} >物流信息</a>
+              <a onClick={() => this.showEditForm({editFormRecord:record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
+                物流信息
+              </a>
             </div>
           );
           if (record.orderState === 4) return (
             <div>
               <span>已签收</span>
               <br />
-                <a href={"#/ord/ord-trace?orderId="+record.id} >物流信息</a>
+              <a onClick={() => this.showEditForm({editFormRecord:record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
+                物流信息
+              </a>
             </div>
           );
           if (record.orderState === 5) return (
             <div>
               <span>已结算</span>
               <br />
-                <a href={"#/ord/ord-trace?orderId="+record.id} >物流信息</a>
+              <a onClick={() => this.showEditForm({editFormRecord:record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
+                物流信息
+              </a>
             </div>
           );
         },
@@ -993,6 +1000,16 @@ export default class OrdOrder extends SimpleMng {
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
             onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'ordorder', saveMethodName: 'modifyOrderShippingAddress' })}
+          />
+        )}
+        {editForm === 'ordTrace' && (
+          <OrdTraceForm
+            width={720}
+            visible
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
           />
         )}
       </PageHeaderLayout>
