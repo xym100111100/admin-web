@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
 import { Card, message, Input, Form, Col, Table, Upload, Icon, Modal, Radio, Select } from 'antd';
-// import OnlyPopupForm from 'components/Rebue/OnlyPopupForm';
 import EditForm from 'components/Rebue/EditForm';
 import EditableTable from 'components/Rebue/EditableTable';
 // 引入编辑器以及EditorState子模块
@@ -19,7 +18,6 @@ const Option = Select.Option;
   prmpartner,
 }))
 @Form.create()
-// @OnlyPopupForm
 @EditForm
 export default class OnlineForm extends React.Component {
   componentWillMount() {
@@ -36,6 +34,7 @@ export default class OnlineForm extends React.Component {
     previewImages: '',
     fileLists: [],
     subjectType: 0,
+    deliveryType: 0,
     pledgeType: 1,
     onlOnlineSpec: [],
     partnerData: [],
@@ -75,7 +74,7 @@ export default class OnlineForm extends React.Component {
         form.setFieldsValue({ onlineName: onlonline.record.onlineTitle });
         this.setState({
           subjectType: onlonline.record.subjectType,
-          pledgeType: onlonline.record.pledgeType,
+          deliveryType: onlonline.record.deliveryType,
           onlOnlineSpec: Array.from(onlonline.record.onlineSpecList),
           previewVisible: false,
           previewImage: '',
@@ -195,10 +194,10 @@ export default class OnlineForm extends React.Component {
     });
   };
 
-  // 选择供应商结算类型事件
-  onChangeSettletTypeRadio = e => {
+  // 选择发货类型事件
+  onChangeDeliveryTypeRadio = e => {
     this.setState({
-      pledgeType: e.target.value,
+      deliveryType: e.target.value,
     });
   }
 
@@ -222,9 +221,14 @@ export default class OnlineForm extends React.Component {
     if (onlineName === undefined || onlineName === null || onlineName === '') return message.error('请输入商品名称');
     if (supplierId === undefined || supplierId === null || supplierId === '') return message.error('请选择供应商');
 
-    const { fileList, fileLists, onlineDetail, subjectType, pledgeType } = this.state;
+    const { fileList, fileLists, onlineDetail, subjectType, deliveryType } = this.state;
     let detailHtml = onlineDetail.toHTML().replace(/<div\/?.+?>/g, '');
     let onlineDetails = detailHtml.replace(/<\/div>/g, '');
+
+    let deliverOrgId = 0;
+    if (deliveryType === 1) {
+      deliverOrgId = supplierId;
+    }
 
     // 上线规格信息
     const onlineSpecs = this.refs.editableTable.getRecords();
@@ -254,7 +258,7 @@ export default class OnlineForm extends React.Component {
     form.getFieldDecorator('productId');
     form.getFieldDecorator('onlineId');
     form.getFieldDecorator('supplierId');
-    form.getFieldDecorator('pledgeType');
+    form.getFieldDecorator('deliverOrgId');
     form.setFieldsValue({
       onlineId: id,
       onlineName: onlineName,
@@ -265,7 +269,7 @@ export default class OnlineForm extends React.Component {
       onlineDetail: onlineDetails,
       productId: productId,
       supplierId: supplierId,
-      pledgeType: pledgeType,
+      deliverOrgId: deliverOrgId,
     });
   };
 
@@ -283,7 +287,7 @@ export default class OnlineForm extends React.Component {
       subjectType,
       partnerData,
     } = this.state;
-    // const options = partnerData.map(d => <Option key={d.id}>{d.partnerName}</Option>);
+    
     // 商品主图、轮播图上传图标
     const uploadButton = (
       <div>
@@ -303,25 +307,31 @@ export default class OnlineForm extends React.Component {
         title: '上线价格',
         dataIndex: 'salePrice',
         align: 'center',
-        width: '110px',
+        width: '90px',
       },
       {
         title: '成本价格',
         dataIndex: 'costPrice',
         align: 'center',
-        width: '110px',
+        width: '90px',
       },
       {
         title: '返现金额',
         dataIndex: 'cashbackAmount',
         align: 'center',
-        width: '110px',
+        width: '90px',
       },
       {
         title: '本次上线数量',
         dataIndex: 'currentOnlineCount',
         align: 'center',
         width: '120px',
+      },
+      {
+        title: '限购数量',
+        dataIndex: 'limitCount',
+        align: 'center',
+        width: '100px',
       },
       {
         title: '单位',
@@ -371,12 +381,11 @@ export default class OnlineForm extends React.Component {
         <Col span={24} style={{ width: '100%' }}>
           <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="供应商名称">
             {form.getFieldDecorator('supplierId', {
-              rules: [{ required: true, message: "请选择供应商"}],
+              rules: [{ required: true, message: "请选择供应商" }],
               initialValue: record.supplierId
             })(
               <Select
                 showSearch
-                disabled={record.supplierName === undefined ? false : true}
                 placeholder={record.supplierName === undefined ? "请输入供应商名称" : record.supplierName}
                 style={{ width: 300 }}
                 defaultActiveFirstOption={false}
@@ -391,15 +400,11 @@ export default class OnlineForm extends React.Component {
           </FormItem>
         </Col>
         <Col span={24} style={{ width: '100%' }}>
-          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="押货类型">
+          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="发货类型">
             {
-              <RadioGroup
-                disabled={record.pledgeType === undefined ? false : true}
-                value={this.state.pledgeType}
-                onChange={this.onChangeSettletTypeRadio}
-              >
-                <Radio value={1}>押货</Radio>
-                <Radio value={2}>供应商发货</Radio>
+              <RadioGroup onChange={this.onChangeDeliveryTypeRadio} value={this.state.deliveryType}>
+                <Radio value={0}>自发</Radio>
+                <Radio value={1}>供应商</Radio>
               </RadioGroup>
             }
           </FormItem>
@@ -436,7 +441,7 @@ export default class OnlineForm extends React.Component {
             {
               <div className="clearfix">
                 <Upload
-                  action="http://192.168.1.203:34862/ise/upload"
+                  action="/ise-svr/ise/upload"
                   listType="picture-card"
                   fileList={fileList}
                   name="multipartFile"
@@ -460,7 +465,7 @@ export default class OnlineForm extends React.Component {
             {
               <div className="clearfix">
                 <Upload
-                  action="http://192.168.1.203:34862/ise/upload"
+                  action="/ise-svr/ise/upload"
                   listType="picture-card"
                   fileList={fileLists}
                   name="multipartFile"

@@ -206,15 +206,8 @@ export default class OnlineMng extends SimpleMng {
         dataIndex: 'supplierName',
       },
       {
-        title: '押货类型',
-        dataIndex: 'pledgeType',
-        render: (text, record) => {
-          if (record.pledgeType === 1) {
-            return '押货';
-          } else if (record.pledgeType === 2) {
-            return '供应商发货';
-          }
-        },
+        title: '发货组织',
+        dataIndex: 'deliverOrgName',
       },
       {
         title: '上线时间',
