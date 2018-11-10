@@ -10,7 +10,7 @@ import EditForm from 'components/Rebue/EditForm';
 const FormItem = Form.Item;
 
 // 添加与编辑的表单
-@connect(({ kdientry, user, loading }) => ({ kdientry, user, loading: loading.models.kdientry || loading.models.user }))
+@connect(({ kdientry, kdilogistic, user, loading }) => ({ kdientry, kdilogistic, user, loading: loading.models.kdientry || loading.models.user }))
 @EditForm
 export default class KdiEntryForm extends PureComponent {
   constructor() {
@@ -33,6 +33,36 @@ export default class KdiEntryForm extends PureComponent {
     }
   };
 
+  /**
+   * 根据手机号码查询收件人信息
+   */
+  getReceivers = e => {
+    this.props.dispatch({
+      type: `kdilogistic/getReceiver`,
+      payload: {
+        receiverMobile: e.target.value
+      },
+      callback: data => {
+        console.log(data);
+        if (data !== undefined) {
+          const { form } = this.props;
+          form.getFieldDecorator('receiverName');
+          form.getFieldDecorator('receiverMobile');
+          form.getFieldDecorator('receiverPostCode');
+          form.getFieldDecorator('receiverProvince');
+          form.getFieldDecorator('receiverAddress');
+          form.setFieldsValue({
+            receiverName: data.receiverName,
+            receiverMobile: data.receiverMobile,
+            receiverPostCode: data.receiverPostCode,
+            receiverProvince: [data.receiverProvince, data.receiverCity, data.receiverExpArea],
+            receiverAddress: data.receiverAddress,
+          });
+        }
+      },
+    });
+  }
+
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
     const { kdientry: { kdientry }, loading, form } = this.props;
@@ -40,7 +70,7 @@ export default class KdiEntryForm extends PureComponent {
       <Form onSubmit={() => this.entry()} layout="inline">
         <Row>
           <Col md={24} sm={24} push={1}>
-            <h3 style={{  marginBottom: 20 }}>物流信息</h3>
+            <h3 style={{ marginBottom: 20 }}>物流信息</h3>
           </Col>
         </Row>
         <Row>
@@ -161,7 +191,7 @@ export default class KdiEntryForm extends PureComponent {
                     message: '请输入全部为数字的收件人手机',
                   },
                 ],
-              })(<Input placeholder="请输入全部为数字的收件人手机" />)}
+              })(<Input placeholder="请输入全部为数字的收件人手机" onPressEnter={this.getReceivers.bind(this)} />)}
             </FormItem>
             <FormItem label="收件地邮编">
               {getFieldDecorator('receiverPostCode', {

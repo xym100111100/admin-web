@@ -47,3 +47,7 @@ export async function del(params) {
     method: 'DELETE',
   });
 }
+
+export async function getReceiver(params) {
+  return request(`/kdi-svr/kdi/logistic/receiver?${stringify(params)}`);
+}

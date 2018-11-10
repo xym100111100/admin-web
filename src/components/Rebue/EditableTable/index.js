@@ -57,7 +57,7 @@ export default class EditableTable extends PureComponent {
     columns.push({
       title: '操作',
       align: 'center',
-      width: 130,
+      width: 120,
       render: (text, record, index) => {
         const { editRowIndex } = this.state;
         // 渲染浏览状态的操作列或可编辑状态时编辑行不是当前行)

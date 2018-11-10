@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { list,  getById, modify, del } from '../services/kdilogistic';
+import { list,  getById, modify, del, getReceiver } from '../services/kdilogistic';
 import { add } from '../services/kdientry';
 
 export default {
@@ -89,7 +89,6 @@ export default {
         payload.receiverCity = receiverProvinceInfo[1];
         payload.receiverExpArea = receiverProvinceInfo[2];
       }
-      console.log(payload);
       const response = yield call(modify, payload);
       if (response.result === 1) {
         message.success(response.msg);
@@ -106,6 +105,10 @@ export default {
       } else {
         message.error(response.msg);
       }
+    },
+    *getReceiver({ payload, callback }, { call }) {
+      const response = yield call(getReceiver, payload);
+      if (callback) callback(response);
     },
   },
 
