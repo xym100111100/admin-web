@@ -63,6 +63,16 @@ export default {
         message.error(response.msg);
       }
     },
+    *invalid({ payload, callback }, { call }) { //作废物流
+      const response = yield call(modify, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    }
+    ,
     *modify({ payload, callback }, { call }) {
       //设置录入类型，1：手动 2：自动
       payload.entryType=1;

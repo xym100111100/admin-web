@@ -1,7 +1,7 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
-import React, { Fragment }  from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Input, Select, Button, Table, DatePicker } from 'antd';
+import { Row, Popconfirm, Col, Card, Form, Input, Select, Button, Table, DatePicker } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './KdiLogistic.less';
 import moment from 'moment';
@@ -11,12 +11,12 @@ import KdiLogisticForm from './KdiLogisticForm';
 const { Option } = Select;
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
-@connect(({ kdilogistic,user, KdiEntry,kdicompany, loading }) => ({
+@connect(({ kdilogistic, user, KdiEntry, kdicompany, loading }) => ({
   kdilogistic,
   kdicompany,
   KdiEntry,
   user,
-  loading: loading.models.kdilogistic || loading.models.KdiEntry || loading.models.user|| loading.models.kdicompany
+  loading: loading.models.kdilogistic || loading.models.KdiEntry || loading.models.user || loading.models.kdicompany
 }))
 @Form.create()
 export default class KdiLogistic extends SimpleMng {
@@ -30,25 +30,25 @@ export default class KdiLogistic extends SimpleMng {
     };
   }
 
-    // 刷新
-    handleReload() {
-      let {user} =this.props
-      let orgId=user.currentUser.orgId
-      this.state.payloads = {
-        orgId: orgId,
-        pageNum: this.state.options.pageNum,
-        pageSize: this.state.options.pageSize,
-      };
-      this.props.dispatch({
-        type: `${this.moduleCode}/list`,
-        payload: this.state.payloads,
-      });
-    }
+  // 刷新
+  handleReload() {
+    let { user } = this.props
+    let orgId = user.currentUser.orgId
+    this.state.payloads = {
+      orgId: orgId,
+      pageNum: this.state.options.pageNum,
+      pageSize: this.state.options.pageSize,
+    };
+    this.props.dispatch({
+      type: `${this.moduleCode}/list`,
+      payload: this.state.payloads,
+    });
+  }
 
   //初始化
   componentDidMount() {
-     let {user} =this.props
-    let orgId=user.currentUser.orgId
+    let { user } = this.props
+    let orgId = user.currentUser.orgId
     this.state.payloads = {
       orgId: orgId,
       pageNum: this.state.options.pageNum,
@@ -156,8 +156,8 @@ export default class KdiLogistic extends SimpleMng {
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
     const { editFormRecord } = this.state;
-    const {user}=this.props;
-    let orgId =user.currentUser.orgId;
+    const { user } = this.props;
+    let orgId = user.currentUser.orgId;
     editFormRecord.orgId = orgId;
     return (
       <Form onSubmit={this.list} layout="inline">
@@ -186,6 +186,7 @@ export default class KdiLogistic extends SimpleMng {
                   <Option value="1">已揽收</Option>
                   <Option value="2">在途中</Option>
                   <Option value="3">已签收</Option>
+                  <Option value="4">问题件</Option>
                   <Option value="0">无轨迹</Option>
                   <Option value="-1">作废</Option>
                 </Select>
@@ -218,10 +219,28 @@ export default class KdiLogistic extends SimpleMng {
     );
   }
 
+  /**
+   * 作废订单
+   */
+  invalid = (record) => {
+    const fieldsValue = {};
+    fieldsValue.id = record.id;
+    fieldsValue.logisticStatus = -1;
+    this.props.dispatch({
+      type: `${this.moduleCode}/invalid`,
+      payload: fieldsValue,
+      callback: () => {
+        this.handleReload();
+      },
+    });
+  }
+
+
+
   render() {
-    const { user,kdilogistic: { kdilogistic }, loading } = this.props;
+    const { user, kdilogistic: { kdilogistic }, loading } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
-    let orgId =user.currentUser.orgId;
+    let orgId = user.currentUser.orgId;
     let ps;
     if (kdilogistic === undefined || kdilogistic.pageSize === undefined) {
       ps = 5;
@@ -271,6 +290,7 @@ export default class KdiLogistic extends SimpleMng {
           if (record.logisticStatus === '2') return '在途中';
           if (record.logisticStatus === '3') return '已签收';
           if (record.logisticStatus === '4') return '问题件';
+          if (record.logisticStatus === '-1') return '作废';
         },
       },
       {
@@ -301,21 +321,50 @@ export default class KdiLogistic extends SimpleMng {
         width: 100,
         render: (text, record) => {
           if (record.entryType === 1) {
-            return (
-              <Fragment  >
-                <a   onClick={() =>
-                    this.showEditForm({ id: record.id, editForm: 'KdiLogistic', editFormTitle: '编辑物流信息' })
-                  }>
-                  修改
+            if (record.logisticStatus === '-1') {
+              return (
+                <Fragment  >
+                  <a onClick={() => this.showEditForm({ id: record.id, editForm: 'KdiLogistic', editFormTitle: '编辑物流信息' })}>
+                    修改
                   </a>
-              </Fragment>
-            )
+                  <br />
+                  <a style={{ color: '#C0C0C0' }} >作废</a>
+                </Fragment>
+              )
+            } else {
+              return (
+                <Fragment  >
+                  <a onClick={() => this.showEditForm({ id: record.id, editForm: 'KdiLogistic', editFormTitle: '编辑物流信息' })}>
+                    修改
+                  </a>
+                  <br />
+                  <Popconfirm title="是否要作废此物流单?" onConfirm={() => this.invalid(record)} >
+                    <a >作废</a>
+                  </Popconfirm>
+                </Fragment>
+              )
+            }
           } else {
-            return (
-              <Fragment  >
-                <a style={{ color: '#C0C0C0' }}>修改</a>
-              </Fragment>
-            )
+            if (record.logisticStatus === '-1') {
+              return (
+                <Fragment  >
+                  <a style={{ color: '#C0C0C0' }}>修改</a>
+                  <br />
+                  <a style={{ color: '#C0C0C0' }}>作废</a>
+                </Fragment>
+              )
+            } else {
+              return (
+                <Fragment  >
+                  <a style={{ color: '#C0C0C0' }}>修改</a>
+                  <br />
+                  <Popconfirm title="是否要作废此物流单?" onConfirm={() => this.invalid(record)} >
+                    <a >作废</a>
+                  </Popconfirm>
+                </Fragment>
+              )
+            }
+
           }
         }
       },
@@ -336,7 +385,7 @@ export default class KdiLogistic extends SimpleMng {
                 <p style={{ margin: 0 }}>
                   <span><b>寄件人:</b>{record.senderName}</span>
                   <span style={{ paddingLeft: '15px' }}><b>寄件人手机:</b>{record.senderMobile}</span>
-                  <span style={{ paddingLeft: '15px' }}><b>收件人地址:</b>{record.receiverProvince+record.receiverCity+record.receiverExpArea+record.receiverAddress}</span>
+                  <span style={{ paddingLeft: '15px' }}><b>收件人地址:</b>{record.receiverProvince + record.receiverCity + record.receiverExpArea + record.receiverAddress}</span>
                 </p>
               )}
               columns={columns}
@@ -357,7 +406,7 @@ export default class KdiLogistic extends SimpleMng {
             onSubmit={fields => this.handleSubmit({ fields })}
           />
         )}
-         {editForm === 'KdiLogistic' && (
+        {editForm === 'KdiLogistic' && (
           <KdiLogisticForm
             width={900}
             visible
