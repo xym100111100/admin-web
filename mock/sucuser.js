@@ -227,3 +227,14 @@ export function unbindQQ(req, res, u, b) {
     });
   }
 }
+
+export function charge(req, res, u, b) {
+  console.info(33333);
+  const body = (b && b.body) || req.body;
+  console.info(body);
+  return res.json({
+    result: 1,
+    msg: '充值成功',
+  });
+
+}

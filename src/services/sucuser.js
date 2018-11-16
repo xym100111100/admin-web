@@ -71,3 +71,12 @@ export async function unbindQQ(params) {
     method: 'PUT',
   });
 }
+
+export async function charge(params) {
+  return request('/afc-svr/charge', {
+    method: 'POST',
+    body: {
+      ...params,
+    },
+  });
+}

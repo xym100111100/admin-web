@@ -26,7 +26,6 @@ export default class CompanyForm extends PureComponent {
 
   render() {
     const { form } = this.props;
-
     const types = {
       type: this.state.see,
     };
