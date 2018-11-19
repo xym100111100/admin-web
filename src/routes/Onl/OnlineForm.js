@@ -162,7 +162,7 @@ export default class OnlineForm extends React.Component {
     }
 
     // 验证是否为正整数
-    const regs = /^[1-9]\d*$/;
+    const regs = /^(0|\+?[1-9][0-9]*)$/;
     if (!regs.test(record.currentOnlineCount)) {
       message.error('上线数量只能为正整数且不能为0');
       return false;
