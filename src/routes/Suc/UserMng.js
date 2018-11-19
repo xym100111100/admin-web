@@ -10,6 +10,8 @@ import UserRoleForm from './UserRoleForm';
 import UserRegForm from './UserRegForm';
 import UserOrgForm from './UserOrgForm';
 import EditPwForm from './EditPwForm';
+import UserChargeForm from './UserChargeForm';
+
 const { Search } = Input;
 
 const FormItem = Form.Item;
@@ -181,6 +183,19 @@ export default class UserMng extends SimpleMng {
       editFormRecord: record,
     })
   }
+  /**
+   * 用户账号充值
+   */
+  personCharge = (record, wxOpenid) => {
+    console.info(record);
+    console.info(wxOpenid);
+    this.showEditForm({
+      moduleCode: 'sucuser',
+      editForm: 'UserChargeForm',
+      editFormTitle: '账号充值',
+      editFormRecord: record,
+    })
+  }
 
   render() {
     const { sucuser: { sucuser }, loading } = this.props;
@@ -300,6 +315,9 @@ export default class UserMng extends SimpleMng {
       const { record } = props;
       const menu = (
         <Menu>
+          <Menu.Item>
+              <a onClick={() => this.personCharge(record, record.wxOpenid)} >账号充值</a>
+          </Menu.Item>
           <Menu.Item>
             <Popconfirm title="是否重置此账号的登录密码？" onConfirm={() => this.removeLoginPassWord(record)}>
               <a>重置登录密码</a>
@@ -462,6 +480,23 @@ export default class UserMng extends SimpleMng {
               this.handleSubmit({
                 fields,
                 saveMethodName: 'setLoginPw',
+                moduleCode: 'sucuser',
+              })
+            }
+          />
+        )}
+        {editForm === "UserChargeForm" && (
+          <UserChargeForm
+            record={editFormRecord}
+            visible
+            title={editFormTitle}
+            width={600}
+            editFormType={editFormType}
+            closeModal={() => this.setState({ editForm: undefined })}
+            onSubmit={fields =>
+              this.handleSubmit({
+                fields,
+                saveMethodName: 'charge',
                 moduleCode: 'sucuser',
               })
             }

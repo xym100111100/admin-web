@@ -20,7 +20,7 @@ export default class KdiCompany extends SimpleMng {
   //初始化
   componentDidMount() {
     let {user} =this.props
-     let orgId=user.currentUser.orgId
+    let orgId=user.currentUser.orgId
     this.props.dispatch({
       type: `${this.moduleCode}/list`,
       payload: { orgId: orgId },

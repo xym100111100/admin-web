@@ -126,6 +126,11 @@ export const getRouterData = app => {
         import('../routes/Afc/WithdrawAccountMng')
       ),
     },
+    '/afc/afc-charge-mng': {
+      component: dynamicWrapper(app, ['afccharge'], () =>
+        import('../routes/Afc/ChargeMng')
+      ),
+    },
     '/prm/prm-partner-mng': {
       component: dynamicWrapper(app, ['prmpartner'], () =>
         import('../routes/Prm/PartnerMng')
@@ -160,7 +165,7 @@ export const getRouterData = app => {
       ),
     },
     '/suc/org-mng': {
-      component: dynamicWrapper(app, ['sucuser', 'sucorg', 'sucuserorg'], () => import('../routes/Suc/OrgMng')),
+      component: dynamicWrapper(app, ['sucuser', 'sucorg', 'sucuserorg','user'], () => import('../routes/Suc/OrgMng')),
     },
     '/onl/onl-mng': {
       component: dynamicWrapper(app, ['onlonline', 'BraftEditorUpload', 'onlonlineporomotion', 'prmpartner'], () =>

@@ -65,6 +65,7 @@ menuData.push({ id: '1536131597143', sysId: 'damai-admin', code: '14', title: nu
 menuData.push({ id: '1536131597144', sysId: 'damai-admin', code: '1400', title: '提现账号申请管理', name: '提现账号申请管理', path: 'afc-applywithdrawaccount-mng', isEnabled: true, icon: null, remark: '申请提现账号相关业务' });
 menuData.push({ id: '1536131597145', sysId: 'damai-admin', code: '1401', title: '提现管理', name: '提现管理', path: 'afc-withdraw-mng', isEnabled: true, icon: null, remark: '提现相关业务' });
 menuData.push({ id: '1536131597146', sysId: 'damai-admin', code: '1402', title: '提现账号管理', name: '提现账号管理', path: 'afc-withdrawaccount-mng', isEnabled: true, icon: null, remark: '提现账号相关业务' });
+menuData.push({ id: '1536131597146', sysId: 'damai-admin', code: '1403', title: '账号充值', name: '账号充值', path: 'afc-charge-mng', isEnabled: true, icon: null, remark: '账号充值相关业务' });
 menuData.push({ id: '1536131597147', sysId: 'damai-admin', code: '15', title: '伙伴管理', name: '伙伴管理', path: 'prm', isEnabled: true, icon: 'team', remark: '伙伴相关业务' });
 menuData.push({ id: '1536131597148', sysId: 'damai-admin', code: '1500', title: '伙伴信息管理', name: '伙伴信息管理', path: 'prm-partner-mng', isEnabled: true, icon: null, remark: '伙伴信息相关业务' });
 
@@ -80,6 +81,7 @@ function sort(list) {
 }
 
 export function getMenuData(sysId) {
+  console.info(3333);
   const list = [];
   for (const item of menuData) {
     if (item.sysId === sysId) list.push(item);
