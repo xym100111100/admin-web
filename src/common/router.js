@@ -127,7 +127,7 @@ export const getRouterData = app => {
       ),
     },
     '/afc/afc-charge-mng': {
-      component: dynamicWrapper(app, ['afccharge','afcpersoncharge'], () =>
+      component: dynamicWrapper(app, ['afccharge'], () =>
         import('../routes/Afc/ChargeMng')
       ),
     },
