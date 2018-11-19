@@ -61,7 +61,7 @@ import {
 ```
 7,在mock文件夹下新建模拟服务器数据文件kdilogistic.js;
 
-8,最后在控制台进入项目文件夹用yarn start 命令启动项目后，就可以在浏览器看到我们新建的页面了。
+8,最后在控制台进入项目文件夹用yarn start(启动代理的命令：yarn start:no-proxy) 命令启动项目后，就可以在浏览器看到我们新建的页面了。
 
 # 常见问题：
 1.项目启动时报no space left on the device错误
