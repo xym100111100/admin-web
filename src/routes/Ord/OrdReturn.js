@@ -1,11 +1,10 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Popover, Row, message, Col, Card, Divider, Form, Input, Select, Button, Table, DatePicker } from 'antd';
+import { Popover, Row, message, Col, Card, Popconfirm, Form, Input, Select, Button, Table, DatePicker } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './OrdReturn.less';
 import moment from 'moment';
-const { RangePicker } = DatePicker;
 import OrdReturnForm from './OrdReturnForm';
 import OrdRejectForm from './OrdRejectForm';
 
@@ -24,6 +23,7 @@ export default class OrdReturn extends SimpleMng {
             pageNum: 1,
             pageSize: 5,
             applicationState: 1,
+            returnType:1,
         };
         this.state.returnCode = undefined;
         this.state.record = undefined;
@@ -35,6 +35,7 @@ export default class OrdReturn extends SimpleMng {
             pageNum: this.state.options.pageNum,
             pageSize: this.state.options.pageSize,
             applicationState: this.state.options.applicationState,
+            returnType: this.state.options.returnType,
         };
         this.props.dispatch({
             type: `${this.moduleCode}/list`,
@@ -66,7 +67,8 @@ export default class OrdReturn extends SimpleMng {
                 options: {
                     pageNum: fieldsValue.pageNum,
                     pageSize: fieldsValue.pageSize,
-                    applicationState: fieldsValue.applicationState
+                    applicationState: fieldsValue.applicationState,
+                    returnType: this.state.options.returnType,
                 },
             });
             if (info !== undefined) {
@@ -97,7 +99,8 @@ export default class OrdReturn extends SimpleMng {
                 options: {
                     pageNum: pagination.current,
                     pageSize: pagination.pageSize,
-                    applicationState: fieldsValue.applicationState
+                    applicationState: fieldsValue.applicationState,
+                    returnType: this.state.options.returnType,
                 },
             });
             fieldsValue.pageNum = pagination.current;
@@ -216,21 +219,21 @@ export default class OrdReturn extends SimpleMng {
                 {record.picList[0] !== undefined && (
                     <Col md={8} sm={24}>
                         <Popover content={content1} placement={'left'} >
-                            <div style={{ cursor: 'hand', cursor: 'pointer', width: 20, height: 20, backgroundImage:'url(/ise-svr/files' + record.picList[0].picPath +')'}} ></div>
+                            <div style={{ cursor: 'hand', cursor: 'pointer', width: 20, height: 20, backgroundImage: 'url(/ise-svr/files' + record.picList[0].picPath + ')' }} ></div>
                         </Popover>
                     </Col>
                 )}
                 {record.picList[1] !== undefined && (
                     <Col md={8} sm={24}>
                         <Popover content={content2} placement={'left'} >
-                            <div style={{ cursor: 'hand', cursor: 'pointer', width: 20, height: 20, backgroundImage: 'url(/ise-svr/files' + record.picList[1].picPath +')' }} ></div>
+                            <div style={{ cursor: 'hand', cursor: 'pointer', width: 20, height: 20, backgroundImage: 'url(/ise-svr/files' + record.picList[1].picPath + ')' }} ></div>
                         </Popover>
                     </Col>
                 )}
                 {record.picList[2] !== undefined && (
                     <Popover content={content3} placement={'left'} >
                         <Col md={8} sm={24}>
-                            <div style={{ cursor: 'hand', cursor: 'pointer', width: 20, height: 20, backgroundImage: 'url(/ise-svr/files' + record.picList[2].picPath +')' }} ></div>
+                            <div style={{ cursor: 'hand', cursor: 'pointer', width: 20, height: 20, backgroundImage: 'url(/ise-svr/files' + record.picList[2].picPath + ')' }} ></div>
                         </Col>
                     </Popover>
                 )}
@@ -330,14 +333,26 @@ export default class OrdReturn extends SimpleMng {
                             )}
                         </FormItem>
                     </Col>
+                    <Col md={4} sm={24}>
+                        <FormItem label="">
+                            {getFieldDecorator('returnType', {
+                                initialValue: '1'
+                            })(
+                                <Select placeholder="退货类型" style={{ width: '100%' }}>
+                                    <Option value="1">仅退款</Option>
+                                    <Option value="2">退货并退款</Option>
+                                </Select>
+                            )}
+                        </FormItem>
+                    </Col>
                     <Col md={6} sm={24}>
                         <span>
                             <Button type="primary" htmlType="submit">
                                 查询
-              </Button>
+                            </Button>
                             <Button style={{ marginLeft: 20 }} onClick={this.handleFormReset}>
                                 重置
-              </Button>
+                            </Button>
                         </span>
                     </Col>
                 </Row>
@@ -449,20 +464,35 @@ export default class OrdReturn extends SimpleMng {
                             </Fragment>
                         )
                     } else {
-                        return (
-                            <Fragment>
-                                <a
-                                    onClick={() =>
-                                        this.showEditForm({ id: record.id, editForm: 'OrdReturn', editFormTitle: '同意退款' })
-                                    }
-                                >同意退款</a>
-                                <a
-                                    onClick={() =>
-                                        this.showEditForm({ id: record.id, editForm: 'OrdReject', editFormTitle: '拒绝退款' })
-                                    }
-                                >拒绝退款</a>
-                            </Fragment>
-                        )
+                        if (record.returnType === 1 && record.orderState !== 2) {
+                            return (
+                                <Fragment>
+                                    <Popconfirm title="订单已发货，确认已经收到用户退货？" onConfirm={() => this.showEditForm({ id: record.id, editForm: 'OrdReturn', editFormTitle: '同意退款' })}>
+                                        <a>同意退款</a>
+                                    </Popconfirm>
+                                    <a
+                                        onClick={() =>
+                                            this.showEditForm({ id: record.id, editForm: 'OrdReject', editFormTitle: '拒绝退款' })
+                                        }
+                                    >拒绝退款</a>
+                                </Fragment>
+                            )
+                        } else {
+                            return (
+                                <Fragment>
+                                    <a
+                                        onClick={() =>
+                                            this.showEditForm({ id: record.id, editForm: 'OrdReturn', editFormTitle: '同意退款' })
+                                        }
+                                    >同意退款</a>
+                                    <a
+                                        onClick={() =>
+                                            this.showEditForm({ id: record.id, editForm: 'OrdReject', editFormTitle: '拒绝退款' })
+                                        }
+                                    >拒绝退款</a>
+                                </Fragment>
+                            )
+                        }
                     }
                 },
             },
