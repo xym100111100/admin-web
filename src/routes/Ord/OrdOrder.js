@@ -473,6 +473,7 @@ export default class OrdOrder extends SimpleMng {
                 initialValue: '2'
               })(
                 <Select placeholder="订单状态" style={{ width: '100%' }}>
+                  <Option value="">全部</Option>
                   <Option value="1">已下单</Option>
                   <Option value="2">已支付</Option>
                   <Option value="3">已发货</Option>
