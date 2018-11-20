@@ -164,7 +164,7 @@ export default class KdiLogistic extends SimpleMng {
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
           <Col md={6} sm={24}>
             <FormItem label="">
-              {getFieldDecorator('receiverName')(<Input placeholder="收件人姓名/手机/快递单号" />)}
+              {getFieldDecorator('receiverName')(<Input placeholder="收件人姓名/手机/快递单号/商品" />)}
             </FormItem>
           </Col>
           <Col md={7} sm={24}>
