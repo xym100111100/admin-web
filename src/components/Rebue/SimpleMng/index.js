@@ -122,6 +122,7 @@ export default class SimpleMng extends PureComponent {
     });
   }
 
+
   // 请求保存并开始添加下一条
   handleNext(params) {
     const temp = params;

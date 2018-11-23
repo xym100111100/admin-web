@@ -7,15 +7,16 @@ import styles from './OrdOrder.less';
 import moment from 'moment';
 import OrdOrderForm from './OrdOrderForm';
 import OrdTraceForm from './OrdTraceForm';
+import OrdSendForm from './OrdSendForm';
 import SendBySupplierForm from './SendBySupplierForm';
 import ModifyOrderShippingAddress from './ModifyOrderShippingAddress';
 const { RangePicker } = DatePicker;
 
 const { Option } = Select;
 const FormItem = Form.Item;
-@connect(({ ordorder, user, kdicompany, kdisender, loading }) => ({
-  ordorder, user, kdicompany, kdisender,
-  loading: loading.models.ordorder || loading.models.user || loading.models.kdicompany || loading.models.kdisender
+@connect(({ ordorder, user, kdicompany, sucorg, kdisender, loading }) => ({
+  ordorder, user, kdicompany, kdisender, sucorg,
+  loading: loading.models.ordorder || loading.models.sucorg || loading.models.user || loading.models.kdicompany || loading.models.kdisender
 }))
 @Form.create()
 export default class OrdOrder extends SimpleMng {
@@ -34,6 +35,7 @@ export default class OrdOrder extends SimpleMng {
     }
     this.state.trace = '';
     this.state.LogisticInfo = '';
+    this.state.step='1';
   }
 
   //初始化
@@ -48,6 +50,18 @@ export default class OrdOrder extends SimpleMng {
       payload: this.state.payloads,
     });
 
+  }
+
+  nextStep(record) {
+    console.log('nextStep')
+    console.log(record)
+    this.setState({ step: '2' })
+  }
+
+  lastStep(record) {
+    console.log('lastStep')
+    console.log(record)
+    this.setState({ step: '1' })
   }
 
 
@@ -354,6 +368,12 @@ export default class OrdOrder extends SimpleMng {
           <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>收件人地址:</span>{record.receiverProvince !== undefined && (
             record.receiverProvince + record.receiverCity + record.receiverExpArea + record.receiverAddress)}
         </Col>
+        <Col md={8} sm={24}>
+          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>供应商:</span>{record.onlineOrgName !== undefined && (record.onlineOrgName)}
+        </Col>
+        <Col md={8} sm={24}>
+          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>发货组织:</span>{record.deliverOrgName !== undefined && (record.deliverOrgName)}
+        </Col>
         {this.showPayTime(record)}
         {this.showSendTime(record)}
         {this.showReceivedTime(record)}
@@ -473,7 +493,6 @@ export default class OrdOrder extends SimpleMng {
                 initialValue: '2'
               })(
                 <Select placeholder="订单状态" style={{ width: '100%' }}>
-                  <Option value="">全部</Option>
                   <Option value="1">已下单</Option>
                   <Option value="2">已支付</Option>
                   <Option value="3">已发货</Option>
@@ -506,6 +525,21 @@ export default class OrdOrder extends SimpleMng {
       )
     }
   }
+
+  /**
+   * 显示发货窗口并把发货步骤窗口改为1，1为选择快递公司发件人界面，2为选择要发货的详情界面。
+   */
+  showSendForm=(record)=>{
+    this.setState({
+      step:'1',
+    })
+    this.showAddForm({
+      editFormRecord: record,
+      editForm: 'ordSend',
+      editFormTitle: '发货',
+    })
+  }
+
 
   MoreBtn = (record) => {
     const menu = (
@@ -546,6 +580,11 @@ export default class OrdOrder extends SimpleMng {
           }
           >
             修改收货地址
+            </a>
+        </Menu.Item>
+        <Menu.Item>
+          <a onClick={() =>this.showSendForm(record)}>
+            发货
             </a>
         </Menu.Item>
       </Menu>
@@ -836,7 +875,7 @@ export default class OrdOrder extends SimpleMng {
             <div>
               <span>已发货</span>
               <br />
-              <a onClick={() => this.showEditForm({editFormRecord:record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
+              <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
                 物流信息
               </a>
             </div>
@@ -845,7 +884,7 @@ export default class OrdOrder extends SimpleMng {
             <div>
               <span>已签收</span>
               <br />
-              <a onClick={() => this.showEditForm({editFormRecord:record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
+              <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
                 物流信息
               </a>
             </div>
@@ -854,7 +893,7 @@ export default class OrdOrder extends SimpleMng {
             <div>
               <span>已结算</span>
               <br />
-              <a onClick={() => this.showEditForm({editFormRecord:record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
+              <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
                 物流信息
               </a>
             </div>
@@ -1011,6 +1050,21 @@ export default class OrdOrder extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
+          />
+        )}
+        {editForm === 'ordSend' && (
+          <OrdSendForm
+            width={800}
+            step={this.state.step}
+            visible
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            onNextStep={(fields) => this.nextStep(fields)}
+            onLastStep={(fields) => this.lastStep(fields)}
+            onSubmit={fields => {this.handleSubmit({fields});
+            }}
           />
         )}
       </PageHeaderLayout>

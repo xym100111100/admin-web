@@ -50,11 +50,31 @@ const EditForm = DivInfo => {
         onSubmit(fields);
       });
     };
+    handleNextStep = () => {
+      const { form, onNextStep } = this.props;
+      form.validateFieldsAndScroll((err, fields) => {
+        if (err) return;
+        if(onNextStep){
+          onNextStep(fields);
+        }
+      });
+    };
+    handleLastStep = () => {
+      const { form, onLastStep } = this.props;
+      form.validateFieldsAndScroll((err, fields) => {
+        if (err) return;
+        if(onLastStep){
+          onLastStep(fields);
+        }
+      });
+    };
 
     render() {
       const {
         title,
         visible,
+        onNextStep,
+        onLastStep,
         form,
         isShowResetButton = false, // 是否显示重置按钮
         onSave,
@@ -65,6 +85,8 @@ const EditForm = DivInfo => {
         width = 520,
         ...restProps
       } = this.props;
+
+      
 
       return (
         <Modal
@@ -92,6 +114,17 @@ const EditForm = DivInfo => {
                 下一条
               </Button>
             ),
+            onLastStep && (
+              <Button key="lastStep" icon="backward" size="large" loading={submitting} onClick={this.handleLastStep}>
+                上一步
+              </Button>
+            ),
+            onNextStep && (
+              <Button key="nextStep" icon="forward" size="large" loading={submitting} onClick={this.handleNextStep}>
+                下一步
+              </Button>
+            ),
+
             onSubmit && (
               <Button
                 key="submit"
