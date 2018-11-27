@@ -23,7 +23,7 @@ export default class OrdReturn extends SimpleMng {
             pageNum: 1,
             pageSize: 5,
             applicationState: 1,
-            returnType:1,
+            returnType: 1,
         };
         this.state.returnCode = undefined;
         this.state.record = undefined;
@@ -43,8 +43,6 @@ export default class OrdReturn extends SimpleMng {
         });
 
     }
-
-
 
     handleFormReset = () => {
         const { form } = this.props;
@@ -289,7 +287,6 @@ export default class OrdReturn extends SimpleMng {
         }
     }
 
-
     //禁止选择当前日期后的
     disabledDate = current => {
         return current && current > moment().endOf('day');
@@ -305,9 +302,18 @@ export default class OrdReturn extends SimpleMng {
         })
     }
 
+    // 同意退货
+    agreeReturn = id => {
+        this.props.dispatch({
+            type: `${this.moduleCode}/agreeReturn`,
+            payload: { id: record.id },
+            callback: () => {
+                this.handleReload();
+            },
+        });
+    }
 
-
-
+    // 搜索
     renderSearchForm() {
         const { getFieldDecorator } = this.props.form;
         return (
@@ -360,9 +366,7 @@ export default class OrdReturn extends SimpleMng {
         );
     }
 
-
     render() {
-
         const { ordreturn: { ordreturn }, loading, } = this.props;
         const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
         const { user } = this.props;
@@ -421,7 +425,14 @@ export default class OrdReturn extends SimpleMng {
                 title: '金额',
                 dataIndex: 'returnRental',
                 key: 'returnRental',
-                width: 50,
+                width: 70,
+                render: (text, record) => {
+                    if (record.refundTotal !== undefined) {
+                        return record.refundTotal;
+                    } else {
+                        return record.returnRental;
+                    }
+                }
             },
             {
                 title: '类型',
@@ -456,7 +467,7 @@ export default class OrdReturn extends SimpleMng {
                 title: '操作',
                 width: 100,
                 render: (text, record) => {
-                    if (record.applicationState !== 1) {
+                    if (record.applicationState !== 1 && record.applicationState !== 2) {
                         return (
                             <Fragment>
                                 <a style={{ color: '#C0C0C0' }} >同意退款</a>
@@ -464,19 +475,36 @@ export default class OrdReturn extends SimpleMng {
                             </Fragment>
                         )
                     } else {
-                        if (record.returnType === 1 && record.orderState !== 2) {
-                            return (
-                                <Fragment>
-                                    <Popconfirm title="订单已发货，确认已经收到用户退货？" onConfirm={() => this.showEditForm({ id: record.id, editForm: 'OrdReturn', editFormTitle: '同意退款' })}>
-                                        <a>同意退款</a>
-                                    </Popconfirm>
-                                    <a
-                                        onClick={() =>
-                                            this.showEditForm({ id: record.id, editForm: 'OrdReject', editFormTitle: '拒绝退款' })
-                                        }
-                                    >拒绝退款</a>
-                                </Fragment>
-                            )
+                        if (record.applicationState === 1) {
+                            if (record.returnType === 1) {
+                                return (
+                                    <Fragment>
+                                        <a
+                                            onClick={() =>
+                                                this.showEditForm({ id: record.id, editForm: 'OrdReturn', editFormTitle: '同意退款' })
+                                            }
+                                        >同意退款</a>
+                                        <a
+                                            onClick={() =>
+                                                this.showEditForm({ id: record.id, editForm: 'OrdReject', editFormTitle: '拒绝退款' })
+                                            }
+                                        >拒绝退款</a>
+                                    </Fragment>
+                                )
+                            } else {
+                                return (
+                                    <Fragment>
+                                        <Popconfirm title="订单已发货，确认已经收到用户退货？" onConfirm={() => this.agreeReturn(record.id)}>
+                                            <a>同意退货</a>
+                                        </Popconfirm>
+                                        <a
+                                            onClick={() =>
+                                                this.showEditForm({ id: record.id, editForm: 'OrdReject', editFormTitle: '拒绝退款' })
+                                            }
+                                        >拒绝退货</a>
+                                    </Fragment>
+                                )
+                            }
                         } else {
                             return (
                                 <Fragment>
@@ -524,6 +552,7 @@ export default class OrdReturn extends SimpleMng {
                         onSubmit={fields => {
                             this.handleSubmit({
                                 fields,
+                                saveMethodName: 'refund',
                             });
                         }}
                     />

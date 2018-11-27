@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { list,  modify,getById,reject } from '../services/ordreturn';
+import { list, modify, getById, reject, refund, agreeReturn } from '../services/ordreturn';
 export default {
   namespace: 'ordreturn',
 
@@ -25,9 +25,26 @@ export default {
         message.error(response.msg);
       }
     },
-
+    *refund({ payload, callback }, { call }) {
+      const response = yield call(refund, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
     *reject({ payload, callback }, { call }) {
       const response = yield call(reject, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *agreeReturn({ payload, callback }, { call }) {
+      const response = yield call(agreeReturn, payload);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);

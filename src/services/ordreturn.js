@@ -14,8 +14,26 @@ export async function modify(params) {
   });
 }
 
+export async function refund(params) {
+  return request('/ord-svr/ord/return/agreetoarefund', {
+    method: 'POST',
+    body: {
+      ...params,
+    },
+  });
+}
+
 export async function reject(params) {
   return request('/ord-svr/ord/return/reject', {
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
+}
+
+export async function agreeReturn(params) {
+  return request('/ord-svr/ord/return/agreereturn', {
     method: 'PUT',
     body: {
       ...params,
