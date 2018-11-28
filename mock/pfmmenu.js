@@ -81,7 +81,6 @@ function sort(list) {
 }
 
 export function getMenuData(sysId) {
-  console.info(3333);
   const list = [];
   for (const item of menuData) {
     if (item.sysId === sysId) list.push(item);

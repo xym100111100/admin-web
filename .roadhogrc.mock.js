@@ -15,8 +15,9 @@ import {
   rnarealnameModify,
   rnarealnameDel,
 } from './mock/rnarealname';
-import { ordorderList, ordorderGetById, ordorderAdd, ordorderModify, ordorderDel } from './mock/ordorder';
+import {order, ordorderList, ordorderGetById, ordorderAdd, ordorderModify, ordorderDel } from './mock/ordorder';
 import { kdieorderList, kdieorderGetById, kdieorderAdd, kdieorderModify, kdieorderDel } from './mock/kdieorder';
+import { detail } from './mock/ordDetail';
 import {
   kdiSenderList,
   kdisenderGetById,
@@ -157,6 +158,8 @@ const proxy = {
   'POST /ord-svr/ord/mng': ordorderAdd,
   'PUT /ord-svr/ord/mng': ordorderModify,
   'DELETE /ord-svr/ord/mng': ordorderDel,
+  'GET /ord-svr/ord/order': order,
+  'GET /ord-svr/ord/orderdetail/info': detail,
   //kdieorder
   'GET /kdi-svr/kdi/eorder': kdieorderList,
   'GET /kdi-svr/kdi/eorder/getbyid': kdieorderGetById,
@@ -371,22 +374,25 @@ function addProxy(key, value) {
 
 // 禁用代理的时候，配置直接请求服务的映射
 if (noProxy) {
-  addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr/');
+  addProxy('kdi-svr', 'http://127.0.0.1:20080/');
+  addProxy('ord-svr', 'http://127.0.0.1:20180/'); 
+
+  // addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr/');
   // addProxy('pfm-svr', 'http://192.168.1.37:20182/');
   /*
    addProxy('suc-svr', 'http://127.0.0.1:9100/');
   addProxy('rna-svr', 'http://127.0.0.1:20088/');
-  addProxy('kdi-svr', 'http://127.0.0.1:20080/');
+
   addProxy('onl-svr', 'http://127.0.0.1:9100/');
   addProxy('ise-svr', 'http://127.0.0.1:20180/');*/
   /* addProxy('ord-svr', 'http://127.0.0.1:20180/');  */
-  addProxy('afc-svr', 'http://127.0.0.1:9300/'); 
+  // addProxy('afc-svr', 'http://127.0.0.1:9300/'); 
  /*  addProxy('prm-svr', 'http://192.168.1.37:20110/'); */
 
   // addProxy('pfm-svr', 'http://127.0.0.1:8080/pfm-svr');
   addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
 
-  // addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr');
+  addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr/');
   // addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
 
   // addProxy('rna-svr', 'https://www.duamai.com/rna-svr/');

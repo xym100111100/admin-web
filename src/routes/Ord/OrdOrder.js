@@ -35,7 +35,8 @@ export default class OrdOrder extends SimpleMng {
     }
     this.state.trace = '';
     this.state.LogisticInfo = '';
-    this.state.step='1';
+    this.state.step = '1';
+    this.state.result='0';
   }
 
   //初始化
@@ -52,17 +53,20 @@ export default class OrdOrder extends SimpleMng {
 
   }
 
-  nextStep(record) {
-    console.log('nextStep')
-    console.log(record)
+  /**
+ * 发货窗口上一步
+ */
+  lastStep() {
+    this.setState({ step: '1' })
+  }
+
+  /**
+   * 发货窗口下一步
+   */
+  nextStep() {
     this.setState({ step: '2' })
   }
 
-  lastStep(record) {
-    console.log('lastStep')
-    console.log(record)
-    this.setState({ step: '1' })
-  }
 
 
   //取消订单
@@ -250,25 +254,6 @@ export default class OrdOrder extends SimpleMng {
     printWindow.close();
   }
 
-  printPageAgain = (id) => {
-    let printWindow;
-    this.props.dispatch({
-      type: `${this.moduleCode}/printpage`,
-      payload: { orderId: id },
-      callback: data => {
-        if (data.length === 0 || data[0].printPage === undefined) {
-          message.success('获取失败');
-          return;
-        }
-        const printPage = data[0].printPage;
-        printWindow = window.open('', '_blank');
-        printWindow.document.body.innerHTML = printPage;
-        printWindow.print();
-        printWindow.close();
-      }
-    });
-
-  }
 
   showExpand = (data) => {
     const listItems = data.map(items => {
@@ -310,8 +295,8 @@ export default class OrdOrder extends SimpleMng {
             <Col md={4} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>总价 :</span>{items.buyPrice !== undefined && (items.buyPrice * items.buyCount)}
             </Col>
-            <Col md={4} sm={24}>
-              <span >状态 :</span><span style={color}>{items.returnState !== undefined && (items.returnState)}</span>
+            <Col md={5} sm={24}>
+              <span >退货状态 :</span><span style={color}>{items.returnState !== undefined && (items.returnState)}</span>
             </Col>
             <Col md={4} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>类型 :</span>{items.subjectType !== undefined && (items.subjectType)}
@@ -493,6 +478,7 @@ export default class OrdOrder extends SimpleMng {
                 initialValue: '2'
               })(
                 <Select placeholder="订单状态" style={{ width: '100%' }}>
+                  <Option value="">全部</Option>
                   <Option value="1">已下单</Option>
                   <Option value="2">已支付</Option>
                   <Option value="3">已发货</Option>
@@ -521,7 +507,7 @@ export default class OrdOrder extends SimpleMng {
   addNewLogistic = (record) => {
     if (record.orderState === 3) {
       return (
-        <a onClick={() => this.send(record)} >添加新快递单</a>
+        <a onClick={() => this.willDeliver(record)} >添加新快递单</a>
       )
     }
   }
@@ -529,9 +515,9 @@ export default class OrdOrder extends SimpleMng {
   /**
    * 显示发货窗口并把发货步骤窗口改为1，1为选择快递公司发件人界面，2为选择要发货的详情界面。
    */
-  showSendForm=(record)=>{
+  showSendForm = (record) => {
     this.setState({
-      step:'1',
+      step: '1',
     })
     this.showAddForm({
       editFormRecord: record,
@@ -562,12 +548,6 @@ export default class OrdOrder extends SimpleMng {
             修改实际金额
             </a>
         </Menu.Item>
-        {/* <Menu.Item>  这个功能需要物流表中有唯一的orderId，否则将获取不到准确的数据。
-                          在目前orderId可以重复的结构下这个功能将失去意义。
-          <a onClick={() => this.printPageAgain(record.id)}>
-            重新打印快递单
-            </a>
-        </Menu.Item> */}
         <Menu.Item>
           <a onClick={() =>
             this.showAddForm({
@@ -580,11 +560,6 @@ export default class OrdOrder extends SimpleMng {
           }
           >
             修改收货地址
-            </a>
-        </Menu.Item>
-        <Menu.Item>
-          <a onClick={() =>this.showSendForm(record)}>
-            发货
             </a>
         </Menu.Item>
       </Menu>
@@ -602,25 +577,74 @@ export default class OrdOrder extends SimpleMng {
   /**
    * 发货
    */
-  send = (record) => {
+  willDeliver = (record) => {
+    if (this.state.step !== '2') {
+      message.success('请点击下一步来确定要发货的详情再提交');
+      return;
+    }
+    const fields=record.fields;
+    const { user } = this.props;
+    fields.orgId = user.currentUser.orgId;
+    fields.sendOpId=user.currentUser.userId;
+    
+    //整理快递公司信息
+    let shipperInfo;
+    if (fields.shipperInfo !== undefined) {
+      shipperInfo = fields.shipperInfo.split('/');
+      fields.shipperId = shipperInfo[0];
+      fields.shipperName = shipperInfo[1];
+      fields.shipperCode = shipperInfo[2];
+      fields.shipperInfo = undefined
+    }
+    //整理发件信息
+    let senderInfo;
+    if (fields.senderInfo !== undefined) {
+      senderInfo = fields.senderInfo.split('/');
+      fields.senderName = senderInfo[0];
+      fields.senderMobile = senderInfo[1];
+      fields.senderProvince = senderInfo[2];
+      fields.senderCity = senderInfo[3];
+      fields.senderExpArea = senderInfo[4];
+      fields.senderPostCode = senderInfo[5];
+      fields.senderAddress = senderInfo[6];
+      fields.senderInfo = undefined;
+    }
+    //整理被选择的订单详情Id
+    let selectDetailId=[];
+    if(fields.selectDetailId !==undefined){
+      //可能添加的时候后面多添加了斜杆，需要去掉再split
+      if(fields.selectDetailId.substr(fields.selectDetailId.length-1,1)==='/'){
+        fields.selectDetailId=fields.selectDetailId.substring(0,fields.selectDetailId.length-1);
+      }
+      selectDetailId=fields.selectDetailId.split('/');
+      fields.selectDetailId=selectDetailId;
+    }
 
+    //整理当前订单所有未发货订单详情id
+    let allDetaileId=[];
+    if(fields.allDetaileId !==undefined){
+      //可能添加的时候后面多添加了斜杆，需要去掉再split
+      if(fields.allDetaileId.substr(fields.allDetaileId.length-1,1)==='/'){
+        fields.allDetaileId=fields.allDetaileId.substring(0,fields.allDetaileId.length-1);
+      }
+      allDetaileId=fields.allDetaileId.split('/');
+      fields.allDetaileId=allDetaileId;
+    }
+    let printWindow;
     this.props.dispatch({
-      type: `${this.moduleCode}/detail`,
-      payload: { orderId: record.id },
+      type: `${this.moduleCode}/shipmentconfirmation`,
+      payload: fields,
       callback: data => {
-        if (data !== undefined && data.length !== 0) {
-          for (let i = 0; i < data.length; i++) {
-            if (data[i].returnState !== 0) {
-              message.error('有订单详情处于退货状态，不能发货');
-              return;
-            }
-          }
-          this.showAddForm({
-            editFormRecord: record,
-            editForm: 'printPage',
-            editFormTitle: '选择发货信息',
-          })
-        }
+        this.setState({ 
+          step: '3',
+         })
+         this.handleReload();
+        const printPage = data.printPage;
+        printWindow = window.open('', '_blank');
+        printWindow.document.body.innerHTML = printPage;
+        printWindow.print();
+        printWindow.close();
+
       }
     })
   }
@@ -914,8 +938,8 @@ export default class OrdOrder extends SimpleMng {
           if (record.orderState === 2) {
             return (
               <Fragment  >
-                <a onClick={() => this.send(record)} >
-                  本店发货
+                <a onClick={() => this.showSendForm(record)} >
+                  发货
                   </a>
                 <br />
                 <a onClick={() => this.send2(record)} >
@@ -928,7 +952,7 @@ export default class OrdOrder extends SimpleMng {
           } else {
             return (
               <Fragment  >
-                <a style={{ color: '#C0C0C0' }}>本店发货</a>
+                <a style={{ color: '#C0C0C0' }}>发货</a>
                 <br />
                 <a style={{ color: '#C0C0C0' }}>非本店发货</a>
                 <br />
@@ -946,7 +970,7 @@ export default class OrdOrder extends SimpleMng {
           <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
           <div className={styles.tableList}>
             <Table
-              rowKey="orderCode"
+              rowKey="id"
               pagination={paginationProps}
               loading={loading}
               onChange={this.handleTableChange}
@@ -1056,6 +1080,7 @@ export default class OrdOrder extends SimpleMng {
           <OrdSendForm
             width={800}
             step={this.state.step}
+            result={this.state.result}
             visible
             title={editFormTitle}
             editFormType={editFormType}
@@ -1063,7 +1088,8 @@ export default class OrdOrder extends SimpleMng {
             closeModal={() => this.setState({ editForm: undefined })}
             onNextStep={(fields) => this.nextStep(fields)}
             onLastStep={(fields) => this.lastStep(fields)}
-            onSubmit={fields => {this.handleSubmit({fields});
+            onSubmit={(fields) => {
+              this.willDeliver({ fields });
             }}
           />
         )}
