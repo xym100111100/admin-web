@@ -128,15 +128,15 @@ export default class OrdOrder extends SimpleMng {
     const { form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      //使用正则来判断用户输入的是什么筛选条件,默认为名字，一旦是其他的就将名字设置为undefined
-      let info = fieldsValue.userName;
+      //使用正则来判断用户输入的是什么筛选条件,默认为收件人名字，一旦是其他的就将收件人名字设置为undefined
+      let info = fieldsValue.receiverName;
       if (info !== undefined) {
         if (/^[0-9]+$/.test(info)) {
           fieldsValue.orderCode = info;
-          fieldsValue.userName = undefined;
+          fieldsValue.receiverName = undefined;
         } else {
           fieldsValue.orderCode = undefined;
-          fieldsValue.userName = info;
+          fieldsValue.receiverName = info;
         }
       }
       //上传上来的时间是一个数组，需要格式化
@@ -177,14 +177,14 @@ export default class OrdOrder extends SimpleMng {
         },
       });
       //使用正则来判断用户输入的是什么筛选条件,默认为名字，一旦是其他的就将名字设置为undefined
-      let info = fieldsValue.userName;
+      let info = fieldsValue.receiverName;
       if (info !== undefined) {
         if (/^[0-9]+$/.test(info)) {
           fieldsValue.orderCode = info;
-          fieldsValue.userName = undefined;
+          fieldsValue.receiverName = undefined;
         } else {
           fieldsValue.orderCode = undefined;
-          fieldsValue.userName = info;
+          fieldsValue.receiverName = info;
         }
       }
       fieldsValue.pageNum = pagination.current;
@@ -459,7 +459,7 @@ export default class OrdOrder extends SimpleMng {
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
           <Col md={6} sm={24}>
             <FormItem label="">
-              {getFieldDecorator('userName')(<Input placeholder="用户名/订单编号/商品名称" />)}
+              {getFieldDecorator('receiverName')(<Input placeholder="收件人姓名/订单编号/商品名称" />)}
             </FormItem>
           </Col>
           <Col md={7} sm={24}>
@@ -650,7 +650,7 @@ export default class OrdOrder extends SimpleMng {
   }
 
   /**
- * 供应商发货
+ * 订阅物流信息
  */
   send2 = (record) => {
 
@@ -661,14 +661,14 @@ export default class OrdOrder extends SimpleMng {
         if (data !== undefined && data.length !== 0) {
           for (let i = 0; i < data.length; i++) {
             if (data[i].returnState !== 0) {
-              message.error('有订单详情处于退货状态，不能发货');
+              message.error('有订单详情处于退货状态，不能订阅');
               return;
             }
           }
           this.showAddForm({
             editFormRecord: record,
             editForm: 'printPage2',
-            editFormTitle: '选择发货信息',
+            editFormTitle: '选择订阅信息',
           })
         }
       }
@@ -859,9 +859,9 @@ export default class OrdOrder extends SimpleMng {
         },
       },
       {
-        title: '用户名',
-        dataIndex: 'userName',
-        key: 'userName',
+        title: '收件人',
+        dataIndex: 'receiverName',
+        key: 'receiverName',
         width: 150,
       },
       {
@@ -943,7 +943,7 @@ export default class OrdOrder extends SimpleMng {
                   </a>
                 <br />
                 <a onClick={() => this.send2(record)} >
-                  非本店发货
+                  订阅物流信息
                   </a>
                 <br />
                 {this.MoreBtn(record)}
@@ -954,7 +954,7 @@ export default class OrdOrder extends SimpleMng {
               <Fragment  >
                 <a style={{ color: '#C0C0C0' }}>发货</a>
                 <br />
-                <a style={{ color: '#C0C0C0' }}>非本店发货</a>
+                <a style={{ color: '#C0C0C0' }}>订阅物流信息</a>
                 <br />
                 {this.MoreBtn(record)}
               </Fragment>
@@ -1046,6 +1046,7 @@ export default class OrdOrder extends SimpleMng {
               }
               const { user } = this.props;
               fields.orgId = user.currentUser.orgId;
+              fields.sendOpId=user.currentUser.userId;
               fields.senderInfo = undefined;
               this.handleSubmit({
                 fields,
