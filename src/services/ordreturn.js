@@ -34,7 +34,7 @@ export async function reject(params) {
 
 export async function agreeReturn(params) {
   return request('/ord-svr/ord/return/agreereturn', {
-    method: 'PUT',
+    method: 'POST',
     body: {
       ...params,
     },

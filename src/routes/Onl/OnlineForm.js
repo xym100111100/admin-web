@@ -394,7 +394,7 @@ export default class OnlineForm extends React.Component {
                 onSearch={this.partnerSearch}
                 notFoundContent="没有可选择的供应商"
               >
-                {partnerData.map(d => <Option key={d.id}>{d.partnerName}</Option>)}
+                {partnerData.map(d => <Option key={d.orgId}>{d.partnerName}</Option>)}
               </Select>
             )}
           </FormItem>
@@ -442,6 +442,7 @@ export default class OnlineForm extends React.Component {
               <div className="clearfix">
                 <Upload
                   action="/ise-svr/ise/upload"
+                  // action="http://192.168.1.203:43135/ise/upload"
                   listType="picture-card"
                   fileList={fileList}
                   name="multipartFile"
@@ -466,6 +467,7 @@ export default class OnlineForm extends React.Component {
               <div className="clearfix">
                 <Upload
                   action="/ise-svr/ise/upload"
+                  // action="http://192.168.1.203:43135/ise/upload"
                   listType="picture-card"
                   fileList={fileLists}
                   name="multipartFile"

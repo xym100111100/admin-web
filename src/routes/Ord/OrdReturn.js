@@ -306,7 +306,7 @@ export default class OrdReturn extends SimpleMng {
     agreeReturn = id => {
         this.props.dispatch({
             type: `${this.moduleCode}/agreeReturn`,
-            payload: { id: record.id },
+            payload: {id: id},
             callback: () => {
                 this.handleReload();
             },

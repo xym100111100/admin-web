@@ -27,9 +27,11 @@ export default class OrdReturnForm extends PureComponent {
         const { form, record } = this.props;
         form.getFieldDecorator('returnId');
         form.getFieldDecorator('returnNum');
+        form.getFieldDecorator('isAutoCalcRefund');
         form.setFieldsValue({
             returnId: record.id,
             returnNum: record.returnCount,
+            isAutoCalcRefund: this.state.refundType === 1 ? true : false,
         });
     }
 
@@ -63,7 +65,7 @@ export default class OrdReturnForm extends PureComponent {
                                 })(<Input placeholder="请输入退款金额" />)}
                             </FormItem>
                             <FormItem style={{ marginLeft: 15 }} label={refundType === 1 ? undefined : "退到余额"}>
-                                {refundType === 1 ? undefined : form.getFieldDecorator('returnAmount1', {
+                                {refundType === 1 ? undefined : form.getFieldDecorator('refundAmount1', {
                                     rules: [
                                         {
                                             required: true,
@@ -74,7 +76,7 @@ export default class OrdReturnForm extends PureComponent {
                                 })(<Input placeholder="请输入退款到余额的金额" />)}
                             </FormItem>
                             <FormItem style={{ marginLeft: 15 }} label={refundType === 1 ? undefined : "退到返现"}>
-                                {refundType === 1 ? undefined : form.getFieldDecorator('returnAmount2', {
+                                {refundType === 1 ? undefined : form.getFieldDecorator('refundAmount2', {
                                     rules: [
                                         {
                                             required: true,
