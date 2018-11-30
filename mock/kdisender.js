@@ -15,6 +15,8 @@ const tableListDataSource = [
     senderProvince: '广西壮族自治区',
     senderCity: '南宁市',
     senderExpArea: '西乡塘区',
+    id:1,
+    isDefault: false,
   },
   {
     key: '1',
@@ -30,6 +32,8 @@ const tableListDataSource = [
     senderProvince: '广西壮族自治区',
     senderCity: '南宁市',
     senderExpArea: '西乡塘区',
+    id:2,
+    isDefault: false,
   },
   {
     key: '2',
@@ -45,6 +49,8 @@ const tableListDataSource = [
     senderProvince: '广西壮族自治区',
     senderCity: '南宁市',
     senderExpArea: '西乡塘区',
+    id:3,
+    isDefault: false,
   },
   {
     key: '3',
@@ -60,6 +66,8 @@ const tableListDataSource = [
     senderProvince: '广西壮族自治区',
     senderCity: '南宁市',
     senderExpArea: '西乡塘区',
+    id:3,
+    isDefault: false,
   },
   {
     key: '3',
@@ -75,6 +83,8 @@ const tableListDataSource = [
     senderProvince: '广西壮族自治区',
     senderCity: '南宁市',
     senderExpArea: '西乡塘区',
+    id:4,
+    isDefault: true,
   },
 ];
 

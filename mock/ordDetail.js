@@ -25,7 +25,8 @@ const tableListDataSource = [
       onlineTitle:'跑车',
       specName:'林肯加长版',
       buyPrice:11,
-      deliver:true,
+      isDeliver:true,
+      returnState:0,
     },
     {
       id: 2,
@@ -50,7 +51,8 @@ const tableListDataSource = [
       onlineTitle:'保时捷',
       specName:'911限量版',
       buyPrice:11,
-      deliver:false,
+      isDeliver:false,
+      returnState:0,
     },
     {
       id: 3,
@@ -75,7 +77,8 @@ const tableListDataSource = [
       onlineTitle:'劳斯莱斯',
       specName:'幻影',
       buyPrice:11,
-      deliver:false,
+      isDeliver:false,
+      returnState:0,
     },
   ]
 
