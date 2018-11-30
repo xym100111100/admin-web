@@ -29,11 +29,11 @@ export default class OrdSendForm extends PureComponent {
         kdicompany: [],//快递公司数据集合
         defaultCompanyId: 0,//默认快递公司Id
         defaultCompany: '',//默认快递公司，用于提交
-        defaultCompanyInfo:{},//用于显示成功后
+        defaultCompanyInfo: {},//用于显示成功后
         sendData: [],//发件人数据集合
         defaultSend: '',//默认发件人,用于提交
         defaultSendId: 0,//默认发件人Id
-        defaultSendInfo:{}//用于显示成功后
+        defaultSendInfo: {}//用于显示成功后
     }
 
     componentDidMount() {
@@ -66,7 +66,7 @@ export default class OrdSendForm extends PureComponent {
                             defaultSend: data[i].senderName + '/' + data[i].senderMobile + '/'
                                 + data[i].senderProvince + '/' + data[i].senderCity + '/' + data[i].senderExpArea + '/'
                                 + data[i].senderPostCode + '/' + data[i].senderAddress,
-                            defaultSendInfo:data[i],
+                            defaultSendInfo: data[i],
                         })
                     }
                 }
@@ -94,7 +94,7 @@ export default class OrdSendForm extends PureComponent {
                         this.setState({
                             defaultCompanyId: data[i].id,
                             defaultCompany: data[i].id + '/' + data[i].companyName + '/' + data[i].companyCode,
-                            defaultCompanyInfo:data[i],
+                            defaultCompanyInfo: data[i],
                         })
                     }
                 }
@@ -136,32 +136,62 @@ export default class OrdSendForm extends PureComponent {
                         data[index].subjectType = '未知';
                     }
 
-                    if (data[index].isDeliver == true && (data[index].returnState === 0 || data[index].returnState === 3)) {
-                        //已经发货且不是退货状态的详情
-                        delivered.push(data[index])
-                    } else if (data[index].isDeliver == false && (data[index].returnState === 0 || data[index].returnState === 3)) {
-                        //所有没有发货的详情Id，不在其他修改，用于后面成功后对比
-                        allRowKeys.push(data[index])
-                        //没有发货且待要发货的详情及各种数据
-                        willDeliver.push(data[index])
-                        //这一行代码是为了默认全选的。
-                        keys.push(data[index].id);
-                        //这里是设置发货备注的,只有在没有发货的详情才会加进去备注中。
-                        let count = data[index].buyCount - data[index].returnCount;
-                        orderDetail += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].buyPrice;
-                        if (index + 1 === data.length) {
-                            orderDetail += ' 。 ';
-                        } else {
-                            orderDetail += ' ， ';
+                    if(this.props.first===false){
+                        console.log('不是首次')
+                        if(data[index].returnState === 0 || data[index].returnState === 3){
+                            //所有没有发货的详情Id，不在其他修改，用于后面成功后对比
+                            allRowKeys.push(data[index])
+                            //所有不是退货的详情
+                            willDeliver.push(data[index])
+                            //这一行代码是为了默认全选的。
+                            keys.push(data[index].id);
+                            //这里是设置发货备注的,只有在没有发货的详情才会加进去备注中。
+                            let count = data[index].buyCount - data[index].returnCount;
+                            orderDetail += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].buyPrice;
+                            if (index + 1 === data.length) {
+                                orderDetail += ' 。 ';
+                            } else {
+                                orderDetail += ' ， ';
+                            }
+                            //设置要发货详情id
+                            selectDetailId += data[index].id + '/';
+                            //设置所有未发货的详情Id
+                            allDetaileId += data[index].id + '/';
+                            //设置发货成功的备注
+                            deliverRemark += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].buyPrice;
                         }
-                        //设置要发货详情id
-                        selectDetailId += data[index].id + '/';
-                        //设置所有未发货的详情Id
-                        allDetaileId += data[index].id + '/';
-                        //设置发货成功的备注
-                        deliverRemark += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].buyPrice;
 
+                    }else if(this.props.first ===true){
+                        console.log('首次');
+                        if (data[index].isDeliver == true && (data[index].returnState === 0 || data[index].returnState === 3)) {
+                            //已经发货且不是退货状态的详情
+                            delivered.push(data[index])
+                        } else if (data[index].isDeliver == false && (data[index].returnState === 0 || data[index].returnState === 3)) {
+                            //所有没有发货的详情Id，不在其他修改，用于后面成功后对比
+                            allRowKeys.push(data[index])
+                            //没有发货且待要发货的详情及各种数据
+                            willDeliver.push(data[index])
+                            //这一行代码是为了默认全选的。
+                            keys.push(data[index].id);
+                            //这里是设置发货备注的,只有在没有发货的详情才会加进去备注中。
+                            let count = data[index].buyCount - data[index].returnCount;
+                            orderDetail += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].buyPrice;
+                            if (index + 1 === data.length) {
+                                orderDetail += ' 。 ';
+                            } else {
+                                orderDetail += ' ， ';
+                            }
+                            //设置要发货详情id
+                            selectDetailId += data[index].id + '/';
+                            //设置所有未发货的详情Id
+                            allDetaileId += data[index].id + '/';
+                            //设置发货成功的备注
+                            deliverRemark += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].buyPrice;
+    
+                        }
                     }
+
+
                 }
                 this.setState({
                     willDeliver,
@@ -197,8 +227,8 @@ export default class OrdSendForm extends PureComponent {
         if (i === 1) {
             this.setState({
                 defaultCompanyId: item.id,
-                defaultCompany: item.id+'/'+item.companyName+'/'+item.companyCode,
-                defaultCompanyInfo:item,
+                defaultCompany: item.id + '/' + item.companyName + '/' + item.companyCode,
+                defaultCompanyInfo: item,
             })
         } else if (i === 2) {
             this.setState({
@@ -206,7 +236,7 @@ export default class OrdSendForm extends PureComponent {
                 defaultSend: item.senderName + '/' + item.senderMobile + '/'
                     + item.senderProvince + '/' + item.senderCity + '/' + item.senderExpArea + '/'
                     + item.senderPostCode + '/' + item.senderAddress,
-                defaultSendInfo:item,
+                defaultSendInfo: item,
             })
         }
     }
@@ -270,7 +300,7 @@ export default class OrdSendForm extends PureComponent {
         const data2 = this.state.sendData;
         return (
             <Fragment>
-             <Form layout="inline">
+                <Form layout="inline">
                     <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
                         <Col md={9} sm={24} >
                             <p>请选择快递公司</p>

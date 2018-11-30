@@ -36,7 +36,7 @@ export default class OrdOrder extends SimpleMng {
     this.state.trace = '';
     this.state.LogisticInfo = '';
     this.state.step = '1';
-    this.state.result='0';
+    this.state.first=true;
   }
 
   //初始化
@@ -507,7 +507,7 @@ export default class OrdOrder extends SimpleMng {
   addNewLogistic = (record) => {
     if (record.orderState === 3) {
       return (
-        <a onClick={() => this.willDeliver(record)} >添加新快递单</a>
+        <a onClick={() => this.showSendForm(record,false)} >添加新快递单</a>
       )
     }
   }
@@ -515,10 +515,19 @@ export default class OrdOrder extends SimpleMng {
   /**
    * 显示发货窗口并把发货步骤窗口改为1，1为选择快递公司发件人界面，2为选择要发货的详情界面。
    */
-  showSendForm = (record) => {
-    this.setState({
-      step: '1',
-    })
+  showSendForm = (record,first) => {
+    console.log(first);
+    if(first !==undefined){
+      this.setState({
+        first:first,
+        step: '1',
+      })
+    }else{
+      this.setState({
+        first:true,
+        step: '1',
+      })
+    }
     this.showAddForm({
       editFormRecord: record,
       editForm: 'ordSend',
@@ -586,7 +595,12 @@ export default class OrdOrder extends SimpleMng {
     const { user } = this.props;
     fields.orgId = user.currentUser.orgId;
     fields.sendOpId=user.currentUser.userId;
-    
+    //是首次发货还是添加物流单号
+    if(this.state.first){
+      fields.first=true;
+    }else{
+      fields.first=false;
+    }
     //整理快递公司信息
     let shipperInfo;
     if (fields.shipperInfo !== undefined) {
@@ -630,6 +644,9 @@ export default class OrdOrder extends SimpleMng {
       allDetaileId=fields.allDetaileId.split('/');
       fields.allDetaileId=allDetaileId;
     }
+
+    console.log(fields);
+
     let printWindow;
     this.props.dispatch({
       type: `${this.moduleCode}/shipmentconfirmation`,
@@ -1081,7 +1098,7 @@ export default class OrdOrder extends SimpleMng {
           <OrdSendForm
             width={800}
             step={this.state.step}
-            result={this.state.result}
+            first={this.state.first}
             visible
             title={editFormTitle}
             editFormType={editFormType}
