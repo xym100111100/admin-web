@@ -128,17 +128,6 @@ export default class OrdOrder extends SimpleMng {
     const { form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      //使用正则来判断用户输入的是什么筛选条件,默认为收件人名字，一旦是其他的就将收件人名字设置为undefined
-      let info = fieldsValue.receiverName;
-      if (info !== undefined) {
-        if (/^[0-9]+$/.test(info)) {
-          fieldsValue.orderCode = info;
-          fieldsValue.receiverName = undefined;
-        } else {
-          fieldsValue.orderCode = undefined;
-          fieldsValue.receiverName = info;
-        }
-      }
       //上传上来的时间是一个数组，需要格式化
       if (fieldsValue.orderTime !== undefined && fieldsValue.orderTime !== '' && fieldsValue.orderTime.length >= 1) {
         fieldsValue.orderTimeEnd = fieldsValue.orderTime[1].format('YYYY-MM-DD HH:mm:ss');
@@ -177,16 +166,6 @@ export default class OrdOrder extends SimpleMng {
         },
       });
       //使用正则来判断用户输入的是什么筛选条件,默认为名字，一旦是其他的就将名字设置为undefined
-      let info = fieldsValue.receiverName;
-      if (info !== undefined) {
-        if (/^[0-9]+$/.test(info)) {
-          fieldsValue.orderCode = info;
-          fieldsValue.receiverName = undefined;
-        } else {
-          fieldsValue.orderCode = undefined;
-          fieldsValue.receiverName = info;
-        }
-      }
       fieldsValue.pageNum = pagination.current;
       fieldsValue.pageSize = pagination.pageSize;
       //上传上来的时间是一个数组，需要格式化
@@ -459,7 +438,7 @@ export default class OrdOrder extends SimpleMng {
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
           <Col md={6} sm={24}>
             <FormItem label="">
-              {getFieldDecorator('receiverName')(<Input placeholder="收件人姓名/订单编号/商品名称" />)}
+              {getFieldDecorator('receiverName')(<Input placeholder="收件人姓名/订单编号" />)}
             </FormItem>
           </Col>
           <Col md={7} sm={24}>
@@ -516,7 +495,6 @@ export default class OrdOrder extends SimpleMng {
    * 显示发货窗口并把发货步骤窗口改为1，1为选择快递公司发件人界面，2为选择要发货的详情界面。
    */
   showSendForm = (record,first) => {
-    console.log(first);
     if(first !==undefined){
       this.setState({
         first:first,
@@ -587,10 +565,7 @@ export default class OrdOrder extends SimpleMng {
    * 发货
    */
   willDeliver = (record) => {
-    if (this.state.step !== '2') {
-      message.success('请点击下一步来确定要发货的详情再提交');
-      return;
-    }
+
     const fields=record.fields;
     const { user } = this.props;
     fields.orgId = user.currentUser.orgId;
@@ -631,6 +606,10 @@ export default class OrdOrder extends SimpleMng {
         fields.selectDetailId=fields.selectDetailId.substring(0,fields.selectDetailId.length-1);
       }
       selectDetailId=fields.selectDetailId.split('/');
+      if(selectDetailId[0]===""){
+        message.error('未选择任何详情，不能提交');
+        return;
+      }
       fields.selectDetailId=selectDetailId;
     }
 
@@ -645,25 +624,24 @@ export default class OrdOrder extends SimpleMng {
       fields.allDetaileId=allDetaileId;
     }
 
-    console.log(fields);
 
-    let printWindow;
-    this.props.dispatch({
-      type: `${this.moduleCode}/shipmentconfirmation`,
-      payload: fields,
-      callback: data => {
-        this.setState({ 
-          step: '3',
-         })
-         this.handleReload();
-        const printPage = data.printPage;
-        printWindow = window.open('', '_blank');
-        printWindow.document.body.innerHTML = printPage;
-        printWindow.print();
-        printWindow.close();
+    // let printWindow;
+    // this.props.dispatch({
+    //   type: `${this.moduleCode}/shipmentconfirmation`,
+    //   payload: fields,
+    //   callback: data => {
+    //     this.setState({ 
+    //       step: '3',
+    //      })
+    //      this.handleReload();
+    //     const printPage = data.printPage;
+    //     printWindow = window.open('', '_blank');
+    //     printWindow.document.body.innerHTML = printPage;
+    //     printWindow.print();
+    //     printWindow.close();
 
-      }
-    })
+    //   }
+    // })
   }
 
   /**
@@ -885,6 +863,18 @@ export default class OrdOrder extends SimpleMng {
         title: '商品',
         dataIndex: 'orderTitle',
         key: 'orderTitle',
+        render: (text, record) => {
+          if(record.orderTitle.length >50){
+            return(
+              record.orderTitle.substr(0,50)+'等商品。。'
+            )
+          }else{
+              return(
+                record.orderTitle
+              )
+          }
+          
+        },
 
       },
       {
@@ -1104,9 +1094,9 @@ export default class OrdOrder extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            onNextStep={(fields) => this.nextStep(fields)}
-            onLastStep={(fields) => this.lastStep(fields)}
-            onSubmit={(fields) => {
+            onNextStep={this.state.step ==='2' ? false: (fields) => this.nextStep(fields)}
+            onLastStep={this.state.step ==='1' ? false: (fields) => this.lastStep(fields)}
+            onSubmit={this.state.step ==='1' ? false:(fields) => {
               this.willDeliver({ fields });
             }}
           />

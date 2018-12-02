@@ -137,7 +137,6 @@ export default class OrdSendForm extends PureComponent {
                     }
 
                     if(this.props.first===false){
-                        console.log('不是首次')
                         if(data[index].returnState === 0 || data[index].returnState === 3){
                             //所有没有发货的详情Id，不在其他修改，用于后面成功后对比
                             allRowKeys.push(data[index])
@@ -162,7 +161,6 @@ export default class OrdSendForm extends PureComponent {
                         }
 
                     }else if(this.props.first ===true){
-                        console.log('首次');
                         if (data[index].isDeliver == true && (data[index].returnState === 0 || data[index].returnState === 3)) {
                             //已经发货且不是退货状态的详情
                             delivered.push(data[index])
