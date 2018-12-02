@@ -87,7 +87,16 @@ export default class OrdOrderForm extends PureComponent {
         {form.getFieldDecorator('receiverAddress')(<Input type="hidden" />)}
         {form.getFieldDecorator('receiverMobile')(<Input type="hidden" />)}
         {form.getFieldDecorator('receiverTel')(<Input type="hidden" />)}
-        {form.getFieldDecorator('receiverPostCode')(<Input type="hidden" />)}
+        {form.getFieldDecorator('receiverPostCode',{
+          rules: [
+            {
+              required: true,
+              message: '请输入选择收件人发件地编码',
+            },
+          ],
+          initialValue: '000000',
+
+        })(<Input type="hidden" />)}
         {form.getFieldDecorator('senderPostCode', {
           rules: [
             {

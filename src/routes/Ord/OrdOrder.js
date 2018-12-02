@@ -1051,6 +1051,9 @@ export default class OrdOrder extends SimpleMng {
                 fields.senderPostCode = senderInfo[5];
                 fields.senderAddress = senderInfo[6];
               }
+              if(fields.receiverPostCode===undefined){
+                fields.receiverPostCode='000000'
+              }
               const { user } = this.props;
               fields.orgId = user.currentUser.orgId;
               fields.sendOpId=user.currentUser.userId;
