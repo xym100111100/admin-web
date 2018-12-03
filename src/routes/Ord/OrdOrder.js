@@ -8,7 +8,7 @@ import moment from 'moment';
 import OrdOrderForm from './OrdOrderForm';
 import OrdTraceForm from './OrdTraceForm';
 import OrdSendForm from './OrdSendForm';
-import SendBySupplierForm from './SendBySupplierForm';
+import OrdgetTrace from './OrdgetTrace';
 import ModifyOrderShippingAddress from './ModifyOrderShippingAddress';
 const { RangePicker } = DatePicker;
 
@@ -482,11 +482,23 @@ export default class OrdOrder extends SimpleMng {
       </Form>
     );
   }
-
+  /**
+   * 重新打印
+   */
   addNewLogistic = (record) => {
     if (record.orderState === 3) {
       return (
         <a onClick={() => this.showSendForm(record,false)} >添加新快递单</a>
+      )
+    }
+  }
+  /**
+   * 重新订阅轨迹
+   */
+  getTraceAgain =(record)=>{
+    if (record.orderState === 3) {
+      return (
+        <a onClick={() => this.getTrace(record)} >重新订阅轨迹</a>
       )
     }
   }
@@ -519,6 +531,9 @@ export default class OrdOrder extends SimpleMng {
       <Menu>
         <Menu.Item>
           {this.addNewLogistic(record)}
+        </Menu.Item>
+        <Menu.Item>
+          {this.getTraceAgain(record)}
         </Menu.Item>
         <Menu.Item>
           <a onClick={() => this.cancel(record)}>
@@ -647,7 +662,7 @@ export default class OrdOrder extends SimpleMng {
   /**
  * 订阅物流信息
  */
-  send2 = (record) => {
+  getTrace = (record) => {
 
     this.props.dispatch({
       type: `${this.moduleCode}/detail`,
@@ -662,7 +677,7 @@ export default class OrdOrder extends SimpleMng {
           }
           this.showAddForm({
             editFormRecord: record,
-            editForm: 'printPage2',
+            editForm: 'getTrace',
             editFormTitle: '选择订阅信息',
           })
         }
@@ -949,7 +964,7 @@ export default class OrdOrder extends SimpleMng {
                   发货
                   </a>
                 <br />
-                <a onClick={() => this.send2(record)} >
+                <a onClick={() => this.getTrace(record)} >
                   订阅物流信息
                   </a>
                 <br />
@@ -1025,8 +1040,8 @@ export default class OrdOrder extends SimpleMng {
             }}
           />
         )}
-        {editForm === 'printPage2' && (
-          <SendBySupplierForm
+        {editForm === 'getTrace' && (
+          <OrdgetTrace
             visible
             title={editFormTitle}
             editFormType={editFormType}

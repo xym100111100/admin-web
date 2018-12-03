@@ -1,13 +1,14 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Popover, Row, message, Col, Card, Popconfirm, Form, Input, Select, Button, Table, DatePicker } from 'antd';
+import { Popover, Row, message, Radio, Col, Card, Popconfirm, Form, Input, Select, Button, Table, DatePicker } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './OrdReturn.less';
 import moment from 'moment';
 import OrdReturnForm from './OrdReturnForm';
 import OrdRejectForm from './OrdRejectForm';
-
+const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
 const { Option } = Select;
 const FormItem = Form.Item;
 @connect(({ ordreturn, user, loading }) => ({
@@ -23,7 +24,7 @@ export default class OrdReturn extends SimpleMng {
             pageNum: 1,
             pageSize: 5,
             applicationState: 1,
-            returnType: 1,
+            returnType: '',
         };
         this.state.returnCode = undefined;
         this.state.record = undefined;
@@ -306,11 +307,18 @@ export default class OrdReturn extends SimpleMng {
     agreeReturn = id => {
         this.props.dispatch({
             type: `${this.moduleCode}/agreeReturn`,
-            payload: {id: id},
+            payload: { id: id },
             callback: () => {
                 this.handleReload();
             },
         });
+    }
+
+    
+    setReturnType=(value)=>{
+        this.setState({
+            returnState:value,
+        })
     }
 
     // 搜索
@@ -339,15 +347,22 @@ export default class OrdReturn extends SimpleMng {
                             )}
                         </FormItem>
                     </Col>
-                    <Col md={4} sm={24}>
-                        <FormItem label="">
+                    <Col md={8} sm={24}>
+                        <FormItem   >
                             {getFieldDecorator('returnType', {
-                                initialValue: '1'
+                                initialValue: '',
                             })(
-                                <Select placeholder="退货类型" style={{ width: '100%' }}>
-                                    <Option value="1">仅退款</Option>
-                                    <Option value="2">退货并退款</Option>
-                                </Select>
+                                <RadioGroup style={{ width: 280 }} >
+                                    <RadioButton onClick={() => this.setReturnType('')} value="">
+                                        全部
+                                    </RadioButton>
+                                    <RadioButton onClick={() => this.setReturnType(1)} value="1">
+                                         仅退款
+                                    </RadioButton>
+                                    <RadioButton onClick={() => this.setReturnType(2)} value="2">
+                                         退货并退款
+                                    </RadioButton>
+                                </RadioGroup>
                             )}
                         </FormItem>
                     </Col>

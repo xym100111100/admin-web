@@ -35,7 +35,7 @@ export async function shipmentconfirmation(params) {
   });
 }
 
-export async function sendBySupplier(params) {
+export async function getTrace(params) {
   return request('/ord-svr/ord/order/sendBySupplier', {
     method: 'PUT',
     body: {
