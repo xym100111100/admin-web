@@ -625,23 +625,23 @@ export default class OrdOrder extends SimpleMng {
     }
 
 
-    // let printWindow;
-    // this.props.dispatch({
-    //   type: `${this.moduleCode}/shipmentconfirmation`,
-    //   payload: fields,
-    //   callback: data => {
-    //     this.setState({ 
-    //       step: '3',
-    //      })
-    //      this.handleReload();
-    //     const printPage = data.printPage;
-    //     printWindow = window.open('', '_blank');
-    //     printWindow.document.body.innerHTML = printPage;
-    //     printWindow.print();
-    //     printWindow.close();
+    let printWindow;
+    this.props.dispatch({
+      type: `${this.moduleCode}/shipmentconfirmation`,
+      payload: fields,
+      callback: data => {
+        this.setState({ 
+          step: '3',
+         })
+         this.handleReload();
+        const printPage = data.printPage;
+        printWindow = window.open('', '_blank');
+        printWindow.document.body.innerHTML = printPage;
+        printWindow.print();
+        printWindow.close();
 
-    //   }
-    // })
+      }
+    })
   }
 
   /**
