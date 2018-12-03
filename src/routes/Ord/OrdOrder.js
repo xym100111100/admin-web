@@ -36,7 +36,7 @@ export default class OrdOrder extends SimpleMng {
     this.state.trace = '';
     this.state.LogisticInfo = '';
     this.state.step = '1';
-    this.state.first=true;
+    this.state.first = true;
   }
 
   //初始化
@@ -488,17 +488,21 @@ export default class OrdOrder extends SimpleMng {
   addNewLogistic = (record) => {
     if (record.orderState === 3) {
       return (
-        <a onClick={() => this.showSendForm(record,false)} >添加新快递单</a>
+        <Menu.Item>
+          <a onClick={() => this.showSendForm(record, false)} >添加新快递单</a>
+        </Menu.Item>
       )
     }
   }
   /**
    * 重新订阅轨迹
    */
-  getTraceAgain =(record)=>{
+  getTraceAgain = (record) => {
     if (record.orderState === 3) {
       return (
-        <a onClick={() => this.getTrace(record)} >重新订阅轨迹</a>
+        <Menu.Item>
+          <a onClick={() => this.getTrace(record)} >重新订阅轨迹</a>
+        </Menu.Item>
       )
     }
   }
@@ -506,15 +510,15 @@ export default class OrdOrder extends SimpleMng {
   /**
    * 显示发货窗口并把发货步骤窗口改为1，1为选择快递公司发件人界面，2为选择要发货的详情界面。
    */
-  showSendForm = (record,first) => {
-    if(first !==undefined){
+  showSendForm = (record, first) => {
+    if (first !== undefined) {
       this.setState({
-        first:first,
+        first: first,
         step: '1',
       })
-    }else{
+    } else {
       this.setState({
-        first:true,
+        first: true,
         step: '1',
       })
     }
@@ -529,12 +533,8 @@ export default class OrdOrder extends SimpleMng {
   MoreBtn = (record) => {
     const menu = (
       <Menu>
-        <Menu.Item>
-          {this.addNewLogistic(record)}
-        </Menu.Item>
-        <Menu.Item>
-          {this.getTraceAgain(record)}
-        </Menu.Item>
+        {this.addNewLogistic(record)}
+        {this.getTraceAgain(record)}
         <Menu.Item>
           <a onClick={() => this.cancel(record)}>
             取消订单
@@ -581,15 +581,15 @@ export default class OrdOrder extends SimpleMng {
    */
   willDeliver = (record) => {
 
-    const fields=record.fields;
+    const fields = record.fields;
     const { user } = this.props;
     fields.orgId = user.currentUser.orgId;
-    fields.sendOpId=user.currentUser.userId;
+    fields.sendOpId = user.currentUser.userId;
     //是首次发货还是添加物流单号
-    if(this.state.first){
-      fields.first=true;
-    }else{
-      fields.first=false;
+    if (this.state.first) {
+      fields.first = true;
+    } else {
+      fields.first = false;
     }
     //整理快递公司信息
     let shipperInfo;
@@ -614,29 +614,29 @@ export default class OrdOrder extends SimpleMng {
       fields.senderInfo = undefined;
     }
     //整理被选择的订单详情Id
-    let selectDetailId=[];
-    if(fields.selectDetailId !==undefined){
+    let selectDetailId = [];
+    if (fields.selectDetailId !== undefined) {
       //可能添加的时候后面多添加了斜杆，需要去掉再split
-      if(fields.selectDetailId.substr(fields.selectDetailId.length-1,1)==='/'){
-        fields.selectDetailId=fields.selectDetailId.substring(0,fields.selectDetailId.length-1);
+      if (fields.selectDetailId.substr(fields.selectDetailId.length - 1, 1) === '/') {
+        fields.selectDetailId = fields.selectDetailId.substring(0, fields.selectDetailId.length - 1);
       }
-      selectDetailId=fields.selectDetailId.split('/');
-      if(selectDetailId[0]===""){
+      selectDetailId = fields.selectDetailId.split('/');
+      if (selectDetailId[0] === "") {
         message.error('未选择任何详情，不能提交');
         return;
       }
-      fields.selectDetailId=selectDetailId;
+      fields.selectDetailId = selectDetailId;
     }
 
     //整理当前订单所有未发货订单详情id
-    let allDetaileId=[];
-    if(fields.allDetaileId !==undefined){
+    let allDetaileId = [];
+    if (fields.allDetaileId !== undefined) {
       //可能添加的时候后面多添加了斜杆，需要去掉再split
-      if(fields.allDetaileId.substr(fields.allDetaileId.length-1,1)==='/'){
-        fields.allDetaileId=fields.allDetaileId.substring(0,fields.allDetaileId.length-1);
+      if (fields.allDetaileId.substr(fields.allDetaileId.length - 1, 1) === '/') {
+        fields.allDetaileId = fields.allDetaileId.substring(0, fields.allDetaileId.length - 1);
       }
-      allDetaileId=fields.allDetaileId.split('/');
-      fields.allDetaileId=allDetaileId;
+      allDetaileId = fields.allDetaileId.split('/');
+      fields.allDetaileId = allDetaileId;
     }
 
 
@@ -645,10 +645,10 @@ export default class OrdOrder extends SimpleMng {
       type: `${this.moduleCode}/shipmentconfirmation`,
       payload: fields,
       callback: data => {
-        this.setState({ 
+        this.setState({
           step: '3',
-         })
-         this.handleReload();
+        })
+        this.handleReload();
         const printPage = data.printPage;
         printWindow = window.open('', '_blank');
         printWindow.document.body.innerHTML = printPage;
@@ -763,6 +763,50 @@ export default class OrdOrder extends SimpleMng {
       }
     })
   }
+  /**
+   * 获取轨迹信息
+   */
+  onGetTrace = (fields) => {
+    const { user } = this.props;
+    fields.orgId = user.currentUser.orgId;
+    fields.sendOpId = user.currentUser.userId;
+    //是首次发货还是添加物流单号
+    if (this.state.first) {
+      fields.first = true;
+    } else {
+      fields.first = false;
+    }
+    //整理快递公司信息
+    let shipperInfo;
+    if (fields.shipperInfo !== undefined) {
+      shipperInfo = fields.shipperInfo.split('/');
+      fields.shipperId = shipperInfo[0];
+      fields.shipperName = shipperInfo[1];
+      fields.shipperCode = shipperInfo[2];
+      fields.shipperInfo = undefined
+    }
+    //整理发件信息
+    let senderInfo;
+    if (fields.senderInfo !== undefined) {
+      senderInfo = fields.senderInfo.split('/');
+      fields.senderName = senderInfo[0];
+      fields.senderMobile = senderInfo[1];
+      fields.senderProvince = senderInfo[2];
+      fields.senderCity = senderInfo[3];
+      fields.senderExpArea = senderInfo[4];
+      fields.senderPostCode = senderInfo[5];
+      fields.senderAddress = senderInfo[6];
+      fields.senderInfo = undefined;
+    }
+    this.props.dispatch({
+      type: `${this.moduleCode}/getTrace`,
+      payload: fields,
+      callback: () => {
+        this.setState({ editForm: undefined })
+        this.handleReload();
+      }
+    })
+  }
 
   showTrace = (data) => {
     const listItems = data.map(items => {
@@ -818,16 +862,9 @@ export default class OrdOrder extends SimpleMng {
       </div>
     );
 
-    const LogisticInfo = (
-      <div>
-        {this.state.LogisticInfo !== '' && this.showLogisticInfo(this.state.LogisticInfo)}
-        <Timeline mode="alternate" style={{ width: 300 }} >
-          {this.state.trace !== '' && this.showTrace(this.state.trace)}
-        </Timeline>
-      </div>
-    )
 
-    const { ordorder: { ordorder }, loading, kdisender } = this.props;
+
+    const { ordorder: { ordorder }, loading } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
     let ps;
     if (ordorder === undefined || ordorder.pageSize === undefined) {
@@ -879,16 +916,16 @@ export default class OrdOrder extends SimpleMng {
         dataIndex: 'orderTitle',
         key: 'orderTitle',
         render: (text, record) => {
-          if(record.orderTitle.length >50){
-            return(
-              record.orderTitle.substr(0,50)+'等商品。。'
+          if (record.orderTitle.length > 50) {
+            return (
+              record.orderTitle.substr(0, 50) + '等商品。。'
             )
-          }else{
-              return(
-                record.orderTitle
-              )
+          } else {
+            return (
+              record.orderTitle
+            )
           }
-          
+
         },
 
       },
@@ -1047,38 +1084,39 @@ export default class OrdOrder extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            onSubmit={fields => {
-              let shipperInfo;
-              if (fields.shipperInfo !== undefined) {
-                shipperInfo = fields.shipperInfo.split('/');
-                fields.shipperId = shipperInfo[0];
-                fields.shipperName = shipperInfo[1];
-                fields.shipperCode = shipperInfo[2];
-              }
-              let senderInfo;
-              if (fields.senderInfo !== undefined) {
-                senderInfo = fields.senderInfo.split('/');
-                fields.senderName = senderInfo[0];
-                fields.senderMobile = senderInfo[1];
-                fields.senderProvince = senderInfo[2];
-                fields.senderCity = senderInfo[3];
-                fields.senderExpArea = senderInfo[4];
-                fields.senderPostCode = senderInfo[5];
-                fields.senderAddress = senderInfo[6];
-              }
-              if(fields.receiverPostCode===undefined){
-                fields.receiverPostCode='000000'
-              }
-              const { user } = this.props;
-              fields.orgId = user.currentUser.orgId;
-              fields.sendOpId=user.currentUser.userId;
-              fields.senderInfo = undefined;
-              this.handleSubmit({
-                fields,
-                moduleCode: 'ordorder',
-                saveMethodName: 'getTrace',
-              });
-            }}
+            // onSubmit={fields => {
+            //   let shipperInfo;
+            //   if (fields.shipperInfo !== undefined) {
+            //     shipperInfo = fields.shipperInfo.split('/');
+            //     fields.shipperId = shipperInfo[0];
+            //     fields.shipperName = shipperInfo[1];
+            //     fields.shipperCode = shipperInfo[2];
+            //   }
+            //   let senderInfo;
+            //   if (fields.senderInfo !== undefined) {
+            //     senderInfo = fields.senderInfo.split('/');
+            //     fields.senderName = senderInfo[0];
+            //     fields.senderMobile = senderInfo[1];
+            //     fields.senderProvince = senderInfo[2];
+            //     fields.senderCity = senderInfo[3];
+            //     fields.senderExpArea = senderInfo[4];
+            //     fields.senderPostCode = senderInfo[5];
+            //     fields.senderAddress = senderInfo[6];
+            //   }
+            //   if(fields.receiverPostCode===undefined){
+            //     fields.receiverPostCode='000000'
+            //   }
+            //   const { user } = this.props;
+            //   fields.orgId = user.currentUser.orgId;
+            //   fields.sendOpId=user.currentUser.userId;
+            //   fields.senderInfo = undefined;
+            //   this.handleSubmit({
+            //     fields,
+            //     moduleCode: 'ordorder',
+            //     saveMethodName: 'getTrace',
+            //   });
+            // }}
+            onSubmit={(fields) => this.onGetTrace(fields)}
           />
         )}
         {editForm === 'modifyOrderShippingAddress' && (
@@ -1112,9 +1150,9 @@ export default class OrdOrder extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            onNextStep={this.state.step ==='2' ? false: (fields) => this.nextStep(fields)}
-            onLastStep={this.state.step ==='1' ? false: (fields) => this.lastStep(fields)}
-            onSubmit={this.state.step ==='1' ? false:(fields) => {
+            onNextStep={this.state.step === '2' ? false : (fields) => this.nextStep(fields)}
+            onLastStep={this.state.step === '1' ? false : (fields) => this.lastStep(fields)}
+            onSubmit={this.state.step === '1' ? false : (fields) => {
               this.willDeliver({ fields });
             }}
           />

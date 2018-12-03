@@ -20,7 +20,6 @@ export default class OrdTraceForm extends PureComponent {
 
   //初始化
   componentDidMount() {
-    console.log(this.props.record.id);
     this.initLogisticInfo(this.props.record.id);
   }
 
