@@ -1076,7 +1076,7 @@ export default class OrdOrder extends SimpleMng {
               this.handleSubmit({
                 fields,
                 moduleCode: 'ordorder',
-                saveMethodName: 'sendBySupplier',
+                saveMethodName: 'getTrace',
               });
             }}
           />
