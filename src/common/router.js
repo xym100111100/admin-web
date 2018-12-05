@@ -126,9 +126,9 @@ export const getRouterData = app => {
         import('../routes/Afc/WithdrawAccountMng')
       ),
     },
-    '/afc/afc-charge-mng': {
-      component: dynamicWrapper(app, ['afccharge'], () =>
-        import('../routes/Afc/ChargeMng')
+    '/afc/afc-flow-mng': {
+      component: dynamicWrapper(app, ['afcflow'], () =>
+        import('../routes/Afc/FlowMng')
       ),
     },
     '/prm/prm-partner-mng': {

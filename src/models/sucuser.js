@@ -134,7 +134,7 @@ export default {
       const response = yield call(charge, payload);
       console.info(response);
       if (response.result === 1) {
-        message.success("充值成功");
+        message.success(response.msg);
         if (callback) callback(response);
       } else {
         message.error(response.msg);

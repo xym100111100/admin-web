@@ -107,7 +107,7 @@ import { getProfileBasicData } from './mock/profile';
 import { getProfileAdvancedData } from './mock/profile';
 import { getNotices } from './mock/notices';
 import { from } from 'rxjs/observable/from';
-import { chargeForPerson, chargeForPlatForm } from './mock/afccharge';
+import { chargeForPerson, chargeForPlatForm,tradeList } from './mock/afcflow';
 
 // 根据环境变量判断是否禁用代理（禁用代理将直接请求真实的服务）
 const noProxy = process.env.NO_PROXY === 'true';
@@ -246,8 +246,7 @@ const proxy = {
   'PUT /prm-svr/prm/partner': prmPartnerModify,
   'DELETE /prm-svr/prm/partner': prmPartnerDel,
   //afccharge
-  'POST /afc-svr/charge': charge,
-  'POST /afc-svr/afc/platform/charge': chargeForPlatForm,
+  'GET /afc-svr/afc/tradeList': tradeList,
   // pfm
   'POST /pfm-svr/user/login/by/user/name': (req, res) => {
     const { loginPswd, userName, type } = req.body;
@@ -374,8 +373,8 @@ function addProxy(key, value) {
 
 // 禁用代理的时候，配置直接请求服务的映射
 if (noProxy) {
-  addProxy('kdi-svr', 'http://127.0.0.1:20080/');
-  addProxy('ord-svr', 'http://127.0.0.1:20180/'); 
+  //addProxy('kdi-svr', 'http://127.0.0.1:20080/');
+  //addProxy('ord-svr', 'http://127.0.0.1:20180/'); 
 
   // addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr/');
   // addProxy('pfm-svr', 'http://192.168.1.37:20182/');
@@ -386,13 +385,13 @@ if (noProxy) {
   addProxy('onl-svr', 'http://127.0.0.1:9100/');
   addProxy('ise-svr', 'http://127.0.0.1:20180/');*/
   /* addProxy('ord-svr', 'http://127.0.0.1:20180/');  */
-  // addProxy('afc-svr', 'http://127.0.0.1:9300/'); 
+   addProxy('afc-svr', 'http://127.0.0.1:9300/'); 
  /*  addProxy('prm-svr', 'http://192.168.1.37:20110/'); */
 
   // addProxy('pfm-svr', 'http://127.0.0.1:8080/pfm-svr');
-  addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
+  //addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
 
-  addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr/');
+  //addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr/');
   // addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
 
   // addProxy('rna-svr', 'https://www.duamai.com/rna-svr/');
