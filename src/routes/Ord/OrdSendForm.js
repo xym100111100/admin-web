@@ -286,7 +286,7 @@ export default class OrdSendForm extends PureComponent {
      */
     showlogisticCode = () => {
         const { form } = this.props;
-        if (this.state.defaultCompanyInfo.companyPwd ===undefined) {
+        if (this.state.defaultCompanyInfo.companyPwd ===undefined ||this.state.defaultCompanyInfo.companyPwd ===null ||this.state.defaultCompanyInfo.companyPwd ==='' ) {
             return (
                 <FormItem label="物流单号" >
                     {form.getFieldDecorator('logisticCode', {
