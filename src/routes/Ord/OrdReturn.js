@@ -123,8 +123,6 @@ export default class OrdReturn extends SimpleMng {
     };
 
     showExpand = (record) => {
-
-
         if (record.orderState === -1) record.orderState = '作废';
         if (record.orderState === 1) record.orderState = '已下单';
         if (record.orderState === 2) record.orderState = '已支付';
@@ -496,7 +494,7 @@ export default class OrdReturn extends SimpleMng {
                                     <Fragment>
                                         <a
                                             onClick={() =>
-                                                this.showEditForm({ id: record.id, editForm: 'OrdReturn', editFormTitle: '同意退款' })
+                                                this.showEditForm({ id: record.id, editFormRecord: record, editForm: 'OrdReturn', editFormTitle: '同意退款' })
                                             }
                                         >同意退款</a>
                                         <a
@@ -525,7 +523,7 @@ export default class OrdReturn extends SimpleMng {
                                 <Fragment>
                                     <a
                                         onClick={() =>
-                                            this.showEditForm({ id: record.id, editForm: 'OrdReturn', editFormTitle: '同意退款' })
+                                            this.showEditForm({ id: record.id, editFormRecord: record, editForm: 'OrdReturn', editFormTitle: '同意退款' })
                                         }
                                     >同意退款</a>
                                     <a

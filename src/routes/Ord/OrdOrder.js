@@ -93,21 +93,21 @@ export default class OrdOrder extends SimpleMng {
 
   //取消发货
   canceldelivery = (record) => {
-
+    console.log(record)
     if (record.orderState !== 2) {
       message.success('非已支付状态不能取消发货');
       return;
     }
-    let Reason = prompt('请填写取消发货原因', '用户退款');
-    if (Reason === null) {
+    let reason = prompt('请填写取消发货原因', '用户退款');
+    if (reason === null) {
       return;
     }
-    record.cancelReason = Reason;
-    const { user } = this.props;
-    record.cancelingOrderOpId = user.currentUser.userId;
     this.props.dispatch({
       type: `${this.moduleCode}/canceldelivery`,
-      payload: record,
+      payload: {
+        id: record.id,
+        canceldeliReason: reason,
+      },
       callback: () => {
         this.handleReload(this.state.options);
       },

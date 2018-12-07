@@ -1,14 +1,9 @@
 import React, { Fragment, PureComponent } from 'react';
 import { Form, Input, Row, Col, Radio } from 'antd';
 import EditForm from 'components/Rebue/EditForm';
-import { connect } from 'dva';
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 // 添加与编辑的表单
-@connect(({ ordreturn, loading }) => ({
-    ordreturn,
-    loading: loading.models.ordreturn
-}))
 @EditForm
 export default class OrdReturnForm extends PureComponent {
 
@@ -60,8 +55,10 @@ export default class OrdReturnForm extends PureComponent {
                                             required: true,
                                             pattern: /^[0-9]+([.]{1}[0-9]+){0,1}$/,
                                             message: '请输入退款金额',
+                                            
                                         },
                                     ],
+                                    initialValue: record.returnRental,
                                 })(<Input placeholder="请输入退款金额" />)}
                             </FormItem>
                             <FormItem style={{ marginLeft: 15 }} label={refundType === 1 ? undefined : "退到余额"}>
