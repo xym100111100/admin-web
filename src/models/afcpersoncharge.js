@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { list, getById, eorder, modify, del } from '../services/afccharge';
+import { list, getById, eorder, modify, del } from '../services/afcflow';
 
 export default {
   namespace: 'afcpersoncharge',
@@ -34,7 +34,7 @@ export default {
   reducers: {
     changeList(state, action) {
       return {
-        afccharge: action.payload,
+        afcflow: action.payload,
       };
     },
   },
