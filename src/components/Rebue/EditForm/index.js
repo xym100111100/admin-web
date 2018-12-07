@@ -53,7 +53,6 @@ const EditForm = DivInfo => {
     handleNextStep = () => {
       const { form, onNextStep } = this.props;
       form.validateFieldsAndScroll((err, fields) => {
-        if (err) return;
         if(onNextStep){
           onNextStep(fields);
         }
@@ -62,7 +61,6 @@ const EditForm = DivInfo => {
     handleLastStep = () => {
       const { form, onLastStep } = this.props;
       form.validateFieldsAndScroll((err, fields) => {
-        if (err) return;
         if(onLastStep){
           onLastStep(fields);
         }

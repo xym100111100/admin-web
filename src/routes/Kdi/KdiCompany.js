@@ -6,11 +6,12 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import CompanyForm from './CompanyForm';
 import styles from './KdiCompany.less';
 
-@connect(({ kdicompany, user, login, loading }) => ({
+@connect(({ kdicompany,companydic, user, login, loading }) => ({
   kdicompany,
+  companydic,
   user,
   login,
-  loading: loading.models.kdicompany || loading.models.user || loading.models.login,
+  loading: loading.models.kdicompany || loading.models.user|| loading.models.companydic || loading.models.login,
 }))
 export default class KdiCompany extends SimpleMng {
   constructor() {
@@ -87,7 +88,7 @@ export default class KdiCompany extends SimpleMng {
               <Fragment>
                 <a
                   onClick={() =>
-                    this.showEditForm({ id: record.id, editForm: 'kdiCompany', editFormTitle: '编辑快递公司信息' })
+                    this.showEditForm({ id:record.id, editForm: 'kdiCompany', editFormTitle: '编辑快递公司信息' })
                   }
                 >
                   编辑
@@ -105,7 +106,7 @@ export default class KdiCompany extends SimpleMng {
               <Fragment>
                 <a
                   onClick={() =>
-                    this.showEditForm({ id: record.id, editForm: 'kdiCompany', editFormTitle: '编辑快递公司信息' })
+                    this.showEditForm({ id:record.id, editForm: 'kdiCompany', editFormTitle: '编辑快递公司信息' })
                   }
                 >
                   编辑
@@ -148,7 +149,6 @@ export default class KdiCompany extends SimpleMng {
         {editForm === 'kdiCompany' && (
           <CompanyForm
             visible
-            orgId={orgId}
             title={editFormTitle}
             editFormType={editFormType}
             record={editFormRecord}

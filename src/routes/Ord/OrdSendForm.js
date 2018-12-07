@@ -4,6 +4,7 @@ import EditForm from 'components/Rebue/EditForm';
 import InfiniteScroll from 'react-infinite-scroller';
 import styles from './OrdOrder.less';
 import { connect } from 'dva';
+const FormItem = Form.Item;
 // 添加与编辑的表单
 @connect(({ kdisender, kdicompany, ordorder, user, loading }) => ({
     kdisender, user, ordorder, kdicompany,
@@ -136,8 +137,8 @@ export default class OrdSendForm extends PureComponent {
                         data[index].subjectType = '未知';
                     }
 
-                    if(this.props.first===false){
-                        if(data[index].returnState === 0 || data[index].returnState === 3){
+                    if (this.props.first === false) {
+                        if (data[index].returnState === 0 || data[index].returnState === 3) {
                             //所有没有发货的详情Id，不在其他修改，用于后面成功后对比
                             allRowKeys.push(data[index])
                             //所有不是退货的详情
@@ -160,7 +161,7 @@ export default class OrdSendForm extends PureComponent {
                             deliverRemark += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].buyPrice;
                         }
 
-                    }else if(this.props.first ===true){
+                    } else if (this.props.first === true) {
                         if (data[index].isDeliver == true && (data[index].returnState === 0 || data[index].returnState === 3)) {
                             //已经发货且不是退货状态的详情
                             delivered.push(data[index])
@@ -185,7 +186,7 @@ export default class OrdSendForm extends PureComponent {
                             allDetaileId += data[index].id + '/';
                             //设置发货成功的备注
                             deliverRemark += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].buyPrice;
-    
+
                         }
                     }
 
@@ -277,6 +278,43 @@ export default class OrdSendForm extends PureComponent {
             deliverRemark,
         })
         form.setFieldsValue({ orderTitle: orderDetail });
+    }
+
+    /**
+     * 如果用户选择的快递公司没有密码证明是要订阅轨迹,下面的else必须需要，否则将存在感觉不存在的logisticCode被校验
+     * 导致无法提交。
+     */
+    showlogisticCode = () => {
+        const { form } = this.props;
+        if (this.state.defaultCompanyInfo.companyPwd ===undefined) {
+            return (
+                <FormItem label="物流单号" >
+                    {form.getFieldDecorator('logisticCode', {
+                        rules: [
+                            {
+                                required: true,
+                                pattern: /^[0-9]*$/,
+                                message: '请输入全部为数字的物流单号',
+                            },
+                        ],
+                    })(<Input placeholder="请输入物流单号" />)}
+                </FormItem>
+            )
+        }else{
+            return (
+                <FormItem  >
+                    {form.getFieldDecorator('logisticCode', {
+                        rules: [
+                            {
+                                required: false,
+                                pattern: /^[0-9]*$/,
+                                message: '请输入全部为数字的物流单号',
+                            },
+                        ],
+                    })(<Input placeholder="请输入物流单号" type="hidden"  />)}
+                </FormItem>
+            )
+        }
     }
 
     /**
@@ -521,10 +559,10 @@ export default class OrdSendForm extends PureComponent {
                         <p style={{ marginBottom: -1 }} >买家留言与商家发货备注:</p>
                         <textarea onChange={(value) => this.textChange(value)} style={{ width: '100%', }} rows="6" value={this.state.orderDetail} >
                         </textarea>
+                        {this.showlogisticCode()}
                     </Col>
                 </Row>
             </Fragment>
-
         )
     }
 

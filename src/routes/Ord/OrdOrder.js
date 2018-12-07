@@ -495,7 +495,7 @@ export default class OrdOrder extends SimpleMng {
     }
   }
   /**
-   * 重新订阅轨迹
+   * 重新订阅轨迹，没有用到
    */
   getTraceAgain = (record) => {
     if (record.orderState === 3) {
@@ -534,7 +534,6 @@ export default class OrdOrder extends SimpleMng {
     const menu = (
       <Menu>
         {this.addNewLogistic(record)}
-        {this.getTraceAgain(record)}
         <Menu.Item>
           <a onClick={() => this.cancel(record)}>
             取消订单
@@ -638,8 +637,6 @@ export default class OrdOrder extends SimpleMng {
       allDetaileId = fields.allDetaileId.split('/');
       fields.allDetaileId = allDetaileId;
     }
-
-
     let printWindow;
     this.props.dispatch({
       type: `${this.moduleCode}/shipmentconfirmation`,
@@ -649,12 +646,13 @@ export default class OrdOrder extends SimpleMng {
           step: '3',
         })
         this.handleReload();
-        const printPage = data.printPage;
-        printWindow = window.open('', '_blank');
-        printWindow.document.body.innerHTML = printPage;
-        printWindow.print();
-        printWindow.close();
-
+        if(fields.logisticCode ===undefined){
+          const printPage = data.printPage;
+          printWindow = window.open('', '_blank');
+          printWindow.document.body.innerHTML = printPage;
+          printWindow.print();
+          printWindow.close();
+        }
       }
     })
   }
@@ -1001,10 +999,6 @@ export default class OrdOrder extends SimpleMng {
                   发货
                   </a>
                 <br />
-                <a onClick={() => this.getTrace(record)} >
-                  订阅物流信息
-                  </a>
-                <br />
                 {this.MoreBtn(record)}
               </Fragment>
             )
@@ -1012,8 +1006,6 @@ export default class OrdOrder extends SimpleMng {
             return (
               <Fragment  >
                 <a style={{ color: '#C0C0C0' }}>发货</a>
-                <br />
-                <a style={{ color: '#C0C0C0' }}>订阅物流信息</a>
                 <br />
                 {this.MoreBtn(record)}
               </Fragment>
@@ -1084,38 +1076,6 @@ export default class OrdOrder extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            // onSubmit={fields => {
-            //   let shipperInfo;
-            //   if (fields.shipperInfo !== undefined) {
-            //     shipperInfo = fields.shipperInfo.split('/');
-            //     fields.shipperId = shipperInfo[0];
-            //     fields.shipperName = shipperInfo[1];
-            //     fields.shipperCode = shipperInfo[2];
-            //   }
-            //   let senderInfo;
-            //   if (fields.senderInfo !== undefined) {
-            //     senderInfo = fields.senderInfo.split('/');
-            //     fields.senderName = senderInfo[0];
-            //     fields.senderMobile = senderInfo[1];
-            //     fields.senderProvince = senderInfo[2];
-            //     fields.senderCity = senderInfo[3];
-            //     fields.senderExpArea = senderInfo[4];
-            //     fields.senderPostCode = senderInfo[5];
-            //     fields.senderAddress = senderInfo[6];
-            //   }
-            //   if(fields.receiverPostCode===undefined){
-            //     fields.receiverPostCode='000000'
-            //   }
-            //   const { user } = this.props;
-            //   fields.orgId = user.currentUser.orgId;
-            //   fields.sendOpId=user.currentUser.userId;
-            //   fields.senderInfo = undefined;
-            //   this.handleSubmit({
-            //     fields,
-            //     moduleCode: 'ordorder',
-            //     saveMethodName: 'getTrace',
-            //   });
-            // }}
             onSubmit={(fields) => this.onGetTrace(fields)}
           />
         )}
@@ -1150,11 +1110,9 @@ export default class OrdOrder extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            onNextStep={this.state.step === '2' ? false : (fields) => this.nextStep(fields)}
-            onLastStep={this.state.step === '1' ? false : (fields) => this.lastStep(fields)}
-            onSubmit={this.state.step === '1' ? false : (fields) => {
-              this.willDeliver({ fields });
-            }}
+            onNextStep={this.state.step === '1' ? (fields) => this.nextStep(fields)  : false}
+            onLastStep={this.state.step === '2' ? (fields) => this.lastStep(fields)  : false}
+            onSubmit={this.state.step === '2' ? (fields) => this.willDeliver({fields}) : false}
           />
         )}
       </PageHeaderLayout>
