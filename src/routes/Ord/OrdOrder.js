@@ -482,18 +482,7 @@ export default class OrdOrder extends SimpleMng {
       </Form>
     );
   }
-  /**
-   * 重新打印
-   */
-  addNewLogistic = (record) => {
-    if (record.orderState === 3) {
-      return (
-        <Menu.Item>
-          <a onClick={() => this.showSendForm(record, false)} >添加新快递单</a>
-        </Menu.Item>
-      )
-    }
-  }
+
   /**
    * 重新订阅轨迹，没有用到
    */
@@ -530,49 +519,6 @@ export default class OrdOrder extends SimpleMng {
   }
 
 
-  MoreBtn = (record) => {
-    const menu = (
-      <Menu>
-        {this.addNewLogistic(record)}
-        <Menu.Item>
-          <a onClick={() => this.cancel(record)}>
-            取消订单
-            </a>
-        </Menu.Item>
-        <Menu.Item>
-          <a onClick={() => this.canceldelivery(record)}>
-            取消发货
-            </a>
-        </Menu.Item>
-        <Menu.Item>
-          <a onClick={() => this.showInput(record)}>
-            修改实际金额
-            </a>
-        </Menu.Item>
-        <Menu.Item>
-          <a onClick={() =>
-            this.showAddForm({
-              id: record.id,
-              moduleCode: 'sucorg',
-              editFormRecord: record,
-              editForm: 'modifyOrderShippingAddress',
-              editFormTitle: '修改收货地址',
-            })
-          }
-          >
-            修改收货地址
-            </a>
-        </Menu.Item>
-      </Menu>
-    );
-    return (
-      <Dropdown overlay={menu}>
-        <a>
-          更多操作 <Icon type="down" />
-        </a>
-      </Dropdown>
-    )
-  }
 
 
   /**
@@ -646,7 +592,7 @@ export default class OrdOrder extends SimpleMng {
           step: '3',
         })
         this.handleReload();
-        if(fields.logisticCode ===undefined){
+        if (fields.logisticCode === undefined) {
           const printPage = data.printPage;
           printWindow = window.open('', '_blank');
           printWindow.document.body.innerHTML = printPage;
@@ -992,22 +938,63 @@ export default class OrdOrder extends SimpleMng {
         title: '操作',
         width: 120,
         render: (text, record) => {
-          if (record.orderState === 2) {
+          if (record.orderState === 1) {
             return (
               <Fragment  >
-                <a onClick={() => this.showSendForm(record)} >
-                  发货
-                  </a>
+                <a onClick={() => this.cancel(record)}>
+                  取消订单
+                 </a>
                 <br />
-                {this.MoreBtn(record)}
+                <a onClick={() => this.showInput(record)}>
+                  修改实际金额
+                 </a>
+                <br />
+                <a onClick={() =>
+                  this.showAddForm({
+                    id: record.id,
+                    moduleCode: 'sucorg',
+                    editFormRecord: record,
+                    editForm: 'modifyOrderShippingAddress',
+                    editFormTitle: '修改收货地址',
+                  })
+                }
+                >
+                  修改收货地址
+               </a>
               </Fragment>
             )
-          } else {
+          } else if (record.orderState === 2) {
             return (
               <Fragment  >
-                <a style={{ color: '#C0C0C0' }}>发货</a>
+                <a onClick={() => this.showSendForm(record)} >发货 </a>
                 <br />
-                {this.MoreBtn(record)}
+                <a onClick={() => this.canceldelivery(record)}>取消发货</a>
+                <br />
+                <a onClick={() =>
+                  this.showAddForm({
+                    id: record.id,
+                    moduleCode: 'sucorg',
+                    editFormRecord: record,
+                    editForm: 'modifyOrderShippingAddress',
+                    editFormTitle: '修改收货地址',
+                  })
+                }
+                >
+                  修改收货地址
+               </a>
+              </Fragment>
+            )
+          } else if(record.orderState === 3){
+            return(
+              <Fragment>
+                    <a onClick={() => this.showSendForm(record, false)} >添加新快递单</a>
+              </Fragment>
+            )
+          }else {
+            return (
+              <Fragment  >
+                <a style={{ color: '#C0C0C0' }}>无操作</a>
+                <br />
               </Fragment>
             )
           }
@@ -1110,9 +1097,9 @@ export default class OrdOrder extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            onNextStep={this.state.step === '1' ? (fields) => this.nextStep(fields)  : false}
-            onLastStep={this.state.step === '2' ? (fields) => this.lastStep(fields)  : false}
-            onSubmit={this.state.step === '2' ? (fields) => this.willDeliver({fields}) : false}
+            onNextStep={this.state.step === '1' ? (fields) => this.nextStep(fields) : false}
+            onLastStep={this.state.step === '2' ? (fields) => this.lastStep(fields) : false}
+            onSubmit={this.state.step === '2' ? (fields) => this.willDeliver({ fields }) : false}
           />
         )}
       </PageHeaderLayout>
