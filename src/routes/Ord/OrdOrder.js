@@ -898,33 +898,9 @@ export default class OrdOrder extends SimpleMng {
           if (record.orderState === -1) return '做废';
           if (record.orderState === 1) return '已下单';
           if (record.orderState === 2) return '已支付';
-          if (record.orderState === 3) return (
-            <div>
-              <span>已发货</span>
-              <br />
-              <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
-                物流信息
-              </a>
-            </div>
-          );
-          if (record.orderState === 4) return (
-            <div>
-              <span>已签收</span>
-              <br />
-              <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
-                物流信息
-              </a>
-            </div>
-          );
-          if (record.orderState === 5) return (
-            <div>
-              <span>已结算</span>
-              <br />
-              <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
-                物流信息
-              </a>
-            </div>
-          );
+          if (record.orderState === 3) return '已发货';
+          if (record.orderState === 4) return '已签收';
+          if (record.orderState === 5) return '已结算';
         },
       },
 
@@ -987,14 +963,19 @@ export default class OrdOrder extends SimpleMng {
           } else if(record.orderState === 3){
             return(
               <Fragment>
-                    <a onClick={() => this.showSendForm(record, false)} >添加新快递单</a>
+                  <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
+                    物流信息
+                  </a>
+                  <br />
+                  <a onClick={() => this.showSendForm(record, false)} >添加新快递单</a>
               </Fragment>
             )
           }else {
             return (
               <Fragment  >
-                <a style={{ color: '#C0C0C0' }}>无操作</a>
-                <br />
+                  <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
+                    物流信息
+                  </a>
               </Fragment>
             )
           }
