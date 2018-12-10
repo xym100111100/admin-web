@@ -286,7 +286,37 @@ export default class OrdSendForm extends PureComponent {
      */
     showlogisticCode = () => {
         const { form } = this.props;
-        if (this.state.defaultCompanyInfo.companyPwd ===undefined ||this.state.defaultCompanyInfo.companyPwd ===null ||this.state.defaultCompanyInfo.companyPwd ==='' ) {
+        if(this.props.record.onlineOrgId === this.props.record.deliverOrgId){
+            if (this.state.defaultCompanyInfo.companyPwd ===undefined ||this.state.defaultCompanyInfo.companyPwd ===null ||this.state.defaultCompanyInfo.companyPwd ==='' ) {
+                return (
+                    <FormItem label="物流单号" >
+                        {form.getFieldDecorator('logisticCode', {
+                            rules: [
+                                {
+                                    required: true,
+                                    pattern: /^[0-9]*$/,
+                                    message: '请输入全部为数字的物流单号',
+                                },
+                            ],
+                        })(<Input placeholder="请输入物流单号" />)}
+                    </FormItem>
+                )
+            }else{
+                return (
+                    <FormItem  >
+                        {form.getFieldDecorator('logisticCode', {
+                            rules: [
+                                {
+                                    required: false,
+                                    pattern: /^[0-9]*$/,
+                                    message: '请输入全部为数字的物流单号',
+                                },
+                            ],
+                        })(<Input placeholder="请输入物流单号" type="hidden"  />)}
+                    </FormItem>
+                )
+            }
+        }else{
             return (
                 <FormItem label="物流单号" >
                     {form.getFieldDecorator('logisticCode', {
@@ -300,21 +330,8 @@ export default class OrdSendForm extends PureComponent {
                     })(<Input placeholder="请输入物流单号" />)}
                 </FormItem>
             )
-        }else{
-            return (
-                <FormItem  >
-                    {form.getFieldDecorator('logisticCode', {
-                        rules: [
-                            {
-                                required: false,
-                                pattern: /^[0-9]*$/,
-                                message: '请输入全部为数字的物流单号',
-                            },
-                        ],
-                    })(<Input placeholder="请输入物流单号" type="hidden"  />)}
-                </FormItem>
-            )
         }
+
     }
 
     /**
