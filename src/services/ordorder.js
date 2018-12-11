@@ -93,3 +93,7 @@ export async function modifyOrderShippingAddress(params) {
     method: 'PUT',
   });
 }
+
+export async function getSettleTotal(params) {
+  return request(`/ord-svr/ord/order/getSettleTotal?${stringify(params)}`);
+}

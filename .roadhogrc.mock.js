@@ -1,4 +1,6 @@
 import mockjs from 'mockjs';
+import { dumaiindexList, dumaiindexGetById, dumaiindexAdd, dumaiindexModify, dumaiindexDel } from './mock/dumaiindex';
+import { supaccountList, supaccountGetById, supaccountAdd, supaccountModify, supaccountDel } from './mock/supaccount';
 import { pfmsysList, pfmsysGetById, pfmsysAdd, pfmsysModify, pfmsysDel } from './mock/pfmsys';
 import {
   kdilogisticList,
@@ -47,6 +49,12 @@ import {
   pfmfuncDel,
   pfmfuncEnable,
 } from './mock/pfmfunc';
+import {
+  suporderList,
+  suporderGetById,
+  suporderAdd,
+  suporderModify,
+} from './mock/suporder';
 import {
   pfmactiGetById,
   pfmactiAdd,
@@ -166,6 +174,18 @@ const proxy = {
   'POST /kdi-svr/kdi/eorder': kdieorderAdd,
   'PUT /kdi-svr/kdi/eorder': kdieorderModify,
   'DELETE /kdi-svr/kdi/eorder': kdieorderDel,
+  // dumaiindex
+  'GET /dumai-svr/dumai/index': dumaiindexList,
+  'GET /dumai-svr/dumai/index/getbyid': dumaiindexGetById,
+  'POST /dumai-svr/dumai/index': dumaiindexAdd,
+  'PUT /dumai-svr/dumai/index': dumaiindexModify,
+  'DELETE /dumai-svr/dumai/index': dumaiindexDel,
+  // supaccount
+  'GET /sup-svr/sup/account': supaccountList,
+  'GET /sup-svr/sup/account/getbyid': supaccountGetById,
+  'POST /sup-svr/sup/account': supaccountAdd,
+  'PUT /sup-svr/sup/account': supaccountModify,
+  'DELETE /sup-svr/sup/account': supaccountDel,
   // pfmsys
   'GET /pfm-svr/pfm/sys': pfmsysList,
   'GET /pfm-svr/pfm/sys/getbyid': pfmsysGetById,
@@ -180,6 +200,11 @@ const proxy = {
   'PUT /pfm-svr/pfm/menu/sort': pfmmenuSort,
   'DELETE /pfm-svr/pfm/menu': pfmmenuDel,
   'PUT /pfm-svr/pfm/menu/enable': pfmmenuEnable,
+  // suporder
+  'GET /sup-svr/sup/order': suporderList,
+  'GET /sup-svr/sup/order/getbyid': suporderGetById,
+  'POST /sup-svr/sup/order': suporderAdd,
+  'PUT /sup-svr/sup/order': suporderModify,
   // pfmfunc
   'GET /pfm-svr/pfm/func': pfmfuncList,
   'GET /pfm-svr/pfm/func/getbyid': pfmfuncGetById,
@@ -373,8 +398,8 @@ function addProxy(key, value) {
 
 // 禁用代理的时候，配置直接请求服务的映射
 if (noProxy) {
-  //addProxy('kdi-svr', 'http://127.0.0.1:20080/');
-  //addProxy('ord-svr', 'http://127.0.0.1:20180/'); 
+  addProxy('kdi-svr', 'http://127.0.0.1:20080/');
+  addProxy('ord-svr', 'http://127.0.0.1:20180/'); 
 
   // addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr/');
   // addProxy('pfm-svr', 'http://192.168.1.37:20182/');
@@ -385,14 +410,15 @@ if (noProxy) {
   addProxy('onl-svr', 'http://127.0.0.1:9100/');
   addProxy('ise-svr', 'http://127.0.0.1:20180/');*/
   /* addProxy('ord-svr', 'http://127.0.0.1:20180/');  */
-   addProxy('afc-svr', 'http://127.0.0.1:9300/'); 
+  //  addProxy('afc-svr', 'http://127.0.0.1:9300/'); 
  /*  addProxy('prm-svr', 'http://192.168.1.37:20110/'); */
 
   // addProxy('pfm-svr', 'http://127.0.0.1:8080/pfm-svr');
   //addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
 
-  //addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr/');
-  // addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
+  addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr/');
+  addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
+  addProxy('afc-svr', 'http://192.168.1.201/afc-svr/');
 
   // addProxy('rna-svr', 'https://www.duamai.com/rna-svr/');
   // addProxy('kdi-svr', 'https://www.duamai.com/kdi-svr/');

@@ -68,6 +68,11 @@ function getFlatMenuData(menus) {
 export const getRouterData = app => {
   const routerConfig = {
     // ****************** 业务路由 *******************
+    '/dumai/dumai-index': {
+      component: dynamicWrapper(app, ['dumaiindex', 'user'], () =>
+        import('../routes/Dumai/DumaiIndex')
+      ),
+    },
     '/rna/rna-realname': {
       component: dynamicWrapper(app, ['rnarealname'], () => import('../routes/Rna/RnaRealname')),
     },
@@ -98,6 +103,16 @@ export const getRouterData = app => {
     '/ord/ord-return': {
       component: dynamicWrapper(app, ['ordreturn', 'user'], () =>
         import('../routes/Ord/OrdReturn')
+      ),
+    },
+    '/sup/sup-order': {
+      component: dynamicWrapper(app, ['suporder','kdicompany', 'user', 'kdisender'], () =>
+        import('../routes/Sup/SupOrder')
+      ),
+    },
+    '/sup/sup-account': {
+      component: dynamicWrapper(app, ['supaccount','ordorder','kdicompany','afcapplywithdrawaccount' ,'user', 'kdisender'], () =>
+        import('../routes/Sup/SupAccount')
       ),
     },
     '/pfm/sys-mng': {

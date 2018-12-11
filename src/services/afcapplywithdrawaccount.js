@@ -20,3 +20,7 @@ export async function review(params) {
     method: 'PUT',
   });
 }
+//获取单个账户信息，供应商调用
+export async function getOneAccount(params) {
+  return request(`/afc-svr/afc/account/getbyid?${stringify(params)}`);
+}
