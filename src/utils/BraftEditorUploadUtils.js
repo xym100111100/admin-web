@@ -1,6 +1,7 @@
 export default function BraftEditorUploadUtils(param, url, method) {
   const xhr = new XMLHttpRequest();
   const fd = new FormData();
+  console.log("11111")
   const successFn = response => {
     const filePaths = JSON.parse(response.currentTarget.response);
     console.log("上传成功");

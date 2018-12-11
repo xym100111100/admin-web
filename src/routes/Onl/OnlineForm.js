@@ -4,7 +4,7 @@ import { Card, message, Input, Form, Col, Table, Upload, Icon, Modal, Radio, Sel
 import EditForm from 'components/Rebue/EditForm';
 import EditableTable from 'components/Rebue/EditableTable';
 // 引入编辑器以及EditorState子模块
-import BraftEditor, { EditorState } from 'braft-editor';
+import BraftEditor from 'braft-editor';
 // 引入编辑器样式
 import 'braft-editor/dist/index.css';
 
@@ -39,7 +39,7 @@ export default class OnlineForm extends React.Component {
     onlOnlineSpec: [],
     partnerData: [],
     // 创建一个空的editorState作为初始值
-    editorState: EditorState.createFrom(''),
+    editorState: BraftEditor.createEditorState(null),
   };
 
   // 获取上线信息包括：上线信息、规格信息、图片信息等
@@ -50,6 +50,7 @@ export default class OnlineForm extends React.Component {
         id: id,
       },
       callback: onlonline => {
+        console.log(onlonline)
         let fileList = new Array();
         let fileLists = new Array();
         for (let i = 0; i < onlonline.record.onlinePicList.length; i++) {
@@ -82,7 +83,7 @@ export default class OnlineForm extends React.Component {
           previewVisibles: false,
           previewImages: '',
           fileLists: fileLists,
-          onlineDetail: EditorState.createFrom(onlineDetail),
+          onlineDetail: BraftEditor.createEditorState(onlineDetail),
         });
       },
     });

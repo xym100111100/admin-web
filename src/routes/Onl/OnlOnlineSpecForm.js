@@ -3,6 +3,10 @@ import OnlyPopupForm from 'components/Rebue/OnlyPopupForm';
 import { connect } from 'dva';
 import React, { Fragment, PureComponent } from 'react';
 import styles from './OnlOnlineSpecFrom.less';
+// 引入编辑器以及EditorState子模块
+import BraftEditor from 'braft-editor';
+// 引入编辑器样式
+import 'braft-editor/dist/index.css';
 
 const FormItem = Form.Item;
 
@@ -16,6 +20,8 @@ export default class OnlOnlineSpecForm extends PureComponent {
     onlOnlineSpec: [], // 规格列表
     mainImageUrl: undefined, // 主图
     fileLists: [], // 轮播图
+    // 创建一个空的editorState作为初始值
+    editorState: BraftEditor.createEditorState(null),
   };
 
   componentWillMount() {
@@ -35,19 +41,21 @@ export default class OnlOnlineSpecForm extends PureComponent {
             fileLists.push('/ise-svr/files' + pic.picPath);
           }
         }
-        const { form } = this.props;
+        const { form, record } = this.props;
+        console.log(record.onlineDetail)
         form.setFieldsValue({ onlineName: onlonline.record.onlineTitle });
         this.setState({
           onlOnlineSpec: Array.from(onlonline.record.onlineSpecList),
           mainImageUrl,
           fileLists: fileLists,
+          editorState: BraftEditor.createEditorState(record.onlineDetail),
         });
       },
     });
   }
   render() {
     const { record } = this.props;
-    const { onlOnlineSpec, mainImageUrl, fileLists } = this.state;
+    const { onlOnlineSpec, mainImageUrl, fileLists, editorState } = this.state;
 
     const columns = [
       {
@@ -79,6 +87,19 @@ export default class OnlOnlineSpecForm extends PureComponent {
     if (record.subjectType === '0' || record.subjectType === 0) {
       columns.splice(3, 0, { title: '返现金额', dataIndex: 'cashbackAmount' });
     }
+
+    // 不在工具栏显示的控件列表
+    const excludeControls = [
+      'undo', 'redo', 'separator',
+      'font-size', 'line-height', 'letter-spacing', 'separator',
+      'text-color', 'bold', 'italic', 'underline', 'strike-through', 'separator',
+      'superscript', 'subscript', 'remove-styles', 'emoji',  'separator', 'text-indent', 'text-align', 'separator',
+      'headings', 'list-ul', 'list-ol', 'blockquote', 'code', 'separator',
+      'link', 'separator', 'hr', 'separator',
+      'media', 'separator',
+      'clear'
+  ];
+
     return (
       <Fragment>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="商品名称">
@@ -115,11 +136,9 @@ export default class OnlOnlineSpecForm extends PureComponent {
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="商品详情">
           {
             <div>
-              <div
-                style={{ float: 'left', width: '604px', height: '604px', margin: '0 8px 8px 0' }}
-                className={styles.onlineDetailClass}
-                dangerouslySetInnerHTML={{ __html: record.onlineDetail }}
-              />
+                <div style={{ float: 'left', width: '604px', height: '604px', margin: '0 8px 8px 0', border: 'solid 1px rgba(0, 0, 0, 0.25)' }}>
+                  <BraftEditor value={editorState} readOnly={true} excludeControls={excludeControls}/>
+                </div>
             </div>
           }
         </FormItem>
