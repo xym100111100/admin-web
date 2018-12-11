@@ -288,7 +288,7 @@ export default class OnlineForm extends React.Component {
       subjectType,
       partnerData,
     } = this.state;
-    
+
     // 商品主图、轮播图上传图标
     const uploadButton = (
       <div>
@@ -345,9 +345,21 @@ export default class OnlineForm extends React.Component {
     if (subjectType === 1) {
       columns.splice(3, 1);
     }
+
+    // 不在工具栏显示的控件列表
+    const excludeControls = [
+      'undo', 'redo', 'separator',
+      'font-size', 'line-height', 'letter-spacing', 'separator',
+      'text-color', 'bold', 'italic', 'underline', 'strike-through', 'separator',
+      'superscript', 'subscript', 'remove-styles', 'emoji', 'separator', 'text-indent', 'text-align', 'separator',
+      'headings', 'list-ul', 'list-ol', 'blockquote', 'code', 'separator',
+      'link', 'separator', 'hr', 'separator', 'separator',
+    ];
+
     // 富文本框功能配置
     const editorProps = {
       value: onlineDetail,
+      excludeControls: excludeControls,
       onChange: this.handleEditorChange,
       media: {
         allowPasteImage: false, // 是否允许直接粘贴剪贴板图片（例如QQ截图等）到编辑器
