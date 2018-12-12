@@ -264,6 +264,12 @@ export default class SupOrder extends SimpleMng {
             <Col md={3} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>数量 :</span>{items.buyCount !== undefined && (items.buyCount)}
             </Col>
+            <Col md={3} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>价格 :</span>{items.costPrice !== undefined && (items.costPrice)}
+            </Col>
+            <Col md={3} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>总价 :</span>{items.costPrice !== undefined && (items.costPrice * items.buyCount)}
+            </Col>
             <Col md={5} sm={24}>
               <span >退货状态 :</span><span style={color}>{items.returnState !== undefined && (items.returnState)}</span>
             </Col>
@@ -469,7 +475,6 @@ export default class SupOrder extends SimpleMng {
         step: '1',
       })
     }
-    console.log("========");
     this.showAddForm({
       editFormRecord: record,
       editForm: 'supSend',

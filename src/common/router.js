@@ -68,9 +68,9 @@ function getFlatMenuData(menus) {
 export const getRouterData = app => {
   const routerConfig = {
     // ****************** 业务路由 *******************
-    '/dumai/dumai-index': {
-      component: dynamicWrapper(app, ['dumaiindex', 'user'], () =>
-        import('../routes/Dumai/DumaiIndex')
+    '/home/index': {
+      component: dynamicWrapper(app, ['homeindex', 'user'], () =>
+        import('../routes/Home/HomeIndex')
       ),
     },
     '/rna/rna-realname': {

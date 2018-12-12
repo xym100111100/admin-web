@@ -148,7 +148,7 @@ export default class SupSendForm extends PureComponent {
                             keys.push(data[index].id);
                             //这里是设置发货备注的,只有在没有发货的详情才会加进去备注中。
                             let count = data[index].buyCount - data[index].returnCount;
-                            orderDetail += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].buyPrice;
+                            orderDetail += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].costPrice;
                             if (index + 1 === data.length) {
                                 orderDetail += ' 。 ';
                             } else {
@@ -159,7 +159,7 @@ export default class SupSendForm extends PureComponent {
                             //设置所有未发货的详情Id
                             allDetaileId += data[index].id + '/';
                             //设置发货成功的备注
-                            deliverRemark += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].buyPrice;
+                            deliverRemark += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].costPrice;
                         }
 
                     } else if (this.props.first === true) {
@@ -175,7 +175,7 @@ export default class SupSendForm extends PureComponent {
                             keys.push(data[index].id);
                             //这里是设置发货备注的,只有在没有发货的详情才会加进去备注中。
                             let count = data[index].buyCount - data[index].returnCount;
-                            orderDetail += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].buyPrice;
+                            orderDetail += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].costPrice;
                             if (index + 1 === data.length) {
                                 orderDetail += ' 。 ';
                             } else {
@@ -186,7 +186,7 @@ export default class SupSendForm extends PureComponent {
                             //设置所有未发货的详情Id
                             allDetaileId += data[index].id + '/';
                             //设置发货成功的备注
-                            deliverRemark += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].buyPrice;
+                            deliverRemark += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].costPrice;
 
                         }
                     }
@@ -258,7 +258,7 @@ export default class SupSendForm extends PureComponent {
         for (let index = 0; index < data.length; index++) {
             //改变发货备注
             let count = data[index].buyCount - data[index].returnCount;
-            orderDetail += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].buyPrice;
+            orderDetail += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].costPrice;
             if (index + 1 === data.length) {
                 orderDetail += ' 。 ';
             } else {
@@ -269,7 +269,7 @@ export default class SupSendForm extends PureComponent {
             //改变选中的项
             rowKeys.push(data[index].id);
             //设置发货成功的备注
-            deliverRemark += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].buyPrice;
+            deliverRemark += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].costPrice;
 
         }
         this.setState({
@@ -443,7 +443,7 @@ export default class SupSendForm extends PureComponent {
                             <br />
                             <span>类型 : {record.subjectType}</span>
                             <br />
-                            <span>数量 : {record.buyCount - record.returnCount + 'x' + record.buyPrice}</span>
+                            <span>数量 : {record.buyCount - record.returnCount + 'x' + record.costPrice}</span>
                         </div>
                     )
 
@@ -465,7 +465,7 @@ export default class SupSendForm extends PureComponent {
                             <br />
                             <span>类型 : {record.subjectType}</span>
                             <br />
-                            <span>数量 : {record.buyCount - record.returnCount + 'x' + record.buyPrice}</span>
+                            <span>数量 : {record.buyCount - record.returnCount + 'x' + record.costPrice}</span>
                         </div>
                     )
 

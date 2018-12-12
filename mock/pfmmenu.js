@@ -2,8 +2,8 @@ import { parse } from 'url';
 
 // mock menuData
 const menuData = [];
-menuData.push({ id: '1536131597087', sysId: 'damai-admin', code: '00', title: '大卖科技', name: '大卖科技', path: 'dumai', isEnabled: true, icon: 'home', remark: '大卖首页' });
-menuData.push({ id: '1536131597088', sysId: 'damai-admin', code: '0000', title: '首页', name: '首页', path: 'dumai-index', isEnabled: true, icon: null, remark: '大卖首页信息'});
+menuData.push({ id: '1536131597087', sysId: 'damai-admin', code: '00', title: '大卖科技', name: '大卖科技', path: 'home', isEnabled: true, icon: 'home', remark: '大卖首页' });
+menuData.push({ id: '1536131597088', sysId: 'damai-admin', code: '0000', title: '首页', name: '首页', path: 'index', isEnabled: true, icon: null, remark: '大卖首页信息'});
 menuData.push({ id: '1536131597089', sysId: 'damai-admin', code: '01', title: null, name: '快递业务', path: 'kdi', isEnabled: true, icon: 'profile', remark: '快递相关业务' });
 menuData.push({ id: '1536131597090', sysId: 'damai-admin', code: '0100', title: '快递下单', name: '快递下单', path: 'kdi-eorder', isEnabled: true, icon: null, remark: '快递下单相关业务' });
 menuData.push({ id: '1536131597091', sysId: 'damai-admin', code: '0101', title: '快递管理', name: '快递单管理', path: 'kdi-mng', isEnabled: true, icon: null, remark: '快递单相关业务' });

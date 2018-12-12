@@ -1,11 +1,11 @@
 import { message } from 'antd';
-import { list, getById, add, modify, del } from '../services/dumaiindex';
+import { list, getById, add, modify, del } from '../services/homeindex';
 
 export default {
-  namespace: 'dumaiindex',
+  namespace: 'homeindex',
 
   state: {
-    dumaiindex: [],
+    homeindex: [],
   },
 
   effects: {
@@ -53,7 +53,7 @@ export default {
   reducers: {
     changeList(state, action) {
       return {
-        dumaiindex: action.payload,
+        homeindex: action.payload,
       };
     },
   },

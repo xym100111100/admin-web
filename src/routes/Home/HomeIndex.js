@@ -6,11 +6,11 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 
 
-@connect(({ dumaiindex, user, loading }) => ({ dumaiindex, user, loading: loading.models.dumaiindex || loading.models.user }))
-export default class DumaiIndex extends SimpleMng {
+@connect(({ homeindex, user, loading }) => ({ homeindex, user, loading: loading.models.homeindex || loading.models.user }))
+export default class HomeIndex extends SimpleMng {
   constructor() {
     super();
-    this.moduleCode = 'dumaiindex';
+    this.moduleCode = 'homeindex';
     this.state.currentUserName='';
   }
 
@@ -24,7 +24,7 @@ export default class DumaiIndex extends SimpleMng {
   }
 
   render() {
-    const { dumaiindex: { dumaiindex }, loading } = this.props;
+    const { homeindex: { homeindex }, loading } = this.props;
 
     return (
       <Fragment>
