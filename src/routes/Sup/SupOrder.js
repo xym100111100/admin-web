@@ -24,6 +24,7 @@ export default class SupOrder extends SimpleMng {
       pageNum: 1,
       pageSize: 5,
       orderState: 2,
+      orgId:0,
     };
     this.state.orderCode = undefined;
     this.state.record = undefined;
@@ -38,10 +39,14 @@ export default class SupOrder extends SimpleMng {
 
   //初始化
   componentDidMount() {
+    this.setState({
+      orgId:this.props.user.currentUser.orgId,
+    })
     this.state.payloads = {
       pageNum: this.state.options.pageNum,
       pageSize: this.state.options.pageSize,
       orderState: this.state.options.orderState,
+      orgId:this.props.user.currentUser.orgId,
     };
     this.props.dispatch({
       type: `${this.moduleCode}/list`,
@@ -132,11 +137,13 @@ export default class SupOrder extends SimpleMng {
       }
       fieldsValue.pageNum = this.state.options.pageNum;
       fieldsValue.pageSize = this.state.options.pageSize;
+      fieldsValue.orgId = this.props.user.currentUser.orgId;
       this.setState({
         options: {
           pageNum: fieldsValue.pageNum,
           pageSize: fieldsValue.pageSize,
-          orderState: fieldsValue.orderState
+          orderState: fieldsValue.orderState,
+          orgId:this.props.user.currentUser.orgId,
         },
       });
       this.props.dispatch({
@@ -158,7 +165,8 @@ export default class SupOrder extends SimpleMng {
         options: {
           pageNum: pagination.current,
           pageSize: pagination.pageSize,
-          orderState: fieldsValue.orderState
+          orderState: fieldsValue.orderState,
+          orgId:this.props.user.currentUser.orgId,
         },
       });
       //使用正则来判断用户输入的是什么筛选条件,默认为名字，一旦是其他的就将名字设置为undefined
@@ -170,6 +178,7 @@ export default class SupOrder extends SimpleMng {
         fieldsValue.orderTimeStart = fieldsValue.orderTime[0].format('YYYY-MM-DD HH:mm:ss');
         fieldsValue.orderTime = undefined;
       }
+      fieldsValue.orgId = this.props.user.currentUser.orgId;
       this.props.dispatch({
         type: `${this.moduleCode}/list`,
         payload: fieldsValue,
@@ -403,7 +412,7 @@ export default class SupOrder extends SimpleMng {
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
           <Col md={6} sm={24}>
             <FormItem label="">
-              {getFieldDecorator('receiverName')(<Input placeholder="收件人姓名/订单编号" />)}
+              {getFieldDecorator('receiverName')(<Input placeholder="收件人姓名/订单编号/订单标题" />)}
             </FormItem>
           </Col>
           <Col md={7} sm={24}>
@@ -423,6 +432,7 @@ export default class SupOrder extends SimpleMng {
               })(
                 <Select placeholder="订单状态" style={{ width: '100%' }}>
                   <Option value="">全部</Option>
+                  <Option value="1">已下单</Option>
                   <Option value="2">已支付</Option>
                   <Option value="3">已发货</Option>
                   <Option value="4">已签收</Option>
@@ -845,6 +855,7 @@ export default class SupOrder extends SimpleMng {
         width: 100,
         render: (text, record) => {
           if (record.orderState === -1) return '做废';
+          if (record.orderState === 1) return '已下单';
           if (record.orderState === 2) return '已支付';
           if (record.orderState === 3) return '已发货';
           if (record.orderState === 4) return '已签收';
