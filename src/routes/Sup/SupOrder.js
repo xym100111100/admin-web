@@ -412,7 +412,7 @@ export default class SupOrder extends SimpleMng {
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
           <Col md={6} sm={24}>
             <FormItem label="">
-              {getFieldDecorator('receiverName')(<Input placeholder="收件人姓名/订单编号/订单标题" />)}
+              {getFieldDecorator('receiverName')(<Input placeholder="收件人/订单编号/商品/id" />)}
             </FormItem>
           </Col>
           <Col md={7} sm={24}>
