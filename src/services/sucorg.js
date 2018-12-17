@@ -5,6 +5,10 @@ export async function list(params) {
   return request(`/suc-svr/suc/org?${stringify(params)}`);
 }
 
+export async function listAll() {
+  return request(`/suc-svr/suc/org/all`);
+}
+
 export async function getById(params) {
   return request(`/suc-svr/suc/org/getbyid?${stringify(params)}`);
 }

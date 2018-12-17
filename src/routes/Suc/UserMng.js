@@ -75,6 +75,20 @@ export default class UserMng extends SimpleMng {
     });
   }
 
+  /**
+   * 设置为测试号
+   */
+  setIsTester=(record)=>{
+    this.props.dispatch({
+      type: 'sucuser/modify',
+      payload: { id: record.id, isTester: !record.isTester},
+      callback: () => {
+        this.handleReload();
+      },
+    });
+
+  }
+
   // 解除登录密码
   removeLoginPassWord(record) {
     this.props.dispatch({
@@ -229,6 +243,23 @@ export default class UserMng extends SimpleMng {
                 checked={record.isLock}
                 loading={loading}
                 onChange={() => this.handleEnable(record)}
+              />
+            </Fragment>
+          );
+        },
+      },
+      {
+        title: '是否测试号',
+        dataIndex: 'isTester',
+        render: (text, record) => {
+          return (
+            <Fragment>
+              <Switch
+                checkedChildren="是"
+                unCheckedChildren="否"
+                checked={record.isTester}
+                loading={loading}
+                onChange={() => this.setIsTester(record)}
               />
             </Fragment>
           );

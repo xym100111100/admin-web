@@ -9,6 +9,7 @@ import OrdOrderForm from './OrdOrderForm';
 import OrdTraceForm from './OrdTraceForm';
 import OrdSendForm from './OrdSendForm';
 import OrdgetTrace from './OrdgetTrace';
+import OrdDeliverOrgForm from './OrdDeliverOrgForm';
 import ModifyOrderShippingAddress from './ModifyOrderShippingAddress';
 const { RangePicker } = DatePicker;
 
@@ -333,10 +334,10 @@ export default class OrdOrder extends SimpleMng {
             record.receiverProvince + record.receiverCity + record.receiverExpArea + record.receiverAddress)}
         </Col>
         <Col md={8} sm={24}>
-          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>供应商:</span>{record.onlineOrgName !== undefined && (record.onlineOrgName)}
+          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>上线组织:</span>{record.onlineOrgName !== undefined && (record.onlineOrgName)}
         </Col>
         <Col md={8} sm={24}>
-          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>发货组织:</span>{record.deliverOrgName !== undefined && (record.deliverOrgName)}
+          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>供应商:</span>{record.deliverOrgName !== undefined && (record.deliverOrgName)}
         </Col>
         {this.showPayTime(record)}
         {this.showSendTime(record)}
@@ -484,18 +485,18 @@ export default class OrdOrder extends SimpleMng {
   }
 
   /**
-   * 重新订阅轨迹，没有用到
+   * 设置供应商
    */
-  getTraceAgain = (record) => {
-    if (record.orderState === 3) {
-      return (
-        <Menu.Item>
-          <a onClick={() => this.getTrace(record)} >重新订阅轨迹</a>
-        </Menu.Item>
-      )
-    }
+  setDeliverOrg=(record)=>{
+    this.props.dispatch({
+      type: `${this.moduleCode}/updateDeliver`,
+      payload: record,
+      callback:()=>{
+        this.setState({ editForm: undefined })
+        this.handleReload();
+      }
+    })
   }
-
   /**
    * 显示发货窗口并把发货步骤窗口改为1，1为选择快递公司发件人界面，2为选择要发货的详情界面。
    */
@@ -958,6 +959,9 @@ export default class OrdOrder extends SimpleMng {
                 >
                   修改收货地址
                </a>
+               <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordDeliverOrg', editFormTitle: '修改供应商' })} >
+               修改供应商
+                  </a>
               </Fragment>
             )
           } else if(record.orderState === 3){
@@ -1066,6 +1070,16 @@ export default class OrdOrder extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
+          />
+        )}
+        {editForm === 'ordDeliverOrg' && (
+          <OrdDeliverOrgForm
+            visible
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            onSubmit={(fields) =>this.setDeliverOrg(fields)}
           />
         )}
         {editForm === 'ordSend' && (

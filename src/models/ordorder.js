@@ -1,6 +1,7 @@
 import { message } from 'antd';
-import { buyrelation,list,getTrace, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,shipmentconfirmation, modifyOrderShippingAddress } from '../services/ordorder';
+import {updateDeliver, buyrelation,list,getTrace, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,shipmentconfirmation, modifyOrderShippingAddress } from '../services/ordorder';
 import { printpage ,logisticList} from '../services/kdilogistic';
+import { listAll } from '../services/sucorg';
 export default {
   namespace: 'ordorder',
 
@@ -22,6 +23,11 @@ export default {
 
     *logisticList({ payload, callback }, { call, put }) {
       const response = yield call(logisticList, payload);
+      if (callback) callback(response);
+    },
+
+    *listAll({ payload, callback }, { call, put }) {
+      const response = yield call(listAll, payload);
       if (callback) callback(response);
     },
 
@@ -64,6 +70,15 @@ export default {
     },
     *modify({ payload, callback }, { call }) {
       const response = yield call(modify, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *updateDeliver({ payload, callback }, { call }) {
+      const response = yield call(updateDeliver, payload);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);

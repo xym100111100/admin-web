@@ -82,6 +82,15 @@ export async function modify(params) {
   });
 }
 
+export async function updateDeliver(params) {
+  return request('/ord-svr/ord/order/update', {
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
+}
+
 export async function del(params) {
   return request(`/ord-svr/ord/order?${stringify(params)}`, {
     method: 'DELETE',
