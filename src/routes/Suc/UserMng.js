@@ -268,7 +268,7 @@ export default class UserMng extends SimpleMng {
                   this.showEditForm({
                     moduleCode: 'sucuser',
                     editForm: 'userForm',
-                    editFormTitle: '编辑角色信息',
+                    editFormTitle: '编辑用户信息',
                     editFormRecord: record,
                   })
                 }
