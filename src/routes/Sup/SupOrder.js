@@ -35,6 +35,7 @@ export default class SupOrder extends SimpleMng {
     this.state.LogisticInfo = '';
     this.state.step = '1';
     this.state.first = true;
+    this.state.payloads={};
   }
 
   //初始化
@@ -273,10 +274,10 @@ export default class SupOrder extends SimpleMng {
             <Col md={3} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>数量 :</span>{items.buyCount !== undefined && (items.buyCount)}
             </Col>
-            <Col md={3} sm={24}>
+            <Col md={4} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>价格 :</span>{items.costPrice !== undefined && (items.costPrice)}
             </Col>
-            <Col md={3} sm={24}>
+            <Col md={4} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>总价 :</span>{items.costPrice !== undefined && (items.costPrice * items.buyCount)}
             </Col>
             <Col md={5} sm={24}>
@@ -797,11 +798,11 @@ export default class SupOrder extends SimpleMng {
     } else {
       tl = Number(suporder.total);
     }
-    let kdilogisticData;
+    let suporderData;
     if (suporder === undefined) {
-      kdilogisticData = [];
+      suporderData = [];
     } else {
-      kdilogisticData = suporder.list;
+      suporderData = suporder.list;
     }
     const paginationProps = {
       showSizeChanger: true,
@@ -937,7 +938,7 @@ export default class SupOrder extends SimpleMng {
               pagination={paginationProps}
               loading={loading}
               onChange={this.handleTableChange}
-              dataSource={kdilogisticData}
+              dataSource={suporderData}
               columns={columns}
             />
           </div>

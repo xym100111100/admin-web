@@ -1,12 +1,14 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Card, DatePicker, Form, Table, Select, Button, Col, Input, Row } from 'antd';
+import { Card,Radio, DatePicker, Form, Table, Select, Button, Col, Input, Row } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './SupAccount.less';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
+const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
 @connect(({ supaccount, ordorder, user, afcapplywithdrawaccount, loading }) => ({
   supaccount, ordorder, user, afcapplywithdrawaccount,
   loading: loading.models.supaccount || loading.models.ordorder || loading.models.user || loading.models.afcapplywithdrawaccount
@@ -15,11 +17,18 @@ const { Option } = Select;
 export default class SupAccount extends SimpleMng {
   constructor() {
     super();
+    this.state.options = {
+      pageNum: 1,
+      pageSize: 5,
+      orderState: '',
+      orgId:0,
+    };
     this.moduleCode = 'supaccount';
     this.state.balance = 0;
     this.state.supplierName = '';
     this.state.notSettle = 0;
     this.state.alreadySettle = 0;
+    this.state.payloads={};
   }
 
   //初始化
@@ -42,7 +51,7 @@ export default class SupAccount extends SimpleMng {
     //获取供应商订单已经结算和待结算的成本价
     this.props.dispatch({
       type: `${this.moduleCode}/getSettleTotal`,
-      payload: { deliverOrgId:deliverOrgId },
+      payload: { deliverOrgId: deliverOrgId },
       callback: data => {
         this.setState({
           notSettle: data.notSettle,
@@ -50,6 +59,21 @@ export default class SupAccount extends SimpleMng {
         })
       }
     });
+    //初始化订单列表
+    this.setState({
+      orgId:this.props.user.currentUser.orgId,
+    })
+    this.state.payloads = {
+      pageNum: this.state.options.pageNum,
+      pageSize: this.state.options.pageSize,
+      orderState: this.state.options.orderState,
+      orgId:this.props.user.currentUser.orgId,
+    };
+    this.props.dispatch({
+      type: `${this.moduleCode}/list`,
+      payload: this.state.payloads,
+    });
+
   }
 
   renderSearchForm() {
@@ -62,7 +86,7 @@ export default class SupAccount extends SimpleMng {
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
           <Col md={6} sm={24}>
             <FormItem label="">
-              {getFieldDecorator('receiverName')(<Input placeholder="收件人姓名/订单编号" />)}
+              {getFieldDecorator('receiverName')(<Input placeholder="收件人/订单编号/商品/id" />)}
             </FormItem>
           </Col>
           <Col md={7} sm={24}>
@@ -78,7 +102,7 @@ export default class SupAccount extends SimpleMng {
           <Col md={4} sm={24}>
             <FormItem label="">
               {getFieldDecorator('orderState', {
-                initialValue: '2'
+                initialValue: ''
               })(
                 <Select placeholder="订单状态" style={{ width: '100%' }}>
                   <Option value="">全部</Option>
@@ -100,6 +124,33 @@ export default class SupAccount extends SimpleMng {
                 重置
               </Button>
             </span>
+          </Col>
+        </Row>
+        <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
+          <Col md={24} sm={24}>
+            <FormItem   >
+              {getFieldDecorator('applyState', {
+                initialValue: '',
+              })(
+                <RadioGroup  >
+                  <RadioButton onClick={() => this.listState('')} value="">
+                    全部
+                  </RadioButton>
+                  <RadioButton onClick={() => this.listState(1)} value="1">
+                    待结算
+                  </RadioButton>
+                  <RadioButton onClick={() => this.listState(2)} value="2">
+                    已结算
+                  </RadioButton>
+                  <RadioButton onClick={() => this.listState(3)} value="3">
+                    交易关闭
+                  </RadioButton>
+                  <RadioButton onClick={() => this.listState(3)} value="4">
+                    退款中
+                  </RadioButton>
+                </RadioGroup>
+              )}
+            </FormItem>
           </Col>
         </Row>
       </Form>
@@ -142,42 +193,97 @@ export default class SupAccount extends SimpleMng {
 
   render() {
     const { supaccount: { supaccount }, loading } = this.props;
+
+    let ps;
+    if (supaccount === undefined || supaccount.pageSize === undefined) {
+      ps = 5;
+    } else {
+      ps = supaccount.pageSize;
+    }
+    let tl;
+    if (supaccount === undefined || supaccount.total === undefined) {
+      tl = 1;
+    } else {
+      tl = Number(supaccount.total);
+    }
+    let supaccountData;
+    if (supaccount === undefined) {
+      supaccountData = [];
+    } else {
+      supaccountData = supaccount.list;
+    }
+    const paginationProps = {
+      showSizeChanger: true,
+      showQuickJumper: true,
+      pageSize: ps,
+      total: tl,
+      pageSizeOptions: ['5', '10'],
+    };
+
     const columns = [
       {
-        title: '代号',
-        dataIndex: 'id',
+        title: '订单编号',
+        dataIndex: 'orderCode',
+        key: 'orderCode',
+        width: 150,
       },
       {
-        title: '名称',
-        dataIndex: 'name',
+        title: '收件人',
+        dataIndex: 'receiverName',
+        key: 'receiverName',
+        width: 150,
       },
       {
-        title: '描述',
-        dataIndex: 'remark',
+        title: '商品',
+        dataIndex: 'orderTitle',
+        key: 'orderTitle',
+        render: (text, record) => {
+          if (record.orderTitle.length > 50) {
+            return (
+              record.orderTitle.substr(0, 50) + '等商品。。'
+            )
+          } else {
+            return (
+              record.orderTitle
+            )
+          }
+
+        },
+
+      },
+      {
+        title: '状态',
+        dataIndex: 'orderState',
+        key: 'orderState',
+        render: (text, record) => {
+          if (record.orderState === -1) return '做废';
+          if (record.orderState === 1) return '已下单';
+          if (record.orderState === 2) return '已支付';
+          if (record.orderState === 3) return '已发货';
+          if (record.orderState === 4) return '已签收';
+          if (record.orderState === 5) return '已结算';
+        },
+      },
+
+      {
+        title: '下单时间',
+        dataIndex: 'orderTime',
+        key: 'orderTime',
+        width: 100,
       },
       {
         title: '操作',
-        render: (text, record) => (
-          <Fragment>
-            <a onClick={() => this.showEditForm({ id: record.id, editForm: 'sysForm', editFormTitle: '编辑系统信息' })}>
-              编辑
-            </a>
-            <Divider type="vertical" />
-            <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record)}>
-              <a>删除</a>
-            </Popconfirm>
-          </Fragment>
-        ),
+        width: 120,
       },
     ];
+
 
     return (
       <Fragment>
         <PageHeaderLayout>
           <Card bordered={false}>
-            <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
-            <p>
-              <span style={{ color: 'rgba(0, 0, 0, 0.85)',  marginRight: 8 }}>
+            <div style={{ marginBottom: 20 }} >
+              <span style={{ color: 'rgba(0, 0, 0, 0.85)', marginRight: 8 }}>
                 {this.state.supplierName}
               </span>
               您的余额为:
@@ -186,13 +292,16 @@ export default class SupAccount extends SimpleMng {
               <span style={{ color: 'rgba(0, 0, 0, 0.85)', fontSize: '20px', marginRight: 8 }}>{this.state.notSettle}元</span>
               您订单已结算金额为:
               <span style={{ color: 'rgba(0, 0, 0, 0.85)', fontSize: '20px', marginRight: 8 }}>{this.state.alreadySettle}元</span>
-            </p>
+            </div>
+            <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
             <div className={styles.tableList}>
               <Table
                 rowKey="id"
+                pagination={paginationProps}
                 loading={loading}
                 onChange={this.handleTableChange}
                 columns={columns}
+                dataSource={supaccountData}
               />
             </div>
           </Card>
