@@ -27,7 +27,6 @@ export default class SupTraceForm extends PureComponent {
  * 初始化物流信息
  */
   initLogisticInfo = (orderId) => {
-    console.log("ooooooo");
     this.props.dispatch({
       type: `suporder/logisticList`,
       payload: { orderId: orderId },

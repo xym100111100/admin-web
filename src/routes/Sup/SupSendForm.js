@@ -38,7 +38,6 @@ export default class SupSendForm extends PureComponent {
     }
 
     componentDidMount() {
-        console.log("=================");
         this.initDetailData();
     }
 
