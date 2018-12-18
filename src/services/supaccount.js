@@ -1,10 +1,9 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
 
-export async function list() {
-  return request(`/sup-svr/sup/account`);
+export async function list(params) {
+  return request(`/ord-svr/ord/order/supplier/listOrderTrade?${stringify(params)}`);
 }
-
 
 
 export async function getById(params) {

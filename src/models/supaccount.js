@@ -1,8 +1,8 @@
 import { message } from 'antd';
-import {  getById, add, modify, del, } from '../services/supaccount';
-import { list } from '../services/suporder';
+import { list, getById, add, modify, del, } from '../services/supaccount';
 import { getOneAccount } from '../services/afcapplywithdrawaccount';
 import { getSettleTotal } from '../services/ordorder';
+import { detail} from '../services/suporder';
 
 export default {
   namespace: 'supaccount',
@@ -18,6 +18,10 @@ export default {
         type: 'changeList',
         payload: response,
       });
+      if (callback) callback(response);
+    },
+    *detail({ payload, callback }, { call, put }) {
+      const response = yield call(detail, payload);
       if (callback) callback(response);
     },
     *getSettleTotal({ payload, callback }, { call, put }) {
