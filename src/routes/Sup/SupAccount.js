@@ -1,14 +1,17 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Card,Radio,Divider, DatePicker, Form, Table, Select, Button,Popover , Col, Input, Row } from 'antd';
+import { Card, Divider, DatePicker, Tooltip, Icon, Form, Table, Button, Col, Input, Row } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './SupAccount.less';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
-const { Option } = Select;
-const RadioGroup = Radio.Group;
-const RadioButton = Radio.Button;
+import {
+  ChartCard,
+  MiniBar,
+  Field,
+} from 'components/Charts';
+
 @connect(({ supaccount, ordorder, user, afcapplywithdrawaccount, loading }) => ({
   supaccount, ordorder, user, afcapplywithdrawaccount,
   loading: loading.models.supaccount || loading.models.ordorder || loading.models.user || loading.models.afcapplywithdrawaccount
@@ -21,7 +24,7 @@ export default class SupAccount extends SimpleMng {
       pageNum: 1,
       pageSize: 5,
       orderState: '',
-      orgId:0,
+      orgId: 0,
     };
     this.state.expand = {
       expand: '',
@@ -31,8 +34,9 @@ export default class SupAccount extends SimpleMng {
     this.state.supplierName = '';
     this.state.notSettle = 0;
     this.state.alreadySettle = 0;
-    this.state.payloads={};
-    this.state.returnState=null;
+    this.state.payloads = {};
+    this.state.returnState = null;
+    this.state.tradeList = [];
   }
 
   handleFormReset = () => {
@@ -46,11 +50,11 @@ export default class SupAccount extends SimpleMng {
 
   //初始化
   componentDidMount() {
-    const deliverOrgId = this.props.user.currentUser.orgId;
+    const orgId = this.props.user.currentUser.orgId;
     //获取单个账户
     this.props.dispatch({
       type: `${this.moduleCode}/getOneAccount`,
-      payload: { id: deliverOrgId },
+      payload: { id: orgId },
       callback: data => {
         if (data.balance !== null && data.balance != undefined) {
           this.setState({
@@ -63,7 +67,7 @@ export default class SupAccount extends SimpleMng {
     //获取供应商订单已经结算和待结算的成本价
     this.props.dispatch({
       type: `${this.moduleCode}/getSettleTotal`,
-      payload: { deliverOrgId: deliverOrgId },
+      payload: { deliverOrgId: orgId },
       callback: data => {
         this.setState({
           notSettle: data.notSettle,
@@ -71,82 +75,60 @@ export default class SupAccount extends SimpleMng {
         })
       }
     });
-    //初始化订单列表
+    //初始化交易表
     this.setState({
-      orgId:this.props.user.currentUser.orgId,
+      orgId: this.props.user.currentUser.orgId,
     })
     this.state.payloads = {
       pageNum: this.state.options.pageNum,
       pageSize: this.state.options.pageSize,
       orderState: this.state.options.orderState,
-      orgId:this.props.user.currentUser.orgId,
+      accountId: orgId,
     };
     this.props.dispatch({
-      type: `${this.moduleCode}/list`,
+      type: `${this.moduleCode}/tradeList`,
       payload: this.state.payloads,
-    });
-
-  }
-
-  /**
-   * 点击状态时候访问
-   * @param {} state 
-   */
-  listState(state) {
-    let payload = {
-      pageNum: this.state.options.pageNum,
-      pageSize: this.state.options.pageSize,
-      orgId:this.props.user.currentUser.orgId,
-    };
-    //如果是点击了查询退货的就特殊处理
-    if(state===1){
-      payload.returnState=state;
-      this.setState({
-        returnState:1,
-      })
-    }else{
-      payload.orderState=state;
-      this.setState({
-        returnState:null,
-      })
-    }
-    this.props.dispatch({
-      type: `${this.moduleCode}/list`,
-      payload: payload,
-    });
-  }
-
-    //点击submit查询
-    list = () => {
-      const { form } = this.props;
-      form.validateFields((err, fieldsValue) => {
-        if (err) return;
-        //特殊处理查询退款中的
-        if(fieldsValue.orderState ==="1"){
-          fieldsValue.returnState =1;
-          fieldsValue.orderState=null;
-        }
-        //上传上来的时间是一个数组，需要格式化
-        if (fieldsValue.orderTime !== undefined && fieldsValue.orderTime !== '' && fieldsValue.orderTime.length >= 1) {
-          fieldsValue.orderTimeEnd = fieldsValue.orderTime[1].format('YYYY-MM-DD HH:mm:ss');
-          fieldsValue.orderTimeStart = fieldsValue.orderTime[0].format('YYYY-MM-DD HH:mm:ss');
-          fieldsValue.orderTime = undefined;
-        }
-        fieldsValue.pageNum = this.state.options.pageNum;
-        fieldsValue.pageSize = this.state.options.pageSize;
-        fieldsValue.orgId = this.props.user.currentUser.orgId;
+      callback: data => {
         this.setState({
-          options: {
-            pageNum: fieldsValue.pageNum,
-            pageSize: fieldsValue.pageSize,
-          },
-        });
-        this.props.dispatch({
-          type: `${this.moduleCode}/list`,
-          payload: fieldsValue,
-        });
+          tradeList:data
+        })
+      }
+    });
+
+  }
+
+
+  //点击submit查询
+  list = () => {
+    const { form } = this.props;
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      //上传上来的时间是一个数组，需要格式化
+      if (fieldsValue.tradeTime !== undefined && fieldsValue.tradeTime !== '' && fieldsValue.tradeTime.length >= 1) {
+        fieldsValue.orderTimeEnd = fieldsValue.tradeTime[1].format('YYYY-MM-DD HH:mm:ss');
+        fieldsValue.orderTimeStart = fieldsValue.tradeTime[0].format('YYYY-MM-DD HH:mm:ss');
+        fieldsValue.tradeTime = undefined;
+      }
+      fieldsValue.pageNum = this.state.options.pageNum;
+      fieldsValue.pageSize = this.state.options.pageSize;
+      fieldsValue.accountId = this.props.user.currentUser.orgId;
+      this.setState({
+        options: {
+          pageNum: fieldsValue.pageNum,
+          pageSize: fieldsValue.pageSize,
+        },
       });
-    };
+      this.props.dispatch({
+        type: `${this.moduleCode}/tradeList`,
+        payload: fieldsValue,
+        callback: data => {
+          this.setState({
+            tradeList:data
+          })
+        }
+      });
+    });
+  };
 
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
@@ -155,23 +137,18 @@ export default class SupAccount extends SimpleMng {
     editFormRecord.orgId = user.currentUser.orgId;
     return (
       <Form onSubmit={this.list} layout="inline">
-        <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
-          <Col md={7} sm={24}>
+        <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
+          <Col md={10} sm={24}  >
             <FormItem label="">
-              {getFieldDecorator('receiverName')(<Input placeholder="订单编号/收件人/商品" />)}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="">
-              {getFieldDecorator('orderTime')(
+              {getFieldDecorator('tradeTime')(
                 <RangePicker
                   disabledDate={this.disabledDate}
-                  placeholder={['下单开始日期', '下单结束日期']}
+                  placeholder={['交易开始日期', '交易结束日期']}
                 />
               )}
             </FormItem>
           </Col>
-          <Col md={7} sm={24}>
+          <Col md={6} sm={24}  >
             <span>
               <Button type="primary" htmlType="submit">
                 查询
@@ -180,33 +157,6 @@ export default class SupAccount extends SimpleMng {
                 重置
               </Button>
             </span>
-          </Col>
-        </Row>
-        <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
-          <Col md={24} sm={24}>
-            <FormItem   >
-              {getFieldDecorator('orderState', {
-                initialValue: '',
-              })(
-                <RadioGroup  >
-                  <RadioButton onClick={() => this.listState('')} value="">
-                    全部
-                  </RadioButton>
-                  <RadioButton onClick={() => this.listState(4)} value="4">
-                    待结算
-                  </RadioButton>
-                  <RadioButton onClick={() => this.listState(5)} value="5">
-                    已结算
-                  </RadioButton>
-                  <RadioButton onClick={() => this.listState(-1)} value="-1">
-                    交易关闭
-                  </RadioButton>
-                  <RadioButton onClick={() => this.listState(1)} value="1">
-                    退款中
-                  </RadioButton>
-                </RadioGroup>
-              )}
-            </FormItem>
           </Col>
         </Row>
       </Form>
@@ -227,25 +177,24 @@ export default class SupAccount extends SimpleMng {
           pageSize: pagination.pageSize,
         },
       });
-      //特殊处理查询退款中的
-      if(fieldsValue.orderState ==="1"){
-        fieldsValue.returnState =1;
-        fieldsValue.orderState=null;
-      }
 
-      //使用正则来判断用户输入的是什么筛选条件,默认为名字，一旦是其他的就将名字设置为undefined
       fieldsValue.pageNum = pagination.current;
       fieldsValue.pageSize = pagination.pageSize;
       //上传上来的时间是一个数组，需要格式化
-      if (fieldsValue.orderTime !== undefined && fieldsValue.orderTime !== '' && fieldsValue.orderTime.length >= 1) {
-        fieldsValue.orderTimeEnd = fieldsValue.orderTime[1].format('YYYY-MM-DD HH:mm:ss');
-        fieldsValue.orderTimeStart = fieldsValue.orderTime[0].format('YYYY-MM-DD HH:mm:ss');
-        fieldsValue.orderTime = undefined;
+      if (fieldsValue.tradeTime !== undefined && fieldsValue.tradeTime !== '' && fieldsValue.tradeTime.length >= 1) {
+        fieldsValue.orderTimeEnd = fieldsValue.tradeTime[1].format('YYYY-MM-DD HH:mm:ss');
+        fieldsValue.orderTimeStart = fieldsValue.tradeTime[0].format('YYYY-MM-DD HH:mm:ss');
+        fieldsValue.tradeTime = undefined;
       }
-      fieldsValue.orgId = this.props.user.currentUser.orgId;
+      fieldsValue.accountId = this.props.user.currentUser.orgId;
       this.props.dispatch({
-        type: `${this.moduleCode}/list`,
+        type: `${this.moduleCode}/tradeList`,
         payload: fieldsValue,
+        callback: data => {
+          this.setState({
+            tradeList:data
+          })
+        }
       });
     });
   };
@@ -279,78 +228,78 @@ export default class SupAccount extends SimpleMng {
 
   }
 
-    /**
- * 根据是否有支付时间来支付时间
- */
-showPayTime = (record) => {
-  if (record.payTime === undefined) {
-    return
-  } else {
-    return (
-      <Col md={8} sm={24}>
-        <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>支付时间:</span>{record.payTime !== undefined && (record.payTime)}
-      </Col>
-    )
+  /**
+* 根据是否有支付时间来支付时间
+*/
+  showPayTime = (record) => {
+    if (record.payTime === undefined) {
+      return
+    } else {
+      return (
+        <Col md={8} sm={24}>
+          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>支付时间:</span>{record.payTime !== undefined && (record.payTime)}
+        </Col>
+      )
+    }
   }
-}
 
-/**
-* 根据是否有发货时间来显示发货时间
-*/
-showSendTime = (record) => {
-  if (record.sendTime === undefined) {
-    return
-  } else {
-    return (
-      <Col md={8} sm={24}>
-        <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>发货时间:</span>{record.sendTime !== undefined && (record.sendTime)}
-      </Col>
-    )
+  /**
+  * 根据是否有发货时间来显示发货时间
+  */
+  showSendTime = (record) => {
+    if (record.sendTime === undefined) {
+      return
+    } else {
+      return (
+        <Col md={8} sm={24}>
+          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>发货时间:</span>{record.sendTime !== undefined && (record.sendTime)}
+        </Col>
+      )
+    }
   }
-}
-/**
-* 根据是否有签收时间来签收时间
-*/
-showReceivedTime = (record) => {
-  if (record.receivedTime === undefined) {
-    return
-  } else {
-    return (
-      <Col md={8} sm={24}>
-        <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>签收时间:</span>{record.receivedTime !== undefined && (record.receivedTime)}
-      </Col>
-    )
+  /**
+  * 根据是否有签收时间来签收时间
+  */
+  showReceivedTime = (record) => {
+    if (record.receivedTime === undefined) {
+      return
+    } else {
+      return (
+        <Col md={8} sm={24}>
+          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>签收时间:</span>{record.receivedTime !== undefined && (record.receivedTime)}
+        </Col>
+      )
+    }
   }
-}
-/**
-* 根据是否有结算时间来结算时间
-*/
-showCloseTime = (record) => {
-  if (record.closeTime === undefined) {
-    return
-  } else {
-    return (
-      <Col md={8} sm={24}>
-        <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>结算时间:</span>{record.closeTime !== undefined && (record.closeTime)}
-      </Col>
-    )
+  /**
+  * 根据是否有结算时间来结算时间
+  */
+  showCloseTime = (record) => {
+    if (record.closeTime === undefined) {
+      return
+    } else {
+      return (
+        <Col md={8} sm={24}>
+          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>结算时间:</span>{record.closeTime !== undefined && (record.closeTime)}
+        </Col>
+      )
+    }
   }
-}
 
-/**
-* 根据是否有作废时间来作废时间
-*/
-showCancelTime = (record) => {
-  if (record.cancelTime === undefined) {
-    return
-  } else {
-    return (
-      <Col md={8} sm={24}>
-        <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>作废时间:</span>{record.cancelTime !== undefined && (record.cancelTime)}
-      </Col>
-    )
+  /**
+  * 根据是否有作废时间来作废时间
+  */
+  showCancelTime = (record) => {
+    if (record.cancelTime === undefined) {
+      return
+    } else {
+      return (
+        <Col md={8} sm={24}>
+          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>作废时间:</span>{record.cancelTime !== undefined && (record.cancelTime)}
+        </Col>
+      )
+    }
   }
-}
 
 
   showOrderInfo = (record) => {
@@ -454,133 +403,118 @@ showCancelTime = (record) => {
     });
     return listItems;
   }
+  /**
+   * 格式化金额
+   */
+  formatNum = (data) => {
+    let i = data.toString().indexOf(".");
+    if (i !== -1) {
+      return "¥"+data.toString().substring(0, i + 3);
+    }
+    return data;
+
+  }
 
 
   render() {
     const { supaccount: { supaccount }, loading } = this.props;
-    const content = (
-      <div>
-        {this.state.expand.expand !== '' && this.showReceiverInfo(this.state.expand.expand.orderInfo)}
-        <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
-          <Col md={24} sm={24}>
-            <h4>订单详情</h4>
-          </Col>
-        </Row>
-        {this.state.expand.expand !== '' && this.showExpand(this.state.expand.expand)}
-      </div>
-    );
-    let ps;
-    if (supaccount === undefined || supaccount.pageSize === undefined) {
-      ps = 5;
-    } else {
-      ps = supaccount.pageSize;
-    }
-    let tl;
-    if (supaccount === undefined || supaccount.total === undefined) {
-      tl = 1;
-    } else {
-      tl = Number(supaccount.total);
-    }
-    let supaccountData;
-    if (supaccount === undefined) {
-      supaccountData = [];
-    } else {
-      supaccountData = supaccount.list;
-    }
+    console.log(this.state.tradeList);
+
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      pageSize: ps,
-      total: tl,
+      pageSize: this.state.tradeList.pageSize,
+      total: this.state.tradeList.total,
       pageSizeOptions: ['5', '10'],
     };
 
     const columns = [
       {
-        title: '订单编号',
-        dataIndex: 'orderCode',
-        key: 'orderCode',
-        width: 150,
-        render: (text, record) => {
-          return (
-            <Popover autoAdjustOverflow={true} trigger='click' placement='right' onVisibleChange={(visible) => !visible || this.showOrderInfo(record)} content={content} title="查看订单信息" >
-              <a>  {record.orderCode}</a>
-            </Popover>
-          );
-        },
+        title: '交易标题',
+        dataIndex: 'tradeTitle',
       },
       {
-        title: '收件人',
-        dataIndex: 'receiverName',
-        key: 'receiverName',
-        width: 150,
-      },
-      {
-        title: '商品',
-        dataIndex: 'orderTitle',
-        key: 'orderTitle',
+        title: '交易类型',
+        dataIndex: 'tradeType',
         render: (text, record) => {
-          if (record.orderTitle.length > 50) {
-            return (
-              record.orderTitle.substr(0, 50) + '等商品。。'
-            )
-          } else {
-            return (
-              record.orderTitle
-            )
-          }
-
+          if (record.tradeType === 50) return '结算'
         },
 
       },
       {
-        title: '状态',
-        dataIndex: 'orderState',
-        key: 'orderState',
-        width: 100,
-        render: (text, record) => {
-          if(this.state.returnState !==null){
-            return'退款中';
-          }else{
-            if (record.orderState === -1) return '交易关闭';
-            if (record.orderState === 1) return '已下单';
-            if (record.orderState === 2) return '已支付';
-            if (record.orderState === 3) return '已发货';
-            if (record.orderState === 4) return '待结算';
-            if (record.orderState === 5) return '已结算';
-          }
-
-        },
-      },
-
-      {
-        title: '下单时间',
-        dataIndex: 'orderTime',
-        key: 'orderTime',
-        width: 100,
-      },
-      {
-        title: '操作',
-        width: 120,
-      },
+        title: '交易总额',
+        dataIndex: 'tradeAmount',
+      },      {
+        title: '交易时间',
+        dataIndex: 'tradeTime',
+      }, 
+     
     ];
 
+    const topColResponsiveProps = {
+      xs: 24,
+      sm: 12,
+      md: 12,
+      lg: 12,
+      xl: 8,
+      style: { marginBottom: 24 },
+    };
+
+    const balanceRemark = <span>余额说明</span>;
+    const notSettleRemark = <span>待结算说明</span>;
+    const settleRemark = <span>已结算说明</span>;
 
     return (
       <Fragment>
         <PageHeaderLayout>
-          <Card bordered={false}>
-            <div style={{ marginBottom: 20 }} >
-              <span style={{ color: 'rgba(0, 0, 0, 0.85)', marginRight: 8 }}>
-                {this.state.supplierName}
-              </span>
-              您的账户余额为:
-              <span style={{ color: 'rgba(0, 0, 0, 0.85)', fontSize: '20px', marginRight: 8 }}>{this.state.balance}元</span>
-              您账户订单待结算金额为:
-              <span style={{ color: 'rgba(0, 0, 0, 0.85)', fontSize: '20px', marginRight: 8 }}>{this.state.notSettle}元</span>
-              您账户订单已结算金额为:
-              <span style={{ color: 'rgba(0, 0, 0, 0.85)', fontSize: '20px', marginRight: 8 }}>{this.state.alreadySettle}元</span>
-            </div>
+          <Row gutter={24}>
+            <Col {...topColResponsiveProps}>
+              <ChartCard
+                bordered={false}
+                title="余额"
+                action={
+                  <Tooltip title={balanceRemark}>
+                    <Icon type="info-circle-o" />
+                  </Tooltip>
+                }
+                total={() => this.formatNum(this.state.balance)}
+                contentHeight={46}
+              >
+                <MiniBar />
+              </ChartCard>
+            </Col>
+            <Col {...topColResponsiveProps}>
+              <ChartCard
+                bordered={false}
+                title="未结算"
+                action={
+                  <Tooltip title={notSettleRemark}>
+                    <Icon type="info-circle-o" />
+                  </Tooltip>
+                }
+                total={() => this.formatNum(this.state.notSettle)}
+                contentHeight={46}
+              >
+                <MiniBar />
+              </ChartCard>
+            </Col>
+            <Col {...topColResponsiveProps}>
+              <ChartCard
+                bordered={false}
+                title="已结算"
+                action={
+                  <Tooltip title={settleRemark}>
+                    <Icon type="info-circle-o" />
+                  </Tooltip>
+                }
+                total={() => this.formatNum(this.state.alreadySettle)}
+                contentHeight={46}
+              >
+                <MiniBar />
+              </ChartCard>
+            </Col>
+          </Row>
+          <Card bordered={false} style={{ marginTop: 8, }} >
             <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
             <div className={styles.tableList}>
               <Table
@@ -589,7 +523,7 @@ showCancelTime = (record) => {
                 loading={loading}
                 onChange={this.handleTableChange}
                 columns={columns}
-                dataSource={supaccountData}
+                dataSource={this.state.tradeList.list}
               />
             </div>
           </Card>

@@ -2,7 +2,7 @@ import { stringify } from 'qs';
 import request from '../utils/request';
 
 export async function list(params) {
-  return request(`/ord-svr/ord/order/supplier?${stringify(params)}`);
+  return request(`/ord-svr/ord/order/Supplier?${stringify(params)}`);
 }
 
 export async function buyrelation(params) {

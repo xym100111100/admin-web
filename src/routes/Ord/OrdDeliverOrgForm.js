@@ -50,16 +50,16 @@ export default class OrdDeliverOrgForm extends PureComponent {
                     <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
 
                         <Col push={4} md={20} sm={24}  >
-                            <FormItem style={{ marginLeft: 15 }} label="供应商" >
+                            <FormItem style={{ marginLeft: 15 }} label="发货组织" >
                                 {form.getFieldDecorator('deliverOrgId', {
                                     rules: [
                                         {
                                             required: true,
-                                            message: '请输入选择供应商',
+                                            message: '请输入选择发货组织',
                                         },
                                     ],
                                 })(
-                                    <Select {...props} placeholder="请选择供应商" style={{ width: 170 }} >
+                                    <Select {...props} placeholder="请选择发货组织" style={{ width: 170 }} >
                                         {listItems}
                                     </Select>
                                 )}

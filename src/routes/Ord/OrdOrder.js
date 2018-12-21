@@ -337,7 +337,7 @@ export default class OrdOrder extends SimpleMng {
           <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>上线组织:</span>{record.onlineOrgName !== undefined && (record.onlineOrgName)}
         </Col>
         <Col md={8} sm={24}>
-          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>供应商:</span>{record.deliverOrgName !== undefined && (record.deliverOrgName)}
+          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>发货组织:</span>{record.deliverOrgName !== undefined && (record.deliverOrgName)}
         </Col>
         {this.showPayTime(record)}
         {this.showSendTime(record)}
@@ -485,7 +485,7 @@ export default class OrdOrder extends SimpleMng {
   }
 
   /**
-   * 设置供应商
+   * 设置发货组织
    */
   setDeliverOrg=(record)=>{
     this.props.dispatch({
@@ -875,6 +875,11 @@ export default class OrdOrder extends SimpleMng {
 
       },
       {
+        title: '发货组织',
+        dataIndex: 'deliverOrgName',
+        key: 'deliverOrgName',
+      },
+      {
         title: '下单金额',
         dataIndex: 'orderMoney',
         key: 'orderMoney',
@@ -959,8 +964,8 @@ export default class OrdOrder extends SimpleMng {
                 >
                   修改收货地址
                </a>
-               <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordDeliverOrg', editFormTitle: '修改供应商' })} >
-               修改供应商
+               <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordDeliverOrg', editFormTitle: '修改发货组织' })} >
+               修改发货组织
                   </a>
               </Fragment>
             )
