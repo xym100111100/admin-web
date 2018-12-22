@@ -857,8 +857,8 @@ export default class OrdOrder extends SimpleMng {
         width: 150,
         render: (text, record) => {
           return (
-            <Popover autoAdjustOverflow={true} trigger='click' placement='right' onVisibleChange={(visible) => !visible || this.showOrderInfo(record)} content={content} title="查看订单信息" >
-              <a>  {record.orderCode}</a>
+            <Popover  autoAdjustOverflow={true} trigger='click' placement='right' onVisibleChange={(visible) => !visible || this.showOrderInfo(record)} content={content} title="查看订单信息" >
+             <a> {record.orderCode}</a>
             </Popover>
           );
         },
@@ -885,6 +885,12 @@ export default class OrdOrder extends SimpleMng {
           }
 
         },
+      },
+      {
+        title: '发货组织',
+        dataIndex: 'deliverOrgName',
+        key: 'deliverOrgName',
+        width: 100,
       },
       {
         title: '下单金额',
