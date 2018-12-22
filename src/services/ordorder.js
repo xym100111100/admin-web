@@ -13,6 +13,10 @@ export async function detail(params) {
   return request(`/ord-svr/ord/orderdetail/info?${stringify(params)}`);
 }
 
+export async function detailList(params) {
+  return request(`/ord-svr/ord/detailList?${stringify(params)}`);
+}
+
 export async function getById(params) {
   return request(`/ord-svr/ord/order/getbyid?${stringify(params)}`);
 }
@@ -82,8 +86,8 @@ export async function modify(params) {
   });
 }
 
-export async function updateDeliver(params) {
-  return request('/ord-svr/ord/order/update', {
+export async function updateOrg(params) {
+  return request('/ord-svr/ord/order/updateOrg', {
     method: 'PUT',
     body: {
       ...params,

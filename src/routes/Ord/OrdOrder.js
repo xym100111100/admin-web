@@ -94,7 +94,6 @@ export default class OrdOrder extends SimpleMng {
 
   //取消发货
   canceldelivery = (record) => {
-    console.log(record)
     if (record.orderState !== 2) {
       message.success('非已支付状态不能取消发货');
       return;
@@ -266,6 +265,9 @@ export default class OrdOrder extends SimpleMng {
             <Col md={12} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>规格 :</span>{items.specName !== undefined && (items.specName)}
             </Col>
+            <Col md={24} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>供应商 :</span>{items.supplierName !== undefined && (items.supplierName)}
+            </Col>
             <Col md={4} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>单价 :</span>{items.buyPrice !== undefined && (items.buyPrice)}
             </Col>
@@ -425,6 +427,18 @@ export default class OrdOrder extends SimpleMng {
     }
   }
 
+  showEditOrg = (record) => {
+    let date = new Date(record.receivedTime);
+    let day=(new Date().getTime()-date.getTime())/1000/60/60/24;
+    if(Math.floor(day) < 7){
+      return (
+        <a onClick={() => this.showEditOrgFrom(record)} >
+          修改供应商
+        </a>
+      )
+    }
+
+  }
 
 
 
@@ -485,13 +499,22 @@ export default class OrdOrder extends SimpleMng {
   }
 
   /**
-   * 设置发货组织
+   * 设置供应商
    */
-  setDeliverOrg=(record)=>{
+  setSupplierOrg = (fields) => {
+    //自发
+    if (fields.deliver === 1) {
+      fields.deliverOrgId = fields.onlineOrgId;
+    } else if (fields.deliver === 2) {
+      //供应商发
+      fields.deliverOrgId = fields.supplierId;
+    }
+    fields.supplierId = fields.supplierId;
+    fields.id = fields.orderId;
     this.props.dispatch({
-      type: `${this.moduleCode}/updateDeliver`,
-      payload: record,
-      callback:()=>{
+      type: `${this.moduleCode}/updateOrg`,
+      payload: fields,
+      callback: () => {
         this.setState({ editForm: undefined })
         this.handleReload();
       }
@@ -604,31 +627,6 @@ export default class OrdOrder extends SimpleMng {
     })
   }
 
-  /**
- * 订阅物流信息
- */
-  getTrace = (record) => {
-
-    this.props.dispatch({
-      type: `${this.moduleCode}/detail`,
-      payload: { orderId: record.id },
-      callback: data => {
-        if (data !== undefined && data.length !== 0) {
-          for (let i = 0; i < data.length; i++) {
-            if (data[i].returnState !== 0) {
-              message.error('有订单详情处于退货状态，不能订阅');
-              return;
-            }
-          }
-          this.showAddForm({
-            editFormRecord: record,
-            editForm: 'getTrace',
-            editFormTitle: '选择订阅信息',
-          })
-        }
-      }
-    })
-  }
 
 
 
@@ -753,13 +751,28 @@ export default class OrdOrder extends SimpleMng {
     })
   }
 
-  showTrace = (data) => {
-    const listItems = data.map(items => {
-      return (
-        <Timeline.Item dot={<Icon type="clock-circle-o" style={{ fontSize: '16px' }} />} key={items.id.toString()} color="green">{items.happenTime}<Icon type="arrow-right" theme="outlined" />{items.traceDesc}</Timeline.Item>
-      )
-    });
-    return listItems;
+  /**
+   * 显示修改供应商窗口，先查询是否只有一个订单详情
+   */
+  showEditOrgFrom = (record) => {
+    this.props.dispatch({
+      type: `${this.moduleCode}/detailList`,
+      payload: { orderId: record.id },
+      callback: data => {
+        //先循环判断是否所有详情都是一个供应商
+        let is = true;
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].supplierId !== data[0].supplierId) {
+            message.error('该订单有多个供应商，不能修改');
+            is = false;
+          }
+        }
+        if (is) {
+          data[0].onlineOrgId = record.onlineOrgId;
+          this.showEditForm({ editFormRecord: data[0], editForm: 'ordSupplierOrg', editFormTitle: '修改供应商' })
+        }
+      }
+    })
   }
 
 
@@ -872,12 +885,6 @@ export default class OrdOrder extends SimpleMng {
           }
 
         },
-
-      },
-      {
-        title: '发货组织',
-        dataIndex: 'deliverOrgName',
-        key: 'deliverOrgName',
       },
       {
         title: '下单金额',
@@ -964,26 +971,39 @@ export default class OrdOrder extends SimpleMng {
                 >
                   修改收货地址
                </a>
-               <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordDeliverOrg', editFormTitle: '修改发货组织' })} >
-               修改发货组织
+                <a onClick={() => this.showEditOrgFrom(record)} >
+                  修改供应商
                   </a>
               </Fragment>
             )
-          } else if(record.orderState === 3){
-            return(
+          } else if (record.orderState === 3) {
+            return (
               <Fragment>
-                  <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
-                    物流信息
+                <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
+                  物流信息
                   </a>
-                  <br />
-                  <a onClick={() => this.showSendForm(record, false)} >添加新快递单</a>
+                <br />
+                <a onClick={() => this.showSendForm(record, false)} >添加新快递单</a>
+                <a onClick={() => this.showEditOrgFrom(record)} >
+                  修改供应商
+                  </a>
               </Fragment>
             )
-          }else {
+          } else if (record.orderState === 4) {
+            return (
+              <Fragment>
+                <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
+                  物流信息
+                  </a>
+                <br />
+                {this.showEditOrg(record)}
+              </Fragment>
+            )
+          } else {
             return (
               <Fragment  >
-                  <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
-                    物流信息
+                <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
+                  物流信息
                   </a>
               </Fragment>
             )
@@ -1077,14 +1097,14 @@ export default class OrdOrder extends SimpleMng {
             closeModal={() => this.setState({ editForm: undefined })}
           />
         )}
-        {editForm === 'ordDeliverOrg' && (
+        {editForm === 'ordSupplierOrg' && (
           <OrdDeliverOrgForm
             visible
             title={editFormTitle}
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            onSubmit={(fields) =>this.setDeliverOrg(fields)}
+            onSubmit={(fields) => this.setSupplierOrg(fields)}
           />
         )}
         {editForm === 'ordSend' && (

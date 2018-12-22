@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import {updateDeliver, buyrelation,list,getTrace, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,shipmentconfirmation, modifyOrderShippingAddress } from '../services/ordorder';
+import {updateOrg,detailList, buyrelation,list,getTrace, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,shipmentconfirmation, modifyOrderShippingAddress } from '../services/ordorder';
 import { printpage ,logisticList} from '../services/kdilogistic';
 import { listAll } from '../services/sucorg';
 export default {
@@ -18,6 +18,10 @@ export default {
         type: 'changeList',
         payload: response,
       });
+      if (callback) callback(response);
+    },
+    *detailList({ payload, callback }, { call, put }) {
+      const response = yield call(detailList, payload);
       if (callback) callback(response);
     },
 
@@ -42,7 +46,6 @@ export default {
     },
 
     *textMeshod({ payload, callback }, { call, put }) {
-      console.log("models");
       const response = yield call(textMeshod, payload);
       yield put({
         type: 'changeList',
@@ -77,8 +80,8 @@ export default {
         message.error(response.msg);
       }
     },
-    *updateDeliver({ payload, callback }, { call }) {
-      const response = yield call(updateDeliver, payload);
+    *updateOrg({ payload, callback }, { call }) {
+      const response = yield call(updateOrg, payload);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);
