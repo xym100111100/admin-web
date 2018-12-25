@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { list, getById, add, modify, del, } from '../services/supaccount';
-import { tradeList} from '../services/afcflow';
+import { orgTrade} from '../services/afcflow';
 import { getOneAccount } from '../services/afcapplywithdrawaccount';
 import { getSettleTotal } from '../services/ordorder';
 import { detail} from '../services/suporder';
@@ -21,8 +21,8 @@ export default {
       });
       if (callback) callback(response);
     },
-    *tradeList({ payload, callback }, { call, put }) {
-      const response = yield call(tradeList, payload);
+    *orgTrade({ payload, callback }, { call, put }) {
+      const response = yield call(orgTrade, payload);
       if (callback) callback(response);
     },
     *detail({ payload, callback }, { call, put }) {

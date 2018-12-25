@@ -285,10 +285,12 @@ export default class OrdOrder extends SimpleMng {
             </Col>
           </Row>
           <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
-            <Col md={8} sm={24}>
+            <Col md={6} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>上家 :</span>{items.uplineUserName !== undefined && (items.uplineUserName + '(' + items.uplineRelationSource + ')')}
             </Col>
-            <Col md={8} sm={24}>
+            <Col md={6} sm={24}>
+             <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>订单编号 :</span>{items.uplineOrderCode !== undefined && (items.uplineOrderCode)}            </Col>
+            <Col md={4} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>是否签收 :</span>{items.uplineIsSignIn !== undefined && (items.uplineIsSignIn)}
             </Col>
             <Col md={8} sm={24}>
@@ -296,10 +298,13 @@ export default class OrdOrder extends SimpleMng {
             </Col>
           </Row>
           <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
-            <Col md={8} sm={24}>
+            <Col md={6} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>下家1 :</span>{items.downlineUserName1 !== undefined && (items.downlineUserName1 + '(' + items.downlineRelationSource1 + ')')}
             </Col>
-            <Col md={8} sm={24}>
+            <Col md={6} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>订单编号 :</span>{items.downlineOrderCode1 !== undefined && (items.downlineOrderCode1)}
+            </Col>
+            <Col md={4} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>是否签收 :</span>{items.downlineIsSignIn1 !== undefined && (items.downlineIsSignIn1)}
             </Col>
             <Col md={8} sm={24}>
@@ -307,10 +312,13 @@ export default class OrdOrder extends SimpleMng {
             </Col>
           </Row>
           <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
-            <Col md={8} sm={24}>
+            <Col md={6} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>下家2 :</span>{items.downlineUserName2 !== undefined && (items.downlineUserName2 + '(' + items.downlineRelationSource2 + ')')}
             </Col>
-            <Col md={8} sm={24}>
+            <Col md={6} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>订单编号 :</span>{items.downlineOrderCode2 !== undefined && (items.downlineOrderCode2)}
+            </Col>
+            <Col md={4} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>是否签收 :</span>{items.downlineIsSignIn2 !== undefined && (items.downlineIsSignIn2)}
             </Col>
             <Col md={8} sm={24}>
