@@ -71,7 +71,7 @@ export default class SupAccount extends SimpleMng {
     //获取供应商订单已经结算和待结算的成本价
     this.props.dispatch({
       type: `${this.moduleCode}/getSettleTotal`,
-      payload: { deliverOrgId: orgId },
+      payload: { supplierId: orgId },
       callback: data => {
         this.setState({
           notSettle: data.notSettle,
