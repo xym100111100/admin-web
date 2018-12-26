@@ -73,6 +73,8 @@ menuData.push({ id: '1536131597154', sysId: 'damai-admin', code: '1701', title: 
 menuData.push({ id: '1536131597155', sysId: 'damai-admin', code: '18', title: '学生管理', name: '学生管理', path: 'stu', isEnabled: true, icon: 'user', remark: '学生表' });
 menuData.push({ id: '1536131597156', sysId: 'damai-admin', code: '1800', title: '学生信息', name: '学生信息', path: 'stu-student', isEnabled: true, icon: null, remark: '学生信息' });
 
+menuData.push({ id: '1536131597157', sysId: 'damai-admin', code: '1504', title: '供应商账户', name: '供应商账户信息', path: 'afc-org-account', isEnabled: true, icon: null, remark: '供应商账户相关业务' });
+
 function sort(list) {
   return list.sort((item1, item2) => {
     const code1 = item1.code;

@@ -149,6 +149,11 @@ export const getRouterData = app => {
         import('../routes/Afc/FlowMng')
       ),
     },
+    '/afc/afc-org-account': {
+      component: dynamicWrapper(app, ['orgaccount','sucorg'], () =>
+        import('../routes/Afc/OrgAccount')
+      ),
+    },
     '/prm/prm-partner-mng': {
       component: dynamicWrapper(app, ['prmpartner'], () =>
         import('../routes/Prm/PartnerMng')
