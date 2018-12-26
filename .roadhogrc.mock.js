@@ -2,6 +2,13 @@ import mockjs from 'mockjs';
 import { dumaiindexList, dumaiindexGetById, dumaiindexAdd, dumaiindexModify, dumaiindexDel } from './mock/dumaiindex';
 import { supaccountList, supaccountGetById, supaccountAdd, supaccountModify, supaccountDel } from './mock/supaccount';
 import { pfmsysList, pfmsysGetById, pfmsysAdd, pfmsysModify, pfmsysDel } from './mock/pfmsys';
+import {  
+  studentList, 
+  studentGetById, 
+  studentAdd, 
+  studentModify, 
+  studentDel 
+  } from './mock/student';
 import {
   kdilogisticList,
   kdilogisticGetById,
@@ -131,6 +138,12 @@ const currentUser = {
 
 // 配置mock代理的请求
 const proxy = {
+  //student
+  'GET /hlw-svr/hlw/student': studentList,
+  'GET /hlw-svr/hlw/student/getbyid': studentGetById,
+  'POST /hlw-svr/hlw/student': studentAdd,
+  'PUT /hlw-svr/hlw/student': studentModify,
+  'DELETE /hlw-svr/hlw/student': studentDel,
   //kdisender
   'GET /kdi-svr/kdi/sender': kdiSenderList,
   'GET /kdi-svr/kdi/sender/alllist': kdiSenderList,
@@ -398,8 +411,10 @@ function addProxy(key, value) {
 
 // 禁用代理的时候，配置直接请求服务的映射
 if (noProxy) {
-  addProxy('kdi-svr', 'http://127.0.0.1:20080/');
-  addProxy('ord-svr', 'http://127.0.0.1:20180/'); 
+  // addProxy('kdi-svr', 'http://127.0.0.1:20080/');
+  // addProxy('ord-svr', 'http://127.0.0.1:20180/'); 
+
+  addProxy('hlw-svr', 'http://127.0.0.1:9009/');
 
   // addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr/');
   // addProxy('pfm-svr', 'http://192.168.1.37:20182/');
@@ -416,9 +431,9 @@ if (noProxy) {
   // addProxy('pfm-svr', 'http://127.0.0.1:8080/pfm-svr');
   //addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
 
-  addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr/');
-  addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
-  addProxy('afc-svr', 'http://192.168.1.201/afc-svr/');
+  // addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr/');
+  // addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
+  // addProxy('afc-svr', 'http://192.168.1.201/afc-svr/');
 
   // addProxy('rna-svr', 'https://www.duamai.com/rna-svr/');
   // addProxy('kdi-svr', 'https://www.duamai.com/kdi-svr/');

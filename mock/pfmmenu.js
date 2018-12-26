@@ -70,6 +70,8 @@ menuData.push({ id: '1536131597151', sysId: 'damai-admin', code: '1600', title: 
 menuData.push({ id: '1536131597152', sysId: 'damai-admin', code: '17', title: '供应商', name: '供应商', path: 'sup', isEnabled: true, icon: 'user', remark: '供应商相关业务' });
 menuData.push({ id: '1536131597153', sysId: 'damai-admin', code: '1700', title: '订单管理', name: '订单管理', path: 'sup-order', isEnabled: true, icon: null, remark: '供应商订单业务' });
 menuData.push({ id: '1536131597154', sysId: 'damai-admin', code: '1701', title: '账户管理', name: '账户管理', path: 'sup-account', isEnabled: true, icon: null, remark: '供应商账户信息' });
+menuData.push({ id: '1536131597155', sysId: 'damai-admin', code: '18', title: '学生管理', name: '学生管理', path: 'stu', isEnabled: true, icon: 'user', remark: '学生表' });
+menuData.push({ id: '1536131597156', sysId: 'damai-admin', code: '1800', title: '学生信息', name: '学生信息', path: 'stu-student', isEnabled: true, icon: null, remark: '学生信息' });
 
 function sort(list) {
   return list.sort((item1, item2) => {
