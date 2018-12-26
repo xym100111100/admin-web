@@ -23,7 +23,6 @@ export default class SupAccount extends SimpleMng {
     this.state.options = {
       pageNum: 1,
       pageSize: 5,
-      orderState: '',
       orgId: 0,
     };
     this.state.expand = {
@@ -43,8 +42,13 @@ export default class SupAccount extends SimpleMng {
     const { form } = this.props;
     form.resetFields();
     this.props.dispatch({
-      type: `${this.moduleCode}/list`,
+      type: `${this.moduleCode}/orgTrade`,
       payload: this.state.payloads,
+      callback: data => {
+        this.setState({
+          tradeList:data
+        })
+      }
     });
   };
 
@@ -67,7 +71,7 @@ export default class SupAccount extends SimpleMng {
     //获取供应商订单已经结算和待结算的成本价
     this.props.dispatch({
       type: `${this.moduleCode}/getSettleTotal`,
-      payload: { deliverOrgId: orgId },
+      payload: { supplierId: orgId },
       callback: data => {
         this.setState({
           notSettle: data.notSettle,
@@ -82,11 +86,10 @@ export default class SupAccount extends SimpleMng {
     this.state.payloads = {
       pageNum: this.state.options.pageNum,
       pageSize: this.state.options.pageSize,
-      orderState: this.state.options.orderState,
       accountId: orgId,
     };
     this.props.dispatch({
-      type: `${this.moduleCode}/tradeList`,
+      type: `${this.moduleCode}/orgTrade`,
       payload: this.state.payloads,
       callback: data => {
         this.setState({
@@ -105,8 +108,8 @@ export default class SupAccount extends SimpleMng {
       if (err) return;
       //上传上来的时间是一个数组，需要格式化
       if (fieldsValue.tradeTime !== undefined && fieldsValue.tradeTime !== '' && fieldsValue.tradeTime.length >= 1) {
-        fieldsValue.orderTimeEnd = fieldsValue.tradeTime[1].format('YYYY-MM-DD HH:mm:ss');
-        fieldsValue.orderTimeStart = fieldsValue.tradeTime[0].format('YYYY-MM-DD HH:mm:ss');
+        fieldsValue.tradeTimeEnd = fieldsValue.tradeTime[1].format('YYYY-MM-DD HH:mm:ss');
+        fieldsValue.tradeTimeStart = fieldsValue.tradeTime[0].format('YYYY-MM-DD HH:mm:ss');
         fieldsValue.tradeTime = undefined;
       }
       fieldsValue.pageNum = this.state.options.pageNum;
@@ -119,7 +122,7 @@ export default class SupAccount extends SimpleMng {
         },
       });
       this.props.dispatch({
-        type: `${this.moduleCode}/tradeList`,
+        type: `${this.moduleCode}/orgTrade`,
         payload: fieldsValue,
         callback: data => {
           this.setState({
@@ -182,13 +185,13 @@ export default class SupAccount extends SimpleMng {
       fieldsValue.pageSize = pagination.pageSize;
       //上传上来的时间是一个数组，需要格式化
       if (fieldsValue.tradeTime !== undefined && fieldsValue.tradeTime !== '' && fieldsValue.tradeTime.length >= 1) {
-        fieldsValue.orderTimeEnd = fieldsValue.tradeTime[1].format('YYYY-MM-DD HH:mm:ss');
-        fieldsValue.orderTimeStart = fieldsValue.tradeTime[0].format('YYYY-MM-DD HH:mm:ss');
+        fieldsValue.tradeTimeEnd = fieldsValue.tradeTime[1].format('YYYY-MM-DD HH:mm:ss');
+        fieldsValue.tradeTimeStart = fieldsValue.tradeTime[0].format('YYYY-MM-DD HH:mm:ss');
         fieldsValue.tradeTime = undefined;
       }
       fieldsValue.accountId = this.props.user.currentUser.orgId;
       this.props.dispatch({
-        type: `${this.moduleCode}/tradeList`,
+        type: `${this.moduleCode}/orgTrade`,
         payload: fieldsValue,
         callback: data => {
           this.setState({
@@ -407,12 +410,13 @@ export default class SupAccount extends SimpleMng {
    * 格式化金额
    */
   formatNum = (data) => {
-    let i = data.toString().indexOf(".");
-    if (i !== -1) {
-      return "¥"+data.toString().substring(0, i + 3);
+    if(data !==undefined){
+      let i = data.toString().indexOf(".");
+      if (i !== -1) {
+        return "¥"+data.toString().substring(0, i + 3);
+      }
+      return data;
     }
-    return data;
-
   }
 
 

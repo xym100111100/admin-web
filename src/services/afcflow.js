@@ -9,6 +9,10 @@ export async function orgList(params) {
   return request(`/afc-svr/afc/orgTradeList?${stringify(params)}`);
 }
 
+export async function orgTrade(params) {
+  return request(`/afc-svr/afc/orgTrade?${stringify(params)}`);
+}
+
 export async function tradeList(params) {
   return request(`/afc-svr/afc/trade?${stringify(params)}`);
 }
