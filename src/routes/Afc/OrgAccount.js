@@ -89,14 +89,14 @@ export default class OrgAccount extends SimpleMng {
       },
       {
         title: '余额',
-        dataIndex: 'tradeType',
+        dataIndex: 'balance',
       },
       {
         title: '待结算',
-        dataIndex: 'tradeAmount',
+        dataIndex: 'notSettle',
       },      {
         title: '已结算',
-        dataIndex: 'tradeTime',
+        dataIndex: 'alreadySettle',
       }, 
      
     ];
