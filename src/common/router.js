@@ -68,13 +68,13 @@ function getFlatMenuData(menus) {
 export const getRouterData = app => {
   const routerConfig = {
     // ****************** 业务路由 *******************
-    '/stu/stu-student': {
-      component: dynamicWrapper(app, ['student'], () => import('../routes/stu/student')),
-    },
     '/home/index': {
       component: dynamicWrapper(app, ['homeindex', 'user'], () =>
         import('../routes/Home/HomeIndex')
       ),
+    },
+    '/stu/stu-student': {
+      component: dynamicWrapper(app, ['student'], () => import('../routes/stu/student')),
     },
     '/rna/rna-realname': {
       component: dynamicWrapper(app, ['rnarealname'], () => import('../routes/Rna/RnaRealname')),

@@ -363,11 +363,28 @@ export default class OrdOrder extends SimpleMng {
         {this.showReceivedTime(record)}
         {this.showCloseTime(record)}
         {this.showCancelTime(record)}
+        {this.showorderMessages(record)}
         <Col md={24} sm={24}>
           <Divider />
         </Col>
       </Row>
     )
+
+  }
+
+  /**
+   * 根据有没有订单留言显示订单留言
+   */
+  showorderMessages =(record)=>{
+    if (record.orderMessages === undefined) {
+      return
+    }else{
+      return(
+        <Col md={8} sm={24}>
+           <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>订单留言:</span>{record.orderMessages !== undefined && (record.orderMessages)}
+        </Col>
+      )
+    }
 
   }
 
