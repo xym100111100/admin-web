@@ -16,8 +16,11 @@ export async function cancel(params) {
 }
 
 export async function review(params) {
-  return request(`/afc-svr/withdraw/ok?${stringify(params)}`, {
+  return request('/afc-svr/withdraw/ok', {
     method: 'PUT',
+    body: {
+      ...params,
+    },
   });
 }
 
