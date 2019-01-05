@@ -1,11 +1,15 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Card, Divider, DatePicker, Tooltip, Icon, Form, Table, Button, Col, Input, Row } from 'antd';
+import { Card, Divider, DatePicker, message, Tooltip, Icon, Form, Table, Button, Col, Row } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './SupAccount.less';
+import SupWithdrawForm from './SupWithdrawForm';
+//引入uuid插件，报错需要yarn install
+import uuid from 'node-uuid';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
+import numeral from 'numeral';
 import {
   ChartCard,
   MiniBar,
@@ -30,12 +34,14 @@ export default class SupAccount extends SimpleMng {
     }
     this.moduleCode = 'supaccount';
     this.state.balance = 0;
+    this.state.withdrawing = 0;
     this.state.supplierName = '';
     this.state.notSettle = 0;
     this.state.alreadySettle = 0;
     this.state.payloads = {};
     this.state.returnState = null;
     this.state.tradeList = [];
+    this.state.orgWithdrawTotal = 0;
   }
 
   handleFormReset = () => {
@@ -46,7 +52,7 @@ export default class SupAccount extends SimpleMng {
       payload: this.state.payloads,
       callback: data => {
         this.setState({
-          tradeList:data
+          tradeList: data
         })
       }
     });
@@ -55,19 +61,9 @@ export default class SupAccount extends SimpleMng {
   //初始化
   componentDidMount() {
     const orgId = this.props.user.currentUser.orgId;
-    //获取单个账户
-    this.props.dispatch({
-      type: `${this.moduleCode}/getOneAccount`,
-      payload: { id: orgId },
-      callback: data => {
-        if (data.balance !== null && data.balance != undefined) {
-          this.setState({
-            balance: data.balance,
-            supplierName: this.props.user.currentUser.nickname,
-          })
-        }
-      }
-    });
+    //获取单个账户余额。
+    this.getOneAccount();
+    this.getOrgWithdrawTotal();
     //获取供应商订单已经结算和待结算的成本价
     this.props.dispatch({
       type: `${this.moduleCode}/getSettleTotal`,
@@ -93,11 +89,48 @@ export default class SupAccount extends SimpleMng {
       payload: this.state.payloads,
       callback: data => {
         this.setState({
-          tradeList:data
+          tradeList: data
         })
       }
     });
 
+  }
+
+  /**
+   *  获取单个账户
+   */
+  getOneAccount = () => {
+    const orgId = this.props.user.currentUser.orgId;
+    this.props.dispatch({
+      type: `${this.moduleCode}/getOneAccount`,
+      payload: { id: orgId },
+      callback: data => {
+        if (data.balance !== null && data.balance != undefined) {
+          this.setState({
+            balance: data.balance,
+            withdrawing: data.withdrawing,
+            supplierName: this.props.user.currentUser.nickname,
+          })
+        }
+      }
+    });
+  }
+  /**
+   * 获取组织提现总额
+   */
+  getOrgWithdrawTotal = () => {
+    const orgId = this.props.user.currentUser.orgId;
+    this.props.dispatch({
+      type: `${this.moduleCode}/orgWithdrawTotal`,
+      payload: { accountId: orgId },
+      callback: data => {
+        if(data !==null && data !==undefined && data !==''){
+          this.setState({
+            orgWithdrawTotal: data.withdrawTotal
+          })
+        }
+      }
+    });
   }
 
 
@@ -126,7 +159,7 @@ export default class SupAccount extends SimpleMng {
         payload: fieldsValue,
         callback: data => {
           this.setState({
-            tradeList:data
+            tradeList: data
           })
         }
       });
@@ -195,7 +228,7 @@ export default class SupAccount extends SimpleMng {
         payload: fieldsValue,
         callback: data => {
           this.setState({
-            tradeList:data
+            tradeList: data
           })
         }
       });
@@ -410,19 +443,43 @@ export default class SupAccount extends SimpleMng {
    * 格式化金额
    */
   formatNum = (data) => {
-    if(data !==undefined){
+    if (data !== undefined) {
       let i = data.toString().indexOf(".");
       if (i !== -1) {
-        return "¥"+data.toString().substring(0, i + 3);
+        return "¥" + data.toString().substring(0, i + 3);
       }
       return data;
     }
   }
 
+  /**
+   * 申请提现
+   */
+  apply = (record) => {
+    console.log(record);
+    record.orderId = uuid.v1().toString().replace(/\-/g, "");
+    record.tradeTitle = '大卖网络-供应商提现';
+    if(record.withdrawAmount>this.state.balance){
+          message.success("提现不能超过当前余额,当前余额为"+this.state.balance);
+      return;
+    }
+    this.props.dispatch({
+      type: `${this.moduleCode}/apply`,
+      payload: record,
+      callback: data => {
+        message.success(data.msg);
+        this.setState({ editForm: undefined })
+        this.getOneAccount();
+        this.getOrgWithdrawTotal();
+      }
+    })
+  }
 
   render() {
     const { supaccount: { supaccount }, loading } = this.props;
-    console.log(this.state.tradeList);
+    const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
+    editFormRecord.applicantId = this.props.user.currentUser.userId;
+    editFormRecord.applicantOrgId = this.props.user.currentUser.orgId;
 
     const paginationProps = {
       showSizeChanger: true,
@@ -441,18 +498,20 @@ export default class SupAccount extends SimpleMng {
         title: '交易类型',
         dataIndex: 'tradeType',
         render: (text, record) => {
-          if (record.tradeType === 50) return '结算'
+          if (record.tradeType === 50) return '结算';
+          if (record.tradeType === 30) return '申请提现';
+          if (record.tradeType === 31) return '提现';
         },
 
       },
       {
         title: '交易总额',
         dataIndex: 'tradeAmount',
-      },      {
+      }, {
         title: '交易时间',
         dataIndex: 'tradeTime',
-      }, 
-     
+      },
+
     ];
 
     const topColResponsiveProps = {
@@ -460,14 +519,18 @@ export default class SupAccount extends SimpleMng {
       sm: 12,
       md: 12,
       lg: 12,
-      xl: 8,
+      xl: 6,
       style: { marginBottom: 24 },
     };
-
-    const balanceRemark = <span>余额说明</span>;
-    const notSettleRemark = <span>待结算说明</span>;
-    const settleRemark = <span>已结算说明</span>;
-
+    const withdraw = <span>
+                      该金额为小数点后两位
+                    </span>;
+    const notSettleRemark = <span>
+      该金额为小数点后两位
+    </span>;
+    const settleRemark = <span>该金额为小数点后两位</span>;
+    const visitData = [];
+    visitData.push("<a>aa</a>")
     return (
       <Fragment>
         <PageHeaderLayout>
@@ -477,27 +540,38 @@ export default class SupAccount extends SimpleMng {
                 bordered={false}
                 title="余额"
                 action={
-                  <Tooltip title={balanceRemark}>
-                    <Icon type="info-circle-o" />
-                  </Tooltip>
+                  <div>
+                    <a onClick={() =>
+                      this.showAddForm({
+                        moduleCode: 'supaccount',
+                        editForm: 'withdraw',
+                        editFormTitle: '供应商提现',
+                      })
+                    } >
+                      提现
+                    </a>
+                  </div>
+
                 }
                 total={() => this.formatNum(this.state.balance)}
-                contentHeight={46}
+                footer={<Field label="提现中" value={`￥${numeral(this.state.withdrawing).value()}`} />}
+                contentHeight={25}
               >
-                <MiniBar />
+                <MiniBar data={visitData} />
               </ChartCard>
             </Col>
             <Col {...topColResponsiveProps}>
               <ChartCard
                 bordered={false}
-                title="未结算"
+                title="已提现"
                 action={
-                  <Tooltip title={notSettleRemark}>
+                  <Tooltip title={withdraw}>
                     <Icon type="info-circle-o" />
                   </Tooltip>
                 }
-                total={() => this.formatNum(this.state.notSettle)}
-                contentHeight={46}
+                total={() => this.formatNum(this.state.orgWithdrawTotal)}
+                footer={<Field  />}
+                contentHeight={25}
               >
                 <MiniBar />
               </ChartCard>
@@ -512,7 +586,24 @@ export default class SupAccount extends SimpleMng {
                   </Tooltip>
                 }
                 total={() => this.formatNum(this.state.alreadySettle)}
-                contentHeight={46}
+                footer={<Field  />}
+                contentHeight={25}
+              >
+                <MiniBar />
+              </ChartCard>
+            </Col>
+            <Col {...topColResponsiveProps}>
+              <ChartCard
+                bordered={false}
+                title="未结算"
+                action={
+                  <Tooltip title={notSettleRemark}>
+                    <Icon type="info-circle-o" />
+                  </Tooltip>
+                }
+                total={() => this.formatNum(this.state.notSettle)}
+                footer={<Field  />}
+                contentHeight={25}
               >
                 <MiniBar />
               </ChartCard>
@@ -531,8 +622,17 @@ export default class SupAccount extends SimpleMng {
               />
             </div>
           </Card>
+          {editForm === 'withdraw' && (
+            <SupWithdrawForm
+              visible
+              title={editFormTitle}
+              editFormType={editFormType}
+              record={editFormRecord}
+              closeModal={() => this.setState({ editForm: undefined })}
+              onSubmit={fields => this.apply(fields)}
+            />
+          )}
         </PageHeaderLayout>,
-
       </Fragment>
     );
   }

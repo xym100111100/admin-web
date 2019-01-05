@@ -29,3 +29,18 @@ export async function deal(params) {
     method: 'PUT',
   });
 }
+
+export async function apply(params) {
+  return request('/afc-svr/withdraw/apply', {
+    method: 'POST',
+    body: {
+      ...params,
+    },
+  });
+}
+
+
+
+export async function orgWithdrawTotal(params) {
+  return request(`/afc-svr/afc/orgWithdrawTotal?${stringify(params)}`);
+}
