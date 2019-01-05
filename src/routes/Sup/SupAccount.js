@@ -522,12 +522,12 @@ export default class SupAccount extends SimpleMng {
       style: { marginBottom: 24 },
     };
     const withdraw = <span>
-                      该金额为小数点后两位
+                      该金额为保留小数点后两位
                     </span>;
     const notSettleRemark = <span>
-      该金额为小数点后两位
+      该金额为保留小数点后两位
     </span>;
-    const settleRemark = <span>该金额为小数点后两位</span>;
+    const settleRemark = <span>该金额为保留小数点后两位</span>;
     const visitData = [];
     visitData.push("<a>aa</a>")
     return (
