@@ -456,7 +456,6 @@ export default class SupAccount extends SimpleMng {
    * 申请提现
    */
   apply = (record) => {
-    console.log(record);
     record.orderId = uuid.v1().toString().replace(/\-/g, "");
     record.tradeTitle = '大卖网络-供应商提现';
     if(record.withdrawAmount>this.state.balance){
