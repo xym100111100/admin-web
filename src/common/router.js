@@ -19,7 +19,7 @@ const dynamicWrapper = (app, models, component) => {
       if (modelNotExisted(app, model)) {
         // eslint-disable-next-line
         app.model(require(`../models/${model}`).default);
-      }   
+      }
     });
     return props => {
       if (!routerDataCache) {
@@ -76,9 +76,9 @@ export const getRouterData = app => {
     '/stu/stu-student': {
       component: dynamicWrapper(app, ['student'], () => import('../routes/stu/student')),
     },
-    // '/pnt/pnt-list': {
-    //   component: dynamicWrapper(app, ['pntList'], () => import('../routes/Pnt/pntList')),
-    // },
+   '/pnt/pnt-list': {
+      component: dynamicWrapper(app, ['pntList'], () => import('../routes/Pnt/pntList')),
+    },
     '/rna/rna-realname': {
       component: dynamicWrapper(app, ['rnarealname'], () => import('../routes/Rna/RnaRealname')),
     },
@@ -119,6 +119,11 @@ export const getRouterData = app => {
     '/sup/sup-account': {
       component: dynamicWrapper(app, ['supaccount','ordorder','kdicompany','afcapplywithdrawaccount' ,'user', 'kdisender'], () =>
         import('../routes/Sup/SupAccount')
+      ),
+    },
+    '/sup/sup-goods': {
+      component: dynamicWrapper(app, ['supgoods','user',], () =>
+        import('../routes/Sup/SupGoods')
       ),
     },
     '/pfm/sys-mng': {

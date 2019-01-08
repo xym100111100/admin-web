@@ -500,6 +500,8 @@ export default class SupAccount extends SimpleMng {
           if (record.tradeType === 50) return '结算';
           if (record.tradeType === 30) return '申请提现';
           if (record.tradeType === 31) return '提现';
+          if (record.tradeType === 32) return '提现被拒绝';
+
         },
 
       },

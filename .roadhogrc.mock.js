@@ -427,12 +427,12 @@ function addProxy(key, value) {
 // 禁用代理的时候，配置直接请求服务的映射
 if (noProxy) {
   // addProxy('kdi-svr', 'http://127.0.0.1:20080/');
-  // addProxy('ord-svr', 'http://127.0.0.1:20180/'); 
+  addProxy('ord-svr', 'http://127.0.0.1:20180/'); 
 
   //addProxy('hlw-svr', 'http://127.0.0.1:9009/');
 
-  addProxy('suc-svr', 'http://127.0.0.1:9100/');
-  addProxy('pnt-svr', 'http://127.0.0.1:9010/');
+  // addProxy('suc-svr', 'http://127.0.0.1:9100/');
+  // addProxy('pnt-svr', 'http://127.0.0.1:9010/');
 
   // addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr/');
   // addProxy('pfm-svr', 'http://192.168.1.37:20182/');
@@ -443,11 +443,11 @@ if (noProxy) {
   addProxy('onl-svr', 'http://127.0.0.1:9100/');
   addProxy('ise-svr', 'http://127.0.0.1:20180/');*/
   /* addProxy('ord-svr', 'http://127.0.0.1:20180/');  */
-  //  addProxy('afc-svr', 'http://127.0.0.1:9300/'); 
+   addProxy('afc-svr', 'http://127.0.0.1:9400/'); 
  /*  addProxy('prm-svr', 'http://192.168.1.37:20110/'); */
 
   // addProxy('pfm-svr', 'http://127.0.0.1:8080/pfm-svr');
-  //addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
+  addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
 
   // addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr/');
   // addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');

@@ -10,8 +10,11 @@ export async function getById(params) {
 }
 
 export async function cancel(params) {
-  return request(`/afc-svr/withdraw/cancel?${stringify(params)}`, {
+  return request('/afc-svr/withdraw/cancel', {
     method: 'PUT',
+    body: {
+      ...params,
+    },
   });
 }
 
