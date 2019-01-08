@@ -33,10 +33,16 @@ export default class UserPointForm extends PureComponent {
   componentDidMount() {
     const { id } = this.props;
     let accountId = id;
+    let record={};
+    record.accountId=id;
+    record.pageNum=this.state.options.pageNum;
+    record.pageSize=this.state.options.pageSize;
+
     this.props.dispatch({
       type: `${this.moduleCode}/listByAccountId`,
-      payload: { accountId: accountId },
+      payload: record,
       callback: data => {
+        console.log(data);
         if (data !== undefined) {
           this.setState(
             {
@@ -71,38 +77,31 @@ export default class UserPointForm extends PureComponent {
       this.props.dispatch({
         type: `${this.moduleCode}/listByAccountId`,
         payload: fieldsValue,
+        callback: data => {
+          console.log(data);
+          if (data !== undefined) {
+            this.setState(
+              {
+                pntList: data,
+              })
+          }
+        },
       });
+
     });
+
   };
 
   render() {
     const { pntList: { pntList }, loading } = this.props;
 
-    let ps;
-    if (pntList === undefined || pntList.pageSize === undefined) {
-      ps = 5;
-    } else {
-      ps = pntList.pageSize;
-    }
-    let tl;
-    if (pntList === undefined || pntList.total === undefined) {
-      tl = 1;
-    } else {
-      tl = Number(pntList.total);
-    }
-    let pntListData;
-    if (pntList === undefined) {
-      pntListData = [];
-    } else {
-      pntListData = pntList.list;
-    }
 
-    // 分页
+    // 分页s
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      pageSize: ps,
-      total: tl,
+      pageSize: this.state.pntList.pageSize,
+      total: this.state.pntList.total,
       pageSizeOptions: ['5', '10'],
     };
     const userColumns = [

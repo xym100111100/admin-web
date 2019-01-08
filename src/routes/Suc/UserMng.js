@@ -38,7 +38,7 @@ export default class UserMng extends SimpleMng {
   handleTableChange = pagination => {
     this.props.form.validateFields((err, values) => {
       this.handleReload({
-        users: values.users,
+        keys: values.keys,
         pageNum: pagination.current,
         pageSize: pagination.pageSize,
       });
@@ -148,7 +148,7 @@ export default class UserMng extends SimpleMng {
 
   selectUser = (e) => {
     let paload = {};
-    paload.users = e;
+    paload.keys = e;
     paload.pageNum = this.state.options.pageNum;
     paload.pageSize = this.state.options.pageSize;
     this.props.dispatch({
@@ -157,7 +157,7 @@ export default class UserMng extends SimpleMng {
     });
   }
 
-  // 搜索  原先的input查询参数为users
+  // 搜索  原先的input查询参数为keys
   renderSearchForm() {
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
