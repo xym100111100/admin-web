@@ -9,6 +9,14 @@ import {
   studentModify, 
   studentDel 
   } from './mock/student';
+  import {  
+    pntListList, 
+    pntListGetById, 
+    pntListAdd, 
+    pntListModify, 
+    pntListDel,
+    pntListByAccountId 
+    } from './mock/pntList';
 import {
   kdilogisticList,
   kdilogisticGetById,
@@ -138,6 +146,13 @@ const currentUser = {
 
 // 配置mock代理的请求
 const proxy = {
+  //pnt
+  'GET /pnt-svr/pnt/account': pntListList,
+  'GET /pnt-svr/pnt/account/getbyid': pntListGetById,
+  'GET /pnt-svr/pnt/listByAccountId': pntListByAccountId,
+  'POST /pnt-svr/pnt/account': pntListAdd,
+  'PUT /pnt-svr/pnt/account': pntListModify,
+  'DELETE /pnt-svr/pnt/account': pntListDel,
   //student
   'GET /hlw-svr/hlw/student': studentList,
   'GET /hlw-svr/hlw/student/getbyid': studentGetById,
@@ -414,7 +429,10 @@ if (noProxy) {
   // addProxy('kdi-svr', 'http://127.0.0.1:20080/');
   // addProxy('ord-svr', 'http://127.0.0.1:20180/'); 
 
-  addProxy('hlw-svr', 'http://127.0.0.1:9009/');
+  //addProxy('hlw-svr', 'http://127.0.0.1:9009/');
+
+  addProxy('suc-svr', 'http://127.0.0.1:9100/');
+  addProxy('pnt-svr', 'http://127.0.0.1:9010/');
 
   // addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr/');
   // addProxy('pfm-svr', 'http://192.168.1.37:20182/');

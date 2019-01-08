@@ -19,7 +19,7 @@ const dynamicWrapper = (app, models, component) => {
       if (modelNotExisted(app, model)) {
         // eslint-disable-next-line
         app.model(require(`../models/${model}`).default);
-      }
+      }   
     });
     return props => {
       if (!routerDataCache) {
@@ -76,6 +76,9 @@ export const getRouterData = app => {
     '/stu/stu-student': {
       component: dynamicWrapper(app, ['student'], () => import('../routes/stu/student')),
     },
+    // '/pnt/pnt-list': {
+    //   component: dynamicWrapper(app, ['pntList'], () => import('../routes/Pnt/pntList')),
+    // },
     '/rna/rna-realname': {
       component: dynamicWrapper(app, ['rnarealname'], () => import('../routes/Rna/RnaRealname')),
     },
@@ -183,7 +186,7 @@ export const getRouterData = app => {
       ),
     },
     '/suc/user-mng': {
-      component: dynamicWrapper(app, ['sucuser', 'pfmsys', 'pfmuserrole', 'sucorg', 'sucuserorg'], () =>
+      component: dynamicWrapper(app, ['sucuser', 'pfmsys','pntList', 'pfmuserrole', 'sucorg', 'sucuserorg'], () =>
         import('../routes/Suc/UserMng')
       ),
     },

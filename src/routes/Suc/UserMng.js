@@ -11,16 +11,18 @@ import UserRegForm from './UserRegForm';
 import UserOrgForm from './UserOrgForm';
 import EditPwForm from './EditPwForm';
 import UserChargeForm from './UserChargeForm';
+import UserPointForm from './UserPointForm'
 
 const { Search } = Input;
 
 const FormItem = Form.Item;
 const { Description } = DescriptionList;
-@connect(({ sucuser, pfmuserrole, sucorg, loading }) => ({
+@connect(({ sucuser, pntList, pfmuserrole, sucorg, loading }) => ({
   sucuser,
+  pntList,
   sucorg,
   pfmuserrole,
-  loading: loading.models.sucuser
+  loading: loading.models.sucuser || loading.models.pntList
 }))
 @Form.create()
 export default class UserMng extends SimpleMng {
@@ -78,10 +80,10 @@ export default class UserMng extends SimpleMng {
   /**
    * 设置为测试号
    */
-  setIsTester=(record)=>{
+  setIsTester = (record) => {
     this.props.dispatch({
       type: 'sucuser/modify',
-      payload: { id: record.id, isTester: !record.isTester},
+      payload: { id: record.id, isTester: !record.isTester },
       callback: () => {
         this.handleReload();
       },
@@ -211,6 +213,19 @@ export default class UserMng extends SimpleMng {
     })
   }
 
+  /**
+   * 用户积分明细
+   */
+  inquiryPoints = (record) => {
+    console.info(record.id);
+    this.showEditForm({
+      moduleCode: 'sucuser',
+      editForm: 'userPointForm',
+      editFormTitle: '积分明细',
+      editFormRecord: record,
+    })
+  }
+
   render() {
     const { sucuser: { sucuser }, loading } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
@@ -218,6 +233,16 @@ export default class UserMng extends SimpleMng {
       {
         title: '登录账号',
         dataIndex: 'loginName',
+        render: (text, record) => {
+          return (
+            <div>
+              <span>账号：{record.loginName}</span>
+              <br />
+              <span>id:{record.id}</span>
+              <p>  <span style={{ marginRight: 10 }} >总积分:{record.point}</span><a onClick={() => this.inquiryPoints(record)} >积分明细</a></p>
+            </div>
+          )
+        }
       },
       {
         title: '昵称',
@@ -347,7 +372,7 @@ export default class UserMng extends SimpleMng {
       const menu = (
         <Menu>
           <Menu.Item>
-              <a onClick={() => this.personCharge(record, record.wxOpenid)} >账号充值</a>
+            <a onClick={() => this.personCharge(record, record.wxOpenid)} >账号充值</a>
           </Menu.Item>
           <Menu.Item>
             <Popconfirm title="是否重置此账号的登录密码？" onConfirm={() => this.removeLoginPassWord(record)}>
@@ -399,6 +424,8 @@ export default class UserMng extends SimpleMng {
                 onChange={this.handleTableChange}
                 expandedRowRender={record => (
                   <DescriptionList className={styles.headerList} size="small" col="2">
+                    <Description term="id">{record.id}</Description>
+                    <Description term="总积分">{record.point}</Description>
                     <Description term="真实名字">{record.realname}</Description>
                     <Description term="是否已验证实名">
                       <Fragment>
@@ -475,6 +502,16 @@ export default class UserMng extends SimpleMng {
             userId={editFormRecord.id}
             visible
             width={715}
+            title={editFormTitle}
+            editFormType={editFormType}
+            closeModal={() => this.setState({ editForm: undefined })}
+          />
+        )}
+        {editForm === 'userPointForm' && (
+          <UserPointForm
+            id={editFormRecord.id}
+            visible
+            width={1200}
             title={editFormTitle}
             editFormType={editFormType}
             closeModal={() => this.setState({ editForm: undefined })}
