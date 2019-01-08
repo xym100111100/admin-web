@@ -13,6 +13,7 @@ import PartnerForm from './PartnerForm';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
+const { Search } = Input;
 const { Description } = DescriptionList;
 
 @connect(({ prmpartner }) => ({ prmpartner }))
@@ -42,6 +43,18 @@ export default class PartnerMng extends SimpleMng {
         this.props.form.resetFields();
     };
 
+
+    selectPartner = (e) => {
+        let paload = {};
+        paload.partnerName = e;
+        paload.pageNum = this.state.options.pageNum;
+        paload.pageSize = this.state.options.pageSize;
+        this.props.dispatch({
+          type: `${this.moduleCode}/list`,
+          payload: paload,
+        });
+      }
+
     // 搜索
     renderSearchForm() {
         const { getFieldDecorator } = this.props.form;
@@ -61,30 +74,9 @@ export default class PartnerMng extends SimpleMng {
                             刷新
                         </Button>
                     </Col>
-                    <Col md={6} sm={24}>
-                        <FormItem label="上线标题">{getFieldDecorator('onlineTitle')(<Input placeholder="上线标题" />)}</FormItem>
-                    </Col>
-                    <Col md={6} sm={24}>
-                        <FormItem label="上线状态">
-                            {getFieldDecorator('onlineState', {
-                                initialValue: '1',
-                            })(
-                                <Select style={{ width: 120 }}>
-                                    <Option value="1">已上线</Option>
-                                    <Option value="0">已下线</Option>
-                                </Select>
-                            )}
-                        </FormItem>
-                    </Col>
-                    <Col md={6} sm={24}>
-                        <span style={{ float: 'left', marginBottom: 24 }}>
-                            <Button type="primary" htmlType="submit">
-                                查询
-                            </Button>
-                            <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-                                重置
-                            </Button>
-                        </span>
+                    <Col md={10} sm={24}/>
+                    <Col md={8} sm={24}>
+                    <Search placeholder="伙伴名称"  onSearch={this.selectPartner}/>
                     </Col>
                 </Row>
             </Form>
