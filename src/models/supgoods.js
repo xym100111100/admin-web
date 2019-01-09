@@ -1,5 +1,7 @@
 import { message } from 'antd';
 import { list, getById, add, modify, del } from '../services/supgoods';
+import {supplierGoods } from '../services/onlonline';
+
 
 export default {
   namespace: 'supgoods',
@@ -10,7 +12,7 @@ export default {
 
   effects: {
     *list({ payload, callback }, { call, put }) {
-      const response = yield call(list, payload);
+      const response = yield call(supplierGoods, payload);
       yield put({
         type: 'changeList',
         payload: response,

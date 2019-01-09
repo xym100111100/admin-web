@@ -439,6 +439,7 @@ export default class FlowMng extends SimpleMng {
           console.info(record);
           if (record.tradeType == '31') return '提现';
           if (record.tradeType == '30') return '申请提现';
+          if (record.tradeType == '32') return '作废提现';
           if (record.tradeType == '40') return '充值保证金';
           if (record.tradeType == '41') return '进货保证金';
           if (record.tradeType == '42') return '出货保证金';

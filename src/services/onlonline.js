@@ -47,3 +47,8 @@ export async function reOnline(params) {
     },
   });
 }
+
+
+export async function supplierGoods(params) {
+  return request(`/onl-svr/onl/online/supplierGoods?${stringify(params)}`);
+}
