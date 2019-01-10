@@ -1,15 +1,17 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Button, Card, Form, Row, Radio, Col, Input, DatePicker, Table } from 'antd';
+import { Button, Card, Form, Row,message, Radio, Col, Input, DatePicker, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './SupGoods.less';
 import OnlOnlineSpecForm from '../Onl/OnlOnlineSpecForm';
+//引入复制插件，报错需要yarn install
+import copy from 'copy-to-clipboard';
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const { RangePicker } = DatePicker;
-@connect(({ supgoods, user, loading }) => ({ supgoods, user, loading: loading.models.supgoods || loading.models.user }))
+@connect(({ supgoods,onlonline, user, loading }) => ({ supgoods,onlonline, user, loading: loading.models.supgoods || loading.models.onlonline|| loading.models.user }))
 @Form.create()
 export default class supGoods extends SimpleMng {
   constructor() {
@@ -33,8 +35,8 @@ export default class supGoods extends SimpleMng {
       onlineState: '1',
     })
     let record = this.state.options;
-    // record.supplierId = this.props.user.currentUser.orgId;
-    record.supplierId = '530999450936672256';
+   record.supplierId = this.props.user.currentUser.orgId;
+    //  record.supplierId = '530999450936672256';
     this.props.dispatch({
       type: `${this.moduleCode}/list`,
       payload: record,
@@ -44,8 +46,8 @@ export default class supGoods extends SimpleMng {
   //初始化
   componentDidMount() {
     let record = this.state.options;
-    // record.supplierId = this.props.user.currentUser.orgId;
-    record.supplierId = '530999450936672256';
+    record.supplierId = this.props.user.currentUser.orgId;
+    // record.supplierId = '530999450936672256';
     this.props.dispatch({
       type: `${this.moduleCode}/list`,
       payload: record,
@@ -68,8 +70,9 @@ export default class supGoods extends SimpleMng {
 
       fieldsValue.pageNum = this.state.options.pageNum;
       fieldsValue.pageSize = this.state.options.pageSize;
-      fieldsValue.supplierId = '530999450936672256';
-      
+    //  fieldsValue.supplierId = '530999450936672256';
+      fieldsValue.supplierId = this.props.user.currentUser.orgId;
+
       this.props.dispatch({
         type: `${this.moduleCode}/list`,
         payload: fieldsValue,
@@ -128,7 +131,20 @@ export default class supGoods extends SimpleMng {
     );
   }
 
+  /**
+   * 复制商品链接
+   */
+  copyUrl=(id,onlineTitle)=>{
+    let url="https://www.duamai.com/wbolybusiness/wechat/goods/goodsDetail.htm?onlineId=";
+    url+=id;
+    url+="&promoterId="+this.props.user.currentUser.userId;
+    copy(url);
+    message.success('复制<'+onlineTitle+'>链接成功,快去发送给微信好友推广您的商品吧!');
+  }
 
+  /**
+   * 搜索组件
+   */
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
     return (
@@ -276,6 +292,12 @@ export default class supGoods extends SimpleMng {
               }
             >
               查询规格信息
+            </a>
+            <br/>
+            <a
+              onClick={() =>this.copyUrl(record.id,record.onlineTitle)}
+            >
+              复制商品链接
             </a>
           </Fragment>
         ),

@@ -122,7 +122,7 @@ export const getRouterData = app => {
       ),
     },
     '/sup/sup-goods': {
-      component: dynamicWrapper(app, ['supgoods','user',], () =>
+      component: dynamicWrapper(app, ['supgoods','user','onlonline'], () =>
         import('../routes/Sup/SupGoods')
       ),
     },
