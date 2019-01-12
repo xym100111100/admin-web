@@ -12,6 +12,7 @@ import UserOrgForm from './UserOrgForm';
 import EditPwForm from './EditPwForm';
 import UserChargeForm from './UserChargeForm';
 import UserPointForm from './UserPointForm'
+import IntegralPointsForm from './IntegralPointsForm'
 
 const { Search } = Input;
 
@@ -214,15 +215,47 @@ export default class UserMng extends SimpleMng {
   }
 
   /**
+   * 用户积分充值
+   */
+  integralPoints = (record, id) => {
+    this.showEditForm({
+      moduleCode: 'sucuser',
+      editForm: 'integralPointsForm',
+      editFormTitle: '积分充值',
+      editFormRecord: record,
+    })
+  }
+
+  /**
    * 用户积分明细
    */
   inquiryPoints = (record) => {
-    console.info(record.id);
+    //console.info(record.id);
     this.showEditForm({
       moduleCode: 'sucuser',
       editForm: 'userPointForm',
       editFormTitle: '积分明细',
       editFormRecord: record,
+    })
+  }
+
+  /**
+   * 积分充值
+   */
+  IntegralPoint = (record) => {
+    const fields=record.fields;
+    fields.accountId=fields.id;
+    fields.oldPoint=fields.point;
+    fields.oldModifiedTimestamp=fields.modifiedTimestamp;
+
+    //console.info(fields);
+    this.props.dispatch({
+      type:'pntList/recharge',
+      payload: record.fields,
+      callback: () => {
+        this.setState({ editForm: undefined })
+        this.handleReload();
+      }        
     })
   }
 
@@ -373,6 +406,9 @@ export default class UserMng extends SimpleMng {
         <Menu>
           <Menu.Item>
             <a onClick={() => this.personCharge(record, record.wxOpenid)} >账号充值</a>
+          </Menu.Item>
+          <Menu.Item>
+            <a onClick={() => this.integralPoints(record, record.id)} >积分充值</a>
           </Menu.Item>
           <Menu.Item>
             <Popconfirm title="是否重置此账号的登录密码？" onConfirm={() => this.removeLoginPassWord(record)}>
@@ -567,6 +603,19 @@ export default class UserMng extends SimpleMng {
                 saveMethodName: 'charge',
                 moduleCode: 'sucuser',
               })
+            }
+          />
+        )}
+        {editForm === "integralPointsForm" && (
+          <IntegralPointsForm
+            record={editFormRecord}
+            visible
+            title={editFormTitle}
+            width={600}
+            editFormType={editFormType}
+            closeModal={() => this.setState({ editForm: undefined })}
+            onSubmit={fields =>
+              this.IntegralPoint({fields})
             }
           />
         )}

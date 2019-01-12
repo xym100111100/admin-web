@@ -19,7 +19,7 @@ export async function add(params) {
 }
 
 export async function modify(params) {
-  return request('/pnt-svr/pnt/account', {
+  return request(`/pnt-svr/pnt/account`, {
     method: 'PUT',
     body: {
       ...params,
@@ -37,4 +37,15 @@ export async function del(params) {
 
 export async function listByAccountId(params) {
   return request(`/pnt-svr/pnt/listByAccountId?${stringify(params)}`);
+
+  
+}
+
+export async function recharge(params) {
+  return request(`/pnt-svr/pnt/account/recharge`, {
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
 }

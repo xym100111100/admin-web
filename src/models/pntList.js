@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { list, getById, add, modify, del, listByAccountId} from '../services/pntList';
+import { list, getById, add, modify, del, listByAccountId,recharge} from '../services/pntList';
 
 export default {
   namespace: 'pntList',
@@ -50,11 +50,18 @@ export default {
     },
     *listByAccountId({ payload, callback }, { call }) {
       const response = yield call(listByAccountId, payload);
-      console.log('2');
       if (callback) callback(response);
+    },
+    *recharge({ payload, callback }, { call }) {
+      const response = yield call(recharge, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
     }
   },
-
   reducers: {
     changeList(state, action) {
       return {

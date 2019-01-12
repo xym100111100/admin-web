@@ -112,11 +112,27 @@ export function pntListByAccountId(req, res, u) {
     url = req.url; // eslint-disable-line
   }
   const params = parse(url, true).query;
-  console.log('3');
   const eo = tableListDataSource.find(item => item.id === params.id);
   if (eo) {
     return res.json(eo);
   } else {
     return res.json({});
+  }
+}
+
+export function pntListRecharge(req, res, u, b) {
+  const body = (b && b.body) || req.body;
+  const replacedIndex = tableListDataSource.findIndex(item => item.id === body.id);
+  if (replacedIndex !== -1) {
+    tableListDataSource.splice(replacedIndex, 1, body);
+    return res.json({
+      result: 1,
+      msg: '充值成功',
+    });
+  } else {
+    return res.json({
+      result: -1,
+      msg: '充值失败，找不到要充值的记录',
+    });
   }
 }
