@@ -249,8 +249,7 @@ export default class OnlineMng extends SimpleMng {
                 <Divider type="vertical" />
                 <a
                   onClick={() =>
-                    this.showAddForm({
-                      id: record.id,
+                    this.showEditForm({
                       editForm: 'onlineForm',
                       editFormRecord: record,
                       editFormTitle: '重新上线',

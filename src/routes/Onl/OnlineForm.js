@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Card, message, Input, Form, Col, Table, Upload, Icon, Modal, Radio, Select } from 'antd';
+import { Card, Row, message, Input, Form, Col, Table, Upload, Icon, Modal, Radio, Select } from 'antd';
 import EditForm from 'components/Rebue/EditForm';
 import EditableTable from 'components/Rebue/EditableTable';
 // 引入编辑器以及EditorState子模块
@@ -21,9 +21,14 @@ const Option = Select.Option;
 @EditForm
 export default class OnlineForm extends React.Component {
   componentWillMount() {
-    const { id } = this.props;
-    if (id !== undefined) this.getOnlines(id);
+    const { record } = this.props;
+    if (record.id !== undefined) this.getOnlines(record.id);
     this.partnerSearch();
+    if (this.props.editFormType === "add") {
+      this.setState({
+        isEditSupplier: 1,
+      })
+    }
   }
 
   state = {
@@ -40,6 +45,8 @@ export default class OnlineForm extends React.Component {
     partnerData: [],
     // 创建一个空的editorState作为初始值
     editorState: BraftEditor.createEditorState(null),
+    //是否能修改供应商,0：否,1：是,2：是，并修改该商品未结算的订单的供应商。
+    isEditSupplier: 0,
   };
 
   // 获取上线信息包括：上线信息、规格信息、图片信息等
@@ -50,7 +57,6 @@ export default class OnlineForm extends React.Component {
         id: id,
       },
       callback: onlonline => {
-        console.log(onlonline)
         let fileList = new Array();
         let fileLists = new Array();
         for (let i = 0; i < onlonline.record.onlinePicList.length; i++) {
@@ -187,6 +193,44 @@ export default class OnlineForm extends React.Component {
       },
     });
   }
+  //显示是否修改供应商组件
+  showIsEditSupplier = () => {
+    const { form } = this.props;
+    const { isEditSupplier } = this.state;
+    if (this.props.editFormType === "add") {
+      return (
+        <Col md={14} sm={24} style={{ display: 'none' }} >
+          <FormItem label="能否修改">
+            {form.getFieldDecorator('isEditSupplier', {
+              initialValue: 0,
+            })(
+              <RadioGroup onChange={this.setEditSupplier} value={isEditSupplier}>
+                <Radio value={0}>否</Radio>
+                <Radio value={1}>是</Radio>
+                <Radio value={2}>是,且修改该商品未结算订单的供应商,发货组织</Radio>
+              </RadioGroup>
+            )}
+          </FormItem>
+        </Col>
+      )
+    } else {
+      return (
+        <Col md={14} sm={24} >
+          <FormItem label="能否修改">
+            {form.getFieldDecorator('isEditSupplier', {
+              initialValue: 0,
+            })(
+              <RadioGroup onChange={this.setEditSupplier} value={isEditSupplier}>
+                <Radio value={0}>否</Radio>
+                <Radio value={1}>是</Radio>
+                <Radio value={2}>是,且修改该商品未结算订单的供应商,发货组织</Radio>
+              </RadioGroup>
+            )}
+          </FormItem>
+        </Col>
+      )
+    }
+  }
 
   // 选择板块类型事件
   onChangeRadio = e => {
@@ -207,17 +251,26 @@ export default class OnlineForm extends React.Component {
     this.setState({ onlineDetail: editorState });
   };
 
+  //设置是否能修改供应商
+  setEditSupplier = e => {
+    this.setState({
+      isEditSupplier: e.target.value,
+    });
+  }
+
   // 提交前事件
   beforeSave = () => {
-    const { form, record, id } = this.props;
+    const { form, record } = this.props;
     // 产品id
     let productId = record.productId === undefined ? 0 : record.productId;
     // 上线商品名称
     let onlineName = undefined;
     let supplierId = undefined;
+    let isEditSupplier = undefined;
     form.validateFields((err, values) => {
       onlineName = values.onlineName;
       supplierId = values.supplierId;
+      isEditSupplier = values.isEditSupplier;
     });
     if (onlineName === undefined || onlineName === null || onlineName === '') return message.error('请输入商品名称');
     if (supplierId === undefined || supplierId === null || supplierId === '') return message.error('请选择供应商');
@@ -251,6 +304,8 @@ export default class OnlineForm extends React.Component {
         slideshow: slideshow,
       });
     }
+
+    form.getFieldDecorator('isEditSupplier');
     form.getFieldDecorator('subjectType');
     form.getFieldDecorator('onlineSpecs');
     form.getFieldDecorator('goodsQsmm');
@@ -261,7 +316,8 @@ export default class OnlineForm extends React.Component {
     form.getFieldDecorator('supplierId');
     form.getFieldDecorator('deliverOrgId');
     form.setFieldsValue({
-      onlineId: id,
+      isEditSupplier: isEditSupplier,
+      onlineId: record.id,
       onlineName: onlineName,
       subjectType: subjectType,
       onlineSpecs: onlineSpecs,
@@ -287,7 +343,9 @@ export default class OnlineForm extends React.Component {
       onlineDetail,
       subjectType,
       partnerData,
+      isEditSupplier,
     } = this.state;
+
 
     // 商品主图、轮播图上传图标
     const uploadButton = (
@@ -384,130 +442,142 @@ export default class OnlineForm extends React.Component {
 
     return (
       <Card style={{ width: '1050px', margin: '0 auto' }}>
-        <Col span={24} style={{ width: '100%' }}>
-          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="商品名称">
-            {form.getFieldDecorator('onlineName', {})(
-              <Input style={{ width: '500px' }} placeholder="请输入商品的名称" />
-            )}
-          </FormItem>
-        </Col>
-        <Col span={24} style={{ width: '100%' }}>
-          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="供应商名称">
-            {form.getFieldDecorator('supplierId', {
-              rules: [{ required: true, message: "请选择供应商" }],
-              initialValue: record.supplierId
-            })(
-              <Select
-                showSearch
-                placeholder={record.supplierName === undefined ? "请输入供应商名称" : record.supplierName}
-                style={{ width: 300 }}
-                defaultActiveFirstOption={false}
-                showArrow={false}
-                filterOption={false}
-                onSearch={this.partnerSearch}
-                notFoundContent="没有可选择的供应商"
-              >
-                {partnerData.map(d => <Option key={d.orgId}>{d.partnerName}</Option>)}
-              </Select>
-            )}
-          </FormItem>
-        </Col>
-        <Col span={24} style={{ width: '100%' }}>
-          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="发货类型">
-            {
-              <RadioGroup onChange={this.onChangeDeliveryTypeRadio} value={this.state.deliveryType}>
-                <Radio value={0}>自发</Radio>
-                <Radio value={1}>供应商</Radio>
-              </RadioGroup>
-            }
-          </FormItem>
-        </Col>
-        <Col span={24} style={{ width: '100%' }}>
-          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="上线板块">
-            {
-              <RadioGroup onChange={this.onChangeRadio} value={this.state.subjectType}>
-                <Radio value={0}>返现</Radio>
-                <Radio value={1}>全返</Radio>
-              </RadioGroup>
-            }
-          </FormItem>
-        </Col>
-        <Col span={24}>
-          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="规格信息">
-            {
-              <div style={{ border: 'solid 1px rgba(0, 0, 0, 0.25)' }}>
-                <EditableTable onCheck={this.handleCheck} ref="editableTable">
-                  <Table
-                    rowKey="id"
-                    pagination={false}
-                    loading={loading}
-                    dataSource={onlOnlineSpec}
-                    columns={columns}
-                  />
-                </EditableTable>
-              </div>
-            }
-          </FormItem>
-        </Col>
-        <Col span={24}>
-          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="商品主图">
-            {
-              <div className="clearfix">
-                <Upload
-                  action="/ise-svr/ise/upload"
-                  // action="http://192.168.1.203:43135/ise/upload"
-                  listType="picture-card"
-                  fileList={fileList}
-                  name="multipartFile"
-                  data={uploadData}
-                  multiple={true}
-                  onPreview={this.handlePreview}
-                  onChange={this.handleChange}
-                  className="damaiQsmm"
-                >
-                  {fileList.length >= 1 ? null : uploadButton}
-                </Upload>
-                <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
-                  <img alt="example" style={{ width: '100%' }} src={previewImage} />
-                </Modal>
-              </div>
-            }
-          </FormItem>
-        </Col>
-        <Col span={24}>
-          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="商品轮播图">
-            {
-              <div className="clearfix">
-                <Upload
-                  action="/ise-svr/ise/upload"
-                  // action="http://192.168.1.203:43135/ise/upload"
-                  listType="picture-card"
-                  fileList={fileLists}
-                  name="multipartFile"
-                  data={uploadDatas}
-                  multiple={true}
-                  onPreview={this.handlePreviews}
-                  onChange={this.handleChanges}
-                  className="damaiSlideshow"
-                >
-                  {fileLists.length >= 5 ? null : uploadButton}
-                </Upload>
-                <Modal visible={previewVisibles} footer={null} onCancel={this.handleCancels}>
-                  <img alt="example" style={{ width: '100%' }} src={previewImages} />
-                </Modal>
-              </div>
-            }
-          </FormItem>
-        </Col>
-        <Col span={24}>
-          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="商品详情">
-            {
-              <div style={{ border: 'solid 1px rgba(0, 0, 0, 0.25)' }}>
-                <BraftEditor {...editorProps} ref={instance => (this.editorInstance = instance)} />
-              </div>
-            }
-          </FormItem>
-        </Col>
+
+        <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
+          <Col md={24} sm={24} >
+            <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="商品名称">
+              {form.getFieldDecorator('onlineName', {})(
+                <Input style={{ width: '500px' }} placeholder="请输入商品的名称" />
+              )}
+            </FormItem>
+          </Col>
+          <Col md={24} sm={24} >
+            <Form layout="inline">
+              <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
+                <Col md={10} sm={24} style={{ marginLeft: -13 }}  >
+                  <FormItem label="供应商名称">
+                    {form.getFieldDecorator('supplierId', {
+                      rules: [{ required: true, message: "请选择供应商" }],
+                      initialValue: record.supplierId
+                    })(
+                      <Select
+                        disabled={isEditSupplier === 0 ? true : false}
+                        showSearch
+                        placeholder={record.supplierName === undefined ? "请输入供应商名称" : record.supplierName}
+                        style={{ width: 250 }}
+                        defaultActiveFirstOption={false}
+                        showArrow={false}
+                        filterOption={false}
+                        onSearch={this.partnerSearch}
+                        notFoundContent="没有可选择的供应商"
+                      >
+                        {partnerData.map(d => <Option key={d.orgId}>{d.partnerName}</Option>)}
+                      </Select>
+                    )}
+                  </FormItem>
+                </Col>
+                {this.showIsEditSupplier()}
+              </Row>
+            </Form>
+          </Col>
+          <Col md={24} sm={24} >
+            <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="发货类型">
+              {
+                <RadioGroup onChange={this.onChangeDeliveryTypeRadio} value={this.state.deliveryType}>
+                  <Radio value={0}>自发</Radio>
+                  <Radio value={1}>供应商</Radio>
+                </RadioGroup>
+              }
+            </FormItem>
+          </Col>
+          <Col md={24} sm={24} >
+            <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="上线板块">
+              {
+                <RadioGroup onChange={this.onChangeRadio} value={this.state.subjectType}>
+                  <Radio value={0}>返现</Radio>
+                  <Radio value={1}>全返</Radio>
+                </RadioGroup>
+              }
+            </FormItem>
+          </Col>
+          <Col md={24} sm={24}>
+            <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="规格信息">
+              {
+                <div style={{ border: 'solid 1px rgba(0, 0, 0, 0.25)' }}>
+                  <EditableTable onCheck={this.handleCheck} ref="editableTable">
+                    <Table
+                      rowKey="id"
+                      pagination={false}
+                      loading={loading}
+                      dataSource={onlOnlineSpec}
+                      columns={columns}
+                    />
+                  </EditableTable>
+                </div>
+              }
+            </FormItem>
+          </Col>
+          <Col md={24} sm={24}>
+            <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="商品主图">
+              {
+                <div className="clearfix">
+                  <Upload
+                    action="/ise-svr/ise/upload"
+                    // action="http://192.168.1.203:43135/ise/upload"
+                    listType="picture-card"
+                    fileList={fileList}
+                    name="multipartFile"
+                    data={uploadData}
+                    multiple={true}
+                    onPreview={this.handlePreview}
+                    onChange={this.handleChange}
+                    className="damaiQsmm"
+                  >
+                    {fileList.length >= 1 ? null : uploadButton}
+                  </Upload>
+                  <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
+                    <img alt="example" src={previewImage} />
+                  </Modal>
+                </div>
+              }
+            </FormItem>
+          </Col>
+          <Col md={24} sm={24}>
+            <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="商品轮播图">
+              {
+                <div className="clearfix">
+                  <Upload
+                    action="/ise-svr/ise/upload"
+                    // action="http://192.168.1.203:43135/ise/upload"
+                    listType="picture-card"
+                    fileList={fileLists}
+                    name="multipartFile"
+                    data={uploadDatas}
+                    multiple={true}
+                    onPreview={this.handlePreviews}
+                    onChange={this.handleChanges}
+                    className="damaiSlideshow"
+                  >
+                    {fileLists.length >= 5 ? null : uploadButton}
+                  </Upload>
+                  <Modal visible={previewVisibles} footer={null} onCancel={this.handleCancels}>
+                    <img alt="example" src={previewImages} />
+                  </Modal>
+                </div>
+              }
+            </FormItem>
+          </Col>
+          <Col md={24} sm={24}>
+            <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="商品详情">
+              {
+                <div style={{ border: 'solid 1px rgba(0, 0, 0, 0.25)' }}>
+                  <BraftEditor {...editorProps} ref={instance => (this.editorInstance = instance)} />
+                </div>
+              }
+            </FormItem>
+          </Col>
+        </Row>
+
       </Card>
     );
   }
