@@ -433,12 +433,10 @@ export default class SupOrder extends SimpleMng {
               })(
                 <Select placeholder="订单状态" style={{ width: '100%' }}>
                   <Option value="">全部</Option>
-                  <Option value="1">已下单</Option>
                   <Option value="2">已支付</Option>
                   <Option value="3">已发货</Option>
                   <Option value="4">已签收</Option>
                   <Option value="5">已结算</Option>
-                  <Option value="-1">做废</Option>
                 </Select>
               )}
             </FormItem>
@@ -519,6 +517,9 @@ export default class SupOrder extends SimpleMng {
       fields.shipperName = shipperInfo[1];
       fields.shipperCode = shipperInfo[2];
       fields.shipperInfo = undefined
+    }else {
+      message.error('快递公司未配置，请到快递配置中配置');
+      return;
     }
     //整理发件信息
     let senderInfo;
@@ -532,6 +533,9 @@ export default class SupOrder extends SimpleMng {
       fields.senderPostCode = senderInfo[5];
       fields.senderAddress = senderInfo[6];
       fields.senderInfo = undefined;
+    }else {
+      message.error('发件人未配置，请到快递配置中配置');
+      return;
     }
     //整理被选择的订单详情Id
     let selectDetailId = [];
@@ -855,8 +859,6 @@ export default class SupOrder extends SimpleMng {
         key: 'orderState',
         width: 100,
         render: (text, record) => {
-          if (record.orderState === -1) return '做废';
-          if (record.orderState === 1) return '已下单';
           if (record.orderState === 2) return '已支付';
           if (record.orderState === 3) return '已发货';
           if (record.orderState === 4) return '已签收';
