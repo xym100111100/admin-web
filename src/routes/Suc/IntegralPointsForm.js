@@ -1,19 +1,14 @@
 import React, { Fragment, PureComponent } from 'react';
-import { Form, Input, Select } from 'antd';
+import { Form, Input } from 'antd';
 import { connect } from 'dva';
 import EditForm from 'components/Rebue/EditForm';
-
 const FormItem = Form.Item;
-const { Option } = Select;
-
 // 添加与编辑的表单
 @connect(({ loading }) => ({
   submitting: loading.models.sucuser,
 }))
 @EditForm
 export default class UserChargeForm extends PureComponent {
-  state = {
-  };
 
   /**
    * 判断昵称是否存在，不存在的话返回微信昵称
@@ -24,32 +19,32 @@ export default class UserChargeForm extends PureComponent {
       return (
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="用户名称">
           {form.getFieldDecorator('nickname', {
-            rules: [{ required: false, message: '用户昵称' }],
-          })(<Input placeholder="用户昵称" disabled="true" />)}
+            
+          })(<Input placeholder="用户昵称" disabled={true} />)}
         </FormItem>
       )
     } else if(this.props.record.wxNickname !== undefined){
       return(
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="用户名称">
         {form.getFieldDecorator('wxNickname', {
-          rules: [{ required: false, message: '用户昵称' }],
-        })(<Input placeholder="用户昵称" disabled="true" />)}
+          
+        })(<Input placeholder="用户昵称" disabled={true} />)}
       </FormItem>
       )
     }else if(this.props.record.qqNickname !== undefined){
       return(
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="用户名称">
         {form.getFieldDecorator('qqNickname', {
-          rules: [{ required: false, message: '用户昵称' }],
-        })(<Input placeholder="用户昵称" disabled="true" />)}
+          
+        })(<Input placeholder="用户昵称" disabled={true} />)}
       </FormItem>
       )
     }else {
       return(
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="用户名称">
         {form.getFieldDecorator('loginName', {
-          rules: [{ required: false, message: '用户昵称' }],
-        })(<Input placeholder="用户昵称" disabled="true" />)}
+          
+        })(<Input placeholder="用户昵称" disabled={true} />)}
       </FormItem>
       )
     }
