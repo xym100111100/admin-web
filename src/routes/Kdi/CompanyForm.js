@@ -88,7 +88,7 @@ export default class CompanyForm extends PureComponent {
             <Col md={24} sm={24} style={{textAlign:'center',marginTop:20}}  >
               <FormItem label="支付方式" style={{marginLeft:-38}} >
                 {form.getFieldDecorator('payType', {
-                  rules: [{ required: true, message: '请选择支付方式' }],
+                 
                 })(
                   <Select placeholder="请选择支付类型" style={{ width: 250 }}>
                     <Option value="1">现付</Option>
@@ -99,6 +99,9 @@ export default class CompanyForm extends PureComponent {
                 )}
               </FormItem>
             </Col>
+            <Col md={24} sm={24}  style={{marginTop:10}}  >
+              <span>温馨提示:如何您未已快递公司对接只需要选择快递公司名称即可，其他输入框留空或清空。</span>
+          </Col>
           </Row>
         </Form>
       </Fragment>

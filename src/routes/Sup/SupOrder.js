@@ -741,7 +741,7 @@ export default class SupOrder extends SimpleMng {
     let oldTimestamp = new Date(oldDate).getTime();
     let newTimestamp = oldTimestamp+(day*1000*60*60*24)
     let nowTimestamp=new Date().getTime();
-    let  rest = parseInt((newTimestamp-nowTimestamp)/1000/60/60/24)
+    let  rest = Math.ceil((newTimestamp-nowTimestamp)/1000/60/60/24)
     return rest;
   }
 
@@ -889,34 +889,38 @@ export default class SupOrder extends SimpleMng {
         title: '下单时间',
         dataIndex: 'orderTime',
         key: 'orderTime',
-        width: 100,
+        width: 150,
         render: (text, record) => {
           if (record.orderState === 3&&record.sendTime!== undefined) {
             return (
               <div>
                 {record.orderTime!== undefined&&record.orderTime}
-                <span>距结算还有{this.stringTODate(record.sendTime,24)}天</span>
+                <br/>
+                <span>预计结算到余额还有{this.stringTODate(record.sendTime,24)}天</span>
               </div>
             )
           } else if (record.orderState === 4&&record.receivedTime!== undefined) {
             return (
               <div>
                 {record.orderTime!== undefined&&record.orderTime}
-                <span>距结算还有{this.stringTODate(record.receivedTime,14)}天</span>
+                <br/>
+                <span>预计距结算到余额还有{this.stringTODate(record.receivedTime,14)}天</span>
               </div>
             )
           } else if (record.orderState === 5&&record.closeTime!== undefined&&(this.stringTODate(record.closeTime,7)>0)) {
             return (
               <div>
                 {record.orderTime!== undefined&&record.orderTime}
-                <span>距结算还有{this.stringTODate(record.closeTime,7)}天</span>
+                <br/>
+                <span>预计距结算到余额还有{this.stringTODate(record.closeTime,7)}天</span>
               </div>
             )
           } else if (record.orderState === 5&&record.closeTime!== undefined&&(this.stringTODate(record.closeTime,7)<0)) {
             return (
               <div>
                 {record.orderTime!== undefined&&record.orderTime}
-                <span>已提现到余额</span>
+                <br/>
+                <span>已结算到余额</span>
               </div>
             )
           } else {

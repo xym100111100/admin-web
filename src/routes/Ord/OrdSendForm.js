@@ -81,15 +81,7 @@ export default class OrdSendForm extends PureComponent {
             payload: { orgId: orgId },
             callback: data => {
                 for (let i = 0; i < data.length; i++) {
-                    if (data[i].payType === 1) {
-                        data[i].payType = '现付';
-                    } else if (data[i].payType === 2) {
-                        data[i].payType = '到付';
-                    } else if (data[i].payType === 3) {
-                        data[i].payType = '月结';
-                    } else if (data[i].payType === 4) {
-                        data[i].payType = '第三方付';
-                    }
+
                     //设置默认快递公司id以便后面修改
                     if (data[i].isDefault) {
                         this.setState({
@@ -372,7 +364,7 @@ export default class OrdSendForm extends PureComponent {
                                             <List.Item>
                                                 <List.Item.Meta
                                                     title={<a href="https://ant.design">{item.companyName}</a>}
-                                                    description={'支付方式 : ' + item.payType}
+
                                                 />
                                                 {this.state.defaultCompanyId === item.id ? (
                                                     <a style={{ float: 'right', marginTop: -15, }} >已选择</a>
