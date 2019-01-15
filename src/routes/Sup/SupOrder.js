@@ -511,19 +511,19 @@ export default class SupOrder extends SimpleMng {
     }
     //整理快递公司信息
     let shipperInfo;
-    if (fields.shipperInfo !== undefined) {
+    if (fields.shipperInfo !== undefined && fields.shipperInfo =='' ) {
       shipperInfo = fields.shipperInfo.split('/');
       fields.shipperId = shipperInfo[0];
       fields.shipperName = shipperInfo[1];
       fields.shipperCode = shipperInfo[2];
       fields.shipperInfo = undefined
     }else {
-      message.error('快递公司未配置，请到快递配置中配置');
+      message.error('快递公司未配置，请到快递业务中的快递配置中配置');
       return;
     }
     //整理发件信息
     let senderInfo;
-    if (fields.senderInfo !== undefined) {
+    if (fields.senderInfo !== undefined && fields.senderInfo !=='' ) {
       senderInfo = fields.senderInfo.split('/');
       fields.senderName = senderInfo[0];
       fields.senderMobile = senderInfo[1];
@@ -534,12 +534,12 @@ export default class SupOrder extends SimpleMng {
       fields.senderAddress = senderInfo[6];
       fields.senderInfo = undefined;
     }else {
-      message.error('发件人未配置，请到快递配置中配置');
+      message.error('发件人未配置，请到快递业务中的快递配置中配置');
       return;
     }
     //整理被选择的订单详情Id
     let selectDetailId = [];
-    if (fields.selectDetailId !== undefined) {
+    if (fields.selectDetailId !== undefined ) {
       //可能添加的时候后面多添加了斜杆，需要去掉再split
       if (fields.selectDetailId.substr(fields.selectDetailId.length - 1, 1) === '/') {
         fields.selectDetailId = fields.selectDetailId.substring(0, fields.selectDetailId.length - 1);
@@ -732,6 +732,19 @@ export default class SupOrder extends SimpleMng {
     })
   }
 
+  /**
+   *计算剩余时间 
+   */
+  stringTODate =(str,day) =>{
+    str=str.replace(/-/g,"/");
+    let oldDate=new Date(str);
+    let oldTimestamp = new Date(oldDate).getTime();
+    let newTimestamp = oldTimestamp+(day*1000*60*60*24)
+    let nowTimestamp=new Date().getTime();
+    let  rest = parseInt((newTimestamp-nowTimestamp)/1000/60/60/24)
+    return rest;
+  }
+
   showTrace = (data) => {
     const listItems = data.map(items => {
       return (
@@ -854,6 +867,13 @@ export default class SupOrder extends SimpleMng {
 
       },
       {
+        title: '总价',
+        dataIndex: 'costPriveTotal',
+        key: 'costPriveTotal',
+        width: 150,
+
+      },
+      {
         title: '状态',
         dataIndex: 'orderState',
         key: 'orderState',
@@ -865,12 +885,48 @@ export default class SupOrder extends SimpleMng {
           if (record.orderState === 5) return '已结算';
         },
       },
-
       {
         title: '下单时间',
         dataIndex: 'orderTime',
         key: 'orderTime',
         width: 100,
+        render: (text, record) => {
+          if (record.orderState === 3&&record.sendTime!== undefined) {
+            return (
+              <div>
+                {record.orderTime!== undefined&&record.orderTime}
+                <span>距结算还有{this.stringTODate(record.sendTime,24)}天</span>
+              </div>
+            )
+          } else if (record.orderState === 4&&record.receivedTime!== undefined) {
+            return (
+              <div>
+                {record.orderTime!== undefined&&record.orderTime}
+                <span>距结算还有{this.stringTODate(record.receivedTime,14)}天</span>
+              </div>
+            )
+          } else if (record.orderState === 5&&record.closeTime!== undefined&&(this.stringTODate(record.closeTime,7)>0)) {
+            return (
+              <div>
+                {record.orderTime!== undefined&&record.orderTime}
+                <span>距结算还有{this.stringTODate(record.closeTime,7)}天</span>
+              </div>
+            )
+          } else if (record.orderState === 5&&record.closeTime!== undefined&&(this.stringTODate(record.closeTime,7)<0)) {
+            return (
+              <div>
+                {record.orderTime!== undefined&&record.orderTime}
+                <span>已提现到余额</span>
+              </div>
+            )
+          } else {
+            return (
+              <div>
+                {record.orderTime!== undefined&&record.orderTime}
+              </div>
+            )
+          }
+        }
       },
       {
         title: '操作',
