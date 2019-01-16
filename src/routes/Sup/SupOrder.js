@@ -511,7 +511,7 @@ export default class SupOrder extends SimpleMng {
     }
     //整理快递公司信息
     let shipperInfo;
-    if (fields.shipperInfo !== undefined && fields.shipperInfo =='' ) {
+    if (fields.shipperInfo !== undefined && fields.shipperInfo !=='' ) {
       shipperInfo = fields.shipperInfo.split('/');
       fields.shipperId = shipperInfo[0];
       fields.shipperName = shipperInfo[1];
