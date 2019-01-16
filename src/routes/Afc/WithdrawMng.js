@@ -1,13 +1,15 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Card, Divider, Form, Input, Button, Table, Popconfirm,Row, Col, Select } from 'antd';
+import { Card, Divider, Form, Input, Button, Table, Popconfirm, Row, Col, Select,Radio } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DescriptionList from 'components/DescriptionList';
 import styles from './WithdrawMng.less';
 import WithdrawReviewForm from './WithdrawReviewForm';
 import WithdrawCancelForm from './WithdrawCancelForm';
 
+const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
 const { Search } = Input;
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -86,6 +88,11 @@ export default class WithdrawMng extends SimpleMng {
     });
   }
 
+  setWithdrawState=(value)=>{
+    this.setState({
+        returnState:value,
+    })
+}
 
   // 重置from
   handleFormReset = () => {
@@ -100,17 +107,28 @@ export default class WithdrawMng extends SimpleMng {
           <Col md={6} sm={24}>
             <FormItem label="银行账户名称">{getFieldDecorator('bankAccountName')(<Input placeholder="银行账户名称" />)}</FormItem>
           </Col>
-          <Col md={4} sm={24}>
-            <FormItem label="">
+          <Col md={6} sm={24}>
+            <FormItem   >
               {getFieldDecorator('withdrawState', {
-                initialValue: '1'
+                initialValue: '1',
               })(
-                <Select placeholder="提现状态" style={{ width: '100%' }}>
-                  <Option value="-1">已作废</Option>
-                  <Option value="1">申请中</Option>
-                  <Option value="2">处理中</Option>
-                  <Option value="3">已提现</Option>
-                </Select>
+                <RadioGroup style={{ width: 360 }} >
+                  <RadioButton onClick={() => this.setWithdrawState()} value="">
+                    全部
+                  </RadioButton>
+                  <RadioButton onClick={() => this.setWithdrawState(1)} value="1">
+                    申请中
+                  </RadioButton>
+                  <RadioButton onClick={() => this.setWithdrawState(2)} value="2">
+                    处理中
+                  </RadioButton>
+                  <RadioButton onClick={() => this.setWithdrawState(2)} value="3">
+                    已提现
+                  </RadioButton>
+                  <RadioButton onClick={() => this.setWithdrawState('-1')} value="-1">
+                    已作废
+                  </RadioButton>
+                </RadioGroup>
               )}
             </FormItem>
           </Col>
