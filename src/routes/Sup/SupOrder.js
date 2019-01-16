@@ -870,7 +870,7 @@ export default class SupOrder extends SimpleMng {
         title: '总价',
         dataIndex: 'costPriveTotal',
         key: 'costPriveTotal',
-        width: 150,
+        width: 100,
 
       },
       {
