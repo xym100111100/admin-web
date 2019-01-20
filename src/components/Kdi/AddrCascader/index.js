@@ -3247,7 +3247,16 @@ const options = [
           { value: '东莞生态园', label: '东莞生态园' },
         ],
       },
-      { value: '中山市', label: '中山市', children: [] },
+      {
+        value: '中山市',
+        label: '中山市',
+        children: [
+          { value: '石岐区', label: '石岐区' },
+          { value: '东区', label: '东区' },
+          { value: '西区', label: '西区' },
+          { value: '南区', label: '南区' },
+          { value: '五桂山区', label: '五桂山区' },
+        ] },
       {
         value: '潮州市',
         label: '潮州市',
