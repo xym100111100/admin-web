@@ -1,7 +1,7 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Card, Divider, DatePicker, message, Tooltip, Icon, Form, Table, Button, Col, Row } from 'antd';
+import { Card, Divider, DatePicker, message, Tooltip, Icon, Form, Table, Button, Col, Row, Popover } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './SupAccount.less';
 import SupWithdrawForm from './SupWithdrawForm';
@@ -16,9 +16,9 @@ import {
   Field,
 } from 'components/Charts';
 
-@connect(({ supaccount, ordorder, user, afcapplywithdrawaccount, loading }) => ({
+@connect(({ supaccount, ordorder, user, afcapplywithdrawaccount, loading, }) => ({
   supaccount, ordorder, user, afcapplywithdrawaccount,
-  loading: loading.models.supaccount || loading.models.ordorder || loading.models.user || loading.models.afcapplywithdrawaccount
+  loading: loading.models.supaccount || loading.models.ordorder || loading.models.user || loading.models.afcapplywithdrawaccount  
 }))
 @Form.create()
 export default class SupAccount extends SimpleMng {
@@ -235,34 +235,6 @@ export default class SupAccount extends SimpleMng {
     });
   };
 
-  showReceiverInfo = (record) => {
-    return (
-      <Row gutter={{ md: 6, lg: 24, xl: 48 }} >
-        <Col md={24} sm={24}>
-          <h4>收件人信息</h4>
-        </Col>
-        <Col md={12} sm={24}>
-          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>收件人名字:</span>{record.receiverName !== undefined && (record.receiverName)}
-        </Col>
-        <Col md={12} sm={24}>
-          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>收件人手机:</span>{record.receiverMobile !== undefined && (record.receiverMobile)}
-        </Col>
-        <Col md={24} sm={24}>
-          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>收件人地址:</span>{record.receiverProvince !== undefined && (
-            record.receiverProvince + record.receiverCity + record.receiverExpArea + record.receiverAddress)}
-        </Col>
-        {this.showPayTime(record)}
-        {this.showSendTime(record)}
-        {this.showReceivedTime(record)}
-        {this.showCloseTime(record)}
-        {this.showCancelTime(record)}
-        <Col md={24} sm={24}>
-          <Divider />
-        </Col>
-      </Row>
-    )
-
-  }
 
   /**
 * 根据是否有支付时间来支付时间
@@ -341,7 +313,7 @@ export default class SupAccount extends SimpleMng {
   showOrderInfo = (record) => {
     this.props.dispatch({
       type: `${this.moduleCode}/detail`,
-      payload: { orderId: record.id },
+      payload: { orderId: record.orderId },
       callback: data => {
         if (data !== undefined && data.length !== 0) {
           for (let i = 0; i < data.length; i++) {
@@ -480,6 +452,17 @@ export default class SupAccount extends SimpleMng {
     editFormRecord.applicantId = this.props.user.currentUser.userId;
     editFormRecord.applicantOrgId = this.props.user.currentUser.orgId;
 
+    const content = (
+      <div>
+        <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
+          <Col md={24} sm={24}>
+            <h4>订单详情</h4>
+          </Col>
+        </Row>
+        {this.state.expand.expand !== '' && this.showExpand(this.state.expand.expand)}
+      </div>
+    );
+
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
@@ -492,6 +475,21 @@ export default class SupAccount extends SimpleMng {
       {
         title: '交易标题',
         dataIndex: 'tradeTitle',
+        render:(text,record) =>{
+          if(record.tradeType === 50){
+            return (
+              <Popover autoAdjustOverflow={true} trigger='click' placement='right' onVisibleChange={(visible) => !visible || this.showOrderInfo(record)} content={content} title="查看订单信息">
+                <a>{record.tradeTitle}</a>
+              </Popover>
+            );
+          }else{
+            return (
+              <div>
+                {record.tradeTitle}
+              </div>
+            );
+          }
+        },
       },
       {
         title: '交易类型',
