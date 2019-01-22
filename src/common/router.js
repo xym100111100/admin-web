@@ -69,7 +69,7 @@ export const getRouterData = app => {
   const routerConfig = {
     // ****************** 业务路由 *******************
     '/home/index': {
-      component: dynamicWrapper(app, ['homeindex', 'user'], () =>
+      component: dynamicWrapper(app, ['homeindex', 'user','ordorder'], () =>
         import('../routes/Home/HomeIndex')
       ),
     },
