@@ -11,6 +11,7 @@ import {
   MiniBar,
   Field,
 } from 'components/Charts';
+import { height } from 'window-size';
 
 @Form.create()
 @connect(({ homeindex, user, loading, ordorder }) => ({
@@ -64,7 +65,14 @@ export default class HomeIndex extends SimpleMng {
   render() {
     const { homeindex: { homeindex }, loading } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
-
+    const topColResponsiveProps = {
+      xs: 24,
+      sm: 12,
+      md: 12,
+      lg: 12,
+      xl: 8,
+      style: { marginBottom: 24 },
+    };
 
     return (
       <Fragment>
@@ -77,20 +85,20 @@ export default class HomeIndex extends SimpleMng {
             </Row>
           </Card>
           <br />
-          <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
-            <Col span={8}>
+          <Row gutter={24}>
+            <Col {...topColResponsiveProps}>
               <ChartCard
                 bordered={false}
                 title="常见问题"
-                contentHeight={60}
-              >
+                style={{height:360}}
+                >
                 <a onClick={() => this.deliveryProcess()}>发货流程</a>
                 <br />
                 <a onClick={() => this.cashWithdrawal()}>提现时间及流程</a>
               </ChartCard>
             </Col>
 
-            <Col span={8}>
+            <Col {...topColResponsiveProps}>
               <ChartCard
                 bordered={false}
                 title="未发货的订单"
@@ -100,7 +108,8 @@ export default class HomeIndex extends SimpleMng {
                     </a>
                   </div>
                 }
-                contentHeight={120}
+                contentHeight={170}
+                style={{height:360}}
               >
                 <div style={{ fontSize: 30, textAlign: 'center' }}>
                   <span style={{ fontWeight: 'bold', fontSize: 50 }}>
@@ -111,7 +120,7 @@ export default class HomeIndex extends SimpleMng {
               </ChartCard>
             </Col>
 
-            <Col span={8}>
+            <Col {...topColResponsiveProps}>
               <ChartCard
                 bordered={false}
                 contentHeight={300}
