@@ -34,7 +34,6 @@ export default class HomeIndex extends SimpleMng {
       currentUserName: this.props.user.currentUser.nickname,
     })
     this.unshipments();
-    console.log(this.state)
   }
 
   unshipments = () => {
@@ -90,11 +89,11 @@ export default class HomeIndex extends SimpleMng {
               <ChartCard
                 bordered={false}
                 title="常见问题"
-                style={{height:360}}
+                style={{height:362}}
                 >
-                <a onClick={() => this.deliveryProcess()}>发货流程</a>
+                <a style={{ fontSize: 20}} onClick={() => this.deliveryProcess()}>发货流程</a>
                 <br />
-                <a onClick={() => this.cashWithdrawal()}>提现时间及流程</a>
+                <a style={{ fontSize: 20}} onClick={() => this.cashWithdrawal()}>提现时间及流程</a>
               </ChartCard>
             </Col>
 
@@ -102,20 +101,16 @@ export default class HomeIndex extends SimpleMng {
               <ChartCard
                 bordered={false}
                 title="未发货的订单"
-                action={
-                  <div>
-                    <a href="#/sup/sup-order">前去发货
-                    </a>
-                  </div>
-                }
                 contentHeight={170}
-                style={{height:360}}
+                style={{height:362}}
               >
                 <div style={{ fontSize: 30, textAlign: 'center' }}>
+                  <a href="#/sup/sup-order">
                   <span style={{ fontWeight: 'bold', fontSize: 50 }}>
                     {this.state.unshipmentsNumber}
                   </span>
                   个订单等待发货
+                  </a>
               </div>
               </ChartCard>
             </Col>
