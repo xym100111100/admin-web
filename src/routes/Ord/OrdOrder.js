@@ -508,8 +508,8 @@ export default class OrdOrder extends SimpleMng {
                 <Select placeholder="订单状态" style={{ width: '100%' }}>
                   <Option value="">全部</Option>
                   <Option value="1">已下单</Option>
-                  <Option value="2">已支付</Option>
-                  <Option value="3">已发货</Option>
+                  <Option value="2">待发货</Option>
+                  <Option value="3">待收货</Option>
                   <Option value="4">已签收</Option>
                   <Option value="5">已结算</Option>
                   <Option value="-1">做废</Option>
@@ -950,8 +950,8 @@ export default class OrdOrder extends SimpleMng {
         render: (text, record) => {
           if (record.orderState === -1) return '做废';
           if (record.orderState === 1) return '已下单';
-          if (record.orderState === 2) return '已支付';
-          if (record.orderState === 3) return '已发货';
+          if (record.orderState === 2) return '待发货';
+          if (record.orderState === 3) return '待收货';
           if (record.orderState === 4) return '已签收';
           if (record.orderState === 5) return '已结算';
         },

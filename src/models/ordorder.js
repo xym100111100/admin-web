@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import {updateOrg,detailList, buyrelation,list,getTrace, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,shipmentconfirmation, modifyOrderShippingAddress } from '../services/ordorder';
+import {updateOrg,detailList, buyrelation,list,getTrace, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,shipmentconfirmation, modifyOrderShippingAddress,getUnshipmentsByDeliverOrgId } from '../services/ordorder';
 import { printpage ,logisticList} from '../services/kdilogistic';
 import { listAll } from '../services/sucorg';
 export default {
@@ -159,6 +159,10 @@ export default {
       } else {
         message.error(response.msg);
       }
+    },
+    *getUnshipmentsByDeliverOrgId({ payload, callback }, { call }) {
+      const response = yield call(getUnshipmentsByDeliverOrgId, payload);
+        if (callback) callback(response);
     },
   },
 

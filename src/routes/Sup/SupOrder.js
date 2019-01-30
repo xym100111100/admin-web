@@ -742,6 +742,12 @@ export default class SupOrder extends SimpleMng {
     let newTimestamp = oldTimestamp+(day*1000*60*60*24)
     let nowTimestamp=new Date().getTime();
     let  rest = Math.ceil((newTimestamp-nowTimestamp)/1000/60/60/24)
+    if((newTimestamp-nowTimestamp) <0){
+      return -1;
+    }
+    if(rest ===0 &&(newTimestamp-nowTimestamp)>0){
+      return 1;
+    }
     return rest;
   }
 
@@ -899,7 +905,7 @@ export default class SupOrder extends SimpleMng {
                 <span>预计结算到余额还有{this.stringTODate(record.sendTime,24)}天</span>
               </div>
             )
-          } else if (record.orderState === 4&&record.receivedTime!== undefined) {
+          } else if (record.orderState === 4&&record.receivedTime!== undefined&&this.stringTODate(record.receivedTime,14)>0) {
             return (
               <div>
                 {record.orderTime!== undefined&&record.orderTime}
@@ -907,15 +913,7 @@ export default class SupOrder extends SimpleMng {
                 <span>预计距结算到余额还有{this.stringTODate(record.receivedTime,14)}天</span>
               </div>
             )
-          } else if (record.orderState === 5&&record.closeTime!== undefined&&(this.stringTODate(record.closeTime,7)>0)) {
-            return (
-              <div>
-                {record.orderTime!== undefined&&record.orderTime}
-                <br/>
-                <span>预计距结算到余额还有{this.stringTODate(record.closeTime,7)}天</span>
-              </div>
-            )
-          } else if (record.orderState === 5&&record.closeTime!== undefined&&(this.stringTODate(record.closeTime,7)<0)) {
+          }else if (record.orderState === 5&&record.closeTime!== undefined&&(this.stringTODate(record.closeTime,1)<0)) {
             return (
               <div>
                 {record.orderTime!== undefined&&record.orderTime}
@@ -923,7 +921,15 @@ export default class SupOrder extends SimpleMng {
                 <span>已结算到余额</span>
               </div>
             )
-          } else {
+          }else if (record.orderState === 5&&record.closeTime!== undefined) {
+            return (
+              <div>
+                {record.orderTime!== undefined&&record.orderTime}
+                <br/>
+                <span>预计今天结算到余额</span>
+              </div>
+            )
+          }  else {
             return (
               <div>
                 {record.orderTime!== undefined&&record.orderTime}

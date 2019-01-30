@@ -110,3 +110,9 @@ export async function modifyOrderShippingAddress(params) {
 export async function getSettleTotal(params) {
   return request(`/ord-svr/ord/order/getSettleTotal?${stringify(params)}`);
 }
+
+
+
+export async function getUnshipmentsByDeliverOrgId(params) {
+  return request(`/ord-svr/ord/order/unshipments?${stringify(params)}`);
+}

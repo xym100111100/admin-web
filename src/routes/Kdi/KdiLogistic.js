@@ -328,7 +328,7 @@ export default class KdiLogistic extends SimpleMng {
                     修改
                   </a>
                   <br />
-                  <a style={{ color: '#C0C0C0' }} >作废</a>
+                  <a style={{ color: '#C0C0C0' }} >已作废</a>
                 </Fragment>
               )
             } else {
@@ -350,7 +350,7 @@ export default class KdiLogistic extends SimpleMng {
                 <Fragment  >
                   <a style={{ color: '#C0C0C0' }}>修改</a>
                   <br />
-                  <a style={{ color: '#C0C0C0' }}>作废</a>
+                  <a style={{ color: '#C0C0C0' }}>已作废</a>
                 </Fragment>
               )
             } else {
