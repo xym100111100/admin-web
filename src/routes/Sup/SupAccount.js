@@ -438,7 +438,6 @@ export default class SupAccount extends SimpleMng {
       type: `${this.moduleCode}/apply`,
       payload: record,
       callback: data => {
-        message.success(data.msg);
         this.setState({ editForm: undefined })
         this.getOneAccount();
         this.getOrgWithdrawTotal();
