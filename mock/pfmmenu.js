@@ -8,7 +8,7 @@ menuData.push({ id: '1536131597089', sysId: 'damai-admin', code: '01', title: nu
 menuData.push({ id: '1536131597090', sysId: 'damai-admin', code: '0100', title: '快递下单', name: '快递下单', path: 'kdi-eorder', isEnabled: true, icon: null, remark: '快递下单相关业务' });
 menuData.push({ id: '1536131597091', sysId: 'damai-admin', code: '0101', title: '快递管理', name: '快递单管理', path: 'kdi-mng', isEnabled: true, icon: null, remark: '快递单相关业务' });
 menuData.push({ id: '1536131597092', sysId: 'damai-admin', code: '0102', title: null, name: '快递配置', path: 'kdi-cfg', isEnabled: true, icon: null, remark: '快递配置相关业务' });
-menuData.push({ id: '1536131597093', sysId: 'damai-admin', code: '010200', title: '快递面单配置', name: '快递面单配置', path: 'kdi-eorder-cfg', isEnabled: true, icon: null, remark: '快递面单相关业务' });
+menuData.push({ id: '1536131597093', sysId: 'damai-admin', code: '010200', title: '快递面单配置', name: '快递面单配置', path: 'kdi-template-cfg', isEnabled: true, icon: null, remark: '快递面单相关业务' });
 menuData.push({ id: '1536131597094', sysId: 'damai-admin', code: '010201', title: '快递公司配置', name: '快递公司配置', path: 'kdi-company-cfg', isEnabled: true, icon: null, remark: '快递公司相关业务' });
 menuData.push({ id: '1536131597095', sysId: 'damai-admin', code: '010202', title: '发件人配置', name: '发件人配置', path: 'kdi-sender-cfg', isEnabled: true, icon: null, remark: '发件人相关业务' });
 menuData.push({ id: '1536131597096', sysId: 'damai-admin', code: '02', title: null, name: '实名认证', path: 'rna', isEnabled: true, icon: 'idcard', remark: '实名认证相关业务' });

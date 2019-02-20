@@ -95,8 +95,11 @@ export const getRouterData = app => {
         import('../routes/Kdi/KdiEorder')
       ),
     },
+    '/kdi/kdi-cfg/kdi-template-cfg': {
+      component: dynamicWrapper(app, ['kditemplate','kdicompany', 'user'], () => import('../routes/Kdi/KdiTemplate')),
+    },
     '/kdi/kdi-cfg/kdi-company-cfg': {
-      component: dynamicWrapper(app, ['kdicompany','kdicompanydic', 'user'], () => import('../routes/Kdi/KdiCompany')),
+      component: dynamicWrapper(app, ['kdicompany','kditemplate','kdicompanydic', 'user'], () => import('../routes/Kdi/KdiCompany')),
     },
     '/kdi/kdi-cfg/kdi-sender-cfg': {
       component: dynamicWrapper(app, ['kdisender'], () => import('../routes/Kdi/KdiSenderCfg')),

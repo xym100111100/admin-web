@@ -1,10 +1,11 @@
 import React, { Fragment, PureComponent } from 'react';
-import { Form, Button, List, Icon, Table, Input, Row, Col, Select } from 'antd';
+import { Form, Button, List, Icon, Table, Input, Row, Col,Radio } from 'antd';
 import EditForm from 'components/Rebue/EditForm';
 import InfiniteScroll from 'react-infinite-scroller';
 import styles from './OrdOrder.less';
 import { connect } from 'dva';
 const FormItem = Form.Item;
+const RadioGroup = Radio.Group;
 // 添加与编辑的表单
 @connect(({ kdisender, kdicompany, ordorder, user, loading }) => ({
     kdisender, user, ordorder, kdicompany,
@@ -278,8 +279,8 @@ export default class OrdSendForm extends PureComponent {
      */
     showlogisticCode = () => {
         const { form } = this.props;
-        if(this.props.record.onlineOrgId === this.props.record.deliverOrgId){
-            if (this.state.defaultCompanyInfo.companyPwd ===undefined ||this.state.defaultCompanyInfo.companyPwd ===null ||this.state.defaultCompanyInfo.companyPwd ==='' ) {
+        if (this.props.record.onlineOrgId === this.props.record.deliverOrgId) {
+            if (this.state.defaultCompanyInfo.companyPwd === undefined || this.state.defaultCompanyInfo.companyPwd === null || this.state.defaultCompanyInfo.companyPwd === '') {
                 return (
                     <FormItem label="物流单号" >
                         {form.getFieldDecorator('logisticCode', {
@@ -293,7 +294,7 @@ export default class OrdSendForm extends PureComponent {
                         })(<Input placeholder="请输入物流单号" />)}
                     </FormItem>
                 )
-            }else{
+            } else {
                 return (
                     <FormItem  >
                         {form.getFieldDecorator('logisticCode', {
@@ -304,11 +305,11 @@ export default class OrdSendForm extends PureComponent {
                                     message: '请输入全部为数字的物流单号',
                                 },
                             ],
-                        })(<Input placeholder="请输入物流单号" type="hidden"  />)}
+                        })(<Input placeholder="请输入物流单号" type="hidden" />)}
                     </FormItem>
                 )
             }
-        }else{
+        } else {
             return (
                 <FormItem label="物流单号" >
                     {form.getFieldDecorator('logisticCode', {
@@ -324,6 +325,28 @@ export default class OrdSendForm extends PureComponent {
             )
         }
 
+    }
+
+    /**
+     * 显示是否能将一个订单拆成多个包裹按钮
+     */
+    showSplit = () => {
+        const { form } = this.props;
+        if (this.state.defaultCompanyInfo.companyPwd !== undefined && this.state.defaultCompanyInfo.companyPwd !== null && this.state.defaultCompanyInfo.companyPwd !== '') {
+            return (
+                <FormItem >
+                    {form.getFieldDecorator('split', {
+                        initialValue:1,
+                    })(
+                        <RadioGroup>
+                            <Radio value={0}>一个商品发一个包裹</Radio>
+                            <Radio value={1}>所有商品发一个包裹</Radio>
+                        </RadioGroup>
+                    )}
+                </FormItem>
+            )
+
+        } 
     }
 
     /**
@@ -542,7 +565,7 @@ export default class OrdSendForm extends PureComponent {
                 })(<Input type="hidden" />)}
                 <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
                     <Col md={17} sm={24}  >
-                        <p style={{ marginBottom: -1 }} >请选择要发货的详情:</p>
+                        <p style={{ marginBottom: -1 }} >请选择要发货的商品:</p>
                     </Col>
                     <Col md={16} sm={24}  >
                         <div >
@@ -569,6 +592,7 @@ export default class OrdSendForm extends PureComponent {
                         <textarea onChange={(value) => this.textChange(value)} style={{ width: '100%', }} rows="6" value={this.state.orderDetail} >
                         </textarea>
                         {this.showlogisticCode()}
+                        {this.showSplit()}
                     </Col>
                 </Row>
             </Fragment>

@@ -1,17 +1,20 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Button, Card, Divider, Popconfirm, Table } from 'antd';
+import { Button,message, Card, Divider, Popconfirm, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import CompanyForm from './CompanyForm';
 import styles from './KdiCompany.less';
+import KdiTemplateImgForm from './KdiTemplateImgForm';
+import TemplateForm from './TemplateForm';
 
-@connect(({ kdicompany,companydic, user, login, loading }) => ({
+@connect(({ kdicompany,kditemplate, companydic, user, login, loading }) => ({
   kdicompany,
   companydic,
+  kditemplate,
   user,
   login,
-  loading: loading.models.kdicompany || loading.models.user|| loading.models.companydic || loading.models.login,
+  loading: loading.models.kdicompany ||loading.models.kditemplate || loading.models.user || loading.models.companydic || loading.models.login,
 }))
 export default class KdiCompany extends SimpleMng {
   constructor() {
@@ -20,8 +23,8 @@ export default class KdiCompany extends SimpleMng {
   }
   //初始化
   componentDidMount() {
-    let {user} =this.props
-    let orgId=user.currentUser.orgId
+    let { user } = this.props
+    let orgId = user.currentUser.orgId
     this.props.dispatch({
       type: `${this.moduleCode}/list`,
       payload: { orgId: orgId },
@@ -29,8 +32,8 @@ export default class KdiCompany extends SimpleMng {
   }
   // 刷新
   handleReload() {
-    let {user} =this.props
-    let orgId=user.currentUser.orgId
+    let { user } = this.props
+    let orgId = user.currentUser.orgId
     this.props.dispatch({
       type: `${this.moduleCode}/list`,
       payload: { orgId: orgId },
@@ -48,10 +51,63 @@ export default class KdiCompany extends SimpleMng {
     });
   };
 
+  /**
+   * 是否显示为添加电子面单
+   */
+  isShowAddTempLate = (record) => {
+    if (record.templateName === undefined) {
+      return (
+        <a onClick={() => this.showAddForm({ editFormRecord: record, editForm: 'addTemplate', editFormTitle: '添加电子面单' })}>添加电子面单</a>
+      )
+    } else {
+      return (
+        <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'editTemplate', editFormTitle: '更改电子面单' })}>更改电子面单</a>
+
+      )
+    }
+  }
+  /**
+   * 添加电子面单
+   */
+  addTemplate=(record)=>{
+    if(record.templateDicId ===0){
+      message.error('未选择任何模板，不能添加');
+      return ;
+    }
+    record.companyId=record.id;
+    record.id=undefined;
+    this.props.dispatch({
+      type: `kditemplate/add`,
+      payload: record,
+      callback: () => {
+        this.setState({ editForm: undefined })
+        this.handleReload();
+      },
+    });
+
+  }
+  /**
+   * 修改电子面单
+   */
+  editTemplate=(record)=>{
+    record.companyId=record.id;
+    record.id=record.templateId;
+    record.templateId=undefined;
+    this.props.dispatch({
+      type: `kditemplate/modify`,
+      payload: record,
+      callback: () => {
+        this.setState({ editForm: undefined })
+        this.handleReload();
+      },
+    });
+  }
+
+
   render() {
     const { kdicompany: { kdicompany }, loading, user } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
-     const orgId=user.currentUser.orgId; 
+    const orgId = user.currentUser.orgId;
     editFormRecord.orgId = orgId;
     const columns = [
       {
@@ -63,10 +119,6 @@ export default class KdiCompany extends SimpleMng {
         dataIndex: 'companyAccount',
       },
       {
-        title: '编号',
-        dataIndex: 'companyCode',
-      },
-      {
         title: '支付方式',
         dataIndex: 'payType',
         render: (text, record) => {
@@ -75,6 +127,18 @@ export default class KdiCompany extends SimpleMng {
           if (record.payType === 3) return '月结';
           if (record.payType === 4) return '第三方付';
         },
+      },
+      {
+        title: '电子面单',
+        dataIndex: 'templateName',
+        render: (text, record) => {
+          return (
+            <a onClick={() =>
+              this.showEditForm({ editFormRecord: record, editForm: 'templateImg', editFormTitle: '预览电子面单' })
+            }
+            >{record.templateName}</a>
+          )
+        }
       },
       {
         title: '录入时间',
@@ -88,7 +152,7 @@ export default class KdiCompany extends SimpleMng {
               <Fragment>
                 <a
                   onClick={() =>
-                    this.showEditForm({ id:record.id, editForm: 'kdiCompany', editFormTitle: '编辑快递公司信息' })
+                    this.showEditForm({ id: record.id, editForm: 'kdiCompany', editFormTitle: '编辑快递公司信息' })
                   }
                 >
                   编辑
@@ -99,6 +163,9 @@ export default class KdiCompany extends SimpleMng {
                 </Popconfirm>
                 <Divider type="vertical" />
                 <a onClick={() => this.setDefuteCompany(record)}>设为默认</a>
+                <Divider type="vertical" />
+                <br />
+                {this.isShowAddTempLate(record,editFormRecord)}
               </Fragment>
             );
           } else {
@@ -106,7 +173,7 @@ export default class KdiCompany extends SimpleMng {
               <Fragment>
                 <a
                   onClick={() =>
-                    this.showEditForm({ id:record.id, editForm: 'kdiCompany', editFormTitle: '编辑快递公司信息' })
+                    this.showEditForm({ id: record.id, editForm: 'kdiCompany', editFormTitle: '编辑快递公司信息' })
                   }
                 >
                   编辑
@@ -117,6 +184,9 @@ export default class KdiCompany extends SimpleMng {
                 </Popconfirm>
                 <Divider type="vertical" />
                 <a>默认</a>
+                <Divider type="vertical" />
+                <br />
+                {this.isShowAddTempLate(record,editFormRecord)}
               </Fragment>
             );
           }
@@ -154,6 +224,37 @@ export default class KdiCompany extends SimpleMng {
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
             onSubmit={fields => this.handleSubmit({ fields })}
+          />
+        )}
+        {editForm === 'templateImg' && (
+          <KdiTemplateImgForm
+            visible
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+          />
+        )}
+        {editForm === 'addTemplate' && (
+          <TemplateForm
+            visible
+            width={635}
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            onSubmit={fields => this.addTemplate(fields)}
+          />
+        )}
+        {editForm === 'editTemplate' && (
+          <TemplateForm
+            visible
+            width={635}
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            onSubmit={fields => this.editTemplate(fields)}
           />
         )}
       </PageHeaderLayout>
