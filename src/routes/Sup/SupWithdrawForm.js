@@ -53,7 +53,6 @@ export default class SupWithdrawForm extends PureComponent {
           {form.getFieldDecorator('idCard', {
             rules: [{
               required: true, message: '请输入全部为数字身份证号',
-              pattern: /^[0-9]*$/,
             }],
           })(<Input placeholder="请输入全部为数字身份证号" />)}
         </FormItem>
