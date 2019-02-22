@@ -114,7 +114,7 @@ const EditForm = DivInfo => {
             ),
             onLastStep && (
               <Button key="lastStep" icon="backward" size="large" loading={submitting} onClick={this.handleLastStep}>
-                上一步
+                修改发件人或快递公司
               </Button>
             ),
             onNextStep && (

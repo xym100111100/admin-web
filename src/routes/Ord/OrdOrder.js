@@ -1,11 +1,10 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Row, Timeline, Divider, Popover, message, Col, Icon, Card, Form, Dropdown, Input, Select, Button, Menu, Table, DatePicker } from 'antd';
+import { Row, Divider, Popover, message, Col, Card, Form, Input, Select, Button, Table, DatePicker } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './OrdOrder.less';
 import moment from 'moment';
-import OrdOrderForm from './OrdOrderForm';
 import OrdTraceForm from './OrdTraceForm';
 import OrdSendForm from './OrdSendForm';
 import OrdgetTrace from './OrdgetTrace';
@@ -36,7 +35,7 @@ export default class OrdOrder extends SimpleMng {
     }
     this.state.trace = '';
     this.state.LogisticInfo = '';
-    this.state.step = '1';
+    this.state.step = '2';
     this.state.first = true;
   }
 
@@ -224,14 +223,6 @@ export default class OrdOrder extends SimpleMng {
     })
   }
 
-  printPage = (data) => {
-    let printWindow;
-    const printPage = data.printPage;
-    printWindow = window.open('', '_blank');
-    printWindow.document.body.innerHTML = printPage;
-    printWindow.print();
-    printWindow.close();
-  }
 
 
   showExpand = (data) => {
@@ -289,7 +280,7 @@ export default class OrdOrder extends SimpleMng {
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>上家 :</span>{items.uplineUserName !== undefined && (items.uplineUserName + '(' + items.uplineRelationSource + ')')}
             </Col>
             <Col md={6} sm={24}>
-             <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>订单编号 :</span>{items.uplineOrderCode !== undefined && (items.uplineOrderCode)}            </Col>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>订单编号 :</span>{items.uplineOrderCode !== undefined && (items.uplineOrderCode)}            </Col>
             <Col md={4} sm={24}>
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>是否签收 :</span>{items.uplineIsSignIn !== undefined && (items.uplineIsSignIn)}
             </Col>
@@ -375,13 +366,13 @@ export default class OrdOrder extends SimpleMng {
   /**
    * 根据有没有订单留言显示订单留言
    */
-  showorderMessages =(record)=>{
+  showorderMessages = (record) => {
     if (record.orderMessages === undefined) {
       return
-    }else{
-      return(
+    } else {
+      return (
         <Col md={8} sm={24}>
-           <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>订单留言:</span>{record.orderMessages !== undefined && (record.orderMessages)}
+          <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>订单留言:</span>{record.orderMessages !== undefined && (record.orderMessages)}
         </Col>
       )
     }
@@ -463,8 +454,8 @@ export default class OrdOrder extends SimpleMng {
 
   showEditOrg = (record) => {
     let date = new Date(record.receivedTime);
-    let day=(new Date().getTime()-date.getTime())/1000/60/60/24;
-    if(Math.floor(day) < 7){
+    let day = (new Date().getTime() - date.getTime()) / 1000 / 60 / 60 / 24;
+    if (Math.floor(day) < 7) {
       return (
         <a onClick={() => this.showEditOrgFrom(record)} >
           修改供应商
@@ -561,12 +552,12 @@ export default class OrdOrder extends SimpleMng {
     if (first !== undefined) {
       this.setState({
         first: first,
-        step: '1',
+        step: '2',
       })
     } else {
       this.setState({
         first: true,
-        step: '1',
+        step: '2',
       })
     }
     this.showAddForm({
@@ -582,83 +573,87 @@ export default class OrdOrder extends SimpleMng {
   /**
    * 发货
    */
-  willDeliver = (record) => {
-
-    const fields = record.fields;
+  willDeliver = (fields) => {
     const { user } = this.props;
     fields.orgId = user.currentUser.orgId;
     fields.sendOpId = user.currentUser.userId;
+    //判断是否选择了详情
+    if (fields.selectDetaile.length === 0) {
+      message.error('未选择任何详情，不能提交');
+      return;
+    }
+    //判断是否选择了发件人
+    if (fields.selectSend.length === 0) {
+      message.error('未选择发件人，不能提交');
+      return;
+    }
+    //判断是否选择了发件人
+    if (fields.selectCompany.length === 0) {
+      message.error('未选择快递公司，不能提交');
+      return;
+    }
+    //将板块类型修改为undefined，否则后台会报错
+    for (let index = 0; index < fields.selectDetaile.length; index++) {
+      fields.selectDetaile[index].subjectType = undefined;
+
+    }
+    for (let index = 0; index < fields.allDetaile.length; index++) {
+      fields.allDetaile[index].subjectType = undefined;
+    }
+
     //是首次发货还是添加物流单号
     if (this.state.first) {
       fields.first = true;
     } else {
       fields.first = false;
     }
-    //整理快递公司信息
-    let shipperInfo;
-    if (fields.shipperInfo !== undefined) {
-      shipperInfo = fields.shipperInfo.split('/');
-      fields.shipperId = shipperInfo[0];
-      fields.shipperName = shipperInfo[1];
-      fields.shipperCode = shipperInfo[2];
-      fields.shipperInfo = undefined
-    }
-    //整理发件信息
-    let senderInfo;
-    if (fields.senderInfo !== undefined) {
-      senderInfo = fields.senderInfo.split('/');
-      fields.senderName = senderInfo[0];
-      fields.senderMobile = senderInfo[1];
-      fields.senderProvince = senderInfo[2];
-      fields.senderCity = senderInfo[3];
-      fields.senderExpArea = senderInfo[4];
-      fields.senderPostCode = senderInfo[5];
-      fields.senderAddress = senderInfo[6];
-      fields.senderInfo = undefined;
-    }
-    //整理被选择的订单详情Id
-    let selectDetailId = [];
-    if (fields.selectDetailId !== undefined) {
-      //可能添加的时候后面多添加了斜杆，需要去掉再split
-      if (fields.selectDetailId.substr(fields.selectDetailId.length - 1, 1) === '/') {
-        fields.selectDetailId = fields.selectDetailId.substring(0, fields.selectDetailId.length - 1);
-      }
-      selectDetailId = fields.selectDetailId.split('/');
-      if (selectDetailId[0] === "") {
-        message.error('未选择任何详情，不能提交');
-        return;
-      }
-      fields.selectDetailId = selectDetailId;
-    }
+    // //整理快递公司信息
+    // let shipperInfo;
+    // if (fields.shipperInfo !== undefined) {
+    //   shipperInfo = fields.shipperInfo.split('/');
+    //   fields.shipperId = shipperInfo[0];
+    //   fields.shipperName = shipperInfo[1];
+    //   fields.shipperCode = shipperInfo[2];
+    //   fields.shipperInfo = undefined
+    // }
+    // //整理发件信息
+    // let senderInfo;
+    // if (fields.senderInfo !== undefined) {
+    //   senderInfo = fields.senderInfo.split('/');
+    //   fields.senderName = senderInfo[0];
+    //   fields.senderMobile = senderInfo[1];
+    //   fields.senderProvince = senderInfo[2];
+    //   fields.senderCity = senderInfo[3];
+    //   fields.senderExpArea = senderInfo[4];
+    //   fields.senderPostCode = senderInfo[5];
+    //   fields.senderAddress = senderInfo[6];
+    //   fields.senderInfo = undefined;
+    // }
 
-    //整理当前订单所有未发货订单详情id
-    let allDetaileId = [];
-    if (fields.allDetaileId !== undefined) {
-      //可能添加的时候后面多添加了斜杆，需要去掉再split
-      if (fields.allDetaileId.substr(fields.allDetaileId.length - 1, 1) === '/') {
-        fields.allDetaileId = fields.allDetaileId.substring(0, fields.allDetaileId.length - 1);
-      }
-      allDetaileId = fields.allDetaileId.split('/');
-      fields.allDetaileId = allDetaileId;
-    }
-    let printWindow;
-    this.props.dispatch({
-      type: `${this.moduleCode}/shipmentconfirmation`,
-      payload: fields,
-      callback: data => {
-        this.setState({
-          step: '3',
-        })
-        this.handleReload();
-        if (fields.logisticCode === undefined) {
-          const printPage = data.printPage;
-          printWindow = window.open('', '_blank');
-          printWindow.document.body.innerHTML = printPage;
-          printWindow.print();
-          printWindow.close();
-        }
-      }
-    })
+    console.log(fields);
+    // let printWindow;
+    // //判断是否是拆包发货
+    // let path=`${this.moduleCode}/shipmentconfirmation`;
+    // if(fields.split===false){
+    //   path=`${this.moduleCode}/splitPackageDeliver`;
+    // }
+    // this.props.dispatch({
+    //   type:path,
+    //   payload: fields,
+    //   callback: data => {
+    //     this.setState({
+    //       step: '3',
+    //     })
+    //     this.handleReload();
+    //     if (fields.logisticCode === undefined) {
+    //       const printPage = data.printPage;
+    //       printWindow = window.open('', '_blank');
+    //       printWindow.document.body.innerHTML = printPage;
+    //       printWindow.print();
+    //       printWindow.close();
+    //     }
+    //   }
+    // })
   }
 
 
@@ -891,8 +886,8 @@ export default class OrdOrder extends SimpleMng {
         width: 150,
         render: (text, record) => {
           return (
-            <Popover  autoAdjustOverflow={true} trigger='click' placement='right' onVisibleChange={(visible) => !visible || this.showOrderInfo(record)} content={content} title="查看订单信息" >
-             <a> {record.orderCode}</a>
+            <Popover autoAdjustOverflow={true} trigger='click' placement='right' onVisibleChange={(visible) => !visible || this.showOrderInfo(record)} content={content} title="查看订单信息" >
+              <a> {record.orderCode}</a>
             </Popover>
           );
         },
@@ -1067,45 +1062,6 @@ export default class OrdOrder extends SimpleMng {
             />
           </div>
         </Card>
-        {editForm === 'printPage' && (
-          <OrdOrderForm
-            visible
-            title={editFormTitle}
-            editFormType={editFormType}
-            record={editFormRecord}
-            closeModal={() => this.setState({ editForm: undefined })}
-            onSubmit={fields => {
-              let shipperInfo;
-              if (fields.shipperInfo !== undefined) {
-                shipperInfo = fields.shipperInfo.split('/');
-                fields.shipperId = shipperInfo[0];
-                fields.shipperName = shipperInfo[1];
-                fields.shipperCode = shipperInfo[2];
-              }
-              let senderInfo;
-              if (fields.senderInfo !== undefined) {
-                senderInfo = fields.senderInfo.split('/');
-                fields.senderName = senderInfo[0];
-                fields.senderMobile = senderInfo[1];
-                fields.senderProvince = senderInfo[2];
-                fields.senderCity = senderInfo[3];
-                fields.senderExpArea = senderInfo[4];
-                fields.senderPostCode = senderInfo[5];
-                fields.senderAddress = senderInfo[6];
-              }
-              const { user } = this.props;
-              fields.orgId = user.currentUser.orgId;
-              fields.senderInfo = undefined;
-              let saveMethodName = editForm === 'printPage' ? 'shipmentconfirmation' : 'printpage';
-              this.handleSubmit({
-                fields,
-                moduleCode: 'ordorder',
-                saveMethodName: saveMethodName,
-                callback: this.printPage
-              });
-            }}
-          />
-        )}
         {editForm === 'getTrace' && (
           <OrdgetTrace
             visible
@@ -1150,16 +1106,12 @@ export default class OrdOrder extends SimpleMng {
         {editForm === 'ordSend' && (
           <OrdSendForm
             width={800}
-            step={this.state.step}
             first={this.state.first}
             visible
             title={editFormTitle}
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            onNextStep={this.state.step === '1' ? (fields) => this.nextStep(fields) : false}
-            onLastStep={this.state.step === '2' ? (fields) => this.lastStep(fields) : false}
-            onSubmit={this.state.step === '2' ? (fields) => this.willDeliver({ fields }) : false}
           />
         )}
       </PageHeaderLayout>

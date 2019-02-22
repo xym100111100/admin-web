@@ -1,5 +1,5 @@
 import React, { Fragment, PureComponent } from 'react';
-import { Form, Button, List, Icon, Table, Input, Row, Col,Radio } from 'antd';
+import { Form, Button, List, Table, Input, Row, Col, Radio } from 'antd';
 import EditForm from 'components/Rebue/EditForm';
 import InfiniteScroll from 'react-infinite-scroller';
 import styles from './OrdOrder.less';
@@ -19,28 +19,47 @@ export default class OrdSendForm extends PureComponent {
         allRowKeys: [],
         receiverInfo: '', //收件人信息
         orderDetail: '详情备注',//包括订单留言
-        deliverRemark: '发货备注',
         orderMessages: '', //订单留言
         willDeliver: [], //将要发货的详情数据用于展示
         delivered: [], //已经发货的详情数据用于展示
-        selectDetailId: '',//选中的详情Id，用于后台修改
-        allDetaileId: '',//所有未发货的详情Id，用于后台与选中的对比来觉得是否改订单状态
-        step: '',
+        selectDetaile: [],//选中的详情，用于后台修改
+        allDetaile: [],//所有未发货的详情，用于后台与选中的对比来觉得是否改订单状态
+        step: '2',
         loading: false,
         hasMore: true,
+
+        merge:true,
+        mergeAllDetaile:[],//用于相同规格商品合并时候的展示
+
         kdicompany: [],//快递公司数据集合
-        defaultCompanyId: 0,//默认快递公司Id
-        defaultCompany: '',//默认快递公司，用于提交
-        defaultCompanyInfo: {},//用于显示成功后
+        selectCompany: [],//选择的快递公司，用于提交
+
         sendData: [],//发件人数据集合
-        defaultSend: '',//默认发件人,用于提交
-        defaultSendId: 0,//默认发件人Id
-        defaultSendInfo: {}//用于显示成功后
+        selectSend: [],//选择的发件人,用于提交
+
     }
 
     componentDidMount() {
         this.initDetailData();
     }
+
+    /**
+     * 提交前事件
+     */
+    beforeSave = () => {
+        const { form } = this.props;
+        form.getFieldDecorator('selectDetaile');
+        form.getFieldDecorator('allDetaile');
+        form.getFieldDecorator('selectCompany');
+        form.getFieldDecorator('selectSend');
+        form.setFieldsValue({
+            selectDetaile: this.state.selectDetaile,
+            allDetaile: this.state.allDetaile,
+            selectCompany: this.state.selectCompany,
+            selectSend: this.state.selectSend,
+        });
+    }
+
 
     /**
      * 这里只是为了页面不出现警告
@@ -54,21 +73,19 @@ export default class OrdSendForm extends PureComponent {
         const { user, record } = this.props;
         const orgId = user.currentUser.orgId;
         this.setState({
-            step: this.props.step,
+            receiverInfo: record,
+            orderMessages: record.orderMessages,
         })
+        //获取发件人
         this.props.dispatch({
             type: `kdisender/list`,
             payload: { orgId: orgId },
             callback: data => {
                 for (let i = 0; i < data.length; i++) {
-                    //设置默认发件人id和默认发件人以便后面修改
+                    //设置默认发件人id和默认选中发件人以便后面修改
                     if (data[i].isDefault) {
                         this.setState({
-                            defaultSendId: data[i].id,
-                            defaultSend: data[i].senderName + '/' + data[i].senderMobile + '/'
-                                + data[i].senderProvince + '/' + data[i].senderCity + '/' + data[i].senderExpArea + '/'
-                                + data[i].senderPostCode + '/' + data[i].senderAddress,
-                            defaultSendInfo: data[i],
+                            selectSend: data[i],
                         })
                     }
                 }
@@ -77,18 +94,16 @@ export default class OrdSendForm extends PureComponent {
                 })
             }
         });
+        //获取快递公司
         this.props.dispatch({
             type: `kdicompany/list`,
             payload: { orgId: orgId },
             callback: data => {
                 for (let i = 0; i < data.length; i++) {
-
                     //设置默认快递公司id以便后面修改
                     if (data[i].isDefault) {
                         this.setState({
-                            defaultCompanyId: data[i].id,
-                            defaultCompany: data[i].id + '/' + data[i].companyName + '/' + data[i].companyCode,
-                            defaultCompanyInfo: data[i],
+                            selectCompany: data[i],
                         })
                     }
                 }
@@ -97,30 +112,31 @@ export default class OrdSendForm extends PureComponent {
                 })
             }
         });
+        //获取订单详情
+        this.getOrderDetaile(record);
+    }
 
-        this.setState({
-            receiverInfo: record,
-            orderMessages: record.orderMessages,
-        })
+    /**
+     * 获取订单详情
+     */
+    getOrderDetaile = (record) => {
         this.props.dispatch({
-            type: `ordorder/detail`,
+            type: `ordorder/detailList`,
             payload: { orderId: record.id },
             callback: data => {
-                let keys = [];
                 let orderDetail = '';
-                let willDeliver = [];
+                let keys = [];
                 let delivered = [];
-                let selectDetailId = '';
-                let allDetaileId = '';
-                let deliverRemark = '';
+                let allDetaile = [];
                 let allRowKeys = [];
+                let willDeliver = [];
+                let selectDetaile = [];
+
                 //设置买家留言
                 if (this.state.orderMessages !== undefined) {
                     orderDetail += '买家留言:' + this.state.orderMessages + ' 。';
                 }
-                orderDetail += '卖家备注 : ';
                 //设置已发货和未发货的表达数据
-
                 for (let index = 0; index < data.length; index++) {
                     if (data[index].subjectType === 0) {
                         data[index].subjectType = '普通';
@@ -146,19 +162,17 @@ export default class OrdSendForm extends PureComponent {
                             } else {
                                 orderDetail += ' ， ';
                             }
-                            //设置要发货详情id
-                            selectDetailId += data[index].id + '/';
+                            //设置要发货详情
+                            selectDetaile.push(data[index]);
                             //设置所有未发货的详情Id
-                            allDetaileId += data[index].id + '/';
-                            //设置发货成功的备注
-                            deliverRemark += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].buyPrice;
+                            allDetaile.push(data[index]);
                         }
 
                     } else if (this.props.first === true) {
-                        if (data[index].isDeliver == true && (data[index].returnState === 0 || data[index].returnState === 3)) {
+                        if (data[index].isDelivered == true && (data[index].returnState === 0 || data[index].returnState === 3)) {
                             //已经发货且不是退货状态的详情
                             delivered.push(data[index])
-                        } else if (data[index].isDeliver == false && (data[index].returnState === 0 || data[index].returnState === 3)) {
+                        } else if (data[index].isDelivered == false && (data[index].returnState === 0 || data[index].returnState === 3)) {
                             //所有没有发货的详情Id，不在其他修改，用于后面成功后对比
                             allRowKeys.push(data[index])
                             //没有发货且待要发货的详情及各种数据
@@ -173,12 +187,10 @@ export default class OrdSendForm extends PureComponent {
                             } else {
                                 orderDetail += ' ， ';
                             }
-                            //设置要发货详情id
-                            selectDetailId += data[index].id + '/';
+                            //设置要发货详情
+                            selectDetaile.push(data[index]);
                             //设置所有未发货的详情Id
-                            allDetaileId += data[index].id + '/';
-                            //设置发货成功的备注
-                            deliverRemark += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].buyPrice;
+                            allDetaile.push(data[index]);
 
                         }
                     }
@@ -190,45 +202,46 @@ export default class OrdSendForm extends PureComponent {
                     delivered,
                     selectedRowKeys: keys,
                     orderDetail: orderDetail,
-                    selectDetailId,
-                    allDetaileId,
-                    deliverRemark,
+                    selectDetaile,
+                    allDetaile,
                     allRowKeys,
+                })
+                //根据上线id和上线规格id将相同的商品合并用于显示
+                let mergeAllDetaile=[];
+                for (let i = 0; i < allDetaile.length; i++) {
+                    let is=false;
+                  for (let j = 0; j < mergeAllDetaile.length; j++) {
+                      if( allDetaile[i].onlineId === mergeAllDetaile[j].onlineId && allDetaile[i].onlineSpecId===mergeAllDetaile[j].onlineSpecId ){
+                        mergeAllDetaile[j].buyCount +=1;
+                        is=true
+                      }
+                  }
+                  if(!is){
+                    mergeAllDetaile.push(allDetaile[i]);
+                  }
+                }
+                //设置合并后的详情
+                this.setState({
+                    mergeAllDetaile,
                 })
             }
         });
-
-    }
-
-    /**
-     * 再发货一次
-     */
-    deliverAgina = () => {
-        this.setState({
-            step: '2'
-        })
     }
 
 
-
-
     /**
-     * 根据传过来的i设置选择的快递公司或者发件人相关状态。
+     * 根据传过来的i设置选择的快递公司或者发件人相关状态，且将步数修改为2
      */
     setDefultId = (item, i) => {
         if (i === 1) {
             this.setState({
-                defaultCompanyId: item.id,
-                defaultCompany: item.id + '/' + item.companyName + '/' + item.companyCode,
-                defaultCompanyInfo: item,
+                selectCompany: item,
+                step:'2'
             })
         } else if (i === 2) {
             this.setState({
-                defaultSendId: item.id,
-                defaultSend: item.senderName + '/' + item.senderMobile + '/'
-                    + item.senderProvince + '/' + item.senderCity + '/' + item.senderExpArea + '/'
-                    + item.senderPostCode + '/' + item.senderAddress,
-                defaultSendInfo: item,
+                selectSend: item,
+                step:'2'
             })
         }
     }
@@ -240,13 +253,11 @@ export default class OrdSendForm extends PureComponent {
         const { form } = this.props;
         let rowKeys = [];
         let orderDetail = '';
-        let selectDetailId = '';
-        let deliverRemark = '';
+        let selectDetaile = [];
         //设置买家留言
         if (this.state.orderMessages !== undefined) {
             orderDetail += '买家留言:' + this.state.orderMessages + ' 。';
         }
-        orderDetail += '卖家备注 : ';
         for (let index = 0; index < data.length; index++) {
             //改变发货备注
             let count = data[index].buyCount - data[index].returnCount;
@@ -256,19 +267,16 @@ export default class OrdSendForm extends PureComponent {
             } else {
                 orderDetail += ' ， ';
             }
-            //选择要发货详情id
-            selectDetailId += data[index].id + '/';
+            //选择要发货详情
+            selectDetaile.push(data[index]);
             //改变选中的项
             rowKeys.push(data[index].id);
-            //设置发货成功的备注
-            deliverRemark += data[index].onlineTitle + '·' + data[index].specName + '·' + count + 'x' + data[index].buyPrice;
 
         }
         this.setState({
             selectedRowKeys: rowKeys,
             orderDetail: orderDetail,
-            selectDetailId,
-            deliverRemark,
+            selectDetaile,
         })
         form.setFieldsValue({ orderTitle: orderDetail });
     }
@@ -280,7 +288,7 @@ export default class OrdSendForm extends PureComponent {
     showlogisticCode = () => {
         const { form } = this.props;
         if (this.props.record.onlineOrgId === this.props.record.deliverOrgId) {
-            if (this.state.defaultCompanyInfo.companyPwd === undefined || this.state.defaultCompanyInfo.companyPwd === null || this.state.defaultCompanyInfo.companyPwd === '') {
+            if (this.state.selectCompany.companyPwd === undefined || this.state.selectCompany.companyPwd === null || this.state.selectCompany.companyPwd === '') {
                 return (
                     <FormItem label="物流单号" >
                         {form.getFieldDecorator('logisticCode', {
@@ -332,21 +340,21 @@ export default class OrdSendForm extends PureComponent {
      */
     showSplit = () => {
         const { form } = this.props;
-        if (this.state.defaultCompanyInfo.companyPwd !== undefined && this.state.defaultCompanyInfo.companyPwd !== null && this.state.defaultCompanyInfo.companyPwd !== '') {
+        if (this.state.selectCompany.companyPwd !== undefined && this.state.selectCompany.companyPwd !== null && this.state.selectCompany.companyPwd !== '') {
             return (
                 <FormItem >
                     {form.getFieldDecorator('split', {
-                        initialValue:1,
+                        initialValue: true,
                     })(
                         <RadioGroup>
-                            <Radio value={0}>一个商品发一个包裹</Radio>
-                            <Radio value={1}>所有商品发一个包裹</Radio>
+                            <Radio value={true}>选择的商品发一个包裹</Radio>
+                            <Radio value={false}>选择的商品发{this.state.selectDetaile.length}个包裹</Radio>
                         </RadioGroup>
                     )}
                 </FormItem>
             )
 
-        } 
+        }
     }
 
     /**
@@ -358,6 +366,78 @@ export default class OrdSendForm extends PureComponent {
             orderDetail: value.target.value,
         })
         form.setFieldsValue({ orderTitle: value.target.value });
+    }
+
+    /**
+     * 显示和提示用户去添加快递公司
+     */
+    showCompany = () => {
+        if (this.state.selectCompany.companyName === undefined) {
+            if (this.state.kdicompany.length === 0) {
+                return (
+                    <a href="#/kdi/kdi-cfg/kdi-company-cfg" style={{ fontSize: 16, paddingRight: 5, color: '#1890ff' }} >未有快递公司，前去添加？</a>
+                )
+            } else {
+                return (
+                    <a onClick={this.setStep} style={{ fontSize: 16, paddingRight: 5 }} >未选择任何快递公司</a>
+                )
+            }
+
+        } else {
+            return (
+                <a onClick={this.setStep} style={{ fontSize: 16, paddingRight: 5 }} >{this.state.selectCompany.companyName}</a>
+            )
+
+        }
+    }
+    /**
+     * 显示和提示用户去添加发件人
+     */
+    showSend = () => {
+        if (this.state.selectSend.senderName === undefined) {
+            if (this.state.sendData.length === 0) {
+                return (
+                    <a href="#/kdi/kdi-cfg/kdi-sender-cfg" style={{ fontSize: 16, paddingRight: 5, color: '#1890ff' }} >未有发件人，前去添加？</a>
+                )
+            } else {
+                return (
+                    <a onClick={this.setStep} style={{ fontSize: 16, paddingRight: 5 }} >未选择任何发件人</a>
+                )
+            }
+        } else {
+            return (
+                <a onClick={this.setStep} style={{ fontSize: 16, paddingRight: 5 }} >{this.state.selectSend.senderName}</a>
+            )
+
+        }
+    }
+    /**
+     * 设置窗口
+     */
+    setStep=()=>{
+        if(this.state.step==='1'){
+            this.setState({
+                step:'2'
+            })
+        }else{
+            this.setState({
+                step:'1'
+            })
+        }
+    }
+    /**
+     * 设置合并
+     */
+    setMerge=()=>{
+        if(this.state.merge===true){
+            this.setState({
+                merge:false
+            })
+        }else{
+            this.setState({
+                merge:true
+            })
+        }
     }
     /**
      * 步骤1
@@ -389,7 +469,7 @@ export default class OrdSendForm extends PureComponent {
                                                     title={<a href="https://ant.design">{item.companyName}</a>}
 
                                                 />
-                                                {this.state.defaultCompanyId === item.id ? (
+                                                {this.state.selectCompany.id === item.id ? (
                                                     <a style={{ float: 'right', marginTop: -15, }} >已选择</a>
                                                 ) : (
                                                         <Button size="small" onClick={() => this.setDefultId(item, 1)} >
@@ -418,10 +498,9 @@ export default class OrdSendForm extends PureComponent {
                                         renderItem={item => (
                                             <List.Item>
                                                 <List.Item.Meta
-                                                    title={<a href="https://ant.design">{item.senderName + '·' + item.senderMobile}</a>}
-                                                    description={item.senderaddr}
+                                                    title={<a >{item.senderName + '·' + item.senderMobile}</a>}
                                                 />
-                                                {this.state.defaultSendId === item.id ? (
+                                                {this.state.selectSend.id === item.id ? (
                                                     <a style={{ float: 'right', marginTop: -15, }} >已选择</a>
                                                 ) : (
                                                         <Button size="small" onClick={() => this.setDefultId(item, 2)} >
@@ -506,7 +585,8 @@ export default class OrdSendForm extends PureComponent {
         return (
 
             <Fragment>
-                <p style={{ marginTop: -20 }} >买家收货信息: {this.state.receiverInfo.receiverProvince + this.state.receiverInfo.receiverCity + this.state.receiverInfo.receiverExpArea + this.state.receiverInfo.receiverAddress + '  ' + this.state.receiverInfo.receiverName + '·' + this.state.receiverInfo.receiverMobile}</p>
+                <p>快递公司: {this.showCompany()}发件人: {this.showSend()}</p>
+                <p style={{}} >买家收货信息: {this.state.receiverInfo.receiverProvince + this.state.receiverInfo.receiverCity + this.state.receiverInfo.receiverExpArea + this.state.receiverInfo.receiverAddress + '  ' + this.state.receiverInfo.receiverName + '·' + this.state.receiverInfo.receiverMobile}</p>
                 {form.getFieldDecorator('id')(<Input type="hidden" />)}
                 {form.getFieldDecorator('orderCode')(<Input type="hidden" />)}
                 {form.getFieldDecorator('orderState')(<Input type="hidden" />)}
@@ -520,26 +600,6 @@ export default class OrdSendForm extends PureComponent {
                     initialValue: this.state.orderDetail,
 
                 })(<Input type="hidden" />)}
-                {form.getFieldDecorator('senderInfo', {
-                    rules: [
-                        {
-                            required: true,
-                            message: '发件人',
-                        },
-                    ],
-                    initialValue: this.state.defaultSend,
-
-                })(<Input type="hidden" />)}
-                {form.getFieldDecorator('shipperInfo', {
-                    rules: [
-                        {
-                            required: true,
-                            message: '快递公司',
-                        },
-                    ],
-                    initialValue: this.state.defaultCompany,
-
-                })(<Input type="hidden" />)}
                 {form.getFieldDecorator('receiverName')(<Input type="hidden" />)}
                 {form.getFieldDecorator('receiverProvince')(<Input type="hidden" />)}
                 {form.getFieldDecorator('orderTitle')(<Input type="hidden" />)}
@@ -549,33 +609,32 @@ export default class OrdSendForm extends PureComponent {
                 {form.getFieldDecorator('receiverMobile')(<Input type="hidden" />)}
                 {form.getFieldDecorator('receiverTel')(<Input type="hidden" />)}
                 {form.getFieldDecorator('receiverPostCode')(<Input type="hidden" />)}
-                {form.getFieldDecorator('senderInfo')(<Input type="hidden" />)}
-                {form.getFieldDecorator('shipperInfo')(<Input type="hidden" />)}
-                {form.getFieldDecorator('selectDetailId', { initialValue: this.state.selectDetailId, })(<Input type="hidden" />)}
-                {form.getFieldDecorator('allDetaileId', { initialValue: this.state.allDetaileId, })(<Input type="hidden" />)}
                 {form.getFieldDecorator('senderPostCode', {
-                    rules: [
-                        {
-                            required: true,
-                            message: '请输入选择发件人发件地编码',
-                        },
-                    ],
                     initialValue: '000000',
-
                 })(<Input type="hidden" />)}
-                <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
+                <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
                     <Col md={17} sm={24}  >
-                        <p style={{ marginBottom: -1 }} >请选择要发货的商品:</p>
+                        <div  >
+                            <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
+                                <Col md={16} sm={24}  >
+                                    <p style={{ marginBottom: -1 }} >请选择要发货的商品:</p>
+                                </Col>
+                                <Col md={8} sm={24} style={{ paddingBottom: 5 }} >
+                                    <Button size="small" type="primary" onClick={() => this.setDefultId(item, 1)} >
+                                        拆分订单发货
+                                    </Button>
+                                </Col>
+                            </Row>
+                        </div>
                     </Col>
                     <Col md={16} sm={24}  >
-                        <div >
+                        <div style={{ height: 450, overflow: scroll }} >
                             <Table
                                 rowKey="id"
                                 dataSource={detailData}
                                 columns={columns}
                                 pagination={false}
                                 rowSelection={rowSelection}
-
                             />
                             <Table
                                 rowKey="id"
@@ -588,67 +647,31 @@ export default class OrdSendForm extends PureComponent {
                         </div>
                     </Col>
                     <Col md={8} sm={24}  >
-                        <p style={{ marginBottom: -1 }} >买家留言与商家发货备注:</p>
+                        <p style={{ marginBottom: -1 }} >发货备注:</p>
                         <textarea onChange={(value) => this.textChange(value)} style={{ width: '100%', }} rows="6" value={this.state.orderDetail} >
                         </textarea>
                         {this.showlogisticCode()}
                         {this.showSplit()}
+                        <Button size="small" type="primary" onClick={() => this.setDefultId(item, 1)} >
+                            发货
+                        </Button>
                     </Col>
                 </Row>
             </Fragment>
         )
     }
 
-    /**
-     * 步骤3
-     */
-    step3 = () => {
-        return (
-            <Fragment>
-                <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
-                    <Col md={24} sm={24} style={{ textAlign: 'center' }}  >
-                        <Icon type="check-circle" style={{ color: '#52c41a', fontSize: 60, }} />
-                        <p style={{ fontSize: 20 }} >发货成功</p>
-                    </Col>
-                </Row>
-                <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
-                    <Col md={16} sm={24} push={4} style={{ background: '#fafafa' }} >
-                        <p><span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >买家地址 :</span>{this.state.receiverInfo.receiverProvince + this.state.receiverInfo.receiverCity + this.state.receiverInfo.receiverExpArea + this.state.receiverInfo.receiverAddress + '  ' + this.state.receiverInfo.receiverName + '·' + this.state.receiverInfo.receiverMobile}</p>
-                        <p><span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >买家留言 :</span>{this.state.orderMessages}</p>
-                        <p><span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >发货备注 :</span>{this.state.deliverRemark}</p>
-                        <p><span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >发货地址 :</span>{this.state.defaultSendInfo.senderProvince + this.state.defaultSendInfo.senderCity + this.state.defaultSendInfo.senderExpArea + this.state.defaultSendInfo.senderAddress + '  ' + this.state.defaultSendInfo.senderName + '·' + this.state.defaultSendInfo.senderMobile}</p>
-                        <p><span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }} >快递公司 :</span>{this.state.defaultCompanyInfo.companyName}</p>
-                    </Col>
-                </Row>
-                {/* <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
-                    <Col md={24} sm={24} style={{ textAlign: 'center' }}  >
-                        <p style={{ color: '#1890ff' }} >您还有{this.state.allRowKeys.length + ':' + this.state.selectedRowKeys.length}个详情没有发货，您是想?</p>
-                        <Button type="primary" htmlType="submit" onClick={() => this.deliverAgina()} >
-                            再发一次
-                    </Button>
-                        <Button style={{ marginLeft: 5 }} type="primary" htmlType="submit">
-                            拆分订单
-                    </Button>
-                    </Col>
-                </Row> */}
-            </Fragment>
 
-        )
-    }
 
 
     render() {
         const step1 = this.step1();
         const step2 = this.step2();
-        const step3 = this.step3();
-        if (this.props.step === '1') {
+        if (this.state.step === '1') {
             return (step1)
         }
-        if (this.props.step === '2') {
+        if (this.state.step === '2') {
             return (step2);
-        }
-        if (this.props.step === '3') {
-            return (step3);
         }
     }
 }

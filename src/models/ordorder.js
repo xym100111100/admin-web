@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import {updateOrg,detailList, buyrelation,list,getTrace, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,shipmentconfirmation, modifyOrderShippingAddress,getUnshipmentsByDeliverOrgId } from '../services/ordorder';
+import {updateOrg,detailList,splitPackageDeliver, buyrelation,list,getTrace, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,shipmentconfirmation, modifyOrderShippingAddress,getUnshipmentsByDeliverOrgId } from '../services/ordorder';
 import { printpage ,logisticList} from '../services/kdilogistic';
 import { listAll } from '../services/sucorg';
 export default {
@@ -127,6 +127,15 @@ export default {
     },
     *shipmentconfirmation({ payload, callback }, { call }) {//确认发货并打印快递单
       const response = yield call(shipmentconfirmation, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *splitPackageDeliver({ payload, callback }, { call }) {//将订单中的每个详情发一个包裹并发货
+      const response = yield call(splitPackageDeliver, payload);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);
