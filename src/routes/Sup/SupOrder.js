@@ -7,13 +7,14 @@ import styles from './SupOrder.less';
 import moment from 'moment';
 import SupSendForm from './SupSendForm';
 import SupTraceForm from './SupTraceForm';
+import SupBatchSendForm from './SupBatchSendForm';
 const { RangePicker } = DatePicker;
 
 const { Option } = Select;
 const FormItem = Form.Item;
-@connect(({ suporder, user,  loading }) => ({
+@connect(({ suporder, user, loading }) => ({
   suporder, user,
-  loading: loading.models.suporder  || loading.models.user 
+  loading: loading.models.suporder || loading.models.user
 }))
 @Form.create()
 export default class SupOrder extends SimpleMng {
@@ -24,7 +25,7 @@ export default class SupOrder extends SimpleMng {
       pageNum: 1,
       pageSize: 5,
       orderState: 2,
-      orgId:0,
+      orgId: 0,
     };
     this.state.orderCode = undefined;
     this.state.record = undefined;
@@ -35,19 +36,21 @@ export default class SupOrder extends SimpleMng {
     this.state.LogisticInfo = '';
     this.state.step = '1';
     this.state.first = true;
-    this.state.payloads={};
+    this.state.payloads = {};
+    this.state.selectedRowKeys = [];
+    this.state.hasSelected = false;
   }
 
   //初始化
   componentDidMount() {
     this.setState({
-      orgId:this.props.user.currentUser.orgId,
+      orgId: this.props.user.currentUser.orgId,
     })
     this.state.payloads = {
       pageNum: this.state.options.pageNum,
       pageSize: this.state.options.pageSize,
       orderState: this.state.options.orderState,
-      orgId:this.props.user.currentUser.orgId,
+      orgId: this.props.user.currentUser.orgId,
     };
     this.props.dispatch({
       type: `${this.moduleCode}/list`,
@@ -144,7 +147,7 @@ export default class SupOrder extends SimpleMng {
           pageNum: fieldsValue.pageNum,
           pageSize: fieldsValue.pageSize,
           orderState: fieldsValue.orderState,
-          orgId:this.props.user.currentUser.orgId,
+          orgId: this.props.user.currentUser.orgId,
         },
       });
       this.props.dispatch({
@@ -167,7 +170,7 @@ export default class SupOrder extends SimpleMng {
           pageNum: pagination.current,
           pageSize: pagination.pageSize,
           orderState: fieldsValue.orderState,
-          orgId:this.props.user.currentUser.orgId,
+          orgId: this.props.user.currentUser.orgId,
         },
       });
       //使用正则来判断用户输入的是什么筛选条件,默认为名字，一旦是其他的就将名字设置为undefined
@@ -405,8 +408,9 @@ export default class SupOrder extends SimpleMng {
 
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
-    const { editFormRecord } = this.state;
+    const { editFormRecord, } = this.state;
     const { user } = this.props;
+
     editFormRecord.orgId = user.currentUser.orgId;
     return (
       <Form onSubmit={this.list} layout="inline">
@@ -452,6 +456,12 @@ export default class SupOrder extends SimpleMng {
             </span>
           </Col>
         </Row>
+        <Row>
+          <Button type="primary" icon="printer" disabled={!this.state.hasSelected} onClick={this.showBatchSendForm}
+          >
+            批量打印
+        </Button>
+        </Row>
       </Form>
     );
   }
@@ -491,14 +501,72 @@ export default class SupOrder extends SimpleMng {
     })
   }
 
+  //显示批量打印选择快递和发件人的窗口
+  showBatchSendForm = () => {
+    this.showAddForm({
+      editForm: 'supBatchSend',
+      editFormTitle: '选择发货快递和发件人',
+    })
+  }
 
+  /**
+   * 批量打印
+   */
+  batchPrint = (fields) => {
+    const { user } = this.props;
+    fields.orgId = user.currentUser.orgId;
+    fields.sendOpId = user.currentUser.userId;
+    fields.receiver = this.state.selectedRowKeys.receiver;
+    //判断是否选择了发件人
+    if (fields.selectSend.length === 0) {
+      message.error('未选择发件人，不能提交');
+      return;
+    }
+    //判断是否选择了快递公司
+    if (fields.selectCompany.length === 0) {
+      message.error('未选择快递公司，不能提交');
+      return;
+    }
+    //整理快递公司信息
+    let selectCompany = fields.selectCompany
+    fields.shipperId = selectCompany.id;
+    fields.shipperName = selectCompany.companyName;
+    fields.shipperCode = selectCompany.companyCode;
+    //整理发货人信息
+    let selectSend = fields.selectSend
+    fields.senderName = selectSend.senderName;
+    fields.senderMobile = selectSend.senderMobile;
+    fields.senderProvince = selectSend.senderProvince;
+    fields.senderCity = selectSend.senderCity;
+    fields.senderExpArea = selectSend.senderExpArea;
+    fields.senderPostCode = selectSend.senderPostCode;
+    fields.senderAddress = selectSend.senderAddress;
+    //console.log(fields);
+    let printWindow;
+    this.props.dispatch({
+      type: `${this.moduleCode}/bulkShipment`,
+      payload: fields,
+      callback: data => {
+        this.handleReload();
+        this.setState({ editForm: undefined });
+        if (fields.logisticCode === undefined) {
+          const printPage = data.printPage;
+          printWindow = window.open('', '_blank');
+          printWindow.document.body.innerHTML = printPage;
+          setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+          }, 1);
+        }
+      }
+    })
 
+  }
 
   /**
    * 发货
    */
   willDeliver = (record) => {
-
     const fields = record.fields;
     const { user } = this.props;
     fields.orgId = user.currentUser.orgId;
@@ -511,19 +579,19 @@ export default class SupOrder extends SimpleMng {
     }
     //整理快递公司信息
     let shipperInfo;
-    if (fields.shipperInfo !== undefined && fields.shipperInfo !=='' ) {
+    if (fields.shipperInfo !== undefined && fields.shipperInfo !== '') {
       shipperInfo = fields.shipperInfo.split('/');
       fields.shipperId = shipperInfo[0];
       fields.shipperName = shipperInfo[1];
       fields.shipperCode = shipperInfo[2];
       fields.shipperInfo = undefined
-    }else {
+    } else {
       message.error('快递公司未配置，请到快递业务中的快递配置中配置');
       return;
     }
     //整理发件信息
     let senderInfo;
-    if (fields.senderInfo !== undefined && fields.senderInfo !=='' ) {
+    if (fields.senderInfo !== undefined && fields.senderInfo !== '') {
       senderInfo = fields.senderInfo.split('/');
       fields.senderName = senderInfo[0];
       fields.senderMobile = senderInfo[1];
@@ -533,13 +601,13 @@ export default class SupOrder extends SimpleMng {
       fields.senderPostCode = senderInfo[5];
       fields.senderAddress = senderInfo[6];
       fields.senderInfo = undefined;
-    }else {
+    } else {
       message.error('发件人未配置，请到快递业务中的快递配置中配置');
       return;
     }
     //整理被选择的订单详情Id
     let selectDetailId = [];
-    if (fields.selectDetailId !== undefined ) {
+    if (fields.selectDetailId !== undefined) {
       //可能添加的时候后面多添加了斜杆，需要去掉再split
       if (fields.selectDetailId.substr(fields.selectDetailId.length - 1, 1) === '/') {
         fields.selectDetailId = fields.selectDetailId.substring(0, fields.selectDetailId.length - 1);
@@ -562,7 +630,7 @@ export default class SupOrder extends SimpleMng {
       allDetaileId = fields.allDetaileId.split('/');
       fields.allDetaileId = allDetaileId;
     }
-    
+
     let printWindow;
     this.props.dispatch({
       type: `${this.moduleCode}/shipmentconfirmation`,
@@ -735,17 +803,17 @@ export default class SupOrder extends SimpleMng {
   /**
    *计算剩余时间 
    */
-  stringTODate =(str,day) =>{
-    str=str.replace(/-/g,"/");
-    let oldDate=new Date(str);
+  stringTODate = (str, day) => {
+    str = str.replace(/-/g, "/");
+    let oldDate = new Date(str);
     let oldTimestamp = new Date(oldDate).getTime();
-    let newTimestamp = oldTimestamp+(day*1000*60*60*24)
-    let nowTimestamp=new Date().getTime();
-    let  rest = Math.ceil((newTimestamp-nowTimestamp)/1000/60/60/24)
-    if((newTimestamp-nowTimestamp) <0){
+    let newTimestamp = oldTimestamp + (day * 1000 * 60 * 60 * 24)
+    let nowTimestamp = new Date().getTime();
+    let rest = Math.ceil((newTimestamp - nowTimestamp) / 1000 / 60 / 60 / 24)
+    if ((newTimestamp - nowTimestamp) < 0) {
       return -1;
     }
-    if(rest ===0 &&(newTimestamp-nowTimestamp)>0){
+    if (rest === 0 && (newTimestamp - nowTimestamp) > 0) {
       return 1;
     }
     return rest;
@@ -791,6 +859,14 @@ export default class SupOrder extends SimpleMng {
 
   }
 
+
+  onSelectChange = (selectedRowKeys, selectedRow) => {
+    selectedRowKeys.receiver = selectedRow;
+    //console.log('获取的值', selectedRowKeys);
+    const hasSelected = selectedRowKeys.length > 0;//是否勾选订单
+    this.setState({ selectedRowKeys, hasSelected });
+  }
+
   render() {
 
     const content = (
@@ -808,7 +884,14 @@ export default class SupOrder extends SimpleMng {
 
 
     const { suporder: { suporder }, loading } = this.props;
-    const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
+    const { editForm, editFormType, editFormTitle, editFormRecord, selectedRowKeys } = this.state;
+    const rowSelection = {
+      selectedRowKeys, onChange: this.onSelectChange, 
+      getCheckboxProps: record => ({
+        disabled: record.orderState !== 2&& record.orderState !==3,
+        name:record.orderState,
+      })
+    };
     let ps;
     if (suporder === undefined || suporder.pageSize === undefined) {
       ps = 5;
@@ -897,42 +980,42 @@ export default class SupOrder extends SimpleMng {
         key: 'orderTime',
         width: 150,
         render: (text, record) => {
-          if (record.orderState === 3&&record.sendTime!== undefined) {
+          if (record.orderState === 3 && record.sendTime !== undefined) {
             return (
               <div>
-                {record.orderTime!== undefined&&record.orderTime}
-                <br/>
-                <span>预计结算到余额还有{this.stringTODate(record.sendTime,24)}天</span>
+                {record.orderTime !== undefined && record.orderTime}
+                <br />
+                <span>预计结算到余额还有{this.stringTODate(record.sendTime, 24)}天</span>
               </div>
             )
-          } else if (record.orderState === 4&&record.receivedTime!== undefined&&this.stringTODate(record.receivedTime,14)>0) {
+          } else if (record.orderState === 4 && record.receivedTime !== undefined && this.stringTODate(record.receivedTime, 14) > 0) {
             return (
               <div>
-                {record.orderTime!== undefined&&record.orderTime}
-                <br/>
-                <span>预计距结算到余额还有{this.stringTODate(record.receivedTime,14)}天</span>
+                {record.orderTime !== undefined && record.orderTime}
+                <br />
+                <span>预计距结算到余额还有{this.stringTODate(record.receivedTime, 14)}天</span>
               </div>
             )
-          }else if (record.orderState === 5&&record.closeTime!== undefined&&(this.stringTODate(record.closeTime,1)<0)) {
+          } else if (record.orderState === 5 && record.closeTime !== undefined && (this.stringTODate(record.closeTime, 1) < 0)) {
             return (
               <div>
-                {record.orderTime!== undefined&&record.orderTime}
-                <br/>
+                {record.orderTime !== undefined && record.orderTime}
+                <br />
                 <span>已结算到余额</span>
               </div>
             )
-          }else if (record.orderState === 5&&record.closeTime!== undefined) {
+          } else if (record.orderState === 5 && record.closeTime !== undefined) {
             return (
               <div>
-                {record.orderTime!== undefined&&record.orderTime}
-                <br/>
+                {record.orderTime !== undefined && record.orderTime}
+                <br />
                 <span>预计今天结算到余额</span>
               </div>
             )
-          }  else {
+          } else {
             return (
               <div>
-                {record.orderTime!== undefined&&record.orderTime}
+                {record.orderTime !== undefined && record.orderTime}
               </div>
             )
           }
@@ -973,21 +1056,21 @@ export default class SupOrder extends SimpleMng {
                 <a onClick={() => this.showSendForm(record)} >发货 </a>
               </Fragment>
             )
-          } else if(record.orderState === 3){
-            return(
+          } else if (record.orderState === 3) {
+            return (
               <Fragment>
-                  <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
-                    物流信息
+                <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
+                  物流信息
                   </a>
-                  <br />
-                  <a onClick={() => this.showSendForm(record, false)} >添加新快递单</a>
+                <br />
+                <a onClick={() => this.showSendForm(record, false)} >添加新快递单</a>
               </Fragment>
             )
-          }else {
+          } else {
             return (
               <Fragment  >
-                  <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
-                    物流信息
+                <a onClick={() => this.showEditForm({ editFormRecord: record, editForm: 'ordTrace', editFormTitle: '物流信息' })} >
+                  物流信息
                   </a>
               </Fragment>
             )
@@ -1008,6 +1091,7 @@ export default class SupOrder extends SimpleMng {
               onChange={this.handleTableChange}
               dataSource={suporderData}
               columns={columns}
+              rowSelection={rowSelection}
             />
           </div>
         </Card>
@@ -1026,7 +1110,18 @@ export default class SupOrder extends SimpleMng {
             onSubmit={this.state.step === '2' ? (fields) => this.willDeliver({ fields }) : false}
           />
         )}
-       {editForm === 'ordTrace' && (
+        {editForm === 'supBatchSend' && (
+          <SupBatchSendForm
+            width={800}
+            visible
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            onSubmit={(fields) => this.batchPrint(fields)}
+          />
+        )}
+        {editForm === 'ordTrace' && (
           <SupTraceForm
             width={720}
             visible

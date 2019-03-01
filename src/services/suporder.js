@@ -28,6 +28,15 @@ export async function shipmentconfirmation(params) {
   });
 }
 
+export async function bulkShipment(params){
+  return request('/ord-svr/ord/order/bulkShipment',{
+    method:'PUT',
+    body:{
+      ...params,
+    }
+  })
+}
+
 export async function add(params) {
   return request('/sup-svr/sup/order', {
     method: 'POST',
