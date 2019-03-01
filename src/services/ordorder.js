@@ -17,6 +17,9 @@ export async function detailList(params) {
   return request(`/ord-svr/ord/detailList?${stringify(params)}`);
 }
 
+export async function listDetailAndlogisticCodeByOrderId(params) {
+  return request(`/ord-svr/ord/listDetailAndlogisticCodeByOrderId?${stringify(params)}`);
+}
 export async function getById(params) {
   return request(`/ord-svr/ord/order/getbyid?${stringify(params)}`);
 }
@@ -30,8 +33,8 @@ export async function add(params) {
   });
 }
 
-export async function shipmentconfirmation(params) {
-  return request('/ord-svr/ord/order/shipmentconfirmation', {
+export async function deliver(params) {
+  return request('/ord-svr/ord/order/deliver', {
     method: 'PUT',
     body: {
       ...params,
@@ -39,14 +42,6 @@ export async function shipmentconfirmation(params) {
   });
 }
 
-export async function splitPackageDeliver(params) {
-  return request('/ord-svr/ord/order/splitPackageDeliver', {
-    method: 'PUT',
-    body: {
-      ...params,
-    },
-  });
-}
 
 export async function getTrace(params) {
   return request('/ord-svr/ord/order/sendBySupplier', {

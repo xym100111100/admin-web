@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import {updateOrg,detailList,splitPackageDeliver, buyrelation,list,getTrace, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,shipmentconfirmation, modifyOrderShippingAddress,getUnshipmentsByDeliverOrgId } from '../services/ordorder';
+import {updateOrg,listDetailAndlogisticCodeByOrderId, buyrelation,list,getTrace, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,deliver, modifyOrderShippingAddress,getUnshipmentsByDeliverOrgId } from '../services/ordorder';
 import { printpage ,logisticList} from '../services/kdilogistic';
 import { listAll } from '../services/sucorg';
 export default {
@@ -24,7 +24,10 @@ export default {
       const response = yield call(detailList, payload);
       if (callback) callback(response);
     },
-
+    *listDetailAndlogisticCodeByOrderId({ payload, callback }, { call, put }) {
+      const response = yield call(listDetailAndlogisticCodeByOrderId, payload);
+      if (callback) callback(response);
+    },
     *logisticList({ payload, callback }, { call, put }) {
       const response = yield call(logisticList, payload);
       if (callback) callback(response);
@@ -125,8 +128,8 @@ export default {
         message.error(response.msg);
       }
     },
-    *shipmentconfirmation({ payload, callback }, { call }) {//确认发货并打印快递单
-      const response = yield call(shipmentconfirmation, payload);
+    *deliver({ payload, callback }, { call }) {//确认发货并打印快递单
+      const response = yield call(deliver, payload);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);
@@ -134,15 +137,7 @@ export default {
         message.error(response.msg);
       }
     },
-    *splitPackageDeliver({ payload, callback }, { call }) {//将订单中的每个详情发一个包裹并发货
-      const response = yield call(splitPackageDeliver, payload);
-      if (response.result === 1) {
-        message.success(response.msg);
-        if (callback) callback(response);
-      } else {
-        message.error(response.msg);
-      }
-    },
+
     *getTrace({ payload, callback }, { call }) {//供应商确认发货并打印快递单
       const response = yield call(getTrace, payload);
       if (response.result === 1) {
