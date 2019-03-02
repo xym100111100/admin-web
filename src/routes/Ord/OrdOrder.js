@@ -545,29 +545,25 @@ export default class OrdOrder extends SimpleMng {
       }
     })
   }
+
+
   /**
    * 显示发货窗口并把发货步骤窗口改为1，1为选择快递公司发件人界面，2为选择要发货的详情界面。
    */
   showSendForm = (record, first) => {
-    if (first !== undefined) {
-      this.setState({
-        first: first,
-        step: '2',
-      })
-    } else {
-      this.setState({
-        first: true,
-        step: '2',
-      })
-    }
     this.showAddForm({
       editFormRecord: record,
-      editForm: 'ordSend',
+      editForm: 'ordDeliver',
       editFormTitle: '发货',
     })
   }
 
-
+  /**
+   * 为了在子窗口隐藏弹窗口
+   */
+  hiddenForm=()=>{
+    this.setState({ editForm: undefined })
+  }
 
 
 
@@ -1017,7 +1013,7 @@ export default class OrdOrder extends SimpleMng {
             onSubmit={(fields) => this.setSupplierOrg(fields)}
           />
         )}
-        {editForm === 'ordSend' && (
+        {editForm === 'ordDeliver' && (
           <OrdSendForm
             width={800}
             first={this.state.first}
@@ -1026,6 +1022,7 @@ export default class OrdOrder extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
+            hiddenForm={()=>{this.hiddenForm()}}
           />
         )}
       </PageHeaderLayout>
