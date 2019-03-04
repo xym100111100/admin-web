@@ -2104,6 +2104,7 @@ const options = [
           { value: '济阳县', label: '济阳县' },
           { value: '商河县', label: '商河县' },
           { value: '章丘市', label: '章丘市' },
+          { value: '高新区', label: '高新区' },
         ],
       },
       {
