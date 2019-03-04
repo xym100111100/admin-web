@@ -72,6 +72,7 @@ export default class OrdSendForm extends PureComponent {
      * 需要详情，将选择的详情分别发一个包裹。
      */
     deliver = (fieldsValue) => {
+        const { hiddenForm } = this.props;
         if (this.state.merge === true) {
             if (this.state.mergeSelectDetaile.length === 0) {
                 message.error('未选择任何详情，不能提交');
@@ -100,7 +101,8 @@ export default class OrdSendForm extends PureComponent {
             type: `ordorder/deliver`,
             payload: fieldsValue,
             callback: data => {
-                console.log(data);
+                this.initDetailData();
+                hiddenForm();
                 const printPage = data.printPage;
                 printWindow = window.open('', '_blank');
                 printWindow.document.body.innerHTML = printPage;
@@ -166,7 +168,6 @@ export default class OrdSendForm extends PureComponent {
 
 
     }
-
 
 
 
@@ -377,8 +378,6 @@ export default class OrdSendForm extends PureComponent {
      * 打勾要选择的发货详情时触发。
      */
     setDetaileData = (count, data) => {
-        console.log(data);
-        const { form } = this.props;
         let rowKeys = [];
         let orderDetail = '';
         let selectDetaile = [];
