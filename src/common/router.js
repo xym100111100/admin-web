@@ -105,7 +105,7 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['kdisender'], () => import('../routes/Kdi/KdiSenderCfg')),
     },
     '/ord/ord-order': {
-      component: dynamicWrapper(app, ['ordorder', 'kdicompany', 'user', 'kdisender'], () =>
+      component: dynamicWrapper(app, ['ordorder', 'kdicompany', 'user', 'kdisender', 'suporder'], () =>
         import('../routes/Ord/OrdOrder')
       ),
     },

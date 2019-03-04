@@ -9,14 +9,15 @@ import OrdTraceForm from './OrdTraceForm';
 import OrdSendForm from './OrdSendForm';
 import OrdgetTrace from './OrdgetTrace';
 import OrdDeliverOrgForm from './OrdDeliverOrgForm';
+import OrdBatchSendForm from './OrdBatchSendForm';
 import ModifyOrderShippingAddress from './ModifyOrderShippingAddress';
 const { RangePicker } = DatePicker;
 
 const { Option } = Select;
 const FormItem = Form.Item;
-@connect(({ ordorder, user, kdicompany, sucorg, kdisender, loading }) => ({
-  ordorder, user, kdicompany, kdisender, sucorg,
-  loading: loading.models.ordorder || loading.models.sucorg || loading.models.user || loading.models.kdicompany || loading.models.kdisender
+@connect(({ ordorder, user, kdicompany, sucorg, kdisender, loading, suporder }) => ({
+  ordorder, user, kdicompany, kdisender, sucorg, suporder,
+  loading: loading.models.ordorder || loading.models.sucorg || loading.models.user || loading.models.kdicompany || loading.models.kdisender || loading.models.suporder
 }))
 @Form.create()
 export default class OrdOrder extends SimpleMng {
@@ -37,6 +38,8 @@ export default class OrdOrder extends SimpleMng {
     this.state.LogisticInfo = '';
     this.state.step = '2';
     this.state.first = true;
+    this.state.selectedRowKeys = [];
+    this.state.hasSelected = false;
   }
 
   //初始化
@@ -223,8 +226,66 @@ export default class OrdOrder extends SimpleMng {
     })
   }
 
+  onSelectChange = (selectedRowKeys, selectedRow) => {
+    //console.log("得到的值", selectedRow);
+    selectedRowKeys.receiver = selectedRow;
+    console.log("得到的Key", selectedRowKeys);
+    const hasSelected = selectedRowKeys.length > 0;//是否有勾选订单
+    this.setState({ selectedRowKeys, hasSelected });
+  }
 
-
+  /**
+   * 批量打印
+   */
+  batchPrint = (fields) => {
+    const { user } = this.props;
+    fields.orgId = user.currentUser.orgId;
+    fields.sendOpId = user.currentUser.userId;
+    fields.receiver = this.state.selectedRowKeys.receiver;
+    //判断是否选择了发件人
+    if (fields.selectSend.length === 0) {
+      message.error('未选择发件人，不能提交');
+      return;
+    }
+    //判断是否选择了快递公司
+    if (fields.selectCompany.length === 0) {
+      message.error('未选择快递公司，不能提交');
+      return;
+    }
+    //整理快递公司信息
+    let selectCompany = fields.selectCompany
+    fields.shipperId = selectCompany.id;
+    fields.shipperName = selectCompany.companyName;
+    fields.shipperCode = selectCompany.companyCode;
+    //整理发货人信息
+    let selectSend = fields.selectSend
+    fields.senderName = selectSend.senderName;
+    fields.senderMobile = selectSend.senderMobile;
+    fields.senderProvince = selectSend.senderProvince;
+    fields.senderCity = selectSend.senderCity;
+    fields.senderExpArea = selectSend.senderExpArea;
+    fields.senderPostCode = selectSend.senderPostCode;
+    fields.senderAddress = selectSend.senderAddress;
+    console.log(fields);
+    let printWindow;
+    this.props.dispatch({
+      type: `suporder/bulkShipment`,
+      payload: fields,
+      callback: data => {
+        this.handleReload();
+        this.setState({ editForm: undefined });
+        if (fields.logisticCode === undefined) {
+          const printPage = data.printPage;
+          printWindow = window.open('', '_blank');
+          printWindow.document.body.innerHTML = printPage;
+          setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+          }, 1);
+        }
+      }
+    })
+  }
   showExpand = (data) => {
     const listItems = data.map(items => {
       let color;
@@ -519,6 +580,11 @@ export default class OrdOrder extends SimpleMng {
             </span>
           </Col>
         </Row>
+        <Row>
+          <Button type="primary" icon="printer" disabled={!this.state.hasSelected} onClick={this.showBatchSendForm}>
+            批量打印
+          </Button>
+        </Row>
       </Form>
     );
   }
@@ -569,7 +635,13 @@ export default class OrdOrder extends SimpleMng {
 
 
 
-
+  //显示批量打印选择快递和发件人的窗口
+  showBatchSendForm = () => {
+    this.showAddForm({
+      editForm: 'ordBatchSend',
+      editFormTitle: '选择发货快递和发件人'
+    })
+  }
 
 
 
@@ -766,7 +838,14 @@ export default class OrdOrder extends SimpleMng {
 
 
     const { ordorder: { ordorder }, loading } = this.props;
-    const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
+    const { editForm, editFormType, editFormTitle, editFormRecord, selectedRowKeys } = this.state;
+    const rowSelection = {
+      selectedRowKeys, onChange: this.onSelectChange,
+      getCheckboxProps: record => ({
+        disabled: record.orderState !== 2 && record.orderState !== 3,
+        name: record.orderState,
+      })
+    }
     let ps;
     if (ordorder === undefined || ordorder.pageSize === undefined) {
       ps = 5;
@@ -973,6 +1052,7 @@ export default class OrdOrder extends SimpleMng {
               onChange={this.handleTableChange}
               dataSource={kdilogisticData}
               columns={columns}
+              rowSelection={rowSelection}
             />
           </div>
         </Card>
@@ -1026,6 +1106,17 @@ export default class OrdOrder extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
+          />
+        )}
+        {editForm === 'ordBatchSend' && (
+          <OrdBatchSendForm
+            width={800}
+            visible
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            onSubmit={(fields) => this.batchPrint(fields)}
           />
         )}
       </PageHeaderLayout>
