@@ -29,6 +29,7 @@ export default class OrdSendForm extends PureComponent {
         step: '2',
         loading: false,
         hasMore: true,
+        split: false,
 
         orderDetail: '详情备注',//包括订单留言
         orderMessages: '', //订单留言
@@ -96,6 +97,7 @@ export default class OrdSendForm extends PureComponent {
             fieldsValue.allDetaile[index].subjectType === '普通' ? fieldsValue.allDetaile[index].subjectType = 0 : fieldsValue.allDetaile[index].subjectType = 1;
 
         }
+        console.log(fieldsValue);
         let printWindow
         this.props.dispatch({
             type: `ordorder/deliver`,
@@ -121,6 +123,33 @@ export default class OrdSendForm extends PureComponent {
 
     }
 
+    /**
+     * 根据快递公司帐号密码显示发货被指
+     */
+    showRemark = (orderDetail) => {
+        if (this.props.record.onlineOrgId === this.props.record.deliverOrgId) {
+            if (this.state.selectCompany.companyPwd !== undefined && this.state.selectCompany.companyPwd !== null && this.state.selectCompany.companyPwd !== '') {
+                return (
+                    <div>
+                        <p style={{ marginBottom: -1 }} >发货备注:</p>
+                        <textarea onChange={(value) => this.textChange(value)} style={{ width: '100%', }} rows="6" value={orderDetail} >
+                        </textarea>
+                    </div>
+                )
+            }
+        } else {
+            if (this.state.selectCompany.companyPwd !== undefined && this.state.selectCompany.companyPwd !== null && this.state.selectCompany.companyPwd !== '') {
+                return (
+                    <div>
+                        <p style={{ marginBottom: -1 }} >发货备注:</p>
+                        <textarea onChange={(value) => this.textChange(value)} style={{ width: '100%', }} rows="6" value={orderDetail} >
+                        </textarea>
+                    </div>
+                )
+            }
+        }
+
+    }
 
     /**
      * 发货
@@ -134,6 +163,7 @@ export default class OrdSendForm extends PureComponent {
             fieldsValue.orgId = user.currentUser.orgId;
             fieldsValue.sendOpId = user.currentUser.userId;
             fieldsValue.merge = this.state.merge;
+            fieldsValue.split = this.state.split;
             //判断是否选择了发件人和整理发件人
             if (this.state.selectSend === undefined) {
                 message.error('未选择发件人，不能提交');
@@ -234,6 +264,7 @@ export default class OrdSendForm extends PureComponent {
             type: `ordorder/listDetailAndlogisticCodeByOrderId`,
             payload: { orderId: record.id },
             callback: data => {
+                console.log(data);
                 let orderDetail = '';
                 let keys = [];
                 let delivered = [];
@@ -259,9 +290,9 @@ export default class OrdSendForm extends PureComponent {
                     if (this.props.first === false) {
                         if (data[index].returnState === 0 || data[index].returnState === 3) {
                             //所有没有发货的详情Id，不在其他修改，用于后面成功后对比
-                            allRowKeys.push(data[index])
+                            allRowKeys.push(Object.assign({}, data[index]))
                             //所有不是退货的详情
-                            willDeliver.push(data[index])
+                            willDeliver.pushObject.assign({}, (data[index]))
                             //这一行代码是为了默认全选的。
                             keys.push(data[index].id);
                             //这里是设置发货备注的,只有在没有发货的详情才会加进去备注中。
@@ -273,20 +304,20 @@ export default class OrdSendForm extends PureComponent {
                                 orderDetail += ' ， ';
                             }
                             //设置要发货详情
-                            selectDetaile.push(data[index]);
+                            selectDetaile.push(Object.assign({}, data[index]));
                             //设置所有未发货的详情Id
-                            allDetaile.push(data[index]);
+                            allDetaile.push(Object.assign({}, data[index]));
                         }
 
                     } else if (this.props.first === true) {
                         if (data[index].isDelivered == true && (data[index].returnState === 0 || data[index].returnState === 3)) {
                             //已经发货且不是退货状态的详情
-                            delivered.push(data[index])
+                            delivered.push(Object.assign({}, data[index]))
                         } else if (data[index].isDelivered == false && (data[index].returnState === 0 || data[index].returnState === 3)) {
                             //所有没有发货的详情Id，不在其他修改，用于后面成功后对比
-                            allRowKeys.push(data[index])
+                            allRowKeys.push(Object.assign({}, data[index]))
                             //没有发货且待要发货的详情及各种数据
-                            willDeliver.push(data[index])
+                            willDeliver.push(Object.assign({}, data[index]))
                             //这一行代码是为了默认全选的。
                             keys.push(data[index].id);
                             //这里是设置发货备注的,只有在没有发货的详情才会加进去备注中。
@@ -298,9 +329,9 @@ export default class OrdSendForm extends PureComponent {
                                 orderDetail += ' ， ';
                             }
                             //设置要发货详情
-                            selectDetaile.push(data[index]);
+                            selectDetaile.push(Object.assign({}, data[index]));
                             //设置所有未发货的详情Id
-                            allDetaile.push(data[index]);
+                            allDetaile.push(Object.assign({}, data[index]));
 
                         }
                     }
@@ -462,51 +493,20 @@ export default class OrdSendForm extends PureComponent {
      * 导致无法提交。
      */
     showlogisticCode = () => {
-        const { form } = this.props;
         if (this.props.record.onlineOrgId === this.props.record.deliverOrgId) {
             if (this.state.selectCompany.companyPwd === undefined || this.state.selectCompany.companyPwd === null || this.state.selectCompany.companyPwd === '') {
                 return (
-                    <FormItem label="物流单号" >
-                        {form.getFieldDecorator('logisticCode', {
-                            rules: [
-                                {
-                                    required: true,
-                                    pattern: /^[0-9]*$/,
-                                    message: '请输入全部为数字的物流单号',
-                                },
-                            ],
-                        })(<Input placeholder="请输入物流单号" />)}
-                    </FormItem>
-                )
-            } else {
-                return (
-                    <FormItem  >
-                        {form.getFieldDecorator('logisticCode', {
-                            rules: [
-                                {
-                                    required: false,
-                                    pattern: /^[0-9]*$/,
-                                    message: '请输入全部为数字的物流单号',
-                                },
-                            ],
-                        })(<Input placeholder="请输入物流单号" type="hidden" />)}
-                    </FormItem>
+                    <textarea placeholder="请输入物流单号，多个单号请用空格隔开。" onChange={(value) => this.textChange(value)} style={{ width: '100%', }} rows="6"  >
+                    </textarea>
                 )
             }
         } else {
-            return (
-                <FormItem label="物流单号" >
-                    {form.getFieldDecorator('logisticCode', {
-                        rules: [
-                            {
-                                required: true,
-                                pattern: /^[0-9]*$/,
-                                message: '请输入全部为数字的物流单号',
-                            },
-                        ],
-                    })(<Input placeholder="请输入物流单号" />)}
-                </FormItem>
-            )
+            if (this.state.selectCompany.companyPwd === undefined || this.state.selectCompany.companyPwd === null || this.state.selectCompany.companyPwd === '') {
+                return (
+                    <textarea placeholder="请输入物流单号，多个单号请用空格隔开。" onChange={(value) => this.textChange(value)} style={{ width: '100%', }} rows="6"  >
+                    </textarea>
+                )
+            }
         }
 
     }
@@ -516,32 +516,25 @@ export default class OrdSendForm extends PureComponent {
      * 显示是否能将一个订单拆成多个包裹按钮
      */
     showSplit = () => {
-        const { form } = this.props;
         let count = 0;
         if (this.state.merge) {
             count = this.state.mergeSelectDetaile.length
         } else {
             count = this.state.selectDetaile.length
         }
-        if (this.state.selectCompany.companyPwd !== undefined && this.state.selectCompany.companyPwd !== null && this.state.selectCompany.companyPwd !== '') {
-            return (
-                <FormItem >
-                    {form.getFieldDecorator('split', {
-                        initialValue: false,
-                    })(
-                        <RadioGroup >
-                            <Tooltip placement="topLeft" title="该选项是所有选择的商品发一个包裹">
-                                <Radio value={false}>选择的商品发一个包裹</Radio>
-                            </Tooltip>
-                            <Tooltip placement="topLeft" title="该选项是选择多少个商品就发多少个包裹,且发货备注将是选中商品的名称规格等,上面的发货备注无效!">
-                                <Radio value={true}>选择的商品发{count}个包裹</Radio>
-                            </Tooltip>
-                        </RadioGroup>
-                    )}
-                </FormItem>
-            )
+        return (
+            <FormItem >
+                <RadioGroup onChange={this.setSplit} value={this.state.split} >
+                    <Tooltip placement="topLeft" title="该选项是所有选择的商品发一个包裹">
+                        <Radio value={false}>选择的商品发一个包裹</Radio>
+                    </Tooltip>
+                    <Tooltip placement="topLeft" title="该选项是选择多少个商品就发多少个包裹,且发货备注将是选中商品的名称规格等,上面的发货备注无效!">
+                        <Radio value={true}>选择的商品发{count}个包裹</Radio>
+                    </Tooltip>
+                </RadioGroup>
+            </FormItem>
+        )
 
-        }
     }
 
     /**
@@ -625,6 +618,21 @@ export default class OrdSendForm extends PureComponent {
             this.setState({
                 merge: true,
                 mergeMsg: '拆分订单'
+            })
+        }
+    }
+
+    /**
+     * 设置拆分包裹
+     */
+    setSplit = () => {
+        if (this.state.split === true) {
+            this.setState({
+                split: false,
+            })
+        } else {
+            this.setState({
+                split: true,
             })
         }
     }
@@ -726,7 +734,6 @@ export default class OrdSendForm extends PureComponent {
             orderDetail = this.state.orderDetail;
             selectKeys = this.state.selectedRowKeys
         }
-
         const rowSelection = {
             onChange: (selectedRowKeys, selectedRows) => {
                 this.setDetaileData(selectedRowKeys, selectedRows);
@@ -814,10 +821,8 @@ export default class OrdSendForm extends PureComponent {
                         </div>
                     </Col>
                     <Col md={8} sm={24}  >
-                        <p style={{ marginBottom: -1 }} >发货备注:</p>
-                        <textarea onChange={(value) => this.textChange(value)} style={{ width: '100%', }} rows="6" value={orderDetail} >
-                        </textarea>
-                        {this.showlogisticCode()}
+                        {this.showRemark(orderDetail)}
+                        {this.showlogisticCode(orderDetail)}
                         {this.showSplit()}
                         <Button size="small" type="primary" onClick={() => this.willDeliver()} >
                             发货

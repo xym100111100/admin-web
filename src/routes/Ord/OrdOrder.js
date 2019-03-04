@@ -625,10 +625,14 @@ export default class OrdOrder extends SimpleMng {
   }
 
   /**
-   * 为了在子窗口隐藏弹窗口
+   * 为了在子窗口隐藏弹窗口并刷新页面
    */
   hiddenForm=()=>{
     this.setState({ editForm: undefined })
+    this.props.dispatch({
+      type: `${this.moduleCode}/list`,
+      payload: this.state.payloads,
+    });
   }
 
   //显示批量打印选择快递和发件人的窗口
