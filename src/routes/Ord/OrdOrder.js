@@ -35,7 +35,6 @@ export default class OrdOrder extends SimpleMng {
     }
     this.state.trace = '';
     this.state.LogisticInfo = '';
-    this.state.step = '2';
     this.state.first = true;
     this.state.selectedRowKeys = [];
     this.state.hasSelected = false;

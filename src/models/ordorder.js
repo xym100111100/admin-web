@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import {updateOrg,listOrderdetaildeliver,listDetailAndlogisticCodeByOrderId, buyrelation,list,getTraceAndDeliver, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,deliver, modifyOrderShippingAddress,getUnshipmentsByDeliverOrgId } from '../services/ordorder';
+import {updateOrg,listOrderdetaildeliver,detailList, buyrelation,list,getTraceAndDeliver, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,deliver, modifyOrderShippingAddress,getUnshipmentsByDeliverOrgId } from '../services/ordorder';
 import { printpage ,logisticList} from '../services/kdilogistic';
 import { listAll } from '../services/sucorg';
 export default {
@@ -29,10 +29,7 @@ export default {
       const response = yield call(listOrderdetaildeliver, payload);
       if (callback) callback(response);
     },
-    *listDetailAndlogisticCodeByOrderId({ payload, callback }, { call, put }) {
-      const response = yield call(listDetailAndlogisticCodeByOrderId, payload);
-      if (callback) callback(response);
-    },
+
     *logisticList({ payload, callback }, { call, put }) {
       const response = yield call(logisticList, payload);
       if (callback) callback(response);

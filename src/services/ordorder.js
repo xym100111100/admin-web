@@ -20,9 +20,7 @@ export async function detailList(params) {
   return request(`/ord-svr/ord/detailList?${stringify(params)}`);
 }
 
-export async function listDetailAndlogisticCodeByOrderId(params) {
-  return request(`/ord-svr/ord/detailList?${stringify(params)}`);
-}
+
 export async function getById(params) {
   return request(`/ord-svr/ord/order/getbyid?${stringify(params)}`);
 }

@@ -105,11 +105,11 @@ export default class OrdSendForm extends PureComponent {
             payload: fieldsValue,
             callback: data => {
                 //如何选择完详情就关闭窗口，否则刷新窗口。
-                // if (fieldsValue.selectDetaile.length === fieldsValue.allDetaile.length) {
-                //     hiddenForm();
-                // } else {
+                if (fieldsValue.selectDetaile.length === fieldsValue.allDetaile.length) {
+                    hiddenForm();
+                } else {
                     this.initDetailData();
-             //   }
+               }
                 const printPage = data.printPage;
                 printWindow = window.open('', '_blank');
                 printWindow.document.body.innerHTML = printPage;
@@ -187,15 +187,15 @@ export default class OrdSendForm extends PureComponent {
             type: `ordorder/getTraceAndDeliver`,
             payload: fieldsValue,
             callback: data => {
-                // 如何选择完详情就关闭窗口，否则刷新窗口,且将物流编号设置为空
-                // if (fieldsValue.selectDetaile.length === fieldsValue.allDetaile.length) {
-                //     hiddenForm();
-                // } else {
+               // 如何选择完详情就关闭窗口，否则刷新窗口,且将物流编号设置为空
+                if (fieldsValue.selectDetaile.length === fieldsValue.allDetaile.length) {
+                    hiddenForm();
+                } else {
                     this.initDetailData();
                     this.setState({
                         logisticCodeArr: [''],
                     })
-              //  }
+               }
             }
         })
 
@@ -367,7 +367,7 @@ export default class OrdSendForm extends PureComponent {
      */
     getOrderDetaile = (record) => {
         this.props.dispatch({
-            type: `ordorder/listDetailAndlogisticCodeByOrderId`,
+            type: `ordorder/detailList`,
             payload: { orderId: record.id },
             callback: data => {
                 let orderDetail = '';
