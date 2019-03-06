@@ -13,12 +13,15 @@ export async function detail(params) {
   return request(`/ord-svr/ord/orderdetail/info?${stringify(params)}`);
 }
 
+export async function listOrderdetaildeliver(params) {
+  return request(`/ord-svr/ord/listOrderdetaildeliver?${stringify(params)}`);
+}
 export async function detailList(params) {
   return request(`/ord-svr/ord/detailList?${stringify(params)}`);
 }
 
 export async function listDetailAndlogisticCodeByOrderId(params) {
-  return request(`/ord-svr/ord/listDetailAndlogisticCodeByOrderId?${stringify(params)}`);
+  return request(`/ord-svr/ord/detailList?${stringify(params)}`);
 }
 export async function getById(params) {
   return request(`/ord-svr/ord/order/getbyid?${stringify(params)}`);
@@ -41,6 +44,16 @@ export async function deliver(params) {
     },
   });
 }
+
+export async function getTraceAndDeliver(params) {
+  return request('/ord-svr/ord/order/getTraceAndDeliver', {
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
+}
+
 
 
 export async function getTrace(params) {

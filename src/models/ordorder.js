@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import {updateOrg,listDetailAndlogisticCodeByOrderId, buyrelation,list,getTrace, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,deliver, modifyOrderShippingAddress,getUnshipmentsByDeliverOrgId } from '../services/ordorder';
+import {updateOrg,listOrderdetaildeliver,listDetailAndlogisticCodeByOrderId, buyrelation,list,getTraceAndDeliver, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,deliver, modifyOrderShippingAddress,getUnshipmentsByDeliverOrgId } from '../services/ordorder';
 import { printpage ,logisticList} from '../services/kdilogistic';
 import { listAll } from '../services/sucorg';
 export default {
@@ -22,6 +22,11 @@ export default {
     },
     *detailList({ payload, callback }, { call, put }) {
       const response = yield call(detailList, payload);
+      if (callback) callback(response);
+    },
+    
+    *listOrderdetaildeliver({ payload, callback }, { call, put }) {
+      const response = yield call(listOrderdetaildeliver, payload);
       if (callback) callback(response);
     },
     *listDetailAndlogisticCodeByOrderId({ payload, callback }, { call, put }) {
@@ -138,8 +143,8 @@ export default {
       }
     },
 
-    *getTrace({ payload, callback }, { call }) {//供应商确认发货并打印快递单
-      const response = yield call(getTrace, payload);
+    *getTraceAndDeliver({ payload, callback }, { call }) {//获取物流轨迹并发货
+      const response = yield call(getTraceAndDeliver, payload);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);

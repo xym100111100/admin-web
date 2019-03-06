@@ -7,7 +7,6 @@ import styles from './OrdOrder.less';
 import moment from 'moment';
 import OrdTraceForm from './OrdTraceForm';
 import OrdSendForm from './OrdSendForm';
-import OrdgetTrace from './OrdgetTrace';
 import OrdDeliverOrgForm from './OrdDeliverOrgForm';
 import OrdBatchSendForm from './OrdBatchSendForm';
 import ModifyOrderShippingAddress from './ModifyOrderShippingAddress';
@@ -56,19 +55,7 @@ export default class OrdOrder extends SimpleMng {
 
   }
 
-  /**
- * 发货窗口上一步
- */
-  lastStep() {
-    this.setState({ step: '1' })
-  }
 
-  /**
-   * 发货窗口下一步
-   */
-  nextStep() {
-    this.setState({ step: '2' })
-  }
 
 
 
@@ -227,9 +214,7 @@ export default class OrdOrder extends SimpleMng {
   }
 
   onSelectChange = (selectedRowKeys, selectedRow) => {
-    //console.log("得到的值", selectedRow);
     selectedRowKeys.receiver = selectedRow;
-    console.log("得到的Key", selectedRowKeys);
     const hasSelected = selectedRowKeys.length > 0;//是否有勾选订单
     this.setState({ selectedRowKeys, hasSelected });
   }
@@ -266,7 +251,6 @@ export default class OrdOrder extends SimpleMng {
     fields.senderExpArea = selectSend.senderExpArea;
     fields.senderPostCode = selectSend.senderPostCode;
     fields.senderAddress = selectSend.senderAddress;
-    console.log(fields);
     let printWindow;
     this.props.dispatch({
       type: `suporder/bulkShipment`,
@@ -614,9 +598,13 @@ export default class OrdOrder extends SimpleMng {
 
 
   /**
-   * 显示发货窗口并把发货步骤窗口改为1，1为选择快递公司发件人界面，2为选择要发货的详情界面。
+   * 显示发货窗口
    */
   showSendForm = (record, first) => {
+    this.setState({
+      first: first
+    })
+    
     this.showAddForm({
       editFormRecord: record,
       editForm: 'ordDeliver',
@@ -627,7 +615,7 @@ export default class OrdOrder extends SimpleMng {
   /**
    * 为了在子窗口隐藏弹窗口并刷新页面
    */
-  hiddenForm=()=>{
+  hiddenForm = () => {
     this.setState({ editForm: undefined })
     this.props.dispatch({
       type: `${this.moduleCode}/list`,
@@ -721,50 +709,7 @@ export default class OrdOrder extends SimpleMng {
       }
     })
   }
-  /**
-   * 获取轨迹信息
-   */
-  onGetTrace = (fields) => {
-    const { user } = this.props;
-    fields.orgId = user.currentUser.orgId;
-    fields.sendOpId = user.currentUser.userId;
-    //是首次发货还是添加物流单号
-    if (this.state.first) {
-      fields.first = true;
-    } else {
-      fields.first = false;
-    }
-    //整理快递公司信息
-    let shipperInfo;
-    if (fields.shipperInfo !== undefined) {
-      shipperInfo = fields.shipperInfo.split('/');
-      fields.shipperId = shipperInfo[0];
-      fields.shipperName = shipperInfo[1];
-      fields.shipperCode = shipperInfo[2];
-      fields.shipperInfo = undefined
-    }
-    //整理发件信息
-    let senderInfo;
-    if (fields.senderInfo !== undefined) {
-      senderInfo = fields.senderInfo.split('/');
-      fields.senderName = senderInfo[0];
-      fields.senderMobile = senderInfo[1];
-      fields.senderProvince = senderInfo[2];
-      fields.senderCity = senderInfo[3];
-      fields.senderExpArea = senderInfo[4];
-      fields.senderPostCode = senderInfo[5];
-      fields.senderAddress = senderInfo[6];
-      fields.senderInfo = undefined;
-    }
-    this.props.dispatch({
-      type: `${this.moduleCode}/getTrace`,
-      payload: fields,
-      callback: () => {
-        this.setState({ editForm: undefined })
-        this.handleReload();
-      }
-    })
-  }
+
 
   /**
    * 显示修改供应商窗口，先查询是否只有一个订单详情
@@ -843,7 +788,7 @@ export default class OrdOrder extends SimpleMng {
       selectedRowKeys, onChange: this.onSelectChange,
       getCheckboxProps: record => ({
         disabled: record.orderState !== 2 && record.orderState !== 3,
-        name: record.orderState,
+        name: record.orderState.toString(),
       })
     }
     let ps;
@@ -983,7 +928,7 @@ export default class OrdOrder extends SimpleMng {
           } else if (record.orderState === 2) {
             return (
               <Fragment  >
-                <a onClick={() => this.showSendForm(record)} >发货 </a>
+                <a onClick={() => this.showSendForm(record, true)} >发货 </a>
                 <br />
                 <a onClick={() => this.canceldelivery(record)}>取消发货</a>
                 <br />
@@ -1056,16 +1001,6 @@ export default class OrdOrder extends SimpleMng {
             />
           </div>
         </Card>
-        {editForm === 'getTrace' && (
-          <OrdgetTrace
-            visible
-            title={editFormTitle}
-            editFormType={editFormType}
-            record={editFormRecord}
-            closeModal={() => this.setState({ editForm: undefined })}
-            onSubmit={(fields) => this.onGetTrace(fields)}
-          />
-        )}
         {editForm === 'modifyOrderShippingAddress' && (
           <ModifyOrderShippingAddress
             id={editFormRecord.id}
@@ -1106,7 +1041,7 @@ export default class OrdOrder extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            hiddenForm={()=>{this.hiddenForm()}}
+            hiddenForm={() => { this.hiddenForm() }}
           />
         )}
         {editForm === 'ordBatchSend' && (
