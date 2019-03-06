@@ -8,6 +8,7 @@ import moment from 'moment';
 import SupSendForm from './SupSendForm';
 import SupTraceForm from './SupTraceForm';
 import SupBatchSendForm from './SupBatchSendForm';
+import SupSubscribeForm from './SupSubscribeForm';
 const { RangePicker } = DatePicker;
 
 const { Option } = Select;
@@ -456,11 +457,17 @@ export default class SupOrder extends SimpleMng {
             </span>
           </Col>
         </Row>
-        <Row>
-          <Button type="primary" icon="printer" disabled={!this.state.hasSelected} onClick={this.showBatchSendForm}
-          >
-            批量打印
-        </Button>
+        <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
+          <Col md={3} sm={12}>
+            <Button type="primary" icon="printer" disabled={!this.state.hasSelected} onClick={this.showBatchSendForm}>
+              批量打印并发货
+            </Button>
+          </Col>
+          <Col md={3} sm={12}>
+            <Button type="primary" icon="plus-square" disabled={!this.state.hasSelected} onClick={this.showSubscribeForm}>
+              批量录入并发货
+            </Button>
+          </Col>
         </Row>
       </Form>
     );
@@ -506,6 +513,14 @@ export default class SupOrder extends SimpleMng {
     this.showAddForm({
       editForm: 'supBatchSend',
       editFormTitle: '选择发货快递和发件人',
+    })
+  }
+
+  //显示批量快递订阅的窗口
+  showSubscribeForm = () => {
+    this.showAddForm({
+      editForm: 'supSubscribe',
+      editFormTitle: '选择发货快递和发件人并填写单号',
     })
   }
 
@@ -677,7 +692,50 @@ export default class SupOrder extends SimpleMng {
     })
   }
 
-
+  /**
+   * 批量订阅并发货
+   */
+  bulkSubscription = (fields) => {
+    const { user } = this.props;
+    fields.orgId = user.currentUser.orgId;
+    fields.sendOpId = user.currentUser.userId;
+    fields.receiver = this.state.selectedRowKeys.receiver;
+    //判断是否选择了发件人
+    if (fields.selectSend.length === 0) {
+      message.error('未选择发件人，不能提交');
+      return;
+    }
+    //判断是否选择了快递公司
+    if (fields.selectCompany.length === 0) {
+      message.error('未选择快递公司，不能提交');
+      return;
+    }
+    //整理快递公司信息
+    let selectCompany = fields.selectCompany
+    fields.shipperId = selectCompany.id;
+    fields.shipperName = selectCompany.companyName;
+    fields.shipperCode = selectCompany.companyCode;
+    //整理发货人信息
+    let selectSend = fields.selectSend
+    fields.senderName = selectSend.senderName;
+    fields.senderMobile = selectSend.senderMobile;
+    fields.senderProvince = selectSend.senderProvince;
+    fields.senderCity = selectSend.senderCity;
+    fields.senderExpArea = selectSend.senderExpArea;
+    fields.senderPostCode = selectSend.senderPostCode;
+    fields.senderAddress = selectSend.senderAddress;
+    //console.log(fields);
+    
+    this.props.dispatch({
+      type:`${this.moduleCode}/bulkSubscription`,
+      payload:fields,
+      callback: data =>{
+        
+          this.setState({ editForm: undefined })
+          this.handleReload();
+      }
+    })
+  }
 
   showOrderInfo = (record) => {
     this.props.dispatch({
@@ -886,10 +944,9 @@ export default class SupOrder extends SimpleMng {
     const { suporder: { suporder }, loading } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord, selectedRowKeys } = this.state;
     const rowSelection = {
-      selectedRowKeys, onChange: this.onSelectChange, 
+      selectedRowKeys, onChange: this.onSelectChange,
       getCheckboxProps: record => ({
-        disabled: record.orderState !== 2&& record.orderState !==3,
-        name:record.orderState,
+        disabled: record.orderState !== 2 && record.orderState !== 3,
       })
     };
     let ps;
@@ -1119,6 +1176,17 @@ export default class SupOrder extends SimpleMng {
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
             onSubmit={(fields) => this.batchPrint(fields)}
+          />
+        )}
+        {editForm === 'supSubscribe' && (
+          <SupSubscribeForm
+            width={800}
+            visible
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            onSubmit={(fields) => this.bulkSubscription(fields)}
           />
         )}
         {editForm === 'ordTrace' && (

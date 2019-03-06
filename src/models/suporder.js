@@ -1,6 +1,6 @@
 import { message } from 'antd';
-import { list, getById, add,detail,buyrelation,shipmentconfirmation, modify, del,bulkShipment } from '../services/suporder';
-import { logisticList} from '../services/kdilogistic';
+import { list, getById, add, detail, buyrelation, shipmentconfirmation, modify, del, bulkShipment, bulkSubscription } from '../services/suporder';
+import { logisticList } from '../services/kdilogistic';
 export default {
   namespace: 'suporder',
 
@@ -70,7 +70,7 @@ export default {
       const response = yield call(logisticList, payload);
       if (callback) callback(response);
     },
-    *bulkShipment({ payload, callback }, { call }){//批量发货
+    *bulkShipment({ payload, callback }, { call }) {//批量发货
       const response = yield call(bulkShipment, payload);
       if (response.result === 1) {
         message.success(response.msg);
@@ -78,7 +78,16 @@ export default {
       } else {
         message.error(response.msg);
       }
-    }
+    },
+    *bulkSubscription({ payload, callback }, { call }) {//批量订阅
+      const response = yield call(bulkSubscription, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
   },
 
   reducers: {
