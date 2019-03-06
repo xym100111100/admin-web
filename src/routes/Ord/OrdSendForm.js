@@ -354,7 +354,6 @@ export default class OrdSendForm extends PureComponent {
             type: `ordorder/listOrderdetaildeliver`,
             payload: { orderId: record.id },
             callback: data => {
-                console.log(data);
                 this.setState({
                     PackageData:data
                 })

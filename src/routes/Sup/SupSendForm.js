@@ -354,7 +354,6 @@ export default class SupSendForm extends PureComponent {
             type: `suporder/listOrderdetaildeliver`,
             payload: { orderId: record.id },
             callback: data => {
-                console.log(data);
                 this.setState({
                     PackageData:data
                 })
