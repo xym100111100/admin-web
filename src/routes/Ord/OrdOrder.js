@@ -611,12 +611,12 @@ export default class OrdOrder extends SimpleMng {
           </Col>
         </Row>
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
-          <Col md={3} sm={12}>
+          <Col md={3} sm={24}>
             <Button type="primary" icon="printer" disabled={!this.state.hasSelected} onClick={this.showBatchSendForm}>
               批量打印并发货
             </Button>
           </Col>
-          <Col md={3} sm={12}>
+          <Col md={3} sm={24} push={1} >
             <Button type="primary" icon="plus-square" disabled={!this.state.hasSelected} onClick={this.showSubscribeForm}>
               批量录入并发货
             </Button>
