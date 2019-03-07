@@ -45,10 +45,10 @@ export default class OrdSendForm extends PureComponent {
         mergeOrderDetail: '详情备注',//用于在相同规格合并时候发货详情展示和提交
 
         kdicompany: [],//快递公司数据集合
-        selectCompany: [],//选择的快递公司，用于提交
+        selectCompany: '',//选择的快递公司，用于提交
 
         sendData: [],//发件人数据集合
-        selectSend: [],//选择的发件人,用于提交
+        selectSend: '',//选择的发件人,用于提交
 
     }
 
@@ -108,7 +108,8 @@ export default class OrdSendForm extends PureComponent {
                 if (fieldsValue.selectDetaile.length === fieldsValue.allDetaile.length) {
                     hiddenForm();
                 } else {
-                    this.initDetailData();
+                    this.getOrderDetaile(this.props.record);
+                    this.getPackage(this.props.record)
                }
                 const printPage = data.printPage;
                 printWindow = window.open('', '_blank');
@@ -191,7 +192,8 @@ export default class OrdSendForm extends PureComponent {
                 if (fieldsValue.selectDetaile.length === fieldsValue.allDetaile.length) {
                     hiddenForm();
                 } else {
-                    this.initDetailData();
+                    this.getOrderDetaile(this.props.record);
+                    this.getPackage(this.props.record)
                     this.setState({
                         logisticCodeArr: [''],
                     })
@@ -245,7 +247,7 @@ export default class OrdSendForm extends PureComponent {
             fieldsValue.split = this.state.split;
             fieldsValue.first = this.props.first;
             //判断是否选择了发件人和整理发件人
-            if (this.state.selectSend === undefined) {
+            if (this.state.selectSend === '') {
                 message.error('未选择发件人，不能提交');
                 return;
             } else {
@@ -258,7 +260,7 @@ export default class OrdSendForm extends PureComponent {
                 fieldsValue.senderAddress = this.state.selectSend.senderAddress;
             }
             //判断是否选择了快递公司和整理快递公司
-            if (this.state.selectCompany === undefined) {
+            if (this.state.selectCompany === '') {
                 message.error('未选择快递公司，不能提交');
                 return;
             } else {

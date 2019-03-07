@@ -104,12 +104,13 @@ export default class SupSendForm extends PureComponent {
             type: `suporder/deliver`,
             payload: fieldsValue,
             callback: data => {
-                //如何选择完详情就关闭窗口，否则刷新窗口。
-                // if (fieldsValue.selectDetaile.length === fieldsValue.allDetaile.length) {
-                //     hiddenForm();
-                // } else {
-                    this.initDetailData();
-             //   }
+              //  如何选择完详情就关闭窗口，否则刷新窗口。
+                if (fieldsValue.selectDetaile.length === fieldsValue.allDetaile.length) {
+                    hiddenForm();
+                } else {
+                    this.getOrderDetaile(this.props.record);
+                    this.getPackage(this.props.record)
+               }
                 const printPage = data.printPage;
                 printWindow = window.open('', '_blank');
                 printWindow.document.body.innerHTML = printPage;
@@ -187,15 +188,16 @@ export default class SupSendForm extends PureComponent {
             type: `suporder/getTraceAndDeliver`,
             payload: fieldsValue,
             callback: data => {
-                // 如何选择完详情就关闭窗口，否则刷新窗口,且将物流编号设置为空
-                // if (fieldsValue.selectDetaile.length === fieldsValue.allDetaile.length) {
-                //     hiddenForm();
-                // } else {
-                    this.initDetailData();
+              //  如何选择完详情就关闭窗口，否则刷新窗口,且将物流编号设置为空
+                if (fieldsValue.selectDetaile.length === fieldsValue.allDetaile.length) {
+                    hiddenForm();
+                } else {
+                    this.getOrderDetaile(this.props.record);
+                    this.getPackage(this.props.record)
                     this.setState({
                         logisticCodeArr: [''],
                     })
-              //  }
+               }
             }
         })
 
