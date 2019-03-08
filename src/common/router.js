@@ -69,14 +69,14 @@ export const getRouterData = app => {
   const routerConfig = {
     // ****************** 业务路由 *******************
     '/home/index': {
-      component: dynamicWrapper(app, ['homeindex', 'user','ordorder'], () =>
+      component: dynamicWrapper(app, ['homeindex', 'user', 'ordorder'], () =>
         import('../routes/Home/HomeIndex')
       ),
     },
     '/stu/stu-student': {
       component: dynamicWrapper(app, ['student'], () => import('../routes/stu/student')),
     },
-   '/pnt/pnt-list': {
+    '/pnt/pnt-list': {
       component: dynamicWrapper(app, ['pntList'], () => import('../routes/Pnt/pntList')),
     },
     '/rna/rna-realname': {
@@ -91,15 +91,15 @@ export const getRouterData = app => {
       ),
     },
     '/kdi/kdi-eorder': {
-      component: dynamicWrapper(app, ['kdieorder', 'kdisender', 'user', 'kdireceiver', 'kdicompany', 'kdilogistic' ], () =>
+      component: dynamicWrapper(app, ['kdieorder', 'kdisender', 'user', 'kdireceiver', 'kdicompany', 'kdilogistic'], () =>
         import('../routes/Kdi/KdiEorder')
       ),
     },
     '/kdi/kdi-cfg/kdi-template-cfg': {
-      component: dynamicWrapper(app, ['kditemplate','kdicompany', 'user'], () => import('../routes/Kdi/KdiTemplate')),
+      component: dynamicWrapper(app, ['kditemplate', 'kdicompany', 'user'], () => import('../routes/Kdi/KdiTemplate')),
     },
     '/kdi/kdi-cfg/kdi-company-cfg': {
-      component: dynamicWrapper(app, ['kdicompany','kditemplate','kdicompanydic', 'user'], () => import('../routes/Kdi/KdiCompany')),
+      component: dynamicWrapper(app, ['kdicompany', 'kditemplate', 'kdicompanydic', 'user'], () => import('../routes/Kdi/KdiCompany')),
     },
     '/kdi/kdi-cfg/kdi-sender-cfg': {
       component: dynamicWrapper(app, ['kdisender'], () => import('../routes/Kdi/KdiSenderCfg')),
@@ -115,17 +115,17 @@ export const getRouterData = app => {
       ),
     },
     '/sup/sup-order': {
-      component: dynamicWrapper(app, ['suporder','kdicompany', 'user', 'kdisender'], () =>
+      component: dynamicWrapper(app, ['suporder', 'kdicompany', 'user', 'kdisender'], () =>
         import('../routes/Sup/SupOrder')
       ),
     },
     '/sup/sup-account': {
-      component: dynamicWrapper(app, ['supaccount','ordorder','kdicompany','afcapplywithdrawaccount' ,'user', 'kdisender'], () =>
+      component: dynamicWrapper(app, ['supaccount', 'ordorder', 'kdicompany', 'afcapplywithdrawaccount', 'user', 'kdisender'], () =>
         import('../routes/Sup/SupAccount')
       ),
     },
     '/sup/sup-goods': {
-      component: dynamicWrapper(app, ['supgoods','user','onlonline'], () =>
+      component: dynamicWrapper(app, ['supgoods', 'user', 'onlonline'], () =>
         import('../routes/Sup/SupGoods')
       ),
     },
@@ -161,13 +161,18 @@ export const getRouterData = app => {
       ),
     },
     '/afc/afc-org-account': {
-      component: dynamicWrapper(app, ['orgaccount','sucorg'], () =>
+      component: dynamicWrapper(app, ['orgaccount', 'sucorg'], () =>
         import('../routes/Afc/OrgAccount')
       ),
     },
     '/prm/prm-partner-mng': {
       component: dynamicWrapper(app, ['prmpartner'], () =>
         import('../routes/Prm/PartnerMng')
+      ),
+    },
+    '/shp/shp-shop-mng': {
+      component: dynamicWrapper(app, ['shpshop', 'sucorg'], () =>
+        import('../routes/Shp/ShpShopMng')
       ),
     },
     '/pfm/script-mng': {
@@ -194,12 +199,12 @@ export const getRouterData = app => {
       ),
     },
     '/suc/user-mng': {
-      component: dynamicWrapper(app, ['sucuser', 'pfmsys','pntList', 'pfmuserrole', 'sucorg', 'sucuserorg'], () =>
+      component: dynamicWrapper(app, ['sucuser', 'pfmsys', 'pntList', 'pfmuserrole', 'sucorg', 'sucuserorg'], () =>
         import('../routes/Suc/UserMng')
       ),
     },
     '/suc/org-mng': {
-      component: dynamicWrapper(app, ['sucuser', 'sucorg', 'sucuserorg','user'], () => import('../routes/Suc/OrgMng')),
+      component: dynamicWrapper(app, ['sucuser', 'sucorg', 'sucuserorg', 'user'], () => import('../routes/Suc/OrgMng')),
     },
     '/onl/onl-mng': {
       component: dynamicWrapper(app, ['onlonline', 'BraftEditorUpload', 'onlonlineporomotion', 'prmpartner'], () =>
