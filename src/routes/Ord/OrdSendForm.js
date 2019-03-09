@@ -17,7 +17,7 @@ export default class OrdSendForm extends PureComponent {
 
     state = {
 
-        PackageData:[],
+        PackageData: [],
 
         receiverInfo: '', //收件人信息
         logisticCodeArr: [''],//物流id集合，应和要发的包裹数量一致
@@ -50,7 +50,7 @@ export default class OrdSendForm extends PureComponent {
         sendData: [],//发件人数据集合
         selectSend: '',//选择的发件人,用于提交
 
-        iframeHTML:'<div></div>'//用于打印
+        iframeHTML: '<div></div>'//用于打印
     }
 
     componentDidMount() {
@@ -104,21 +104,26 @@ export default class OrdSendForm extends PureComponent {
             type: `ordorder/deliver`,
             payload: fieldsValue,
             callback: data => {
+                //设置打印页面
+                this.setState({
+                    iframeHTML: data.printPage
+                }, () => {
+                    setTimeout(() => {
+                        this.refs.myFocusInput.contentWindow.print()
+                    }, 1);
+
+                })
+
                 //如何选择完详情就关闭窗口，否则刷新窗口。
                 if (fieldsValue.selectDetaile.length === fieldsValue.allDetaile.length) {
                     hiddenForm();
                 } else {
                     this.getOrderDetaile(this.props.record);
                     this.getPackage(this.props.record)
-               }
-            
-                this.setState({
-                    iframeHTML:data.printPage
-                },()=>{
-                    console.log(this.refs.myFocusInput.contentWindow)
-                    this.refs.myFocusInput.contentWindow.print()
-                })
-     
+                }
+
+
+
 
 
             }
@@ -193,7 +198,7 @@ export default class OrdSendForm extends PureComponent {
             type: `ordorder/getTraceAndDeliver`,
             payload: fieldsValue,
             callback: data => {
-               // 如何选择完详情就关闭窗口，否则刷新窗口,且将物流编号设置为空
+                // 如何选择完详情就关闭窗口，否则刷新窗口,且将物流编号设置为空
                 if (fieldsValue.selectDetaile.length === fieldsValue.allDetaile.length) {
                     hiddenForm();
                 } else {
@@ -202,7 +207,7 @@ export default class OrdSendForm extends PureComponent {
                     this.setState({
                         logisticCodeArr: [''],
                     })
-               }
+                }
             }
         })
 
@@ -348,7 +353,7 @@ export default class OrdSendForm extends PureComponent {
             }
         });
         //获取订单详情
-       this.getOrderDetaile(record);
+        this.getOrderDetaile(record);
         //获取包裹
         this.getPackage(record);
     }
@@ -356,17 +361,17 @@ export default class OrdSendForm extends PureComponent {
     /**
      * 获取包裹
      */
-    getPackage=(record)=>{
+    getPackage = (record) => {
         this.props.dispatch({
             type: `ordorder/listOrderdetaildeliver`,
             payload: { orderId: record.id },
             callback: data => {
                 this.setState({
-                    PackageData:data
+                    PackageData: data
                 })
             }
         })
-    }   
+    }
 
     /**
      * 获取订单详情
@@ -418,7 +423,7 @@ export default class OrdSendForm extends PureComponent {
                             selectDetaile.push(Object.assign({}, data[index]));
                             //设置所有未发货的详情Id
                             allDetaile.push(Object.assign({}, data[index]));
-                             //已经发货且不是退货状态的详情
+                            //已经发货且不是退货状态的详情
                             delivered.push(Object.assign({}, data[index]))
                         }
 
@@ -909,7 +914,7 @@ export default class OrdSendForm extends PureComponent {
         return (
 
             <Fragment>
-                 <iframe name="print" style={{display:'none'}} ref="myFocusInput" srcdoc={this.state.iframeHTML} ></iframe>
+                <iframe name="print" style={{ display: 'none' }} ref="myFocusInput" srcdoc={this.state.iframeHTML} ></iframe>
                 <p>快递公司: {this.showCompany()}发件人: {this.showSend()}</p>
                 <p style={{}} >买家收货信息: {this.state.receiverInfo.receiverProvince + this.state.receiverInfo.receiverCity + this.state.receiverInfo.receiverExpArea + this.state.receiverInfo.receiverAddress + '  ' + this.state.receiverInfo.receiverName + '·' + this.state.receiverInfo.receiverMobile}</p>
                 {form.getFieldDecorator('id')(<Input type="hidden" />)}
