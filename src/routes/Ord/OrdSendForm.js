@@ -50,6 +50,7 @@ export default class OrdSendForm extends PureComponent {
         sendData: [],//发件人数据集合
         selectSend: '',//选择的发件人,用于提交
 
+        iframeHTML:'<div></div>'//用于打印
     }
 
     componentDidMount() {
@@ -99,7 +100,6 @@ export default class OrdSendForm extends PureComponent {
             fieldsValue.allDetaile[index].subjectType === '普通' ? fieldsValue.allDetaile[index].subjectType = 0 : fieldsValue.allDetaile[index].subjectType = 1;
 
         }
-        let printWindow
         this.props.dispatch({
             type: `ordorder/deliver`,
             payload: fieldsValue,
@@ -111,11 +111,16 @@ export default class OrdSendForm extends PureComponent {
                     this.getOrderDetaile(this.props.record);
                     this.getPackage(this.props.record)
                }
-                const printPage = data.printPage;
-                printWindow = window.open('', '_blank');
-                printWindow.document.body.innerHTML = printPage;
-                printWindow.print();
-                printWindow.close();
+            
+                this.setState({
+                    iframeHTML:data.printPage
+                },()=>{
+                    console.log(this.refs.myFocusInput.contentWindow)
+                    this.refs.myFocusInput.contentWindow.print()
+                })
+     
+
+
             }
         })
 
@@ -555,6 +560,9 @@ export default class OrdSendForm extends PureComponent {
 
     }
 
+
+
+
     /**
      * 显示包裹
      */
@@ -901,6 +909,7 @@ export default class OrdSendForm extends PureComponent {
         return (
 
             <Fragment>
+                 <iframe name="print" style={{display:'none'}} ref="myFocusInput" srcdoc={this.state.iframeHTML} ></iframe>
                 <p>快递公司: {this.showCompany()}发件人: {this.showSend()}</p>
                 <p style={{}} >买家收货信息: {this.state.receiverInfo.receiverProvince + this.state.receiverInfo.receiverCity + this.state.receiverInfo.receiverExpArea + this.state.receiverInfo.receiverAddress + '  ' + this.state.receiverInfo.receiverName + '·' + this.state.receiverInfo.receiverMobile}</p>
                 {form.getFieldDecorator('id')(<Input type="hidden" />)}
