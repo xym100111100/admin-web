@@ -806,11 +806,11 @@ export default class OrdSendForm extends PureComponent {
                                         renderItem={item => (
                                             <List.Item>
                                                 <List.Item.Meta
-                                                    title={<a href="https://ant.design">{item.companyName}</a>}
+                                                    title={<a onClick={this.setStep} >{item.companyName}</a>}
 
                                                 />
                                                 {this.state.selectCompany.id === item.id ? (
-                                                    <a style={{ float: 'right', marginTop: -15, }} >已选择</a>
+                                                    <a onClick={this.setStep} style={{ float: 'right', marginTop: -15, }} >已选择</a>
                                                 ) : (
                                                         <Button size="small" onClick={() => this.setDefultId(item, 1)} >
                                                             选择
