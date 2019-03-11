@@ -171,7 +171,7 @@ export const getRouterData = app => {
       ),
     },
     '/shp/shp-shop-mng': {
-      component: dynamicWrapper(app, ['shpshop', 'sucorg'], () =>
+      component: dynamicWrapper(app, ['shpshop', 'shpshopaccount'], () =>
         import('../routes/Shp/ShpShopMng')
       ),
     },

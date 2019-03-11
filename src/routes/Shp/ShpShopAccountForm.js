@@ -28,8 +28,8 @@ function getUserItem(user) {
   };
 }
 
-@connect(({ shpshop, loading }) => ({
-  shpshop,
+@connect(({ shpshopaccount, loading }) => ({
+  shpshopaccount,
   loading,
 }))
 @EditForm
@@ -43,7 +43,7 @@ export default class ShpShopAccountForm extends PureComponent {
    * 处理两栏之间转移用户
    */
   handleUsersMove = (targetKeys, direction, moveKeys) => {
-    const { dispatch, id, shpshop: { addedUsers, unaddedUsers }, modelName, movePayload } = this.props;
+    const { dispatch, id, shpshopaccount: { addedUsers, unaddedUsers }, modelName, movePayload } = this.props;
 
     // 调用的model
     const type = direction === 'left' ? `${modelName}/delAccounts` : `${modelName}/addAccounts`;
@@ -52,10 +52,8 @@ export default class ShpShopAccountForm extends PureComponent {
     const unaddedPageNum = unaddedUsers.pageNum;
     const payload = { id, addedPageNum, unaddedPageNum, moveIds: moveKeys, ...movePayload };
     // 已添加和未添加用户模糊查询的关键字
-    // const addedKeys = this.state.rightKeys;
-    // const unaddedKeys = this.state.leftKeys;
-    const addedKeys = 2;
-    const unaddedKeys = 1;
+    const addedKeys = this.state.rightKeys;
+    const unaddedKeys = this.state.leftKeys;
     if (addedKeys) payload.addedKeys = addedKeys;
     if (unaddedKeys) payload.unaddedKeys = unaddedKeys;
     console.log(payload)
@@ -86,7 +84,6 @@ export default class ShpShopAccountForm extends PureComponent {
    * 处理输入关键字搜索
    */
   handleSearchChange = (direction, e) => {
-    console.log(e)
     if (direction === 'left') this.state.leftKeys = e;
     else this.state.rightKeys = e;
     this.handleSearch(direction, e, 1);
@@ -116,7 +113,7 @@ export default class ShpShopAccountForm extends PureComponent {
    * 渲染底部分页
    */
   renderFooter = props => {
-    const { shpshop: { addedUsers, unaddedUsers } } = this.props;
+    const { shpshopaccount: { addedUsers, unaddedUsers } } = this.props;
     const { filter, titleText } = props;
 
     // 判断左边框还是右边框
@@ -143,7 +140,7 @@ export default class ShpShopAccountForm extends PureComponent {
   };
 
   render() {
-    const { shpshop: { addedUsers, unaddedUsers }, loading, modelName } = this.props;
+    const { shpshopaccount: { addedUsers, unaddedUsers }, loading, modelName } = this.props;
     const dataSource = [];
     const targetKeys = [];
 

@@ -11,7 +11,7 @@ import styles from './ShpShopMng.less';
 const { Description } = DescriptionList;
 
 @Form.create()
-@connect(({ shpshop, sucorg, loading }) => ({ shpshop, sucorg, loading: loading.models.shpshop }))
+@connect(({ shpshop, shpshopaccount, loading }) => ({ shpshop, shpshopaccount, loading: loading.models.shpshop }))
 export default class ShpShopMng extends SimpleMng {
     constructor() {
         super();
@@ -60,6 +60,7 @@ export default class ShpShopMng extends SimpleMng {
 
     render() {
         const { shpshop: { shpshop }, loading } = this.props;
+        console.log(shpshop)
         const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
 
         const columns = [
@@ -110,10 +111,10 @@ export default class ShpShopMng extends SimpleMng {
                                 this.showEditForm({
                                     editFormRecord: record,
                                     id: record.id,
-                                    moduleCode: 'shpshop',
+                                    moduleCode: 'shpshopaccount',
                                     getByIdMethodName: 'getShopAccountList',
                                     editForm: 'shpShopAccountForm',
-                                    editFormTitle: '设置组织的用户',
+                                    editFormTitle: '设置店铺的用户',
                                 })
                             }
                         >
@@ -204,7 +205,7 @@ export default class ShpShopMng extends SimpleMng {
                 {editForm === 'shpShopAccountForm' && (
                     <ShpShopAccountForm
                         id={editFormRecord.id}
-                        modelName="shpshop" //
+                        modelName="shpshopaccount" //
                         visible
                         title={editFormTitle}
                         width={815}
