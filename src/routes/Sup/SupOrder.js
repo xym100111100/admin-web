@@ -564,15 +564,8 @@ export default class SupOrder extends SimpleMng {
             iframeHTML: data.printPage
           }, () => {
             setTimeout(() => {
-              console.log(this.refs.myFocusInput.contentWindow)
-              this.refs.myFocusInput.contentWindow.print()
-              console.log(this.refs.myFocusInput.contentWindow.document.body.innerHTML)
-              if (fieldsValue.selectDetaile.length === fieldsValue.allDetaile.length) {
-                hiddenForm();
-              } else {
-                this.getOrderDetaile(this.props.record);
-                this.getPackage(this.props.record)
-              }
+              this.refs.myFocusInput.contentWindow.print();
+              this.handleReload(this.state.options);
             }, 1000);
           })
 
