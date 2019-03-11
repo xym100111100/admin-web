@@ -41,6 +41,8 @@ export default class SupOrder extends SimpleMng {
     this.state.payloads = {};
     this.state.selectedRowKeys = [];
     this.state.hasSelected = false;
+
+    iframeHTML: '<div></div>'//用于打印
   }
 
   //初始化
@@ -548,8 +550,7 @@ export default class SupOrder extends SimpleMng {
     fields.senderExpArea = selectSend.senderExpArea;
     fields.senderPostCode = selectSend.senderPostCode;
     fields.senderAddress = selectSend.senderAddress;
-    //console.log(fields);
-    let printWindow;
+
     this.props.dispatch({
       type: `${this.moduleCode}/bulkShipment`,
       payload: fields,
@@ -557,13 +558,24 @@ export default class SupOrder extends SimpleMng {
         this.handleReload();
         this.setState({ editForm: undefined });
         if (fields.logisticCode === undefined) {
-          const printPage = data.printPage;
-          printWindow = window.open('', '_blank');
-          printWindow.document.body.innerHTML = printPage;
-          setTimeout(() => {
-            printWindow.print();
-            printWindow.close();
-          }, 1);
+
+          //设置打印页面
+          this.setState({
+            iframeHTML: data.printPage
+          }, () => {
+            setTimeout(() => {
+              console.log(this.refs.myFocusInput.contentWindow)
+              this.refs.myFocusInput.contentWindow.print()
+              console.log(this.refs.myFocusInput.contentWindow.document.body.innerHTML)
+              if (fieldsValue.selectDetaile.length === fieldsValue.allDetaile.length) {
+                hiddenForm();
+              } else {
+                this.getOrderDetaile(this.props.record);
+                this.getPackage(this.props.record)
+              }
+            }, 1000);
+          })
+
         }
       }
     })
@@ -1005,6 +1017,7 @@ export default class SupOrder extends SimpleMng {
 
     return (
       <PageHeaderLayout title="订单管理">
+        <iframe name="print" style={{ display: 'none' }} ref="myFocusInput" srcdoc={this.state.iframeHTML} ></iframe>
         <Card bordered={false}>
           <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
           <div className={styles.tableList}>

@@ -18,6 +18,7 @@ export default class KdiEorder extends PureComponent {
   constructor() {
     super();
     this.moduleCode = 'kdieorder';
+    this.state.iframeHTML='<div></div>'
   }
 
   state = {
@@ -80,7 +81,7 @@ export default class KdiEorder extends PureComponent {
   kdiEorder = () => {
     const { user } = this.props;
 
-     let orgId = user.currentUser.orgId; 
+    let orgId = user.currentUser.orgId;
     this.props.form.validateFields((err, values) => {
       if (err) return;
       let eorderParam = {
@@ -91,7 +92,7 @@ export default class KdiEorder extends PureComponent {
         orgId: orgId,
       };
       //将录入类型设置为手动 1:手动 2:自动
-      eorderParam.entryType=1;
+      eorderParam.entryType = 1;
       let shipperInfo = values.shipperInfo.split('/');
       eorderParam.shipperId = shipperInfo[0];
       eorderParam.shipperName = shipperInfo[1];
@@ -118,19 +119,29 @@ export default class KdiEorder extends PureComponent {
         sendervalues.senderExpArea = sendervalues.senderaddr[2];
         // eorderParam = { ...sendervalues };
         Object.assign(eorderParam, sendervalues);
-        let printWindow;
-        let newTimeStamp;
+
         this.props.dispatch({
           type: 'kdieorder/eorder',
           payload: eorderParam,
           callback: data => {
-            const printPage = data.printPage;
-            printWindow = window.open('', '_blank');
-            printWindow.document.body.innerHTML = printPage;
-            printWindow.print();
-            printWindow.close();
-            newTimeStamp = Date.parse(new Date());
-            this.state.orderId = newTimeStamp;
+
+            //设置打印页面
+            this.setState({
+              iframeHTML: data.printPage
+            }, () => {
+              setTimeout(() => {
+                console.log(this.refs.myFocusInput.contentWindow)
+                this.refs.myFocusInput.contentWindow.print()
+                console.log(this.refs.myFocusInput.contentWindow.document.body.innerHTML)
+                if (fieldsValue.selectDetaile.length === fieldsValue.allDetaile.length) {
+                  hiddenForm();
+                } else {
+                  this.getOrderDetaile(this.props.record);
+                  this.getPackage(this.props.record)
+                }
+              }, 1000);
+            })
+
           },
         });
       });
@@ -142,10 +153,11 @@ export default class KdiEorder extends PureComponent {
     const record = this.state.record;
     return (
       <PageHeaderLayout title="快递下单">
+          <iframe name="print" style={{ display: 'none' }} ref="myFocusInput" srcdoc={this.state.iframeHTML} ></iframe>
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
           <Col md={12} sm={24}>
             <Card title="寄件人信息">
-              <SenderInfoForm getSender={this.getSender}  />
+              <SenderInfoForm getSender={this.getSender} />
             </Card>
             <div style={{ marginTop: '20px', height: '1px' }}>
               <KdiSenderList />

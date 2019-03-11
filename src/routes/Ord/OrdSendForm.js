@@ -107,25 +107,19 @@ export default class OrdSendForm extends PureComponent {
                 //设置打印页面
                 this.setState({
                     iframeHTML: data.printPage
-                }, () => {
+                },()=>{
                     setTimeout(() => {
+                        console.log( this.refs.myFocusInput.contentWindow)
                         this.refs.myFocusInput.contentWindow.print()
-                    }, 1);
-
+                        console.log( this.refs.myFocusInput.contentWindow.document.body.innerHTML)
+                        if (fieldsValue.selectDetaile.length === fieldsValue.allDetaile.length) {
+                            hiddenForm();
+                        } else {
+                            this.getOrderDetaile(this.props.record);
+                            this.getPackage(this.props.record)
+                        }
+                    }, 1000);
                 })
-
-                //如何选择完详情就关闭窗口，否则刷新窗口。
-                if (fieldsValue.selectDetaile.length === fieldsValue.allDetaile.length) {
-                    hiddenForm();
-                } else {
-                    this.getOrderDetaile(this.props.record);
-                    this.getPackage(this.props.record)
-                }
-
-
-
-
-
             }
         })
 
