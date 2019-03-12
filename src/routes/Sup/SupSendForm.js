@@ -801,11 +801,11 @@ export default class SupSendForm extends PureComponent {
                                         renderItem={item => (
                                             <List.Item>
                                                 <List.Item.Meta
-                                                    title={<a href="https://ant.design">{item.companyName}</a>}
+                                                    title={<a onClick={this.setStep} >{item.companyName}</a>}
 
                                                 />
                                                 {this.state.selectCompany.id === item.id ? (
-                                                    <a style={{ float: 'right', marginTop: -15, }} >已选择</a>
+                                                    <a onClick={this.setStep} style={{ float: 'right', marginTop: -15, }} >已选择</a>
                                                 ) : (
                                                         <Button size="small" onClick={() => this.setDefultId(item, 1)} >
                                                             选择
@@ -833,10 +833,10 @@ export default class SupSendForm extends PureComponent {
                                         renderItem={item => (
                                             <List.Item>
                                                 <List.Item.Meta
-                                                    title={<a >{item.senderName + '·' + item.senderMobile}</a>}
+                                                    title={<a onClick={this.setStep}  >{item.senderName + '·' + item.senderMobile}</a>}
                                                 />
                                                 {this.state.selectSend.id === item.id ? (
-                                                    <a style={{ float: 'right', marginTop: -15, }} >已选择</a>
+                                                    <a onClick={this.setStep} style={{ float: 'right', marginTop: -15, }} >已选择</a>
                                                 ) : (
                                                         <Button size="small" onClick={() => this.setDefultId(item, 2)} >
                                                             选择
@@ -930,7 +930,7 @@ export default class SupSendForm extends PureComponent {
                                     <p style={{ marginBottom: -1 }} >未发货商品:</p>
                                 </Col>
                                 <Col md={8} sm={24} style={{ paddingBottom: 5 }} >
-                                    <Tooltip placement="topLeft" title="如果数量大于1,拆分后可勾选任意个商品发一个包裹或者同时发多个包裹,默认勾选全部且发一个包裹。">
+                                    <Tooltip placement="topLeft" title="拆分后可勾选任意个商品发一个包裹或者同时发多个包裹,默认勾选全部且发一个包裹。">
                                         <Button onClick={this.setMerge} size="small" type="primary"  >
                                             {this.state.mergeMsg}
                                         </Button>

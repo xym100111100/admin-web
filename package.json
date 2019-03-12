@@ -56,7 +56,8 @@
     "react-infinite-scroller": "^1.2.0",
     "rollbar": "^2.3.4",
     "source-map-support": "0.4.3",
-    "url-polyfill": "^1.0.10"
+    "url-polyfill": "^1.0.10",
+    "xlsx": "^0.14.1"
   },
   "devDependencies": {
     "babel-eslint": "^8.1.2",
