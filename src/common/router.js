@@ -101,6 +101,9 @@ export const getRouterData = app => {
     '/kdi/kdi-cfg/kdi-company-cfg': {
       component: dynamicWrapper(app, ['kdicompany', 'kditemplate', 'kdicompanydic', 'user'], () => import('../routes/Kdi/KdiCompany')),
     },
+    '/kdi/kdi-batch': {
+      component: dynamicWrapper(app, ['kdicompany', 'kditemplate', 'kdicompanydic', 'user'], () => import('../routes/Kdi/KdiBatch')),
+    },
     '/kdi/kdi-cfg/kdi-sender-cfg': {
       component: dynamicWrapper(app, ['kdisender'], () => import('../routes/Kdi/KdiSenderCfg')),
     },
