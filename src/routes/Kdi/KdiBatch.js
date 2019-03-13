@@ -25,19 +25,22 @@ export default class KdiBatch extends SimpleMng {
     }
     //初始化
     componentDidMount() {
-        //window.localStorage.clear();
-        let { user } = this.props
+        console.log(JSON.parse(window.localStorage.getItem('templates')));
     }
 
     /**
      * 清空table
      */
     clearData = () => {
+        console.log(this.state.data);
+        console.log("----------")
+        console.log(JSON.parse(window.localStorage.getItem('templates')));
+        console.log("开始清除");
         window.localStorage.clear();
+        console.log(JSON.parse(window.localStorage.getItem('templates')));
         this.setState({
-            data: JSON.parse(window.localStorage.getItem('templates')),
-            hasSelected:false
-        });
+            data:[]
+        })
 
     }
 
@@ -64,40 +67,46 @@ export default class KdiBatch extends SimpleMng {
         if (obj.fileList.length === 0) {
             return;
         }
-        if (obj.file.status !== 'uploading') {
-            console.log('obj', obj);
+        this.setState({
+            data:[]
+        },()=>{
+            window.localStorage.clear();
+        })
 
-            var f = obj.fileList[0].originFileObj;
-            let read = new FileReader();
+        setTimeout(() => {
+            if (obj.file.status !== 'uploading') {
+                let f = obj.fileList[obj.fileList.length-1].originFileObj;
+                let read = new FileReader();
 
-            read.onload = function (e) {
-                var data = e.target.result;
-                var wb = XLSX.read(data, {
-                    type: 'binary' //以二进制的方式读取
-                });
-                var sheet0 = wb.Sheets[wb.SheetNames[0]];//sheet0代表excel表格中的第一页
-                var str = XLSX.utils.sheet_to_json(sheet0);//利用接口实现转换。
-                // var templates = new Array();
-                // var str1 = obj.fileList[0].originFileObj.name;
-                //templates = str1.split(".");//将导入文件名去掉后缀
-                //alert(JSON.stringify(str));
-                console.log('1', JSON.parse(window.localStorage.getItem('templates')));
-                window.localStorage.clear();
-                console.log('2', JSON.parse(window.localStorage.getItem('templates')));
-                window.localStorage.setItem("templates", JSON.stringify(str))//存入localStorage 中
-                console.log('3', JSON.parse(window.localStorage.getItem('templates')));
+                read.onload = function (e) {
+                    let data = e.target.result;
+                    let wb = XLSX.read(data, {
+                        type: 'binary' //以二进制的方式读取
+                    });
+                    let sheet0 = wb.Sheets[wb.SheetNames[0]];//sheet0代表excel表格中的第一页
+                    let str = XLSX.utils.sheet_to_json(sheet0);//利用接口实现转换。
+
+                    window.localStorage.setItem("templates", JSON.stringify(str))//存入localStorage 中
+                }
+
+                read.readAsBinaryString(f);
+
             }
-            read.readAsBinaryString(f);
-            console.log('4', JSON.parse(window.localStorage.getItem('templates')));
-        }
-            this.setState({
-                data: JSON.parse(window.localStorage.getItem('templates')),
-            })
-        if (obj.file.status === 'done') {
-            message.success(`${obj.file.name} 导入成功`);
-        } else if (obj.file.status === 'error') {
-            message.error(`${obj.file.name} 导入失败`);
-        }
+
+
+            if (obj.file.status === 'done') {
+                message.success(`${obj.file.name} 导入成功`);
+            } else if (obj.file.status === 'error') {
+                message.error(`${obj.file.name} 导入失败`);
+            }
+            setTimeout(() => {
+                this.setState({
+                    data: JSON.parse(window.localStorage.getItem('templates'))
+                })
+            }, 500);
+        },500)
+
+
     }
 
 
@@ -106,12 +115,13 @@ export default class KdiBatch extends SimpleMng {
         const { kdicompany: { kdicompany }, loading, user } = this.props;
         const { editForm, editFormType, editFormTitle, editFormRecord, selectedRowKeys } = this.state;
         const prop = {
-            name: 'image/*',
+            name: 'fileName',
             action: '//jsonplaceholder.typicode.com/posts/',
             headers: {
                 authorization: 'authorization-text',
             },
         };
+
         const rowSelection = {
             selectedRowKeys, onChange: this.onSelectChange,
             // getCheckboxProps: record => ({
@@ -120,7 +130,6 @@ export default class KdiBatch extends SimpleMng {
             // })
         };
         //let temp = window.localStorage.getItem('templates');
-        //console.log(temp);
         const columns = [
             {
                 title: '编号',
