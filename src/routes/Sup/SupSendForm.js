@@ -635,13 +635,19 @@ export default class SupSendForm extends PureComponent {
         } else {
             count = this.state.selectDetaile.length
         }
+        let title = '该选项是选择多少个商品就发多少个包裹,且发货备注将是选中商品的名称规格等,上面的发货备注无效!';
+
+        if (this.state.selectCompany.companyPwd === undefined || this.state.selectCompany.companyPwd === null || this.state.selectCompany.companyPwd === '') {
+            title = '该选项是选择多少个商品就发多少个包裹,且发货备注将是选中商品的名称规格等。';
+        }
+
         return (
             <FormItem >
                 <RadioGroup onChange={this.setSplit} value={this.state.split} >
                     <Tooltip placement="topLeft" title="该选项是所有选择的商品发一个包裹">
                         <Radio value={false}>选择的商品发一个包裹</Radio>
                     </Tooltip>
-                    <Tooltip placement="topLeft" title="该选项是选择多少个商品就发多少个包裹,且发货备注将是选中商品的名称规格等,上面的发货备注无效!">
+                    <Tooltip placement="topLeft" title={title}>
                         <Radio value={true}>选择的商品发{count}个包裹</Radio>
                     </Tooltip>
                 </RadioGroup>
