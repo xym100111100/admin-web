@@ -8,10 +8,7 @@ import CashWithdrawal from './CashWithdrawal'
 
 import {
   ChartCard,
-  MiniBar,
-  Field,
 } from 'components/Charts';
-import { height } from 'window-size';
 
 @Form.create()
 @connect(({ homeindex, user, loading, ordorder }) => ({
@@ -37,15 +34,18 @@ export default class HomeIndex extends SimpleMng {
   }
 
   unshipments = () => {
-    this.props.dispatch({
-      type: `ordorder/getUnshipmentsByDeliverOrgId`,
-      payload: { deliverOrgId: this.props.user.currentUser.orgId },
-      callback: data => {
-        this.setState({
-          unshipmentsNumber: data
-        })
-      }
-    });
+    if (this.props.user.currentUser.orgId !== undefined && this.props.user.currentUser.orgId !== null) {
+      this.props.dispatch({
+        type: `ordorder/getUnshipmentsByDeliverOrgId`,
+        payload: { deliverOrgId: this.props.user.currentUser.orgId },
+        callback: data => {
+          this.setState({
+            unshipmentsNumber: data
+          })
+        }
+      });
+    }
+
   }
 
   deliveryProcess = () => {
@@ -89,11 +89,14 @@ export default class HomeIndex extends SimpleMng {
               <ChartCard
                 bordered={false}
                 title="常见问题"
-                style={{height:362}}
-                >
-                <a style={{ fontSize: 20}} onClick={() => this.deliveryProcess()}>发货流程</a>
+                style={{ height: 362 }}
+                contentHeight={170}
+              >
+              <div  >
+                <a style={{ fontSize: 20 }} onClick={() => this.deliveryProcess()}>发货流程说明</a>
                 <br />
-                <a style={{ fontSize: 20}} onClick={() => this.cashWithdrawal()}>提现时间及流程</a>
+                <a style={{ fontSize: 20 }} onClick={() => this.cashWithdrawal()}>提现时间及流程说明</a>
+                </div>
               </ChartCard>
             </Col>
 
@@ -102,25 +105,29 @@ export default class HomeIndex extends SimpleMng {
                 bordered={false}
                 title="未发货的订单"
                 contentHeight={170}
-                style={{height:362}}
+                style={{ height: 362 }}
               >
-                <div style={{ fontSize: 30, textAlign: 'center' }}>
+                <div  style={{ fontSize: 30, textAlign: 'center' }}>
                   <a href="#/sup/sup-order">
-                  <span style={{ fontWeight: 'bold', fontSize: 50 }}>
-                    {this.state.unshipmentsNumber}
-                  </span>
-                  个订单等待发货
+                    <span style={{ fontWeight: 'bold', fontSize: 50 }}>
+                      {this.state.unshipmentsNumber}
+                    </span>
+                    个订单等待发货
                   </a>
-              </div>
+                </div>
               </ChartCard>
             </Col>
 
             <Col {...topColResponsiveProps}>
               <ChartCard
                 bordered={false}
-                contentHeight={300}
+                title="更新通知 : 2019-03-12"
+                style={{ height: 362,}}
               >
-                <Calendar fullscreen={false} onPanelChange={this.onPanelChange()} />
+              <div >
+               <p style={{color:'red'}} >发货流程已经修改，请各用户再仔细浏览一次发货流程说明！！！</p>
+               <a></a>
+               </div>
               </ChartCard>
             </Col>
           </Row>
