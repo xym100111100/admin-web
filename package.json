@@ -56,7 +56,8 @@
     "react-infinite-scroller": "^1.2.0",
     "rollbar": "^2.3.4",
     "source-map-support": "0.4.3",
-    "url-polyfill": "^1.0.10"
+    "url-polyfill": "^1.0.10",
+    "xlsx": "^0.14.1"
   },
   "devDependencies": {
     "babel-eslint": "^8.1.2",
@@ -109,5 +110,9 @@
     "> 1%",
     "last 2 versions",
     "not ie <= 10"
-  ]
+  ],
+  "main": "index.js",
+  "repository": "http://192.168.1.201:10080/rebue/admin-web.git",
+  "author": "You <601559210@qq.com>",
+  "license": "MIT"
 }
