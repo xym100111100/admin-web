@@ -108,7 +108,7 @@ export default class SupSendForm extends PureComponent {
                 //设置打印页面
                 this.setState({
                     iframeHTML: data.printPage
-                },()=>{
+                }, () => {
                     setTimeout(() => {
                         this.refs.myFocusInput.contentWindow.print()
                         if (fieldsValue.selectDetaile.length === fieldsValue.allDetaile.length) {
@@ -608,16 +608,23 @@ export default class SupSendForm extends PureComponent {
         if (this.props.record.onlineOrgId === this.props.record.deliverOrgId) {
             if (this.state.selectCompany.companyPwd === undefined || this.state.selectCompany.companyPwd === null || this.state.selectCompany.companyPwd === '') {
                 return (
-                    <textarea placeholder="请输入物流单号，多个单号请换行区分，且单号的数量要与要发的包裹相等。" onChange={(value) => this.logisticCodeChange(value)} style={{ width: '100%', }} rows="6"  >
+                    <div>
+                        <p style={{ marginBottom: -1 }} >物流单号:</p>
+                        <textarea placeholder="请输入物流单号，多个单号请换行区分，注意删除多余空格，且单号的数量要与要发的包裹相等。" onChange={(value) => this.logisticCodeChange(value)} style={{ width: '100%', }} rows="6"  >
 
-                    </textarea>
+                        </textarea>
+                    </div>
                 )
             }
         } else {
             if (this.state.selectCompany.companyPwd === undefined || this.state.selectCompany.companyPwd === null || this.state.selectCompany.companyPwd === '') {
                 return (
-                    <textarea placeholder="请输入物流单号，多个单号请换行区分。" onChange={(value) => this.logisticCodeChange(value)} style={{ width: '100%', }} rows="6"  >
-                    </textarea>
+                    <div>
+                        <p style={{ marginBottom: -1 }} >物流单号:</p>
+                        <textarea placeholder="请输入物流单号，多个单号请换行区分，注意删除多余空格，且单号的数量要与要发的包裹相等。" onChange={(value) => this.logisticCodeChange(value)} style={{ width: '100%', }} rows="6"  >
+
+                        </textarea>
+                    </div>
                 )
             }
         }
