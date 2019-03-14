@@ -53,12 +53,13 @@ export default class SlrSellerMng extends SimpleMng {
     };
 
     // 启用/禁用组织
-    handleEnable(record) {
+    handleEnableShop(record) {
         this.props.dispatch({
-            type: `slrseller/enable`,
+            type: `slrshop/enable`,
             payload: { id: record.id, isEnabled: !record.isEnabled },
             callback: () => {
                 this.handleReload();
+                this.getSellerShop(record.sellerId);
             },
         });
     }
@@ -67,12 +68,12 @@ export default class SlrSellerMng extends SimpleMng {
      * 获取卖家店铺
      * @param {*} record 
      */
-    getSellerShop(record) {
+    getSellerShop(sellerId) {
         // 加载用户信息
         this.props.dispatch({
             type: 'slrshop/list',
             payload: {
-                sellerId: record.id,
+                sellerId: sellerId,
                 pageNum: 1,
                 pageSize: 5,
             },
@@ -207,7 +208,7 @@ export default class SlrSellerMng extends SimpleMng {
                                 unCheckedChildren="停用"
                                 checked={record.isEnabled}
                                 loading={loading}
-                                onChange={() => this.handleEnable(record)}
+                                onChange={() => this.handleEnableShop(record)}
                             />
                         </Fragment>
                     );
@@ -318,7 +319,7 @@ export default class SlrSellerMng extends SimpleMng {
                                 dataSource={slrSellerData}
                                 columns={columns}
                                 expandRowByClick={true}
-                                onExpand={record => this.getSellerShop(record)}
+                                onExpand={record => this.getSellerShop(record.id)}
                                 expandedRowRender={record =>
                                     <Table rowKey="id"
                                         loading={loading}
