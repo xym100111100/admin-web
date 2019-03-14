@@ -109,6 +109,10 @@ export default class OrgMng extends SimpleMng {
         dataIndex: 'remark',
       },
       {
+        title: '联系方式',
+        dataIndex: 'contact',
+      },
+      {
         title: '是否启用',
         dataIndex: 'isEnabled',
         width: 110,

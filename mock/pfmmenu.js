@@ -77,8 +77,8 @@ menuData.push({ id: '1536131597157', sysId: 'damai-admin', code: '1504', title: 
 menuData.push({ id: '1536131597158', sysId: 'damai-admin', code: '1702', title: '商品管理', name: '商品管理', path: 'sup-goods', isEnabled: true, icon: null, remark: '供应商商品相关业务' });
 menuData.push({ id: '1536131597159', sysId: 'damai-admin', code: '19', title: '积分与收益', name: '积分与收益', path: 'pnt', isEnabled: true, icon: 'user', remark: '积分与收益' });
 menuData.push({ id: '1536131597160', sysId: 'damai-admin', code: '1900', title: '积分查询', name: '积分查询', path: 'pnt-list', isEnabled: true, icon: null, remark: '积分查询' });
-menuData.push({ id: '1536131597161', sysId: 'damai-admin', code: '20', title: '店铺管理', name: '店铺管理', path: 'shp', isEnabled: true, icon: 'shop', remark: '店铺管理' });
-menuData.push({ id: '1536131597162', sysId: 'damai-admin', code: '2000', title: '店铺信息管理', name: '店铺信息管理', path: 'shp-shop-mng', isEnabled: true, icon: null, remark: '店铺信息管理' });
+menuData.push({ id: '1536131597161', sysId: 'damai-admin', code: '20', title: '卖家管理', name: '卖家管理', path: 'slr', isEnabled: true, icon: 'shop', remark: '卖家管理' });
+menuData.push({ id: '1536131597162', sysId: 'damai-admin', code: '2000', title: '卖家信息', name: '卖家信息', path: 'slr-seller-mng', isEnabled: true, icon: null, remark: '卖家信息' });
 menuData.push({ id: '1536131597163', sysId: 'damai-admin', code: '0103', title: '快递批量下单', name: '快递批量下单', path: 'kdi-batch', isEnabled: true, icon: null, remark: '快递批量下单' });
 
 function sort(list) {

@@ -428,7 +428,7 @@ function addProxy(key, value) {
 if (noProxy) {
   // addProxy('kdi-svr', 'http://127.0.0.1:20080/');
   // addProxy('ord-svr', 'http://127.0.0.1:20180/'); 
-  addProxy('shp-svr', 'http://192.168.1.222:20090/'); 
+  addProxy('slr-svr', 'http://127.0.0.1:20193/'); 
 
   //addProxy('hlw-svr', 'http://127.0.0.1:9009/');
 
@@ -451,7 +451,7 @@ if (noProxy) {
   // addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
 
   // addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr/');
-  addProxy('suc-svr', 'http://192.168.1.224:9100/');
+  addProxy('suc-svr', 'http://127.0.0.1:9100/');
   // addProxy('afc-svr', 'http://192.168.1.201/afc-svr/');
 
   // addProxy('rna-svr', 'https://www.duamai.com/rna-svr/');

@@ -7,7 +7,7 @@ const { TextArea } = Input;
 // 添加与编辑的表单
 @EditForm
 @Form.create()
-export default class OrgForm extends PureComponent {
+export default class SlrSellerForm extends PureComponent {
   render() {
     const FormItem = Form.Item;
     const { form } = this.props;

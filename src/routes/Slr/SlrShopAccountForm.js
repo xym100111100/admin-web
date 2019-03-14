@@ -28,12 +28,12 @@ function getUserItem(user) {
   };
 }
 
-@connect(({ shpshopaccount, loading }) => ({
-  shpshopaccount,
+@connect(({ slrshopaccount, loading }) => ({
+  slrshopaccount,
   loading,
 }))
 @EditForm
-export default class ShpShopAccountForm extends PureComponent {
+export default class SlrShopAccountForm extends PureComponent {
   state = {
     leftKeys: undefined,
     rightKeys: undefined,
@@ -43,20 +43,20 @@ export default class ShpShopAccountForm extends PureComponent {
    * 处理两栏之间转移用户
    */
   handleUsersMove = (targetKeys, direction, moveKeys) => {
-    const { dispatch, id, shpshopaccount: { addedUsers, unaddedUsers }, modelName, movePayload } = this.props;
-
+    const { dispatch, id, record, slrshopaccount: { addedUsers, unaddedUsers }, modelName, movePayload } = this.props;
     // 调用的model
     const type = direction === 'left' ? `${modelName}/delAccounts` : `${modelName}/addAccounts`;
     // 已添加和未添加查询的页码
     const addedPageNum = addedUsers.pageNum;
     const unaddedPageNum = unaddedUsers.pageNum;
-    const payload = { id, addedPageNum, unaddedPageNum, moveIds: moveKeys, ...movePayload };
+    // 卖家id
+    const sellerId = record.sellerId;
+    const payload = { id, sellerId, addedPageNum, unaddedPageNum, moveIds: moveKeys, ...movePayload };
     // 已添加和未添加用户模糊查询的关键字
     const addedKeys = this.state.rightKeys;
     const unaddedKeys = this.state.leftKeys;
     if (addedKeys) payload.addedKeys = addedKeys;
     if (unaddedKeys) payload.unaddedKeys = unaddedKeys;
-    console.log(payload)
     // 发出请求
     dispatch({
       type,
@@ -84,9 +84,11 @@ export default class ShpShopAccountForm extends PureComponent {
    * 处理输入关键字搜索
    */
   handleSearchChange = (direction, e) => {
-    if (direction === 'left') this.state.leftKeys = e;
-    else this.state.rightKeys = e;
-    this.handleSearch(direction, e, 1);
+    const { value } = e.target;
+    console.log(value);
+    if (direction === 'left') this.state.leftKeys = value;
+    else this.state.rightKeys = value;
+    this.handleSearch(direction, value, 1);
   };
 
   /**
@@ -113,7 +115,7 @@ export default class ShpShopAccountForm extends PureComponent {
    * 渲染底部分页
    */
   renderFooter = props => {
-    const { shpshopaccount: { addedUsers, unaddedUsers } } = this.props;
+    const { slrshopaccount: { addedUsers, unaddedUsers } } = this.props;
     const { filter, titleText } = props;
 
     // 判断左边框还是右边框
@@ -140,7 +142,7 @@ export default class ShpShopAccountForm extends PureComponent {
   };
 
   render() {
-    const { shpshopaccount: { addedUsers, unaddedUsers }, loading, modelName } = this.props;
+    const { slrshopaccount: { addedUsers, unaddedUsers }, loading, modelName } = this.props;
     const dataSource = [];
     const targetKeys = [];
 
@@ -167,7 +169,7 @@ export default class ShpShopAccountForm extends PureComponent {
           render={this.renderItem}
           footer={this.renderFooter}
           onChange={this.handleUsersMove}
-          onSearch={this.handleSearchChange}
+          onSearchChange={this.handleSearchChange}
         />
       </Spin>
     );

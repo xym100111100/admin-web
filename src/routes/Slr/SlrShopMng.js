@@ -4,18 +4,18 @@ import { connect } from 'dva';
 import { Button, Form, Card, Switch, Divider, Popconfirm, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DescriptionList from 'components/DescriptionList';
-import ShpShopForm from './ShpShopForm';
-import ShpShopAccountForm from './ShpShopAccountForm';
-import styles from './ShpShopMng.less';
+import SlrShopForm from './SlrShopForm';
+import SlrShopAccountForm from './SlrShopAccountForm';
+import styles from './SlrShopMng.less';
 
 const { Description } = DescriptionList;
 
 @Form.create()
-@connect(({ shpshop, shpshopaccount, loading }) => ({ shpshop, shpshopaccount, loading: loading.models.shpshop }))
-export default class ShpShopMng extends SimpleMng {
+@connect(({ slrshop, slrshopaccount, loading }) => ({ slrshop, slrshopaccount, loading: loading.models.shpshop }))
+export default class SlrShopMng extends SimpleMng {
     constructor() {
         super();
-        this.moduleCode = 'shpshop';
+        this.moduleCode = 'slrshop';
         this.state.options = {
             pageNum: 1,
             pageSize: 5,
@@ -26,7 +26,7 @@ export default class ShpShopMng extends SimpleMng {
     handleUserReload(selectedRows) {
         // 加载用户信息
         this.props.dispatch({
-            type: 'shpshop/list',
+            type: 'slrshop/list',
             payload: {
                 pageNum: 1,
                 pageSize: 5,
@@ -50,7 +50,7 @@ export default class ShpShopMng extends SimpleMng {
     // 启用/禁用组织
     handleEnable(record) {
         this.props.dispatch({
-            type: `shpshop/enable`,
+            type: `slrshop/enable`,
             payload: { id: record.id, isEnabled: !record.isEnabled },
             callback: () => {
                 this.handleReload();
@@ -59,8 +59,7 @@ export default class ShpShopMng extends SimpleMng {
     }
 
     render() {
-        const { shpshop: { shpshop }, loading } = this.props;
-        console.log(shpshop)
+        const { slrshop: { slrshop }, loading } = this.props;
         const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
 
         const columns = [
@@ -102,7 +101,7 @@ export default class ShpShopMng extends SimpleMng {
                 title: '操作',
                 render: (text, record) => (
                     <Fragment>
-                        <a onClick={() => this.showEditForm({ id: record.id, editForm: 'ShpShopForm', editFormTitle: '编辑店铺信息' })}>
+                        <a onClick={() => this.showEditForm({ id: record.id, editForm: 'SlrShopForm', editFormTitle: '编辑店铺信息' })}>
                             编辑
             </a>
                         <Divider type="vertical" />
@@ -111,9 +110,9 @@ export default class ShpShopMng extends SimpleMng {
                                 this.showEditForm({
                                     editFormRecord: record,
                                     id: record.id,
-                                    moduleCode: 'shpshopaccount',
+                                    moduleCode: 'slrshopaccount',
                                     getByIdMethodName: 'getShopAccountList',
-                                    editForm: 'shpShopAccountForm',
+                                    editForm: 'slrShopAccountForm',
                                     editFormTitle: '设置店铺的用户',
                                 })
                             }
@@ -126,22 +125,22 @@ export default class ShpShopMng extends SimpleMng {
         ];
 
         let ps;
-        if (shpshop === undefined || shpshop.pageSize === undefined) {
+        if (slrshop === undefined || slrshop.pageSize === undefined) {
             ps = 5;
         } else {
-            ps = shpshop.pageSize;
+            ps = slrshop.pageSize;
         }
         let tl;
-        if (shpshop === undefined || shpshop.total === undefined) {
+        if (slrshop === undefined || slrshop.total === undefined) {
             tl = 1;
         } else {
-            tl = Number(shpshop.total);
+            tl = Number(slrshop.total);
         }
-        let shpShopData;
-        if (shpshop === undefined) {
-            shpShopData = [];
+        let slrShopData;
+        if (slrshop === undefined) {
+            slrShopData = [];
         } else {
-            shpShopData = shpshop.list;
+            slrShopData = slrshop.list;
         }
 
         // 分页
@@ -162,7 +161,7 @@ export default class ShpShopMng extends SimpleMng {
                                 <Button
                                     icon="plus"
                                     type="primary"
-                                    onClick={() => this.showAddForm({ editForm: 'ShpShopForm', editFormTitle: '添加新店铺' })}
+                                    onClick={() => this.showAddForm({ editForm: 'SlrSellerForm', editFormTitle: '添加新卖家' })}
                                 >
                                     添加
                 </Button>
@@ -176,7 +175,7 @@ export default class ShpShopMng extends SimpleMng {
                                 pagination={paginationProps}
                                 onChange={this.handleTableChange}
                                 loading={loading}
-                                dataSource={shpShopData}
+                                dataSource={slrShopData}
                                 columns={columns}
                                 expandRowByClick={true}
                                 expandedRowRender={record => (
@@ -192,20 +191,20 @@ export default class ShpShopMng extends SimpleMng {
                         </div>
                     </Card>
                 </PageHeaderLayout>,
-        {editForm === 'ShpShopForm' && (
-                    <ShpShopForm
+        {editForm === 'SlrShopForm' && (
+                    <SlrShopForm
                         visible
                         title={editFormTitle}
                         editFormType={editFormType}
                         record={editFormRecord}
                         closeModal={() => this.setState({ editForm: undefined })}
-                        onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'shpshop', saveMethodName: editFormType === 'add' ? 'add' : 'modify' })}
+                        onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'slrshop', saveMethodName: editFormType === 'add' ? 'add' : 'modify' })}
                     />
                 )}
-                {editForm === 'shpShopAccountForm' && (
-                    <ShpShopAccountForm
+                {editForm === 'slrShopAccountForm' && (
+                    <SlrShopAccountForm
                         id={editFormRecord.id}
-                        modelName="shpshopaccount" //
+                        modelName="slrshopaccount" //
                         visible
                         title={editFormTitle}
                         width={815}

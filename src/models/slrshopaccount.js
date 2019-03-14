@@ -1,10 +1,10 @@
-import { getShopAccountList, listUnaddedAccounts, listAddedAccounts, addAccounts, delAccounts } from '../services/shpshopaccount';
+import { getShopAccountList, listUnaddedAccounts, listAddedAccounts, addAccounts, delAccounts } from '../services/slrshopaccount';
 
 export default {
-    namespace: 'shpshopaccount',
+    namespace: 'slrshopaccount',
 
     state: {
-        shpshopaccount: [],
+        slrshopaccount: [],
     },
 
     effects: {

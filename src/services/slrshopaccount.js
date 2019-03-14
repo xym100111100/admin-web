@@ -6,7 +6,7 @@ import request from '../utils/request';
  * @param {*} params 
  */
 export async function getShopAccountList(params) {
-  return request(`/shp-svr/shp/shopaccount/listaddedAndunaddedusers?${stringify(params)}`);
+  return request(`/slr-svr/slr/shopaccount/listaddedAndunaddedusers?${stringify(params)}`);
 }
 
 /**
@@ -14,7 +14,7 @@ export async function getShopAccountList(params) {
  * @param {*} params 
  */
 export async function listUnaddedAccounts(params) {
-  return request(`/shp-svr/shp/shopaccount/listunaddedusers?${stringify(params)}`);
+  return request(`/slr-svr/slr/shopaccount/listunaddedusers?${stringify(params)}`);
 }
 
 /**
@@ -22,14 +22,14 @@ export async function listUnaddedAccounts(params) {
  * @param {*} params 
  */
 export async function listAddedAccounts(params) {
-  return request(`/shp-svr/shp/shopaccount/listaddedusers?${stringify(params)}`);
+  return request(`/slr-svr/slr/shopaccount/listaddedusers?${stringify(params)}`);
 }
 
 /**
  * 删除店铺账号
  */
 export async function delAccounts(params) {
-  return request('/shp-svr/shp/shopaccount', {
+  return request('/slr-svr/slr/shopaccount', {
     method: 'DELETE',
     body: {
       ...params,
@@ -42,7 +42,7 @@ export async function delAccounts(params) {
  * @param {*} params 
  */
 export async function addAccounts(params) {
-  return request(`/shp-svr/shp/shopaccount`, {
+  return request(`/slr-svr/slr/shopaccount`, {
     method: 'POST',
     body: {
       ...params,

@@ -1,11 +1,11 @@
 import { message } from 'antd';
-import { list, getById, add, modify, enable } from '../services/shpshop';
+import { list, getById, add, modify, enable } from '../services/slrshop';
 
 export default {
-  namespace: 'shpshop',
+  namespace: 'slrshop',
 
   state: {
-    shpshop: [],
+    slrshop: [],
   },
 
   effects: {
@@ -53,7 +53,7 @@ export default {
   reducers: {
     changeList(state, action) {
       return {
-        shpshop: action.payload,
+        slrshop: action.payload,
       };
     },
   }

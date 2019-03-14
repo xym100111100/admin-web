@@ -173,9 +173,14 @@ export const getRouterData = app => {
         import('../routes/Prm/PartnerMng')
       ),
     },
-    '/shp/shp-shop-mng': {
-      component: dynamicWrapper(app, ['shpshop', 'shpshopaccount'], () =>
-        import('../routes/Shp/ShpShopMng')
+    '/slr/slr-shop-mng': {
+      component: dynamicWrapper(app, ['slrshop', 'slrshopaccount'], () =>
+        import('../routes/Slr/SlrShopMng')
+      ),
+    },
+    '/slr/slr-seller-mng': {
+      component: dynamicWrapper(app, ['slrseller', 'slrshop', 'slrshopaccount'], () =>
+        import('../routes/Slr/SlrSellerMng')
       ),
     },
     '/pfm/script-mng': {
