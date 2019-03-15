@@ -80,7 +80,8 @@ menuData.push({ id: '1536131597160', sysId: 'damai-admin', code: '1900', title: 
 menuData.push({ id: '1536131597161', sysId: 'damai-admin', code: '20', title: '卖家管理', name: '卖家管理', path: 'slr', isEnabled: true, icon: 'shop', remark: '卖家管理' });
 menuData.push({ id: '1536131597162', sysId: 'damai-admin', code: '2000', title: '卖家信息', name: '卖家信息', path: 'slr-seller-mng', isEnabled: true, icon: null, remark: '卖家信息' });
 menuData.push({ id: '1536131597163', sysId: 'damai-admin', code: '0103', title: '快递批量下单', name: '快递批量下单', path: 'kdi-batch', isEnabled: true, icon: null, remark: '快递批量下单' });
-
+menuData.push({ id: '1536131597164', sysId: 'damai-admin', code: '21', title: '区域管理', name: '区域管理', path: 'xyz', isEnabled: true, icon: 'shop', remark: '区域管理' });
+menuData.push({ id: '1536131597165', sysId: 'damai-admin', code: '2100', title: '区域列表', name: '区域列表', path: 'area', isEnabled: true, icon: null, remark: '区域列表' });
 function sort(list) {
   return list.sort((item1, item2) => {
     const code1 = item1.code;

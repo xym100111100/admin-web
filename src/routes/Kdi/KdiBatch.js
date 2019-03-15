@@ -5,6 +5,7 @@ import { Button, Card, Divider, Table, Upload, message, Icon, Row, Col } from 'a
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './KdiCompany.less';
 import KdiBatchSendForm from './KdiBatchSendForm'
+import getArea from 'components/Kdi/Area/index';//获取地址
 import KdiCopyForm from './KdiCopyForm'
 import XLSX from 'xlsx';//引入JS读取Excel文件的插件
 import downloadExcel from "./downloadFile/导入模板.xlsx"
@@ -37,6 +38,8 @@ export default class KdiBatch extends SimpleMng {
     clearData = () => {
         console.log(this.state.data);
         console.log("----------")
+        //打印地址
+        console.log(getArea())
         console.log(JSON.parse(window.localStorage.getItem('templates')));
         console.log("开始清除");
         window.localStorage.clear();

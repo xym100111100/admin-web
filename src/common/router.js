@@ -135,6 +135,9 @@ export const getRouterData = app => {
     '/pfm/sys-mng': {
       component: dynamicWrapper(app, ['pfmsys'], () => import('../routes/Pfm/SysMng')),
     },
+    '/xyz/area': {
+      component: dynamicWrapper(app, ['xyzarea'], () => import('../routes/Xyz/XyzArea')),
+    },
     '/pfm/menu-mng': {
       component: dynamicWrapper(app, ['pfmsys', 'pfmmenu'], () => import('../routes/Pfm/MenuMng')),
     },

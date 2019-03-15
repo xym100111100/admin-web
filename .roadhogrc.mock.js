@@ -2,6 +2,7 @@ import mockjs from 'mockjs';
 import { dumaiindexList, dumaiindexGetById, dumaiindexAdd, dumaiindexModify, dumaiindexDel } from './mock/dumaiindex';
 import { supaccountList, supaccountGetById, supaccountAdd, supaccountModify, supaccountDel } from './mock/supaccount';
 import { pfmsysList, pfmsysGetById, pfmsysAdd, pfmsysModify, pfmsysDel } from './mock/pfmsys';
+import { xyzareaList, xyzareaGetById, xyzareaAdd, xyzareaModify, xyzareaDel } from './mock/pfmarea';
 import {  
   studentList, 
   studentGetById, 
@@ -153,6 +154,12 @@ const proxy = {
   'POST /pnt-svr/pnt/account': pntListAdd,
   'PUT /pnt-svr/pnt/account': pntListModify,
   'DELETE /pnt-svr/pnt/account': pntListDel,
+    // xyz
+    'GET /xyz-svr/xyz/area': xyzareaList,
+    'GET /xyz-svr/xyz/area/getbyid': xyzareaGetById,
+    'POST /xyz-svr/xyz/area': xyzareaAdd,
+    'PUT /xyz-svr/xyz/area': xyzareaModify,
+    'DELETE /xyz-svr/xyz/area': xyzareaDel,
   //student
   'GET /hlw-svr/hlw/student': studentList,
   'GET /hlw-svr/hlw/student/getbyid': studentGetById,
