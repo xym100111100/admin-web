@@ -5,7 +5,10 @@ import { Button, Card, Divider, Table, Upload, message, Icon, Row, Col } from 'a
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './KdiCompany.less';
 import KdiBatchSendForm from './KdiBatchSendForm'
+import KdiCopyForm from './KdiCopyForm'
 import XLSX from 'xlsx';//引入JS读取Excel文件的插件
+import downloadExcel from "./downloadFile/导入模板.xlsx"
+
 
 @connect(({ kdicompany, kditemplate, companydic, user, login, loading }) => ({
     kdicompany,
@@ -39,7 +42,9 @@ export default class KdiBatch extends SimpleMng {
         window.localStorage.clear();
         console.log(JSON.parse(window.localStorage.getItem('templates')));
         this.setState({
-            data:[]
+            data: [],
+            selectedRowKeys: [],
+            hasSelected: false
         })
 
     }
@@ -47,13 +52,28 @@ export default class KdiBatch extends SimpleMng {
 
     //显示批量打印选择快递和发件人的窗口
     showBatchSendForm = () => {
-        this.setState({
-            data: [],
+        this.showAddForm({
+            editForm: 'kdiBatchSend',
+            editFormTitle: '选择发货快递和发件人',
         })
-        // this.showAddForm({
-        //     editForm: 'kdiBatchSend',
-        //     editFormTitle: '选择发货快递和发件人',
-        // })
+    }
+
+    //显示批量复制输入框
+    showCopyForm = () => {
+        this.showAddForm({
+            editForm: 'kdiCopy',
+            editFormTitle: '批量复制输入框',
+        })
+    }
+
+    //通过复制获取的收件人信息
+    receivingInformation = (files) => {
+        console.log(files);
+        
+        let temp=files.receivingInformation.split("\n");
+        console.log(temp);
+        //存入localStorage 中
+        //window.localStorage.setItem("templates", JSON.stringify(str))
     }
 
     onSelectChange = (selectedRowKeys, selectedRow) => {
@@ -68,14 +88,14 @@ export default class KdiBatch extends SimpleMng {
             return;
         }
         this.setState({
-            data:[]
-        },()=>{
+            data: []
+        }, () => {
             window.localStorage.clear();
         })
 
         setTimeout(() => {
             if (obj.file.status !== 'uploading') {
-                let f = obj.fileList[obj.fileList.length-1].originFileObj;
+                let f = obj.fileList[obj.fileList.length - 1].originFileObj;
                 let read = new FileReader();
 
                 read.onload = function (e) {
@@ -104,7 +124,7 @@ export default class KdiBatch extends SimpleMng {
                     data: JSON.parse(window.localStorage.getItem('templates'))
                 })
             }, 500);
-        },500)
+        }, 500)
 
 
     }
@@ -132,28 +152,24 @@ export default class KdiBatch extends SimpleMng {
         //let temp = window.localStorage.getItem('templates');
         const columns = [
             {
-                title: '编号',
-                dataIndex: 'id',
-            },
-            {
                 title: '收件人',
                 dataIndex: '收件人',
+                width: 150
             },
             {
                 title: '收件人电话',
                 dataIndex: '收件人电话',
+                width: 150
             },
             {
                 title: '收件地址',
                 dataIndex: '收件地址',
+                width: 150
             },
             {
-                title: '邮编',
-                dataIndex: '邮编',
-            },
-            {
-                title: '备注',
-                dataIndex: '备注',
+                title: '订单标题',
+                dataIndex: '订单标题',
+                width: 150
             },
 
         ];
@@ -162,15 +178,33 @@ export default class KdiBatch extends SimpleMng {
                 <Card bordered={false}>
                     <div className={styles.tableList}>
                         <div className={styles.tableListOperator}>
-                            <Button icon="reload" onClick={() => this.clearData()}>
-                                清除
-                            </Button>
-                            <Divider type="vertical" />
-                            <Upload {...prop} onChange={(obj) => this.onChange(obj)}>
-                                <Button >
-                                    <Icon type="upload" /> 导入Excel文件
-                                </Button>
-                            </Upload>
+                            <Row gutter={{ xs: 8, sm: 16 }}  >
+                                <Col sm={4} md={5} >
+                                    <Button icon="reload" onClick={() => this.clearData()}>
+                                        清除
+                                    </Button>
+                                    <Divider type="vertical" />
+                                    <Upload {...prop} onChange={(obj) => this.onChange(obj)}>
+                                        <Button >
+                                            <Icon type="upload" /> 导入Excel文件
+                                        </Button>
+                                    </Upload>
+                                </Col>
+                                <Col sm={2} md={3} pull={1} >
+                                    <a
+                                        href={downloadExcel} download="导入模板"
+                                        title="导入模板"
+                                        mce_href="#"
+                                        style={{ fontSize: 15, textAlign:'center'}}
+                                    >
+                                        Excel模板文件下载
+                                       </a>
+                                </Col>
+                                <Col sm={3} md={4} pull={2} >
+                                    <Divider type="vertical" />
+                                    <Button icon="copy" onClick={() => this.showCopyForm()}>复制并导入收货信息</Button>
+                                </Col>
+                            </Row>
                             <p />
                             <Row>
                                 <Button type="primary" icon="printer" disabled={!this.state.hasSelected} onClick={this.showBatchSendForm}>
@@ -184,6 +218,7 @@ export default class KdiBatch extends SimpleMng {
                             dataSource={this.state.data}
                             columns={columns}
                             rowSelection={rowSelection}
+                            scroll={{ x: 1500, y: 600 }}
                         />
                     </div>
                 </Card>
@@ -195,7 +230,18 @@ export default class KdiBatch extends SimpleMng {
                         editFormType={editFormType}
                         record={editFormRecord}
                         closeModal={() => this.setState({ editForm: undefined })}
-                        onSubmit={(fields) => this.batchPrint(fields)}
+                        onSubmit={(fields) => this.kdiMessage(fields)}
+                    />
+                )}
+                {editForm === 'kdiCopy' && (
+                    <KdiCopyForm
+                        width={800}
+                        visible
+                        title={editFormTitle}
+                        editFormType={editFormType}
+                        record={editFormRecord}
+                        closeModal={() => this.setState({ editForm: undefined })}
+                        onSubmit={(fields) => this.receivingInformation(fields)}
                     />
                 )}
             </PageHeaderLayout>
