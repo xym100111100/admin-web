@@ -10,7 +10,7 @@ const FormItem = Form.Item;
   submitting: loading.models.xyzarea,
 }))
 @EditForm
-export default class XyzForm extends PureComponent {
+export default class XyzAreaForm extends PureComponent {
   render() {
     const { form, record } = this.props;
     return (

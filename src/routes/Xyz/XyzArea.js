@@ -3,7 +3,7 @@ import React, { Fragment } from 'react';
 import { connect } from 'dva';
 import { Button, Card, Divider, Popconfirm, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import XyzForm from './XyzForm';
+import XyzAreaForm from './XyzAreaForm';
 import styles from './XyzArea.less';
 
 @connect(({ xyzarea, loading }) => ({ xyzarea, loading: loading.models.xyzarea }))
@@ -68,7 +68,7 @@ export default class XyzArea extends SimpleMng {
           </Card>
         </PageHeaderLayout>,
         {editForm === 'sysForm' && (
-          <XyzForm
+          <XyzAreaForm
             visible
             title={editFormTitle}
             editFormType={editFormType}
