@@ -72,22 +72,27 @@ export default class KdiBatch extends SimpleMng {
 
     //通过复制获取的收件人信息
     receivingInformation = (files) => {
-        let temp=files.receivingInformation.split("\n");
+        let temp = files.receivingInformation.split("\n");
         //清除内容为空的数组元素
-        let array=[];
-        let x=0;
-        for(let i=0;i<temp.length;i++){
-            if(temp[i] !== null && temp[i] !==""){
-                array[x++]=temp[i];
-            }  
+        let array = [];
+        let x = 0;
+        for (let i = 0; i < temp.length; i++) {
+            if (temp[i] !== null && temp[i] !== "") {
+                array[x++] = temp[i];
+            }
         }
-        let receivingInformation=[];
-        for(let i=0;i<array.length;i++){
-            receivingInformation[i]=splitAddr(array[i]);
+        let receivingInformation = [];
+        for (let i = 0; i < array.length; i++) {
+            receivingInformation[i] = splitAddr(array[i]);
+            receivingInformation[i].id = i+1;
         }
-       // console.log(receivingInformation);
+        console.log(receivingInformation);
         //存入localStorage 中
-        //window.localStorage.setItem("templates", JSON.stringify(str))
+        window.localStorage.setItem("templates", JSON.stringify(receivingInformation));
+        this.setState({
+            data: JSON.parse(window.localStorage.getItem('templates'))
+        })
+        this.setState({ editForm: undefined });
     }
 
     onSelectChange = (selectedRowKeys, selectedRow) => {
@@ -154,31 +159,35 @@ export default class KdiBatch extends SimpleMng {
 
         const rowSelection = {
             selectedRowKeys, onChange: this.onSelectChange,
-            // getCheckboxProps: record => ({
-            //     disabled: record.orderState !== 2 && record.orderState !== 3,
-            //     name: record.orderState.toString(),
-            // })
+            getCheckboxProps: record => ({
+                disabled: record.receivePeople === null || record.receivePhone === null || record.address === null || record.receiveTitle === null,
+                name: record.receivePeople.toString(),
+            })
         };
         //let temp = window.localStorage.getItem('templates');
         const columns = [
             {
                 title: '收件人',
-                dataIndex: '收件人',
+                dataIndex: 'receivePeople',
+                key:'receivePeople',
                 width: 150
             },
             {
                 title: '收件人电话',
-                dataIndex: '收件人电话',
+                dataIndex: 'receivePhone',
+                key:'receivePhone',
                 width: 150
             },
             {
                 title: '收件地址',
-                dataIndex: '收件地址',
+                dataIndex: 'address',
+                key:'address',
                 width: 150
             },
             {
                 title: '订单标题',
-                dataIndex: '订单标题',
+                dataIndex: 'receiveTitle',
+                key:'receiveTitle',
                 width: 150
             },
 
@@ -205,7 +214,7 @@ export default class KdiBatch extends SimpleMng {
                                         href={downloadExcel} download="导入模板"
                                         title="导入模板"
                                         mce_href="#"
-                                        style={{ fontSize: 15, textAlign:'center'}}
+                                        style={{ fontSize: 15, textAlign: 'center' }}
                                     >
                                         Excel模板文件下载
                                        </a>

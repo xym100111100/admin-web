@@ -10,29 +10,29 @@ function splitAddr(addr) {
         let array = addr.split(/\s+/);
         if (array.length === 4) {
             receivingMessage.receiveAddress = array[0];
-            receivingMessage.receivepeople = array[1];
+            receivingMessage.receivePeople = array[1];
             receivingMessage.receivePhone = array[2];
-            receivingMessage.title = array[3];
+            receivingMessage.receiveTitle = array[3];
         } else if (array.length === 3) {
             receivingMessage.receiveAddress = array[0];
-            receivingMessage.receivepeople = array[1];
+            receivingMessage.receivePeople = array[1];
             receivingMessage.receivePhone = array[2];
-            receivingMessage.title = null;
+            receivingMessage.receiveTitle = null;
         } else if (array.length === 2) {
             receivingMessage.receiveAddress = array[0];
-            receivingMessage.receivepeople = array[1];
+            receivingMessage.receivePeople = array[1];
             receivingMessage.receivePhone = null;
-            receivingMessage.title = null;
+            receivingMessage.receiveTitle = null;
         } else if (array.length === 1) {
             receivingMessage.receiveAddress = array[0];
-            receivingMessage.receivepeople = null;
+            receivingMessage.receivePeople = null;
             receivingMessage.receivePhone = null;
-            receivingMessage.title = null;
+            receivingMessage.receiveTitle = null;
         } else {
             receivingMessage.receiveAddress = null;
-            receivingMessage.receivepeople = null;
+            receivingMessage.receivePeople = null;
             receivingMessage.receivePhone = null;
-            receivingMessage.title = null;
+            receivingMessage.receiveTitle = null;
         }
     } else {
         receivingMessage.receiveAddress = addr;
@@ -69,7 +69,7 @@ function splitAddr(addr) {
         //切分地级行政区
         const regCity = /.+?(市|自治州)/;
         let city = receivingMessage.receiveAddress.match(regCity);
-       // console.log('市', city);
+        // console.log('市', city);
         receivingMessage.city = city[0];
         //在详细地址中去除地级行政区
         receivingMessage.receiveAddress = receivingMessage.receiveAddress.replace(receivingMessage.city, "");
@@ -83,6 +83,8 @@ function splitAddr(addr) {
     //在详细地址中去除地级行政区
     receivingMessage.receiveAddress = receivingMessage.receiveAddress.replace(receivingMessage.count, "");
 
+
+    receivingMessage.address = receivingMessage.province + receivingMessage.city + receivingMessage.count + receivingMessage.receiveAddress;
     return receivingMessage;
 };
 
