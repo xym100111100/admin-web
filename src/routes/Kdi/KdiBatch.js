@@ -6,6 +6,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './KdiCompany.less';
 import KdiBatchSendForm from './KdiBatchSendForm'
 import getArea from 'components/Kdi/Area/index';//获取地址
+import splitAddr from 'components/Kdi/Area/SplitAddr';
 import KdiCopyForm from './KdiCopyForm'
 import XLSX from 'xlsx';//引入JS读取Excel文件的插件
 import downloadExcel from "./downloadFile/导入模板.xlsx"
@@ -29,7 +30,7 @@ export default class KdiBatch extends SimpleMng {
     }
     //初始化
     componentDidMount() {
-        console.log(JSON.parse(window.localStorage.getItem('templates')));
+        //console.log(JSON.parse(window.localStorage.getItem('templates')));
     }
 
     /**
@@ -71,10 +72,20 @@ export default class KdiBatch extends SimpleMng {
 
     //通过复制获取的收件人信息
     receivingInformation = (files) => {
-        console.log(files);
-        
         let temp=files.receivingInformation.split("\n");
-        console.log(temp);
+        //清除内容为空的数组元素
+        let array=[];
+        let x=0;
+        for(let i=0;i<temp.length;i++){
+            if(temp[i] !== null && temp[i] !==""){
+                array[x++]=temp[i];
+            }  
+        }
+        let receivingInformation=[];
+        for(let i=0;i<array.length;i++){
+            receivingInformation[i]=splitAddr(array[i]);
+        }
+       // console.log(receivingInformation);
         //存入localStorage 中
         //window.localStorage.setItem("templates", JSON.stringify(str))
     }
@@ -111,12 +122,8 @@ export default class KdiBatch extends SimpleMng {
 
                     window.localStorage.setItem("templates", JSON.stringify(str))//存入localStorage 中
                 }
-
                 read.readAsBinaryString(f);
-
             }
-
-
             if (obj.file.status === 'done') {
                 message.success(`${obj.file.name} 导入成功`);
             } else if (obj.file.status === 'error') {
