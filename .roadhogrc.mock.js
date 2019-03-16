@@ -2,7 +2,9 @@ import mockjs from 'mockjs';
 import { dumaiindexList, dumaiindexGetById, dumaiindexAdd, dumaiindexModify, dumaiindexDel } from './mock/dumaiindex';
 import { supaccountList, supaccountGetById, supaccountAdd, supaccountModify, supaccountDel } from './mock/supaccount';
 import { pfmsysList, pfmsysGetById, pfmsysAdd, pfmsysModify, pfmsysDel } from './mock/pfmsys';
-import { xyzareaList, xyzareaGetById, xyzareaAdd, xyzareaModify, xyzareaDel } from './mock/pfmarea';
+import { xyzareaList, xyzareaGetById, xyzareaAdd, xyzareaModify, xyzareaDel } from './mock/xyzarea';
+import { xyzareasendorgList, xyzareasendorgGetById, xyzareasendorgAdd, xyzareasendorgModify, xyzareasendorgDel } from './mock/xyzareasendorg';
+
 import {  
   studentList, 
   studentGetById, 
@@ -154,12 +156,18 @@ const proxy = {
   'POST /pnt-svr/pnt/account': pntListAdd,
   'PUT /pnt-svr/pnt/account': pntListModify,
   'DELETE /pnt-svr/pnt/account': pntListDel,
-    // xyz
-    'GET /xyz-svr/xyz/area': xyzareaList,
-    'GET /xyz-svr/xyz/area/getbyid': xyzareaGetById,
-    'POST /xyz-svr/xyz/area': xyzareaAdd,
-    'PUT /xyz-svr/xyz/area': xyzareaModify,
-    'DELETE /xyz-svr/xyz/area': xyzareaDel,
+  // xyz
+  'GET /xyz-svr/xyz/area': xyzareaList,
+  'GET /xyz-svr/xyz/area/getbyid': xyzareaGetById,
+  'POST /xyz-svr/xyz/area': xyzareaAdd,
+  'PUT /xyz-svr/xyz/area': xyzareaModify,
+  'DELETE /xyz-svr/xyz/area': xyzareaDel,
+  // xyz
+  'GET /xyz-svr/xyz/areasendorg': xyzareasendorgList,
+  'GET /xyz-svr/xyz/xyzareasendorg/getbyid': xyzareasendorgGetById,
+  'POST /xyz-svr/xyz/xyzareasendorg': xyzareasendorgAdd,
+  'PUT /xyz-svr/xyz/xyzareasendorg': xyzareasendorgModify,
+  'DELETE /xyz-svr/xyz/xyzareasendorg': xyzareasendorgDel,
   //student
   'GET /hlw-svr/hlw/student': studentList,
   'GET /hlw-svr/hlw/student/getbyid': studentGetById,
@@ -433,9 +441,13 @@ function addProxy(key, value) {
 
 // 禁用代理的时候，配置直接请求服务的映射
 if (noProxy) {
-  // addProxy('kdi-svr', 'http://127.0.0.1:20080/');
-  // addProxy('ord-svr', 'http://127.0.0.1:20180/'); 
-  addProxy('slr-svr', 'http://127.0.0.1:20193/'); 
+  addProxy('xyz-svr', 'http://127.0.0.1:9500/');
+  addProxy('suc-svr', 'http://127.0.0.1:9100/');
+  addProxy('pfm-svr', 'http://127.0.0.1:20182/');
+
+//  addProxy('kdi-svr', 'http://127.0.0.1:20080/');
+  //  addProxy('ord-svr', 'http://127.0.0.1:20180/'); 
+ // addProxy('slr-svr', 'http://127.0.0.1:20193/'); 
 
   //addProxy('hlw-svr', 'http://127.0.0.1:9009/');
 
@@ -445,7 +457,7 @@ if (noProxy) {
   // addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr/');
   // addProxy('pfm-svr', 'http://192.168.1.37:20182/');
   /*
-   addProxy('suc-svr', 'http://127.0.0.1:9100/');
+
   addProxy('rna-svr', 'http://127.0.0.1:20088/');
 
   addProxy('onl-svr', 'http://127.0.0.1:9100/');
@@ -458,7 +470,7 @@ if (noProxy) {
   // addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
 
   // addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr/');
-  addProxy('suc-svr', 'http://127.0.0.1:9100/');
+ // addProxy('suc-svr', 'http://127.0.0.1:9100/');
   // addProxy('afc-svr', 'http://192.168.1.201/afc-svr/');
 
   // addProxy('rna-svr', 'https://www.duamai.com/rna-svr/');
