@@ -8,7 +8,16 @@ function splitAddr(addr) {
     if (reg.test(addr)) {
         //将字符串通过空格进行切割分为字符串数组
         let array = addr.split(/\s+/);
-        if (array.length === 4) {
+        if (array.length > 4) {
+            receivingMessage.receiveAddress = array[0];
+            receivingMessage.receivePeople = array[1];
+            receivingMessage.receivePhone = array[2];
+            let str = '';
+            for (let i = 3; i < array.length; i++) {
+                str += ' ' + array[i];
+            }
+            receivingMessage.receiveTitle = str;
+        } else if (array.length === 4) {
             receivingMessage.receiveAddress = array[0];
             receivingMessage.receivePeople = array[1];
             receivingMessage.receivePhone = array[2];
@@ -37,7 +46,8 @@ function splitAddr(addr) {
     } else {
         receivingMessage.receiveAddress = addr;
     }
-
+    let error = new Object();
+    error.address = receivingMessage.receiveAddress;
     /**
      *对省市区进行切分 
      */
@@ -62,6 +72,9 @@ function splitAddr(addr) {
         const regProvince = /.+?(省|区)/;
         let province = receivingMessage.receiveAddress.match(regProvince);
         //console.log('省', province);
+        if (province == null) {
+            return error;
+        }
         receivingMessage.province = province[0];
         //在详细地址中去除省级行政区
         receivingMessage.receiveAddress = receivingMessage.receiveAddress.replace(receivingMessage.province, "");
@@ -70,6 +83,9 @@ function splitAddr(addr) {
         const regCity = /.+?(市|自治州)/;
         let city = receivingMessage.receiveAddress.match(regCity);
         // console.log('市', city);
+        if (city == null) {
+            return error;
+        }
         receivingMessage.city = city[0];
         //在详细地址中去除地级行政区
         receivingMessage.receiveAddress = receivingMessage.receiveAddress.replace(receivingMessage.city, "");
@@ -79,6 +95,9 @@ function splitAddr(addr) {
     const regCount = /.+?(市|县|旗|区)/
     let count = receivingMessage.receiveAddress.match(regCount);
     //console.log('区', count);
+    if (count == null) {
+        return error;
+    }
     receivingMessage.count = count[0];
     //在详细地址中去除地级行政区
     receivingMessage.receiveAddress = receivingMessage.receiveAddress.replace(receivingMessage.count, "");

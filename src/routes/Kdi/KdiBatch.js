@@ -124,8 +124,15 @@ export default class KdiBatch extends SimpleMng {
                     });
                     let sheet0 = wb.Sheets[wb.SheetNames[0]];//sheet0代表excel表格中的第一页
                     let str = XLSX.utils.sheet_to_json(sheet0);//利用接口实现转换。
-
-                    window.localStorage.setItem("templates", JSON.stringify(str))//存入localStorage 中
+                    let receivingInformation=[];
+                    for(let i=0;i<str.length;i++){
+                        receivingInformation[i] = splitAddr(str[i].收货地址);
+                        receivingInformation[i].id = i+1;
+                        receivingInformation[i].receivePeople =str[i].收件人;
+                        receivingInformation[i].receivePhone =str[i].收件人手机;
+                        receivingInformation[i].receiveTitle =str[i].订单标题;
+                    }
+                    window.localStorage.setItem("templates", JSON.stringify(receivingInformation))//存入localStorage 中
                 }
                 read.readAsBinaryString(f);
             }
@@ -160,8 +167,8 @@ export default class KdiBatch extends SimpleMng {
         const rowSelection = {
             selectedRowKeys, onChange: this.onSelectChange,
             getCheckboxProps: record => ({
-                disabled: record.receivePeople === null || record.receivePhone === null || record.address === null || record.receiveTitle === null,
-                name: record.receivePeople.toString(),
+                disabled: record.receivePeople === null || record.receivePhone === null || record.address === null || record.receiveTitle === undefined||record.receivePeople === undefined || record.receivePhone === undefined || record.address === undefined || record.receiveTitle === undefined,
+                
             })
         };
         //let temp = window.localStorage.getItem('templates');
