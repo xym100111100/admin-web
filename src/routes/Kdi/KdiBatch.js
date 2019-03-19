@@ -272,31 +272,34 @@ export default class KdiBatch extends SimpleMng {
                 <Card bordered={false}>
                     <div className={styles.tableList}>
                         <div className={styles.tableListOperator}>
-                            <Row gutter={{ xs: 8, sm: 16 }}  >
-                                <Col sm={4} md={5} >
+                            <Row gutter={{ md: 6, lg: 24, xl: 48 }} >
+                                <Col md={2} sm={24}   >
                                     <Button icon="reload" onClick={() => this.clearData()}>
                                         清除
                                     </Button>
-                                    <Divider type="vertical" />
+
+                                </Col>
+
+                                <Col md={5} sm={24} style={{marginLeft:30}} >
+                                    <Button icon="copy" onClick={() => this.showCopyForm()}>复制并导入收货信息</Button>
+                                </Col>
+                                <Col md={4} sm={24}  >
+
                                     <Upload {...prop} onChange={(obj) => this.onChange(obj)}>
                                         <Button >
                                             <Icon type="upload" /> 导入Excel文件
-                                        </Button>
+                                         </Button>
                                     </Upload>
                                 </Col>
-                                <Col sm={2} md={3} pull={1} >
+                                <Col md={4} sm={24} style={{marginTop:5}} >
                                     <a
-                                        href={downloadExcel} download="导入模板"
-                                        title="导入模板"
+                                        href={downloadExcel} download="导入模板.xlsx"
+                                        title="导入模板.xlsx"
                                         mce_href="#"
                                         style={{ fontSize: 15, textAlign: 'center' }}
                                     >
                                         Excel模板文件下载
-                                       </a>
-                                </Col>
-                                <Col sm={3} md={4} pull={2} >
-                                    <Divider type="vertical" />
-                                    <Button icon="copy" onClick={() => this.showCopyForm()}>复制并导入收货信息</Button>
+                                     </a>
                                 </Col>
                             </Row>
                             <p />
