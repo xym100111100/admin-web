@@ -138,6 +138,7 @@ export default class KdiBatch extends SimpleMng {
      * 导入Excel获取的收件人信息
      */
     onChange = (obj) => {
+        const check = getArea();
         if (obj.fileList.length === 0) {
             return;
         }
