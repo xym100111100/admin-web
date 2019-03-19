@@ -177,13 +177,18 @@ export const getRouterData = app => {
       ),
     },
     '/slr/slr-shop-mng': {
-      component: dynamicWrapper(app, ['slrshop', 'slrshopaccount'], () =>
+      component: dynamicWrapper(app, ['slrshop', 'slrshopaccount', 'slrsearchcategory'], () =>
         import('../routes/Slr/SlrShopMng')
       ),
     },
     '/slr/slr-seller-mng': {
       component: dynamicWrapper(app, ['slrseller', 'slrshop', 'slrshopaccount'], () =>
         import('../routes/Slr/SlrSellerMng')
+      ),
+    },
+    '/slr/slr-search-category-mng': {
+      component: dynamicWrapper(app, ['slrsearchcategory', 'slrshop'], () =>
+        import('../routes/Slr/SlrSearchCategoryMng')
       ),
     },
     '/pfm/script-mng': {

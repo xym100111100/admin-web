@@ -1,36 +1,47 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Button, Form, Card, Switch, Divider, Row, Col, Table, Popover } from 'antd';
+import { Button, Form, Card, Switch, Divider, Row, Col, Table, Popover, Tabs } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DescriptionList from 'components/DescriptionList';
 import styles from './SlrShopMng.less';
-import SlrSellerForm from './SlrSellerForm';
-import SlrShopForm from './SlrShopForm';
-import SlrShopAccountForm from './SlrShopAccountForm';
+import SlrSearchCategoryForm from './SlrSearchCategoryForm';
 
 const { Description } = DescriptionList;
+const { TabPane } = Tabs;
 
 @Form.create()
-@connect(({ slrseller, slrshop, slrshopaccount, loading }) => ({ slrseller, slrshop, slrshopaccount, loading: loading.models.slrseller }))
-export default class SlrSellerMng extends SimpleMng {
+@connect(({ slrsearchcategory, slrshop, loading }) => ({ slrsearchcategory, slrshop, loading: loading.models.slrsearchcategory }))
+export default class SlrSearchCategoryMng extends SimpleMng {
     constructor() {
         super();
-        this.moduleCode = 'slrseller';
+        this.moduleCode = 'slrsearchcategory';
         this.state.options = {
             pageNum: 1,
             pageSize: 5,
         };
     }
 
+    componentDidMount() {
+        // 刷新
+        this.props.dispatch({
+            type: `slrshop/shopList`,
+            callback: () => {
+                const { slrshop: { slrshop } } = this.props;
+                this.handleReload({ shopId: slrshop[0].id });
+            },
+        });
+    }
+
     // 刷新用户列表
     handleUserReload(selectedRows) {
         // 加载用户信息
         this.props.dispatch({
-            type: 'slrseller/list',
+            type: 'slrsearchcategory/list',
             payload: {
                 pageNum: 1,
                 pageSize: 5,
+                shopId: selectedRows.shopId,
             },
             callback: () => {
                 this.setState({ selectedRows });
@@ -48,22 +59,54 @@ export default class SlrSellerMng extends SimpleMng {
         });
     };
 
-    render() {
-        const { slrseller: { slrseller }, loading } = this.props;
-        const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
+    /**
+     * 切换店铺
+     */
+    switchShop = activeKey => {
+        this.handleUserReload({ shopId: activeKey });
+    }
 
+    // 启用/禁用搜索分类
+    handleEnable(record) {
+        this.props.dispatch({
+            type: `slrsearchcategory/enable`,
+            payload: {
+                sellerId: record.sellerId,
+                shopId: record.shopId,
+                code: record.code,
+                isEnabled: !record.isEnabled
+            },
+            callback: () => {
+                this.handleReload({ shopId: record.shopId });
+            },
+        });
+    }
+
+    render() {
+        const { slrsearchcategory: { slrsearchcategory }, slrshop: { slrshop }, loading } = this.props;
+        const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
         const columns = [
             {
-                title: '卖家名称',
+                title: '分类名称',
                 dataIndex: 'name',
             },
             {
-                title: '卖家描述',
-                dataIndex: 'remark',
+                title: '分类编码',
+                dataIndex: 'code',
             },
             {
-                title: '联系方式',
-                dataIndex: 'contact',
+                title: '图片',
+                dataIndex: 'image',
+                width: '7%',
+                render: (text, record) => {
+                    if (text !== undefined) {
+                        return (<img alt="example" style={{ width: '100%' }} src={text} />);
+                    }
+                }
+            },
+            {
+                title: '分类备注',
+                dataIndex: 'remark',
             },
             {
                 title: '是否启用',
@@ -77,25 +120,22 @@ export default class SlrSellerMng extends SimpleMng {
                                 unCheckedChildren="停用"
                                 checked={record.isEnabled}
                                 loading={loading}
+                                onChange={() => this.handleEnable(record)}
                             />
                         </Fragment>
                     );
                 },
             },
             {
-                title: '所属组织',
-                dataIndex: 'orgName',
-            },
-            {
                 title: '操作',
                 render: (text, record) => (
                     <Fragment>
-                        <a onClick={() => this.showEditForm({ id: record.id, editFormRecord: record, editForm: 'SlrSellerForm', editFormTitle: '编辑卖家信息' })}>
+                        <a onClick={() => this.showEditForm({ id: record.id, editFormRecord: record, editForm: 'SlrSearchCategoryForm', editFormTitle: '编辑分类信息' })}>
                             编辑
                         </a>
                         <Divider type="vertical" />
-                        <a onClick={() => this.showAddForm({ editFormRecord: record, editForm: 'SlrShopForm', editFormTitle: '添加店铺' })}>
-                            添加店铺
+                        <a onClick={() => this.showAddForm({ editFormRecord: { shopId: record.shopId, sellerId: record.sellerId, code: record.code }, editForm: 'searchsonCategory', editFormTitle: '添加子分类' })}>
+                            添加子分类
                         </a>
                     </Fragment>
                 ),
@@ -103,22 +143,22 @@ export default class SlrSellerMng extends SimpleMng {
         ];
 
         let ps;
-        if (slrseller === undefined || slrseller.pageSize === undefined) {
+        if (slrsearchcategory === undefined || slrsearchcategory.pageSize === undefined) {
             ps = 5;
         } else {
-            ps = slrseller.pageSize;
+            ps = slrsearchcategory.pageSize;
         }
         let tl;
-        if (slrseller === undefined || slrseller.total === undefined) {
+        if (slrsearchcategory === undefined || slrsearchcategory.total === undefined) {
             tl = 1;
         } else {
-            tl = Number(slrseller.total);
+            tl = Number(slrsearchcategory.total);
         }
-        let slrSellerData;
-        if (slrseller === undefined) {
-            slrSellerData = [];
+        let slrsearchcategoryData;
+        if (slrsearchcategory === undefined) {
+            slrsearchcategoryData = [];
         } else {
-            slrSellerData = slrseller.list;
+            slrsearchcategoryData = slrsearchcategory.list;
         }
 
         // 分页
@@ -136,14 +176,7 @@ export default class SlrSellerMng extends SimpleMng {
                     <Card bordered={false}>
                         <div className={styles.tableList}>
                             <div className={styles.tableListOperator}>
-                                <Button
-                                    icon="plus"
-                                    type="primary"
-                                    onClick={() => this.showAddForm({ editForm: 'SlrSellerForm', editFormTitle: '添加新卖家' })}
-                                >
-                                    添加
-                                </Button>
-                                <Divider type="vertical" />
+                                <Tabs onChange={this.switchShop}>{slrshop.map(shop => <TabPane tab={shop.shopAbbre} key={shop.id} />)}</Tabs>
                                 <Button icon="reload" onClick={() => this.handleReload()}>
                                     刷新
                                 </Button>
@@ -153,32 +186,32 @@ export default class SlrSellerMng extends SimpleMng {
                                 pagination={paginationProps}
                                 onChange={this.handleTableChange}
                                 loading={loading}
-                                dataSource={slrSellerData}
+                                dataSource={slrsearchcategoryData}
                                 columns={columns}
                             />
                         </div>
                     </Card>
                 </PageHeaderLayout>,
 
-                {editForm === 'SlrSellerForm' && (
-                    <SlrSellerForm
+                {editForm === 'SlrSearchCategoryForm' && (
+                    <SlrSearchCategoryForm
                         visible
                         title={editFormTitle}
                         editFormType={editFormType}
                         record={editFormRecord}
                         closeModal={() => this.setState({ editForm: undefined })}
-                        onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'slrseller', saveMethodName: editFormType === 'add' ? 'add' : 'modify' })}
+                        onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'slrsearchcategory', saveMethodName: 'modify' })}
                     />
                 )}
 
-                {editForm === 'SlrShopForm' && (
-                    <SlrShopForm
+                {editForm === 'searchsonCategory' && (
+                    <SlrSearchCategoryForm
                         visible
                         title={editFormTitle}
                         editFormType={editFormType}
                         record={editFormRecord}
                         closeModal={() => this.setState({ editForm: undefined })}
-                        onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'slrshop', saveMethodName: editFormType === 'add' ? 'add' : 'modify' })}
+                        onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'slrsearchcategory', saveMethodName: 'add' })}
                     />
                 )}
             </Fragment>

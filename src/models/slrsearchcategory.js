@@ -1,11 +1,11 @@
 import { message } from 'antd';
-import { list, getById, add, modify, enable, shopList } from '../services/slrshop';
+import { list, getById, add, modify, enable } from '../services/slrsearchcategory';
 
 export default {
-  namespace: 'slrshop',
+  namespace: 'slrsearchcategory',
 
   state: {
-    slrshop: [],
+    slrsearchcategory: [],
   },
 
   effects: {
@@ -48,20 +48,18 @@ export default {
         message.error(response.msg);
       }
     },
-    *shopList({ payload, callback }, { call, put }) {
-      const response = yield call(shopList, payload);
-      yield put({
-        type: 'changeList',
-        payload: response,
-      });
-      if (callback) callback(response);
-    },
   },
 
   reducers: {
     changeList(state, action) {
       return {
-        slrshop: action.payload,
+        slrsearchcategory: action.payload,
+      };
+    },
+
+    shopList(state, action) {
+      return {
+        shopList: action.payload,
       };
     },
   }

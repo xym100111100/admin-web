@@ -2,27 +2,27 @@ import { stringify } from 'qs';
 import request from '../utils/request';
 
 /**
- * 查询所有店铺信息
+ * 查询所有店铺搜索分类
  * @param {*} params 
  */
 export async function list(params) {
-  return request(`/slr-svr/slr/shop/listshop?${stringify(params)}`);
+  return request(`/slr-svr/slr/searchcategory?${stringify(params)}`);
 }
 
 /**
- * 获取单个店铺信息
+ * 获取单个店铺搜索分类
  * @param {*} params 
  */
 export async function getById(params) {
-  return request(`/slr-svr/slr/shop/getbyid?${stringify(params)}`);
+  return request(`/slr-svr/slr/searchcategory/getbyid?${stringify(params)}`);
 }
 
 /**
- * 添加店铺信息
+ * 添加店铺搜索分类
  * @param {*} params 
  */
 export async function add(params) {
-  return request('/slr-svr/slr/shop/addshop', {
+  return request('/slr-svr/slr/searchcategory', {
     method: 'POST',
     body: {
       ...params,
@@ -31,11 +31,11 @@ export async function add(params) {
 }
 
 /**
- * 修改店铺信息
+ * 修改店铺搜索分类
  * @param {*} params 
  */
 export async function modify(params) {
-  return request('/slr-svr/slr/shop', {
+  return request('/slr-svr/slr/searchcategory', {
     method: 'PUT',
     body: {
       ...params,
@@ -48,16 +48,11 @@ export async function modify(params) {
  * @param {*} params 
  */
 export async function enable(params) {
-  return request(`/slr-svr/slr/shop/enable?${stringify(params)}`, {
+  return request(`/slr-svr/slr/searchcategory/enable`, {
     method: 'PUT',
+    body: {
+      ...params,
+    },
   });
-}
-
-/**
- * 查询所有店铺信息
- * @param {*} params 
- */
-export async function shopList(params) {
-  return request(`/slr-svr/slr/shop/byseller`);
 }
 

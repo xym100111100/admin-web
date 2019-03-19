@@ -6,6 +6,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DescriptionList from 'components/DescriptionList';
 import SlrShopForm from './SlrShopForm';
 import SlrShopAccountForm from './SlrShopAccountForm';
+import SlrSearchCategoryForm from './SlrSearchCategoryForm';
 import styles from './SlrShopMng.less';
 
 const { Description } = DescriptionList;
@@ -24,7 +25,7 @@ export default class SlrShopMng extends SimpleMng {
 
     // 刷新用户列表
     handleUserReload(selectedRows) {
-        // 加载用户信息
+        // 加载店铺信息
         this.props.dispatch({
             type: 'slrshop/list',
             payload: {
@@ -47,7 +48,7 @@ export default class SlrShopMng extends SimpleMng {
         });
     };
 
-    // 启用/禁用组织
+    // 启用/禁用店铺
     handleEnable(record) {
         this.props.dispatch({
             type: `slrshop/enable`,
@@ -101,9 +102,9 @@ export default class SlrShopMng extends SimpleMng {
                 title: '操作',
                 render: (text, record) => (
                     <Fragment>
-                        <a onClick={() => this.showEditForm({ id: record.id, editForm: 'SlrShopForm', editFormTitle: '编辑店铺信息' })}>
+                        <a onClick={() => this.showEditForm({ id: record.id, editFormRecord: record, editForm: 'SlrShopForm', editFormTitle: '编辑店铺信息' })}>
                             编辑
-            </a>
+                        </a>
                         <Divider type="vertical" />
                         <a
                             onClick={() =>
@@ -118,7 +119,11 @@ export default class SlrShopMng extends SimpleMng {
                             }
                         >
                             用户
-              </a>
+                        </a>
+                        <Divider type="vertical" />
+                        <a onClick={() => this.showAddForm({ editFormRecord: record, editForm: 'SlrSearchCategoryForm', editFormTitle: '添加分类' })}>
+                            添加分类
+                        </a>
                     </Fragment>
                 ),
             },
@@ -158,17 +163,9 @@ export default class SlrShopMng extends SimpleMng {
                     <Card bordered={false}>
                         <div className={styles.tableList}>
                             <div className={styles.tableListOperator}>
-                                <Button
-                                    icon="plus"
-                                    type="primary"
-                                    onClick={() => this.showAddForm({ editForm: 'SlrSellerForm', editFormTitle: '添加新卖家' })}
-                                >
-                                    添加
-                </Button>
-                                <Divider type="vertical" />
                                 <Button icon="reload" onClick={() => this.handleReload()}>
                                     刷新
-                </Button>
+                                </Button>
                             </div>
                             <Table
                                 rowKey="id"
@@ -191,7 +188,7 @@ export default class SlrShopMng extends SimpleMng {
                         </div>
                     </Card>
                 </PageHeaderLayout>,
-        {editForm === 'SlrShopForm' && (
+                {editForm === 'SlrShopForm' && (
                     <SlrShopForm
                         visible
                         title={editFormTitle}
@@ -201,15 +198,28 @@ export default class SlrShopMng extends SimpleMng {
                         onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'slrshop', saveMethodName: editFormType === 'add' ? 'add' : 'modify' })}
                     />
                 )}
+
                 {editForm === 'slrShopAccountForm' && (
                     <SlrShopAccountForm
                         id={editFormRecord.id}
                         modelName="slrshopaccount" //
                         visible
                         title={editFormTitle}
+                        record={editFormRecord}
                         width={815}
                         editFormType={editFormType}
                         closeModal={() => this.setState({ editForm: undefined })}
+                    />
+                )}
+
+                {editForm === 'SlrSearchCategoryForm' && (
+                    <SlrSearchCategoryForm
+                        visible
+                        title={editFormTitle}
+                        editFormType={editFormType}
+                        record={editFormRecord}
+                        closeModal={() => this.setState({ editForm: undefined })}
+                        onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'slrsearchcategory', saveMethodName: editFormType === 'add' ? 'add' : 'modify' })}
                     />
                 )}
             </Fragment>
