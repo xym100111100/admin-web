@@ -81,6 +81,7 @@ export default class KdiBatch extends SimpleMng {
         for (let i = 0; i < temp.length; i++) {
             temp[i] = temp[i].replace(/^[\s]*$/, "");
             if (temp[i] !== null && temp[i] !== "") {
+                temp[i] = temp[i].replace(/^\s*/,"");
                 array[x++] = temp[i];
             }
         }
