@@ -73,10 +73,13 @@ export default class KdiBatch extends SimpleMng {
     //通过复制获取的收件人信息
     receivingInformation = (files) => {
         let temp = files.receivingInformation.split("\n");
+        const check = getArea();
+        console.log('temp', temp);
         //清除内容为空的数组元素
         let array = [];
         let x = 0;
         for (let i = 0; i < temp.length; i++) {
+            temp[i] = temp[i].replace(/^[\s]*$/, "");
             if (temp[i] !== null && temp[i] !== "") {
                 array[x++] = temp[i];
             }
@@ -84,7 +87,35 @@ export default class KdiBatch extends SimpleMng {
         let receivingInformation = [];
         for (let i = 0; i < array.length; i++) {
             receivingInformation[i] = splitAddr(array[i]);
-            receivingInformation[i].id = i+1;
+            receivingInformation[i].id = i + 1;
+            for (let x = 0; x < check.length; x++) {
+                let province = check[x];
+                //校验省份
+                if (province.value == receivingInformation[i].province) {
+                    for (let y = 0; y < province.children.length; y++) {
+                        let city = province.children[y];
+                        //校验城市
+                        if (city.value == receivingInformation[i].city) {
+                            for (let z = 0; z < city.children.length; z++) {
+                                let count = city.children[z];
+                                //校验市区
+                                if (count.value == receivingInformation[i].count) {
+                                    receivingInformation[i].errorMessage = null;
+                                    break;
+                                } else {
+                                    receivingInformation[i].errorMessage = '市区错误';
+                                }
+                            }
+                            break;
+                        } else {
+                            receivingInformation[i].errorMessage = "城市错误";
+                        }
+                    }
+                    break;
+                } else {
+                    receivingInformation[i].errorMessage = "省份错误";
+                }
+            }
         }
         console.log(receivingInformation);
         //存入localStorage 中
@@ -97,11 +128,15 @@ export default class KdiBatch extends SimpleMng {
 
     onSelectChange = (selectedRowKeys, selectedRow) => {
         //selectedRowKeys.receiver = selectedRow;
-        //console.log('获取的值', selectedRowKeys);
+        console.log('获取的值', selectedRow);
         const hasSelected = selectedRowKeys.length > 0;//是否勾选订单
         this.setState({ selectedRowKeys, hasSelected });
     }
 
+
+    /**
+     * 导入Excel获取的收件人信息
+     */
     onChange = (obj) => {
         if (obj.fileList.length === 0) {
             return;
@@ -124,13 +159,41 @@ export default class KdiBatch extends SimpleMng {
                     });
                     let sheet0 = wb.Sheets[wb.SheetNames[0]];//sheet0代表excel表格中的第一页
                     let str = XLSX.utils.sheet_to_json(sheet0);//利用接口实现转换。
-                    let receivingInformation=[];
-                    for(let i=0;i<str.length;i++){
+                    let receivingInformation = [];
+                    for (let i = 0; i < str.length; i++) {
                         receivingInformation[i] = splitAddr(str[i].收货地址);
-                        receivingInformation[i].id = i+1;
-                        receivingInformation[i].receivePeople =str[i].收件人;
-                        receivingInformation[i].receivePhone =str[i].收件人手机;
-                        receivingInformation[i].receiveTitle =str[i].订单标题;
+                        receivingInformation[i].id = i + 1;
+                        receivingInformation[i].receivePeople = str[i].收件人;
+                        receivingInformation[i].receivePhone = str[i].收件人手机;
+                        receivingInformation[i].receiveTitle = str[i].订单标题;
+                        for (let x = 0; x < check.length; x++) {
+                            let province = check[x];
+                            //校验省份
+                            if (province.value == receivingInformation[i].province) {
+                                for (let y = 0; y < province.children.length; y++) {
+                                    let city = province.children[y];
+                                    //校验城市
+                                    if (city.value == receivingInformation[i].city) {
+                                        for (let z = 0; z < city.children.length; z++) {
+                                            let count = city.children[z];
+                                            //校验市区
+                                            if (count.value == receivingInformation[i].count) {
+                                                receivingInformation[i].errorMessage = null;
+                                                break;
+                                            } else {
+                                                receivingInformation[i].errorMessage = '市区错误';
+                                            }
+                                        }
+                                        break;
+                                    } else {
+                                        receivingInformation[i].errorMessage = "城市错误";
+                                    }
+                                }
+                                break;
+                            } else {
+                                receivingInformation[i].errorMessage = "省份错误";
+                            }
+                        }
                     }
                     window.localStorage.setItem("templates", JSON.stringify(receivingInformation))//存入localStorage 中
                 }
@@ -167,8 +230,8 @@ export default class KdiBatch extends SimpleMng {
         const rowSelection = {
             selectedRowKeys, onChange: this.onSelectChange,
             getCheckboxProps: record => ({
-                disabled: record.receivePeople === null || record.receivePhone === null || record.address === null || record.receiveTitle === undefined||record.receivePeople === undefined || record.receivePhone === undefined || record.address === undefined || record.receiveTitle === undefined,
-                
+                disabled: record.receivePeople === null || record.receivePhone === null || record.address === null || record.receiveTitle === null || record.receivePeople === undefined || record.receivePhone === undefined || record.address === undefined || record.receiveTitle === undefined || record.errorMessage !== null,
+
             })
         };
         //let temp = window.localStorage.getItem('templates');
@@ -176,28 +239,33 @@ export default class KdiBatch extends SimpleMng {
             {
                 title: '收件人',
                 dataIndex: 'receivePeople',
-                key:'receivePeople',
+                key: 'receivePeople',
                 width: 150
             },
             {
                 title: '收件人电话',
                 dataIndex: 'receivePhone',
-                key:'receivePhone',
-                width: 150
+                key: 'receivePhone',
+                width: 100
             },
             {
                 title: '收件地址',
                 dataIndex: 'address',
-                key:'address',
-                width: 150
+                key: 'address',
+                width: 200
             },
             {
                 title: '订单标题',
                 dataIndex: 'receiveTitle',
-                key:'receiveTitle',
+                key: 'receiveTitle',
                 width: 150
             },
-
+            {
+                title: '地址错误信息',
+                dataIndex: 'errorMessage',
+                key: 'errorMessage',
+                width: 150
+            }
         ];
         return (
             <PageHeaderLayout title="快递批量下单">
