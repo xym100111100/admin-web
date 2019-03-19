@@ -1,15 +1,12 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Button, Form, Card, Switch, Divider, Row, Col, Table, Popover } from 'antd';
+import { Button, Form, Card, Switch, Divider, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import DescriptionList from 'components/DescriptionList';
 import styles from './SlrShopMng.less';
 import SlrSellerForm from './SlrSellerForm';
 import SlrShopForm from './SlrShopForm';
-import SlrShopAccountForm from './SlrShopAccountForm';
 
-const { Description } = DescriptionList;
 
 @Form.create()
 @connect(({ slrseller, slrshop, slrshopaccount, loading }) => ({ slrseller, slrshop, slrshopaccount, loading: loading.models.slrseller }))

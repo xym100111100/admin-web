@@ -5,12 +5,14 @@ import { Card, Divider, Switch, Popconfirm, Form, Input, Button, Table, Spin } f
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './OrgMng.less';
 import OrgForm from './OrgForm';
+import SlrShopForm from '../Slr/SlrShopForm'
 import UserTransferForm from './UserTransferForm';
 
 const { Search } = Input;
 
-@connect(({ sucorg, loading, sucuserorg }) => ({
+@connect(({ sucorg, slrshop, loading, sucuserorg }) => ({
   sucorg,
+  slrshop,
   sucuserorg,
   loading: loading.models.sucorg,
 }))
@@ -167,6 +169,10 @@ export default class OrgMng extends SimpleMng {
               <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record)}>
                 <a>删除</a>
               </Popconfirm>
+              <Divider type="vertical" />
+              <a onClick={() => this.showAddForm({ editFormRecord: record, editForm: 'SlrShopForm', editFormTitle: '添加店铺' })}>
+                添加店铺
+              </a>
             </Fragment>
           );
         },
@@ -256,6 +262,17 @@ export default class OrgMng extends SimpleMng {
             width={815}
             editFormType={editFormType}
             closeModal={() => this.setState({ editForm: undefined })}
+          />
+        )}
+
+        {editForm === 'SlrShopForm' && (
+          <SlrShopForm
+            visible
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'slrshop' })}
           />
         )}
       </Fragment>

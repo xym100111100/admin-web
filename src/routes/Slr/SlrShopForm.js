@@ -18,15 +18,9 @@ export default class SlrShopForm extends React.Component {
     beforeSave = () => {
         const { form, record, editFormType } = this.props;
         // 卖家id/组织id
-        let sellerId = undefined;
+        let sellerId = record.sellerId === undefined ? record.id : record.sellerId;
         // 店铺id
-        let shopId = undefined;
-        if (editFormType === 'add') {
-            sellerId = record.id;
-        } else {
-            sellerId = record.sellerId;
-            shopId = record.id;
-        }
+        let shopId = editFormType === 'edit' ? record.id : undefined;
 
         // 门店名称
         let shopName = undefined;
@@ -42,7 +36,6 @@ export default class SlrShopForm extends React.Component {
         let contact = undefined;
 
         form.validateFields((err, values) => {
-            console.log(values);
             // 门店名称
             shopName = values.shopName;
             // 门店简称
@@ -82,10 +75,18 @@ export default class SlrShopForm extends React.Component {
             // 联系方式
             contact: contact,
         });
+
+        form.validateFields((err, values) => {
+            console.log(values);
+
+        });
+
+        return ;
     }
 
     render() {
         const { form, record } = this.props;
+        console.log(record);
         return (
             <Fragment>
                 {form.getFieldDecorator('id')(<Input type="hidden" />)}
