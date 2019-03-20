@@ -18,6 +18,15 @@ export async function eorder(params) {
   });
 }
 
+export async function batchOrder(params) {
+  return request('/kdi-svr/kdi/batchOrder', {
+    method: 'POST',
+    body: {
+      ...params,
+    },
+  });
+}
+
 export async function modify(params) {
   return request('/kdi-svr/kdi/eorder', {
     method: 'PUT',

@@ -48,7 +48,6 @@ function splitAddr(addr) {
     }
     let error = new Object();
     error.address = receivingMessage.receiveAddress;
-    console.log('1', receivingMessage.receiveAddress);
     /**
      *对省市区进行切分 
      */
@@ -57,7 +56,6 @@ function splitAddr(addr) {
     if (regMunicipality.test(receivingMessage.receiveAddress)) {
         let municipality = receivingMessage.receiveAddress.match(regMunicipality);
         receivingMessage.province = municipality[0];
-        console.log('2', receivingMessage);
         receivingMessage.city = "市辖区";
         receivingMessage.receiveAddress = receivingMessage.receiveAddress.replace(receivingMessage.province, "");
         const addMunicipality = /北京市|天津市|重庆市|上海市/;
@@ -81,7 +79,6 @@ function splitAddr(addr) {
                 const regAutonomousRegion3 = /内蒙古|广西|西藏|宁夏|新疆/;
                 if (regAutonomousRegion2.test(receivingMessage.receiveAddress)) {
                     let autonomousRegion = receivingMessage.receiveAddress.match(regAutonomousRegion2);
-                    console.log('autonomousRegion', autonomousRegion);
                     if (autonomousRegion == '广西省') {
                         receivingMessage.receiveAddress = receivingMessage.receiveAddress.replace(regAutonomousRegion2, "广西壮族自治区");
                     } else if (autonomousRegion == '内蒙古省') {
@@ -95,7 +92,6 @@ function splitAddr(addr) {
                     }
                 } else {
                     let autonomousRegion = receivingMessage.receiveAddress.match(regAutonomousRegion3);
-                    console.log('autonomousRegion', autonomousRegion);
                     if (autonomousRegion == '广西') {
                         receivingMessage.receiveAddress = receivingMessage.receiveAddress.replace(regAutonomousRegion3, autonomousRegion + "壮族自治区");
                     } else if (autonomousRegion == '内蒙古') {
@@ -132,7 +128,6 @@ function splitAddr(addr) {
         //在详细地址中去除地级行政区
         receivingMessage.receiveAddress = receivingMessage.receiveAddress.replace(receivingMessage.city, "");
     }
-    console.log('2', receivingMessage.receiveAddress)
 
     //切分县级行政区
     const regCount = /.+?(市|县|旗|区)/
