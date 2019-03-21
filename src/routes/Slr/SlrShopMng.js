@@ -23,7 +23,7 @@ export default class SlrShopMng extends SimpleMng {
         };
     }
 
-    // 刷新用户列表
+    // 刷新店铺列表
     handleUserReload(selectedRows) {
         // 加载店铺信息
         this.props.dispatch({
@@ -70,11 +70,7 @@ export default class SlrShopMng extends SimpleMng {
             },
             {
                 title: '店铺简称',
-                dataIndex: 'shopAbbre',
-            },
-            {
-                title: '地址',
-                dataIndex: 'adderss',
+                dataIndex: 'shortName',
             },
             {
                 title: '是否启用',
@@ -93,10 +89,6 @@ export default class SlrShopMng extends SimpleMng {
                         </Fragment>
                     );
                 },
-            },
-            {
-                title: '所属组织',
-                dataIndex: 'orgName',
             },
             {
                 title: '操作',
@@ -179,9 +171,10 @@ export default class SlrShopMng extends SimpleMng {
                                     <DescriptionList className={styles.headerList} size="small" col="2">
                                         <Description term="店铺id">{record.id}</Description>
                                         <Description term="详细地址">{record.adderss}</Description>
+                                        <Description term="组织名称">{record.orgName}</Description>
                                         <Description term="经度">{record.longitude}</Description>
-                                        <Description term="纬度">{record.latitude}</Description>
                                         <Description term="创建时间">{record.createTime}</Description>
+                                        <Description term="纬度">{record.latitude}</Description>
                                     </DescriptionList>
                                 )}
                             />

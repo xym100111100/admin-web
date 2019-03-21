@@ -100,7 +100,7 @@ export default class SlrSearchCategoryMng extends SimpleMng {
                 width: '7%',
                 render: (text, record) => {
                     if (text !== undefined) {
-                        return (<img alt="example" style={{ width: '100%' }} src={text} />);
+                        return (<img alt="example" style={{ width: '100%' }} src={'/ise-svr/files' + text} />);
                     }
                 }
             },
@@ -176,7 +176,7 @@ export default class SlrSearchCategoryMng extends SimpleMng {
                     <Card bordered={false}>
                         <div className={styles.tableList}>
                             <div className={styles.tableListOperator}>
-                                <Tabs onChange={this.switchShop}>{slrshop.map(shop => <TabPane tab={shop.shopAbbre} key={shop.id} />)}</Tabs>
+                                <Tabs onChange={this.switchShop}>{slrshop.map(shop => <TabPane tab={shop.shortName} key={shop.id} />)}</Tabs>
                                 <Button icon="reload" onClick={() => this.handleReload()}>
                                     刷新
                                 </Button>

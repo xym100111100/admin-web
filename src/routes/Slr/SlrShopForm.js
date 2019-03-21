@@ -25,7 +25,7 @@ export default class SlrShopForm extends React.Component {
         // 门店名称
         let shopName = undefined;
         // 门店简称
-        let shopAbbre = undefined;
+        let shortName = undefined;
         // 地址
         let adderss = undefined;
         // 经度
@@ -39,7 +39,7 @@ export default class SlrShopForm extends React.Component {
             // 门店名称
             shopName = values.shopName;
             // 门店简称
-            shopAbbre = values.shopAbbre;
+            shortName = values.shortName;
             // 地址
             adderss = values.adderss;
             // 经度
@@ -52,7 +52,7 @@ export default class SlrShopForm extends React.Component {
 
         form.getFieldDecorator('sellerId');
         form.getFieldDecorator('shopName');
-        form.getFieldDecorator('shopAbbre');
+        form.getFieldDecorator('shortName');
         form.getFieldDecorator('adderss');
         form.getFieldDecorator('latitude');
         form.getFieldDecorator('longitude');
@@ -65,7 +65,7 @@ export default class SlrShopForm extends React.Component {
             // 门店名称
             shopName: shopName,
             // 门店简称
-            shopAbbre: shopAbbre,
+            shortName: shortName,
             // 地址
             adderss: adderss,
             // 经度
@@ -75,13 +75,6 @@ export default class SlrShopForm extends React.Component {
             // 联系方式
             contact: contact,
         });
-
-        form.validateFields((err, values) => {
-            console.log(values);
-
-        });
-
-        return ;
     }
 
     render() {
@@ -97,9 +90,9 @@ export default class SlrShopForm extends React.Component {
                     })(<Input placeholder="请输入店铺名称" />)}
                 </FormItem>
                 <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="店铺简称">
-                    {form.getFieldDecorator('shopAbbre', {
+                    {form.getFieldDecorator('shortName', {
                         rules: [{ required: true, message: '请输入店铺简称' }],
-                        initialValue: record.shopAbbre,
+                        initialValue: record.shortName,
                     })(<Input placeholder="请输入店铺简称" />)}
                 </FormItem>
                 <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="地址">

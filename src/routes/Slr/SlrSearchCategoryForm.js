@@ -1,12 +1,13 @@
-import React, { Fragment, PureComponent } from 'react';
-import { Form, Input, Upload, Icon, Modal, Switch } from 'antd';
+import React, { Fragment } from 'react';
+import { Form, Input, Upload, Icon, Modal } from 'antd';
 import EditForm from 'components/Rebue/EditForm';
 
 const { TextArea } = Input;
+const FormItem = Form.Item;
 
 // 添加与编辑的表单
 @EditForm
-export default class SlrSearchCategoryForm extends PureComponent {
+export default class SlrSearchCategoryForm extends React.Component {
 
     componentWillMount() {
         const { record, editFormType } = this.props;
@@ -16,7 +17,7 @@ export default class SlrSearchCategoryForm extends PureComponent {
                     uid: record.id,
                     name: record.image,
                     status: 'done',
-                    url: record.image,
+                    url: '/ise-svr/files' + record.image,
                 }],
             })
         }
@@ -46,6 +47,11 @@ export default class SlrSearchCategoryForm extends PureComponent {
         let shopId = record.shopId === undefined ? record.id : record.shopId;
         // 分类id
         let id = editFormType === 'edit' ? record.id : undefined;
+        const { fileList } = this.state;
+        let image = undefined;
+        if (fileList !== '[]' && fileList !== undefined && fileList.length !== 0) {
+            image = fileList[0].response === undefined ? fileList[0].name : fileList[0].response.filePaths[0];
+        }
 
         let name = undefined;
         let remark = undefined;
@@ -64,6 +70,7 @@ export default class SlrSearchCategoryForm extends PureComponent {
             id: id,
             sellerId: record.sellerId,
             shopId: shopId,
+            image: image,
             code: record.code,
             name: name,
             remark: remark,
@@ -71,7 +78,6 @@ export default class SlrSearchCategoryForm extends PureComponent {
     }
 
     render() {
-        const FormItem = Form.Item;
         const { form } = this.props;
         const { previewVisible, previewImage, fileList } = this.state;
         const uploadButton = (
@@ -100,8 +106,8 @@ export default class SlrSearchCategoryForm extends PureComponent {
                     {form.getFieldDecorator('image')(
                         <div className="clearfix">
                             <Upload
-                                // action="/ise-svr/ise/upload"
-                                action="http://192.168.1.203:41169/ise/upload"
+                                action="/ise-svr/ise/upload"
+                                // action="http://192.168.1.203:36697/ise/upload"
                                 listType="picture-card"
                                 fileList={fileList}
                                 name="multipartFile"
