@@ -19,6 +19,11 @@ export default class OrgForm extends PureComponent {
             rules: [{ required: false, message: '请输入组织的名称' }],
           })(<Input placeholder="请输入组织的名称" />)}
         </FormItem>
+        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="组织简称">
+          {form.getFieldDecorator('shortName', {
+            rules: [{ required: false, message: '请输入组织的简称' }],
+          })(<Input placeholder="请输入组织的简称" />)}
+        </FormItem>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="组织描述">
           {form.getFieldDecorator('remark')(<TextArea placeholder="选填" />)}
         </FormItem>

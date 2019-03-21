@@ -107,6 +107,10 @@ export default class OrgMng extends SimpleMng {
         dataIndex: 'name',
       },
       {
+        title: '组织简称',
+        dataIndex: 'shortName',
+      },
+      {
         title: '描述',
         dataIndex: 'remark',
       },

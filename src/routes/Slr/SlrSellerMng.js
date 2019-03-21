@@ -55,6 +55,10 @@ export default class SlrSellerMng extends SimpleMng {
                 dataIndex: 'name',
             },
             {
+                title: '卖家简称',
+                dataIndex: 'shortName',
+              },
+            {
                 title: '卖家描述',
                 dataIndex: 'remark',
             },
