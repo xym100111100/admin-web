@@ -12,17 +12,20 @@ import XLSX from 'xlsx';//引入JS读取Excel文件的插件
 import downloadExcel from "./downloadFile/导入模板.xlsx"
 
 
-@connect(({ kdicompany, kditemplate, companydic, user, login, loading }) => ({
+@connect(({kdieorder ,kdicompany, kditemplate, companydic, user, login, loading,kdisender }) => ({
     kdicompany,
+    kdieorder,
     companydic,
     kditemplate,
     user,
+    kdisender,
     login,
-    loading: loading.models.kdicompany || loading.models.kditemplate || loading.models.user || loading.models.companydic || loading.models.login,
+    loading: loading.models.kdicompany || loading.models.kditemplate || loading.models.user || loading.models.companydic || loading.models.login ||loading.models.kdieorder||loading.models.kdisender,
 }))
 export default class KdiBatch extends SimpleMng {
     constructor() {
         super();
+        this.moduleCode='kdieorder';
         this.state.selectedRowKeys = [];
         this.state.hasSelected = false;
         this.state.data = [];
@@ -74,7 +77,6 @@ export default class KdiBatch extends SimpleMng {
     receivingInformation = (files) => {
         let temp = files.receivingInformation.split("\n");
         const check = getArea();
-        console.log('temp', temp);
         //清除内容为空的数组元素
         let array = [];
         let x = 0;
@@ -118,7 +120,6 @@ export default class KdiBatch extends SimpleMng {
                 }
             }
         }
-        console.log(receivingInformation);
         //存入localStorage 中
         window.localStorage.setItem("templates", JSON.stringify(receivingInformation));
         this.setState({
@@ -128,8 +129,8 @@ export default class KdiBatch extends SimpleMng {
     }
 
     onSelectChange = (selectedRowKeys, selectedRow) => {
-        //selectedRowKeys.receiver = selectedRow;
-        console.log('获取的值', selectedRow);
+        selectedRowKeys.receiver = selectedRow;
+       // console.log('获取的值', selectedRow);
         const hasSelected = selectedRowKeys.length > 0;//是否勾选订单
         this.setState({ selectedRowKeys, hasSelected });
     }
@@ -216,8 +217,74 @@ export default class KdiBatch extends SimpleMng {
 
     }
 
+      /**
+   * 批量下单
+   */
+  kdiMessage = (fields) => {
+    const { user } = this.props;
+    fields.orgId = user.currentUser.orgId;
+    fields.sendOpId = user.currentUser.userId;
+    fields.receiver = this.state.selectedRowKeys.receiver;
+    //判断是否选择了发件人
+    if (fields.selectSend.length === 0) {
+      message.error('未选择发件人，不能提交');
+      return;
+    }
+    //判断是否选择了快递公司
+    if (fields.selectCompany.length === 0) {
+      message.error('未选择快递公司，不能提交');
+      return;
+    }
+    //整理快递公司信息
+    let selectCompany = fields.selectCompany
+    fields.shipperId = selectCompany.id;
+    fields.shipperName = selectCompany.companyName;
+    fields.shipperCode = selectCompany.companyCode;
+    //整理发货人信息
+    let selectSend = fields.selectSend
+    fields.senderName = selectSend.senderName;
+    fields.senderMobile = selectSend.senderMobile;
+    fields.senderProvince = selectSend.senderProvince;
+    fields.senderCity = selectSend.senderCity;
+    fields.senderExpArea = selectSend.senderExpArea;
+    fields.senderPostCode = selectSend.senderPostCode;
+    fields.senderAddress = selectSend.senderAddress;
+    
+    //分批传到后台
+    let receiver=this.state.selectedRowKeys.receiver;
+    if(receiver.length>10){
+        for(let i=0;i<receiver.length;){
+            let indexStart=i;
+            fields.receiver=[];
+            i+=10;
+            if(i>=receiver.length){
+                i=receiver.length;
+            }
+            for(indexStart;indexStart<i;indexStart++){
+                fields.receiver[indexStart]=receiver[indexStart];
+            }
+            this.commit(fields);
+        } 
+    }else{
+        this.commit(fields);
+    }
+}
 
-
+  /**
+   * 
+   */
+    commit = (fields)=>{
+       
+        this.props.dispatch({
+            type: `kdieorder/batchOrder`,
+            payload: fields,
+            callback: data => {
+              this.handleReload();
+              this.setState({ editForm: undefined });
+                console.log(data);
+            }
+          })
+    }
     render() {
         const { kdicompany: { kdicompany }, loading, user } = this.props;
         const { editForm, editFormType, editFormTitle, editFormRecord, selectedRowKeys } = this.state;

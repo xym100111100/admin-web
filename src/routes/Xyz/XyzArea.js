@@ -5,13 +5,19 @@ import { Button, Card, Divider, Popconfirm, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import XyzAreaForm from './XyzAreaForm';
 import styles from './XyzArea.less';
+import OrgTransferForm from './OrgTransferForm';
 
-@connect(({ xyzarea, loading }) => ({ xyzarea, loading: loading.models.xyzarea }))
+@connect(({ xyzarea,sucorg, loading }) => ({sucorg, xyzarea, loading: loading.models.xyzarea || loading.models.sucorg }))
 export default class XyzArea extends SimpleMng {
   constructor() {
     super();
     this.moduleCode = 'xyzarea';
   }
+
+  
+
+
+
   render() {
     const { xyzarea: { xyzarea }, loading } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
@@ -22,18 +28,32 @@ export default class XyzArea extends SimpleMng {
         dataIndex: 'areaName',
       },
       {
-        title: '录入时间',
-        dataIndex: 'entryTime',
-      },
-      {
         title: '描述',
         dataIndex: 'remark',
+      },
+      {
+        title: '录入时间',
+        dataIndex: 'entryTime',
       },
       {
         title: '操作',
         render: (text, record) => (
           <Fragment>
-            <a onClick={() => this.showEditForm({ id: record.id, editForm: 'sysForm', editFormTitle: '编辑系统信息' })}>
+              <a
+                onClick={() =>
+                  this.showAddForm({
+                    editFormRecord: record,
+                    id: record.id,
+                    editForm: 'OrgForm',
+                    editFormTitle: '设置区域组织',
+                  })
+                }
+                
+              >
+                组织
+              </a>
+            <Divider type="vertical" />
+            <a onClick={() => this.showEditForm({ id: record.id, editForm: 'xyzForm', editFormTitle: '编辑系统信息' })}>
               编辑
             </a>
             <Divider type="vertical" />
@@ -54,7 +74,7 @@ export default class XyzArea extends SimpleMng {
                 <Button
                   icon="plus"
                   type="primary"
-                  onClick={() => this.showAddForm({ editForm: 'sysForm', editFormTitle: '添加新系统' })}
+                  onClick={() => this.showAddForm({ editForm: 'xyzForm', editFormTitle: '添加新系统' })}
                 >
                   添加
                 </Button>
@@ -67,14 +87,26 @@ export default class XyzArea extends SimpleMng {
             </div>
           </Card>
         </PageHeaderLayout>,
-        {editForm === 'sysForm' && (
+        {editForm === 'xyzForm' && (
           <XyzAreaForm
             visible
             title={editFormTitle}
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            onSubmit={fields => this.handleSubmit({ fields })}
+            onSubmit={fields => this.handleSubmit({fields})}
+
+          />
+        )}
+         {editForm === 'OrgForm' && (
+          <OrgTransferForm
+            id={editFormRecord.id}
+            visible
+            modelName='xyzarea'
+            title={editFormTitle}
+            width={815}
+            editFormType={editFormType}
+            closeModal={() => this.setState({ editForm: undefined })}
           />
         )}
       </Fragment>
