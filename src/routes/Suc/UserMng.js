@@ -167,7 +167,7 @@ export default class UserMng extends SimpleMng {
             <Button
               icon="plus"
               type="primary"
-              onClick={() => this.showAddForm({ editForm: 'userRegForm', editFormTitle: '添加新用户' })}
+              onClick={() => this.showEditForm({ editFormRecord: { isOrgAdd: false }, editForm: 'userRegForm', editFormTitle: '添加新用户' })}
             >
               添加
                 </Button>
@@ -243,19 +243,19 @@ export default class UserMng extends SimpleMng {
    * 积分充值
    */
   IntegralPoint = (record) => {
-    const fields=record.fields;
-    fields.accountId=fields.id;
-    fields.oldPoint=fields.point;
-    fields.oldModifiedTimestamp=fields.modifiedTimestamp;
+    const fields = record.fields;
+    fields.accountId = fields.id;
+    fields.oldPoint = fields.point;
+    fields.oldModifiedTimestamp = fields.modifiedTimestamp;
 
     //console.info(fields);
     this.props.dispatch({
-      type:'pntList/recharge',
+      type: 'pntList/recharge',
       payload: record.fields,
       callback: () => {
         this.setState({ editForm: undefined })
         this.handleReload();
-      }        
+      }
     })
   }
 
@@ -530,7 +530,7 @@ export default class UserMng extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
-            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'sucuser' })}
+            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'sucuser', saveMethodName: 'add' })}
           />
         )}
         {editForm === 'userRoleForm' && (
@@ -615,7 +615,7 @@ export default class UserMng extends SimpleMng {
             editFormType={editFormType}
             closeModal={() => this.setState({ editForm: undefined })}
             onSubmit={fields =>
-              this.IntegralPoint({fields})
+              this.IntegralPoint({ fields })
             }
           />
         )}

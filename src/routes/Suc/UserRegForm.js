@@ -2,9 +2,10 @@ import React, { Fragment, PureComponent } from 'react';
 import { Form, Input } from 'antd';
 import EditForm from 'components/Rebue/EditForm';
 
+const FormItem = Form.Item;
+
 // 添加与编辑的表单
 @EditForm
-@Form.create()
 export default class UserRegForm extends PureComponent {
   compareToFirstPassword = (rule, value, callback) => {
     const form = this.props.form;
@@ -15,15 +16,63 @@ export default class UserRegForm extends PureComponent {
     }
   };
 
+  // 提交前事件
+  beforeSave = () => {
+    const { form, record } = this.props;
+
+    let loginName = undefined;
+    let loginPswd = undefined;
+    let comfirmLoginPswd = undefined;
+    let email = undefined;
+    let mobile = undefined;
+    let nickname = undefined;
+    let realname = undefined;
+    let idcard = undefined;
+    // 是否为组织添加
+    let isOrgAdd = record.isOrgAdd;
+
+    form.validateFields((err, values) => {
+      loginName = values.loginName,
+        loginPswd = values.loginPswd,
+        comfirmLoginPswd = values.comfirmLoginPswd,
+        email = values.email,
+        mobile = values.mobile,
+        nickname = values.nickname,
+        realname = values.realname,
+        idcard = values.idcard
+    });
+
+    form.getFieldDecorator('loginName');
+    form.getFieldDecorator('loginPswd');
+    form.getFieldDecorator('comfirmLoginPswd');
+    form.getFieldDecorator('email');
+    form.getFieldDecorator('mobile');
+    form.getFieldDecorator('nickname');
+    form.getFieldDecorator('realname');
+    form.getFieldDecorator('idcard');
+    form.getFieldDecorator('isOrgAdd');
+
+    form.setFieldsValue({
+      loginName: loginName,
+      loginPswd: loginPswd,
+      comfirmLoginPswd: comfirmLoginPswd,
+      email: email,
+      mobile: mobile,
+      nickname: nickname,
+      realname: realname,
+      idcard: idcard,
+      isOrgAdd: isOrgAdd,
+    });
+  }
+
   render() {
-    const FormItem = Form.Item;
-    const { form, editFormType } = this.props;
+    const { form } = this.props;
     return (
       <Fragment>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="登录名称">
           {form.getFieldDecorator('loginName', {
             rules: [{ required: true, message: '请输入用户的登陆名称' }],
-          })(<Input disabled={editFormType !== 'add'} placeholder="请输入用户的登陆名称" />)}
+          })(<Input placeholder="请输入用户的登陆名称" />)}
         </FormItem>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="登录密码">
           {form.getFieldDecorator('loginPswd', {

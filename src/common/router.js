@@ -222,6 +222,11 @@ export const getRouterData = app => {
     '/suc/org-mng': {
       component: dynamicWrapper(app, ['sucuser', 'sucorg', 'sucuserorg', 'user', 'slrshop'], () => import('../routes/Suc/OrgMng')),
     },
+    '/suc/org-user-mng': {
+      component: dynamicWrapper(app, ['sucuser', 'pfmsys', 'pntList', 'pfmuserrole', 'sucorg', 'sucuserorg'], () =>
+        import('../routes/Suc/OrgUserMng')
+      ),
+    },
     '/onl/onl-mng': {
       component: dynamicWrapper(app, ['onlonline', 'BraftEditorUpload', 'onlonlineporomotion', 'prmpartner'], () =>
         import('../routes/Onl/OnlineMng')

@@ -23,6 +23,7 @@ menuData.push({ id: '1536131597104', sysId: 'damai-admin', code: '0500', title: 
 menuData.push({ id: '1536131597105', sysId: 'damai-admin', code: '06', title: null, name: '用户中心', path: 'suc', isEnabled: true, icon: 'team', remark: '用户相关业务' });
 menuData.push({ id: '1536131597106', sysId: 'damai-admin', code: '0600', title: '用户信息', name: '用户信息', path: 'user-mng', isEnabled: true, icon: null, remark: '用户信息相关业务' });
 menuData.push({ id: '1536131597107', sysId: 'damai-admin', code: '0601', title: '组织信息', name: '组织信息', path: 'org-mng', isEnabled: true, icon: null, remark: '组织相关业务' });
+menuData.push({ id: '1536131597169', sysId: 'damai-admin', code: '0601', title: '组织用户', name: '组织用户', path: 'org-user-mng', isEnabled: true, icon: null, remark: '组织用户相关业务' });
 menuData.push({ id: '1536131597108', sysId: 'damai-admin', code: '07', title: null, name: '系统配置', path: 'pfm', isEnabled: true, icon: 'setting', remark: '系统相关业务' });
 menuData.push({ id: '1536131597109', sysId: 'damai-admin', code: '0700', title: '系统', name: '系统', path: 'sys-mng', isEnabled: true, icon: null, remark: '系统相关业务' });
 menuData.push({ id: '1536131597110', sysId: 'damai-admin', code: '0701', title: '菜单', name: '菜单', path: 'menu-mng', isEnabled: true, icon: null, remark: '菜单相关业务' });

@@ -55,6 +55,7 @@ export default {
         nickname: payload.nickname,
         realname: payload.realname,
         sysId: 'damai-admin',
+        isOrgAdd: payload.isOrgAdd,
       });
       const response = yield call(add, payloads[0]);
       if (response.result === 1) {
