@@ -14,7 +14,7 @@ export default class XyzArea extends SimpleMng {
     this.moduleCode = 'xyzarea';
   }
 
-  
+
 
 
 
