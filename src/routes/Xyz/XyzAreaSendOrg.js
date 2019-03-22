@@ -1,7 +1,7 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Button, Form, Card, Input, DatePicker, Divider, Checkbox, Col, Row, Table } from 'antd';
+import { Button, Form, Card, Input,Popconfirm, DatePicker, Divider, Checkbox, Col, Row, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import XyzAreaSendOrgForm from './XyzAreaSendOrgForm';
 import styles from './XyzAreaSendOrg.less';
@@ -71,6 +71,19 @@ export default class XyzAreaSendOrg extends SimpleMng {
             pageSize:data.pageSize
           }
         })
+      },
+    });
+  }
+
+  /**
+   * 删除
+   */
+  handleDel=(record)=>{
+    this.props.dispatch({
+      type: `${this.moduleCode}/del`,
+      payload: {id:record.id},
+      callback: (data) => {
+        this.getSendOrgs();
       },
     });
   }
@@ -250,6 +263,16 @@ export default class XyzAreaSendOrg extends SimpleMng {
       {
         title: '发单量',
         dataIndex: 'count',
+      },
+      {
+        title: '操作',
+        render: (text, record) => (
+          <Fragment>
+            <Popconfirm title="是否要删除此行？" onConfirm={() => this.handleDel(record)}>
+              <a>删除</a>
+            </Popconfirm>
+          </Fragment>
+        ),
       },
     ];
 
