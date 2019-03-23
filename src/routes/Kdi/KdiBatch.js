@@ -12,7 +12,7 @@ import XLSX from 'xlsx';//引入JS读取Excel文件的插件
 import downloadExcel from "./downloadFile/导入模板.xlsx"
 
 
-@connect(({kdieorder ,kdicompany, kditemplate, companydic, user, login, loading,kdisender }) => ({
+@connect(({ kdieorder, kdicompany, kditemplate, companydic, user, login, loading, kdisender }) => ({
     kdicompany,
     kdieorder,
     companydic,
@@ -20,15 +20,17 @@ import downloadExcel from "./downloadFile/导入模板.xlsx"
     user,
     kdisender,
     login,
-    loading: loading.models.kdicompany || loading.models.kditemplate || loading.models.user || loading.models.companydic || loading.models.login ||loading.models.kdieorder||loading.models.kdisender,
+    loading: loading.models.kdicompany || loading.models.kditemplate || loading.models.user || loading.models.companydic || loading.models.login || loading.models.kdieorder || loading.models.kdisender,
 }))
 export default class KdiBatch extends SimpleMng {
     constructor() {
         super();
-        this.moduleCode='kdieorder';
+        this.moduleCode = 'kdieorder';
         this.state.selectedRowKeys = [];
         this.state.hasSelected = false;
         this.state.data = [];
+        this.state.noOrder = [];
+        this.state.allOrder = [];
 
     }
     //初始化
@@ -40,14 +42,7 @@ export default class KdiBatch extends SimpleMng {
      * 清空table
      */
     clearData = () => {
-        console.log(this.state.data);
-        console.log("----------")
-        //打印地址
-        console.log(getArea())
-        console.log(JSON.parse(window.localStorage.getItem('templates')));
-        console.log("开始清除");
         window.localStorage.clear();
-        console.log(JSON.parse(window.localStorage.getItem('templates')));
         this.setState({
             data: [],
             selectedRowKeys: [],
@@ -83,7 +78,7 @@ export default class KdiBatch extends SimpleMng {
         for (let i = 0; i < temp.length; i++) {
             temp[i] = temp[i].replace(/^[\s]*$/, "");
             if (temp[i] !== null && temp[i] !== "") {
-                temp[i] = temp[i].replace(/^\s*/,"");
+                temp[i] = temp[i].replace(/^\s*/, "");
                 array[x++] = temp[i];
             }
         }
@@ -120,9 +115,11 @@ export default class KdiBatch extends SimpleMng {
                 }
             }
         }
+
         //存入localStorage 中
         window.localStorage.setItem("templates", JSON.stringify(receivingInformation));
         this.setState({
+            allOrder: receivingInformation,
             data: JSON.parse(window.localStorage.getItem('templates'))
         })
         this.setState({ editForm: undefined });
@@ -130,9 +127,23 @@ export default class KdiBatch extends SimpleMng {
 
     onSelectChange = (selectedRowKeys, selectedRow) => {
         selectedRowKeys.receiver = selectedRow;
-       // console.log('获取的值', selectedRow);
+        //console.log('获取的值', selectedRow);
+        let noOrder = [];
+        for (let i = 0; i < this.state.allOrder.length; i++) {
+            let temp = this.state.allOrder[i];
+            let flag =true;
+            for (let j = 0; j < selectedRow.length; j++) {
+                if (temp.id === selectedRow[j].id) {
+                    flag=false;
+                    break;
+                }
+            }
+            if(flag){
+                noOrder.push(temp);
+            }
+        }
         const hasSelected = selectedRowKeys.length > 0;//是否勾选订单
-        this.setState({ selectedRowKeys, hasSelected });
+        this.setState({ selectedRowKeys, hasSelected, noOrder });
     }
 
 
@@ -209,6 +220,7 @@ export default class KdiBatch extends SimpleMng {
             }
             setTimeout(() => {
                 this.setState({
+                    allOrder: receivingInformation,
                     data: JSON.parse(window.localStorage.getItem('templates'))
                 })
             }, 500);
@@ -217,74 +229,101 @@ export default class KdiBatch extends SimpleMng {
 
     }
 
-      /**
-   * 批量下单
-   */
-  kdiMessage = (fields) => {
-    const { user } = this.props;
-    fields.orgId = user.currentUser.orgId;
-    fields.sendOpId = user.currentUser.userId;
-    fields.receiver = this.state.selectedRowKeys.receiver;
-    //判断是否选择了发件人
-    if (fields.selectSend.length === 0) {
-      message.error('未选择发件人，不能提交');
-      return;
-    }
-    //判断是否选择了快递公司
-    if (fields.selectCompany.length === 0) {
-      message.error('未选择快递公司，不能提交');
-      return;
-    }
-    //整理快递公司信息
-    let selectCompany = fields.selectCompany
-    fields.shipperId = selectCompany.id;
-    fields.shipperName = selectCompany.companyName;
-    fields.shipperCode = selectCompany.companyCode;
-    //整理发货人信息
-    let selectSend = fields.selectSend
-    fields.senderName = selectSend.senderName;
-    fields.senderMobile = selectSend.senderMobile;
-    fields.senderProvince = selectSend.senderProvince;
-    fields.senderCity = selectSend.senderCity;
-    fields.senderExpArea = selectSend.senderExpArea;
-    fields.senderPostCode = selectSend.senderPostCode;
-    fields.senderAddress = selectSend.senderAddress;
-    
-    //分批传到后台
-    let receiver=this.state.selectedRowKeys.receiver;
-    if(receiver.length>10){
-        for(let i=0;i<receiver.length;){
-            let indexStart=i;
-            fields.receiver=[];
-            i+=10;
-            if(i>=receiver.length){
-                i=receiver.length;
-            }
-            for(indexStart;indexStart<i;indexStart++){
-                fields.receiver[indexStart]=receiver[indexStart];
-            }
-            this.commit(fields);
-        } 
-    }else{
-        this.commit(fields);
-    }
-}
+    /**
+ * 批量下单
+ */
+    kdiMessage = (fields) => {
+        const { user } = this.props;
+        fields.orgId = user.currentUser.orgId;
+        fields.sendOpId = user.currentUser.userId;
+        fields.receiver = this.state.selectedRowKeys.receiver;
+        //判断是否选择了发件人
+        if (fields.selectSend.length === 0) {
+            message.error('未选择发件人，不能提交');
+            return;
+        }
+        //判断是否选择了快递公司
+        if (fields.selectCompany.length === 0) {
+            message.error('未选择快递公司，不能提交');
+            return;
+        }
+        //整理快递公司信息
+        let selectCompany = fields.selectCompany
+        fields.shipperId = selectCompany.id;
+        fields.shipperName = selectCompany.companyName;
+        fields.shipperCode = selectCompany.companyCode;
+        //整理发货人信息
+        let selectSend = fields.selectSend
+        fields.senderName = selectSend.senderName;
+        fields.senderMobile = selectSend.senderMobile;
+        fields.senderProvince = selectSend.senderProvince;
+        fields.senderCity = selectSend.senderCity;
+        fields.senderExpArea = selectSend.senderExpArea;
+        fields.senderPostCode = selectSend.senderPostCode;
+        fields.senderAddress = selectSend.senderAddress;
 
-  /**
-   * 
-   */
-    commit = (fields)=>{
-       
-        this.props.dispatch({
+        //分批传到后台
+        let receiver = this.state.selectedRowKeys.receiver;
+        if (receiver.length > 10) {
+            fields.receiver = [];
+            for (let i = 0; i < receiver.length;) {
+                let indexStart = i;
+                i += 10;
+                if (i >= receiver.length) {
+                    i = receiver.length;
+                }
+                for (indexStart; indexStart < i; indexStart++) {
+                    fields.receiver[indexStart] = receiver[indexStart];
+                }
+                this.commit(fields);
+            }
+        } else {
+            this.commit(fields);
+        }
+    }
+
+    //提交到后台
+    commit = (fields) => {
+        this.setState({ editForm: undefined });
+          this.props.dispatch({
             type: `kdieorder/batchOrder`,
             payload: fields,
             callback: data => {
-              this.handleReload();
-              this.setState({ editForm: undefined });
-                console.log(data);
+                let page = data.printPage;
+                if (data.result === 1) {
+                   this.undisplay(fields.receiver);
+                }
             }
-          })
+        })
     }
+
+    //去除成功下单的发件信息
+    undisplay = (fields) =>{
+        let oldNoOrder=JSON.parse(window.localStorage.getItem('templates'));
+        let newNoOrder=[];
+        for(let i=0;i<oldNoOrder.length;i++){
+            let temp=oldNoOrder[i];
+            let flag= true;
+            for(let j=0;j<fields.length;j++){
+                if(temp.id === fields[j].id){
+                    flag=false;
+                    break;
+                }
+            }
+            if(flag){
+                newNoOrder.push(temp);
+            }
+        }
+        window.localStorage.clear();
+        window.localStorage.setItem("templates", JSON.stringify(newNoOrder));
+        this.setState({
+            selectedRowKeys: [],
+            hasSelected : false,
+            noOrder:newNoOrder,
+            data:JSON.parse(window.localStorage.getItem('templates'))
+        })
+    }
+
     render() {
         const { kdicompany: { kdicompany }, loading, user } = this.props;
         const { editForm, editFormType, editFormTitle, editFormRecord, selectedRowKeys } = this.state;
@@ -349,7 +388,7 @@ export default class KdiBatch extends SimpleMng {
 
                                 </Col>
 
-                                <Col md={5} sm={24} style={{marginLeft:30}} >
+                                <Col md={5} sm={24} style={{ marginLeft: 30 }} >
                                     <Button icon="copy" onClick={() => this.showCopyForm()}>复制并导入收货信息</Button>
                                 </Col>
                                 <Col md={4} sm={24}  >
@@ -360,7 +399,7 @@ export default class KdiBatch extends SimpleMng {
                                          </Button>
                                     </Upload>
                                 </Col>
-                                <Col md={4} sm={24} style={{marginTop:5}} >
+                                <Col md={4} sm={24} style={{ marginTop: 5 }} >
                                     <a
                                         href={downloadExcel} download="导入模板.xlsx"
                                         title="导入模板.xlsx"

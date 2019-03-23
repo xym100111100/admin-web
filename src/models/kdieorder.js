@@ -69,6 +69,7 @@ export default {
         if (callback) callback(response);
       } else {
         message.error(response.msg);
+        if (callback) callback(response);
       }
     },
   },
