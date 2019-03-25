@@ -251,7 +251,7 @@ export default class OrdSendForm extends PureComponent {
             fieldsValue.split = this.state.split;
             fieldsValue.first = this.props.first;
             //判断是否选择了发件人和整理发件人
-            if (this.state.selectSend === '') {
+            if (this.state.selectSend === undefined) {
                 message.error('未选择发件人，不能提交');
                 return;
             } else {
@@ -264,7 +264,7 @@ export default class OrdSendForm extends PureComponent {
                 fieldsValue.senderAddress = this.state.selectSend.senderAddress;
             }
             //判断是否选择了快递公司和整理快递公司
-            if (this.state.selectCompany === '') {
+            if (this.state.selectCompany === undefined) {
                 message.error('未选择快递公司，不能提交');
                 return;
             } else {

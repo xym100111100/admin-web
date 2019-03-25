@@ -25,11 +25,11 @@ export default class HomeIndex extends SimpleMng {
 
 
   componentDidMount() {
-    const { roles} = this.props.user;
+    const { roles } = this.props.user;
     for (let i = 0; i < roles.length; i++) {
-      if(roles[i].indexPath !=='' && roles[i].indexPath !==undefined){
-          window.location.href=roles[i].indexPath;
-          break;
+      if (roles[i].indexPath !== '' && roles[i].indexPath !== undefined) {
+        window.location.href = roles[i].indexPath;
+        break;
       }
     }
     this.setState({
@@ -80,83 +80,18 @@ export default class HomeIndex extends SimpleMng {
 
     return (
       <Fragment>
-        <PageHeaderLayout>
-          <Card bordered={false}>
-            <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
-              <Col style={{ textAlign: 'center' }} md={24} sm={24}>
-                <h2>{this.state.currentUserName} 欢迎您登录大卖后台</h2>
-              </Col>
-            </Row>
-          </Card>
-          <br />
-          <Row gutter={24}>
-            <Col {...topColResponsiveProps}>
-              <ChartCard
-                bordered={false}
-                title="常见问题"
-                style={{ height: 362 }}
-                contentHeight={170}
-              >
-              <div  >
-                <a style={{ fontSize: 20 }} onClick={() => this.deliveryProcess()}>发货流程说明</a>
-                <br />
-                <a style={{ fontSize: 20 }} onClick={() => this.cashWithdrawal()}>提现时间及流程说明</a>
-                </div>
-              </ChartCard>
-            </Col>
-
-            <Col {...topColResponsiveProps}>
-              <ChartCard
-                bordered={false}
-                title="未发货的订单"
-                contentHeight={170}
-                style={{ height: 362 }}
-              >
-                <div  style={{ fontSize: 30, textAlign: 'center' }}>
-                  <a href="#/sup/sup-order">
-                    <span style={{ fontWeight: 'bold', fontSize: 50 }}>
-                      {this.state.unshipmentsNumber}
-                    </span>
-                    个订单等待发货
-                  </a>
-                </div>
-              </ChartCard>
-            </Col>
-
-            <Col {...topColResponsiveProps}>
-              <ChartCard
-                bordered={false}
-                title="更新通知 : 2019-03-12"
-                style={{ height: 362,}}
-              >
-              <div >
-               <p style={{color:'red'}} >发货流程已经修改，请各用户再仔细浏览一次发货流程说明！！！</p>
-               <a></a>
-               </div>
-              </ChartCard>
+        <Card bordered={false}>
+          <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
+            <Col style={{ textAlign: 'center' }} md={24} sm={24}>
+              <h2>{this.state.currentUserName} 供应商欢迎您登录大卖后台</h2>
             </Col>
           </Row>
-        </PageHeaderLayout>
-        {editForm === 'deliveryProcess' && (
-          <DeliveryProcess
-            id={editFormRecord.id}
-            visible
-            width={1200}
-            title={editFormTitle}
-            editFormType={editFormType}
-            closeModal={() => this.setState({ editForm: undefined })}
-          />
-        )}
-        {editForm === 'cashWithdrawal' && (
-          <CashWithdrawal
-            id={editFormRecord.id}
-            visible
-            width={1200}
-            title={editFormTitle}
-            editFormType={editFormType}
-            closeModal={() => this.setState({ editForm: undefined })}
-          />
-        )}
+          <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
+            <Col style={{ textAlign: 'center' }} md={24} sm={24}>
+              <Calendar />
+            </Col>
+          </Row>
+        </Card>
       </Fragment>
     );
   }

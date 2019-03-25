@@ -73,6 +73,11 @@ export const getRouterData = app => {
         import('../routes/Home/HomeIndex')
       ),
     },
+    '/home/SupIndex': {
+      component: dynamicWrapper(app, ['homeindex', 'user', 'ordorder'], () =>
+        import('../routes/Home/SupIndex')
+      ),
+    },
     '/stu/stu-student': {
       component: dynamicWrapper(app, ['student'], () => import('../routes/stu/student')),
     },
