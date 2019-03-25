@@ -23,10 +23,15 @@ export default class HomeIndex extends SimpleMng {
     this.state.unshipmentsNumber = 0;
   }
 
-  onPanelChange(value, mode) {
 
-  }
   componentDidMount() {
+    const { roles} = this.props.user;
+    for (let i = 0; i < roles.length; i++) {
+      if(roles[i].indexPath !=='' && roles[i].indexPath !==undefined){
+          window.location.href=roles[i].indexPath;
+          break;
+      }
+    }
     this.setState({
       currentUserName: this.props.user.currentUser.nickname,
     })

@@ -12,6 +12,11 @@ const { TextArea } = Input;
 }))
 @EditForm
 export default class RoleForm extends PureComponent {
+
+  onChange = (value) => {
+    console.log('changed', value);
+  }
+
   render() {
     const { form } = this.props;
     return (
@@ -22,6 +27,10 @@ export default class RoleForm extends PureComponent {
           {form.getFieldDecorator('name', {
             rules: [{ required: true, message: '请输入角色的名称' }],
           })(<Input placeholder="请输入角色的名称" />)}
+        </FormItem>
+        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="路径">
+          {form.getFieldDecorator('indexPath', {
+          })(<Input placeholder="请输入首页路径" />)}
         </FormItem>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="描述">
           {form.getFieldDecorator('remark', {})(<TextArea placeholder="请输入角色的描述" rows={4} />)}

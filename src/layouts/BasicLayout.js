@@ -300,6 +300,7 @@ class BasicLayout extends React.PureComponent {
 export default connect(({ user, global, loading }) => ({
   currentUser: user.currentUser,
   urns: user.urns,
+  roles:user.roles,
   menus: user.menus,
   collapsed: global.collapsed,
   fetchingNotices: loading.effects['global/fetchNotices'],

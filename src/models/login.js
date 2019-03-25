@@ -13,8 +13,8 @@ export default {
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(login, payload);
-      const { result: status, msg, userId, orgId, nickname, menus, urns } = response;
-      const currentUser = { userId, orgId, nickname, menus, urns };
+      const { result: status, msg, userId, orgId, nickname, menus,roles, urns } = response;
+      const currentUser = { userId, orgId, nickname, menus, urns,roles };
 
       yield put({
         type: 'changeLoginStatus',

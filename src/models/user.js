@@ -10,6 +10,7 @@ export default {
     currentUser: {},
     urns: [],
     menus: [],
+    roles:[],
   },
 
   effects: {
@@ -37,11 +38,12 @@ export default {
       };
     },
     saveCurrentUser(state, action) {
-      const { menus, urns, ...currentUser } = action.payload;
+      const { menus, urns,roles, ...currentUser } = action.payload;
       return {
         ...state,
         currentUser,
         urns,
+        roles,
         menus: TreeUtils.convertFlatToTree(menus),
       };
     },
