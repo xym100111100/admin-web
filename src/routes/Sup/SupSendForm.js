@@ -215,7 +215,7 @@ export default class SupSendForm extends PureComponent {
             if (this.state.selectCompany.companyPwd !== undefined && this.state.selectCompany.companyPwd !== null && this.state.selectCompany.companyPwd !== '') {
                 return (
                     <div>
-                        <p style={{ marginBottom: -1 }} >发货备注:</p>
+                        <p style={{ marginBottom: -1,fontSize:18,color:'#1890ff' }} >发货备注:</p>
                         <textarea onChange={(value) => this.textChange(value)} style={{ width: '100%', }} rows="6" value={orderDetail} >
                         </textarea>
                     </div>
@@ -225,7 +225,7 @@ export default class SupSendForm extends PureComponent {
             if (this.state.selectCompany.companyPwd !== undefined && this.state.selectCompany.companyPwd !== null && this.state.selectCompany.companyPwd !== '') {
                 return (
                     <div>
-                        <p style={{ marginBottom: -1 }} >发货备注:</p>
+                        <p style={{ marginBottom: -1,fontSize:18,color:'#1890ff' }} >发货备注:</p>
                         <textarea onChange={(value) => this.textChange(value)} style={{ width: '100%', }} rows="6" value={orderDetail} >
                         </textarea>
                     </div>
@@ -609,7 +609,7 @@ export default class SupSendForm extends PureComponent {
             if (this.state.selectCompany.companyPwd === undefined || this.state.selectCompany.companyPwd === null || this.state.selectCompany.companyPwd === '') {
                 return (
                     <div>
-                        <p style={{ marginBottom: -1 }} >物流单号:</p>
+                        <p style={{ marginBottom: -1,fontSize:18,color:'#1890ff' }} >物流单号:</p>
                         <textarea placeholder="请输入物流单号，多个单号请换行区分，注意删除多余空格，且单号的数量要与要发的包裹相等。" onChange={(value) => this.logisticCodeChange(value)} style={{ width: '100%', }} rows="6"  >
 
                         </textarea>
@@ -620,7 +620,7 @@ export default class SupSendForm extends PureComponent {
             if (this.state.selectCompany.companyPwd === undefined || this.state.selectCompany.companyPwd === null || this.state.selectCompany.companyPwd === '') {
                 return (
                     <div>
-                        <p style={{ marginBottom: -1 }} >物流单号:</p>
+                        <p style={{ marginBottom: -1,fontSize:18,color:'#1890ff' }} >物流单号:</p>
                         <textarea placeholder="请输入物流单号，多个单号请换行区分，注意删除多余空格，且单号的数量要与要发的包裹相等。" onChange={(value) => this.logisticCodeChange(value)} style={{ width: '100%', }} rows="6"  >
 
                         </textarea>
