@@ -2,13 +2,7 @@ import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
 import { Col, Row, Card, Calendar, Form } from 'antd';
-import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import DeliveryProcess from './DeliveryProcess'
-import CashWithdrawal from './CashWithdrawal'
 
-import {
-  ChartCard,
-} from 'components/Charts';
 
 @Form.create()
 @connect(({ homeindex, user, loading, ordorder }) => ({
@@ -26,45 +20,17 @@ export default class HomeIndex extends SimpleMng {
 
   componentDidMount() {
     const { roles } = this.props.user;
-    for (let i = 0; i < roles.length; i++) {
-      if (roles[i].indexPath !== '' && roles[i].indexPath !== undefined) {
-        window.location.href = roles[i].indexPath;
-        break;
+    if(roles !==undefined && roles.length !==undefined ){
+      for (let i = 0; i < roles.length; i++) {
+        if (roles[i].indexPath !== '' && roles[i].indexPath !== undefined) {
+          window.location.href = roles[i].indexPath;
+          break;
+        }
       }
     }
-    this.setState({
-      currentUserName: this.props.user.currentUser.nickname,
-    })
-    this.unshipments();
-  }
-
-  unshipments = () => {
-    if (this.props.user.currentUser.orgId !== undefined && this.props.user.currentUser.orgId !== null) {
-      this.props.dispatch({
-        type: `ordorder/getUnshipmentsByDeliverOrgId`,
-        payload: { deliverOrgId: this.props.user.currentUser.orgId },
-        callback: data => {
-          this.setState({
-            unshipmentsNumber: data
-          })
-        }
-      });
-    }
 
   }
 
-  deliveryProcess = () => {
-    this.showEditForm({
-      editForm: 'deliveryProcess',
-      editFormTitle: '发货流程',
-    })
-  }
-  cashWithdrawal = () => {
-    this.showEditForm({
-      editForm: 'cashWithdrawal',
-      editFormTitle: '提现时间及流程',
-    })
-  }
 
   render() {
     const { homeindex: { homeindex }, loading } = this.props;
