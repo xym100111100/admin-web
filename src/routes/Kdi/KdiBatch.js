@@ -161,7 +161,7 @@ export default class KdiBatch extends SimpleMng {
         }, () => {
             window.localStorage.clear();
         })
-
+        let receivingInformation = [];
         setTimeout(() => {
             if (obj.file.status !== 'uploading') {
                 let f = obj.fileList[obj.fileList.length - 1].originFileObj;
@@ -174,7 +174,7 @@ export default class KdiBatch extends SimpleMng {
                     });
                     let sheet0 = wb.Sheets[wb.SheetNames[0]];//sheet0代表excel表格中的第一页
                     let str = XLSX.utils.sheet_to_json(sheet0);//利用接口实现转换。
-                    let receivingInformation = [];
+
                     for (let i = 0; i < str.length; i++) {
                         receivingInformation[i] = splitAddr(str[i].收货地址);
                         receivingInformation[i].id = i + 1;
