@@ -32,6 +32,7 @@ export default class KdiBatch extends SimpleMng {
         this.state.noOrder = [];
         this.state.allOrder = [];
 
+        iframeHTML: '<div></div>'//用于打印
     }
     //初始化
     componentDidMount() {
@@ -131,14 +132,14 @@ export default class KdiBatch extends SimpleMng {
         let noOrder = [];
         for (let i = 0; i < this.state.allOrder.length; i++) {
             let temp = this.state.allOrder[i];
-            let flag =true;
+            let flag = true;
             for (let j = 0; j < selectedRow.length; j++) {
                 if (temp.id === selectedRow[j].id) {
-                    flag=false;
+                    flag = false;
                     break;
                 }
             }
-            if(flag){
+            if (flag) {
                 noOrder.push(temp);
             }
         }
@@ -285,32 +286,39 @@ export default class KdiBatch extends SimpleMng {
     //提交到后台
     commit = (fields) => {
         this.setState({ editForm: undefined });
-          this.props.dispatch({
+        this.props.dispatch({
             type: `kdieorder/batchOrder`,
             payload: fields,
             callback: data => {
-                let page = data.printPage;
                 if (data.result === 1) {
-                   this.undisplay(fields.receiver);
+                    this.undisplay(fields.receiver);
+                    //设置打印页面
+                    this.setState({
+                        iframeHTML: data.printPage
+                    }, () => {
+                        setTimeout(() => {
+                            this.refs.myFocusInput.contentWindow.print();
+                        }, 1000);
+                    })
                 }
             }
         })
     }
 
     //去除成功下单的发件信息
-    undisplay = (fields) =>{
-        let oldNoOrder=JSON.parse(window.localStorage.getItem('templates'));
-        let newNoOrder=[];
-        for(let i=0;i<oldNoOrder.length;i++){
-            let temp=oldNoOrder[i];
-            let flag= true;
-            for(let j=0;j<fields.length;j++){
-                if(temp.id === fields[j].id){
-                    flag=false;
+    undisplay = (fields) => {
+        let oldNoOrder = JSON.parse(window.localStorage.getItem('templates'));
+        let newNoOrder = [];
+        for (let i = 0; i < oldNoOrder.length; i++) {
+            let temp = oldNoOrder[i];
+            let flag = true;
+            for (let j = 0; j < fields.length; j++) {
+                if (temp.id === fields[j].id) {
+                    flag = false;
                     break;
                 }
             }
-            if(flag){
+            if (flag) {
                 newNoOrder.push(temp);
             }
         }
@@ -318,9 +326,9 @@ export default class KdiBatch extends SimpleMng {
         window.localStorage.setItem("templates", JSON.stringify(newNoOrder));
         this.setState({
             selectedRowKeys: [],
-            hasSelected : false,
-            noOrder:newNoOrder,
-            data:JSON.parse(window.localStorage.getItem('templates'))
+            hasSelected: false,
+            noOrder: newNoOrder,
+            data: JSON.parse(window.localStorage.getItem('templates'))
         })
     }
 
@@ -377,6 +385,7 @@ export default class KdiBatch extends SimpleMng {
         ];
         return (
             <PageHeaderLayout title="快递批量下单">
+                <iframe name="print" style={{ display: 'none' }} ref="myFocusInput" srcdoc={this.state.iframeHTML} ></iframe>
                 <Card bordered={false}>
                     <div className={styles.tableList}>
                         <div className={styles.tableListOperator}>
