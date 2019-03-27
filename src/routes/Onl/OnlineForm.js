@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Card, Row, message, Input, Form, Col, Table, Upload, Icon, Modal, Radio, Select } from 'antd';
+import { Card, Row, message, Input, Form, Col, Table, Upload, Icon, Modal, Radio, Select, Button } from 'antd';
 import EditForm from 'components/Rebue/EditForm';
 import EditableTable from 'components/Rebue/EditableTable';
 // 引入编辑器以及EditorState子模块
@@ -47,6 +47,8 @@ export default class OnlineForm extends React.Component {
     editorState: BraftEditor.createEditorState(null),
     //是否能修改供应商,0：否,1：是,2：是，并修改该商品未结算的订单的供应商。
     isEditSupplier: 0,
+    // 上线规格table表格
+    columns: [],
   };
 
   // 获取上线信息包括：上线信息、规格信息、图片信息等
@@ -234,8 +236,30 @@ export default class OnlineForm extends React.Component {
 
   // 选择板块类型事件
   onChangeRadio = e => {
+    let { columns } = this.state;
+    for (let i = 0; i < columns.length; i++) {
+      let column = columns[i];
+      // 如果板块类型为全返和上线规格的table表格里面有返现金额时，则删除该字段
+      if (column.dataIndex === 'cashbackAmount' && e.target.value === 1) {
+        columns.splice(i, 1);
+      }
+      // 判断板块类型为普通返现时，判断成本价格下一个是否为返现金额，如果不是则加上
+      if (column.dataIndex === 'costPrice' && e.target.value === 0) {
+        if (columns[i + 1].dataIndex !== 'cashbackAmount') {
+          let cashbackAmount = {
+            title: '返现金额',
+            dataIndex: 'cashbackAmount',
+            align: 'center',
+            width: '90px',
+          };
+          columns.splice(i + 1, 0, cashbackAmount);
+        }
+      }
+    }
+
     this.setState({
       subjectType: e.target.value,
+      columns
     });
   };
 
@@ -256,6 +280,85 @@ export default class OnlineForm extends React.Component {
     this.setState({
       isEditSupplier: e.target.value,
     });
+  }
+
+  customizeAttr = () => {
+    console.log(111);
+    let attrName = document.getElementById("attrName").value.trim();
+    if (attrName === null || attrName === undefined || attrName === '') {
+      message.error("请输入属性名");
+      return;
+    }
+
+    // 上线规格table表格
+    let { columns, subjectType } = this.state;
+    if (columns.length === 0) {
+      columns = [
+        {
+          title: attrName,
+          dataIndex: 'onlineSpec',
+          align: 'center',
+        },
+        {
+          title: '上线价格',
+          dataIndex: 'salePrice',
+          align: 'center',
+          width: '90px',
+        },
+        {
+          title: '成本价格',
+          dataIndex: 'costPrice',
+          align: 'center',
+          width: '90px',
+        },
+        {
+          title: '返现金额',
+          dataIndex: 'cashbackAmount',
+          align: 'center',
+          width: '90px',
+        },
+        {
+          title: '本次上线数量',
+          dataIndex: 'currentOnlineCount',
+          align: 'center',
+          width: '90px',
+        },
+        {
+          title: '限购数量',
+          dataIndex: 'limitCount',
+          align: 'center',
+          width: '90px',
+        },
+        {
+          title: '单位',
+          dataIndex: 'saleUnit',
+          align: 'center',
+          width: '90px',
+        },
+      ];
+
+      // 如果板块类型为全返时，去掉返现金额
+      if (subjectType === 1) {
+        columns.splice(3, 1);
+      }
+    } else {
+      for (let i = 0; i < columns.length; i++) {
+        const element = columns[i];
+        console.log(element)
+        if (element.dataIndex === 'salePrice') {
+          let column = {
+            title: attrName,
+            dataIndex: 'onlineSpec' + i - 1,
+            align: 'center',
+            width: '90px',
+          };
+
+          columns.splice(i - 1, 0, column);
+        }
+      }
+    }
+    console.log(columns)
+    this.setState({ columns });
   }
 
   // 提交前事件
@@ -344,8 +447,8 @@ export default class OnlineForm extends React.Component {
       subjectType,
       partnerData,
       isEditSupplier,
+      columns,
     } = this.state;
-
 
     // 商品主图、轮播图上传图标
     const uploadButton = (
@@ -354,55 +457,6 @@ export default class OnlineForm extends React.Component {
         <div className="ant-upload-text" />
       </div>
     );
-
-    // 上线规格table表格
-    const columns = [
-      {
-        title: '规格名称',
-        dataIndex: 'onlineSpec',
-        align: 'center',
-      },
-      {
-        title: '上线价格',
-        dataIndex: 'salePrice',
-        align: 'center',
-        width: '90px',
-      },
-      {
-        title: '成本价格',
-        dataIndex: 'costPrice',
-        align: 'center',
-        width: '90px',
-      },
-      {
-        title: '返现金额',
-        dataIndex: 'cashbackAmount',
-        align: 'center',
-        width: '90px',
-      },
-      {
-        title: '本次上线数量',
-        dataIndex: 'currentOnlineCount',
-        align: 'center',
-        width: '120px',
-      },
-      {
-        title: '限购数量',
-        dataIndex: 'limitCount',
-        align: 'center',
-        width: '100px',
-      },
-      {
-        title: '单位',
-        dataIndex: 'saleUnit',
-        align: 'center',
-        width: '90px',
-      },
-    ];
-
-    if (subjectType === 1) {
-      columns.splice(3, 1);
-    }
 
     // 不在工具栏显示的控件列表
     const excludeControls = [
@@ -503,16 +557,27 @@ export default class OnlineForm extends React.Component {
           <Col md={24} sm={24}>
             <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="规格信息">
               {
-                <div style={{ border: 'solid 1px rgba(0, 0, 0, 0.25)' }}>
-                  <EditableTable onCheck={this.handleCheck} ref="editableTable">
-                    <Table
-                      rowKey="id"
-                      pagination={false}
-                      loading={loading}
-                      dataSource={onlOnlineSpec}
-                      columns={columns}
-                    />
-                  </EditableTable>
+                <div>
+                  <br />
+                  <div style={{ border: 'solid 1px rgba(0, 0, 0, 0.25)', marginLeft: -70 }}>
+                    {
+                      columns.length === 0 ? <div id="skuDivId"></div> :
+                        <div id="skuDivId">
+                          <EditableTable onCheck={this.handleCheck} ref="editableTable">
+                            <Table
+                              rowKey="id"
+                              pagination={false}
+                              loading={loading}
+                              dataSource={onlOnlineSpec}
+                              columns={columns}
+                            />
+                          </EditableTable>
+                        </div>
+                    }
+                    <div >
+                      &nbsp;<Input id="attrName" placeholder="自定义属性" style={{ width: 180 }} />&nbsp;&nbsp;<Button icon="plus" onClick={this.customizeAttr} />
+                    </div>
+                  </div>
                 </div>
               }
             </FormItem>
@@ -523,12 +588,12 @@ export default class OnlineForm extends React.Component {
                 <div className="clearfix">
                   <Upload
                     action="/ise-svr/ise/upload"
-                    // action="http://192.168.1.203:43135/ise/upload"
+                    // action="http://192.168.1.203:46643/ise/upload"
                     listType="picture-card"
                     fileList={fileList}
                     name="multipartFile"
                     data={uploadData}
-                    multiple={true}
+                    multiple={false}
                     onPreview={this.handlePreview}
                     onChange={this.handleChange}
                     className="damaiQsmm"
@@ -548,7 +613,7 @@ export default class OnlineForm extends React.Component {
                 <div className="clearfix">
                   <Upload
                     action="/ise-svr/ise/upload"
-                    // action="http://192.168.1.203:43135/ise/upload"
+                    // action="http://192.168.1.203:46643/ise/upload"
                     listType="picture-card"
                     fileList={fileLists}
                     name="multipartFile"

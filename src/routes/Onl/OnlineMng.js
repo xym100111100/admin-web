@@ -315,6 +315,7 @@ export default class OnlineMng extends SimpleMng {
             id={editFormRecord.id}
             editFormType={editFormType}
             record={editFormRecord}
+            onFullScreen
             closeModal={() => this.setState({ editForm: undefined })}
             onSubmit={fields =>
               this.handleSubmit({
