@@ -6,7 +6,7 @@ import request from '../utils/request';
  * @param {*} params 
  */
 export async function list(params) {
-  return request(`/slr-svr/slr/searchcategory?${stringify(params)}`);
+  return request(`/onl-svr/onl/searchcategory?${stringify(params)}`);
 }
 
 /**
@@ -14,7 +14,7 @@ export async function list(params) {
  * @param {*} params 
  */
 export async function getById(params) {
-  return request(`/slr-svr/slr/searchcategory/getbyid?${stringify(params)}`);
+  return request(`/onl-svr/onl/searchcategory/getbyid?${stringify(params)}`);
 }
 
 /**
@@ -22,7 +22,7 @@ export async function getById(params) {
  * @param {*} params 
  */
 export async function add(params) {
-  return request('/slr-svr/slr/searchcategory', {
+  return request('/onl-svr/onl/searchcategory', {
     method: 'POST',
     body: {
       ...params,
@@ -35,7 +35,7 @@ export async function add(params) {
  * @param {*} params 
  */
 export async function modify(params) {
-  return request('/slr-svr/slr/searchcategory', {
+  return request('/onl-svr/onl/searchcategory', {
     method: 'PUT',
     body: {
       ...params,
@@ -48,7 +48,7 @@ export async function modify(params) {
  * @param {*} params 
  */
 export async function enable(params) {
-  return request(`/slr-svr/slr/searchcategory/enable`, {
+  return request(`/onl-svr/onl/searchcategory/enable`, {
     method: 'PUT',
     body: {
       ...params,

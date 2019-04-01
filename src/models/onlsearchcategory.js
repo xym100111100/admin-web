@@ -1,11 +1,11 @@
 import { message } from 'antd';
-import { list, getById, add, modify, enable } from '../services/slrsearchcategory';
+import { list, getById, add, modify, enable } from '../services/onlsearchcategory';
 
 export default {
-  namespace: 'slrsearchcategory',
+  namespace: 'onlsearchcategory',
 
   state: {
-    slrsearchcategory: [],
+    onlsearchcategory: [],
   },
 
   effects: {
@@ -53,7 +53,7 @@ export default {
   reducers: {
     changeList(state, action) {
       return {
-        slrsearchcategory: action.payload,
+        onlsearchcategory: action.payload,
       };
     },
 

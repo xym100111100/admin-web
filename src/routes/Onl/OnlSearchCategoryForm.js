@@ -96,7 +96,7 @@ export default class SlrSearchCategoryForm extends React.Component {
                 {form.getFieldDecorator('id')(<Input type="hidden" />)}
                 <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="分类名称">
                     {form.getFieldDecorator('name', {
-                        rules: [{ required: false, message: '请输入分类的名称' }],
+                        rules: [{ required: true, message: '请输入分类的名称' }],
                     })(<Input placeholder="请输入分类的名称" />)}
                 </FormItem>
                 <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="分类备注">

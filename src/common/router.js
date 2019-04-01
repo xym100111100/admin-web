@@ -185,7 +185,7 @@ export const getRouterData = app => {
       ),
     },
     '/slr/slr-shop-mng': {
-      component: dynamicWrapper(app, ['slrshop', 'slrshopaccount', 'slrsearchcategory'], () =>
+      component: dynamicWrapper(app, ['slrshop', 'slrshopaccount', 'onlsearchcategory'], () =>
         import('../routes/Slr/SlrShopMng')
       ),
     },
@@ -194,9 +194,9 @@ export const getRouterData = app => {
         import('../routes/Slr/SlrSellerMng')
       ),
     },
-    '/slr/slr-search-category-mng': {
-      component: dynamicWrapper(app, ['slrsearchcategory', 'slrshop'], () =>
-        import('../routes/Slr/SlrSearchCategoryMng')
+    '/onl/onl-search-category-mng': {
+      component: dynamicWrapper(app, ['onlsearchcategory', 'slrshop'], () =>
+        import('../routes/Onl/OnlSearchCategoryMng')
       ),
     },
     '/pfm/script-mng': {

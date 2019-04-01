@@ -6,7 +6,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DescriptionList from 'components/DescriptionList';
 import SlrShopForm from './SlrShopForm';
 import SlrShopAccountForm from './SlrShopAccountForm';
-import SlrSearchCategoryForm from './SlrSearchCategoryForm';
+import OnlSearchCategoryForm from '../Onl/OnlSearchCategoryForm';
 import styles from './SlrShopMng.less';
 
 const { Description } = DescriptionList;
@@ -113,7 +113,7 @@ export default class SlrShopMng extends SimpleMng {
                             用户
                         </a>
                         <Divider type="vertical" />
-                        <a onClick={() => this.showAddForm({ editFormRecord: record, editForm: 'SlrSearchCategoryForm', editFormTitle: '添加分类' })}>
+                        <a onClick={() => this.showAddForm({ editFormRecord: record, editForm: 'OnlSearchCategoryForm', editFormTitle: '添加分类' })}>
                             添加分类
                         </a>
                     </Fragment>
@@ -205,14 +205,14 @@ export default class SlrShopMng extends SimpleMng {
                     />
                 )}
 
-                {editForm === 'SlrSearchCategoryForm' && (
-                    <SlrSearchCategoryForm
+                {editForm === 'OnlSearchCategoryForm' && (
+                    <OnlSearchCategoryForm
                         visible
                         title={editFormTitle}
                         editFormType={editFormType}
                         record={editFormRecord}
                         closeModal={() => this.setState({ editForm: undefined })}
-                        onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'slrsearchcategory', saveMethodName: editFormType === 'add' ? 'add' : 'modify' })}
+                        onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'onlsearchcategory', saveMethodName: editFormType === 'add' ? 'add' : 'modify' })}
                     />
                 )}
             </Fragment>

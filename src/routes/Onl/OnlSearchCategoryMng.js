@@ -1,21 +1,19 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Button, Form, Card, Switch, Divider, Row, Col, Table, Popover, Tabs } from 'antd';
+import { Button, Form, Card, Switch, Divider, Table, Tabs } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import DescriptionList from 'components/DescriptionList';
-import styles from './SlrShopMng.less';
-import SlrSearchCategoryForm from './SlrSearchCategoryForm';
+import styles from './OnlSearchCategoryMng.less';
+import OnlSearchCategoryForm from './OnlSearchCategoryForm';
 
-const { Description } = DescriptionList;
 const { TabPane } = Tabs;
 
 @Form.create()
-@connect(({ slrsearchcategory, slrshop, loading }) => ({ slrsearchcategory, slrshop, loading: loading.models.slrsearchcategory }))
-export default class SlrSearchCategoryMng extends SimpleMng {
+@connect(({ onlsearchcategory, slrshop, loading }) => ({ onlsearchcategory, slrshop, loading: loading.models.onlsearchcategory }))
+export default class OnlSearchCategoryMng extends SimpleMng {
     constructor() {
         super();
-        this.moduleCode = 'slrsearchcategory';
+        this.moduleCode = 'onlsearchcategory';
         this.state.options = {
             pageNum: 1,
             pageSize: 5,
@@ -37,7 +35,7 @@ export default class SlrSearchCategoryMng extends SimpleMng {
     handleUserReload(selectedRows) {
         // 加载用户信息
         this.props.dispatch({
-            type: 'slrsearchcategory/list',
+            type: 'onlsearchcategory/list',
             payload: {
                 pageNum: 1,
                 pageSize: 5,
@@ -69,7 +67,7 @@ export default class SlrSearchCategoryMng extends SimpleMng {
     // 启用/禁用搜索分类
     handleEnable(record) {
         this.props.dispatch({
-            type: `slrsearchcategory/enable`,
+            type: `onlsearchcategory/enable`,
             payload: {
                 sellerId: record.sellerId,
                 shopId: record.shopId,
@@ -83,7 +81,7 @@ export default class SlrSearchCategoryMng extends SimpleMng {
     }
 
     render() {
-        const { slrsearchcategory: { slrsearchcategory }, slrshop: { slrshop }, loading } = this.props;
+        const { onlsearchcategory: { onlsearchcategory }, slrshop: { slrshop }, loading } = this.props;
         const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
         const columns = [
             {
@@ -130,7 +128,7 @@ export default class SlrSearchCategoryMng extends SimpleMng {
                 title: '操作',
                 render: (text, record) => (
                     <Fragment>
-                        <a onClick={() => this.showEditForm({ id: record.id, editFormRecord: record, editForm: 'SlrSearchCategoryForm', editFormTitle: '编辑分类信息' })}>
+                        <a onClick={() => this.showEditForm({ id: record.id, editFormRecord: record, editForm: 'OnlSearchCategoryForm', editFormTitle: '编辑分类信息' })}>
                             编辑
                         </a>
                         <Divider type="vertical" />
@@ -143,22 +141,22 @@ export default class SlrSearchCategoryMng extends SimpleMng {
         ];
 
         let ps;
-        if (slrsearchcategory === undefined || slrsearchcategory.pageSize === undefined) {
+        if (onlsearchcategory === undefined || onlsearchcategory.pageSize === undefined) {
             ps = 5;
         } else {
-            ps = slrsearchcategory.pageSize;
+            ps = onlsearchcategory.pageSize;
         }
         let tl;
-        if (slrsearchcategory === undefined || slrsearchcategory.total === undefined) {
+        if (onlsearchcategory === undefined || onlsearchcategory.total === undefined) {
             tl = 1;
         } else {
-            tl = Number(slrsearchcategory.total);
+            tl = Number(onlsearchcategory.total);
         }
-        let slrsearchcategoryData;
-        if (slrsearchcategory === undefined) {
-            slrsearchcategoryData = [];
+        let onlsearchcategoryData;
+        if (onlsearchcategory === undefined) {
+            onlsearchcategoryData = [];
         } else {
-            slrsearchcategoryData = slrsearchcategory.list;
+            onlsearchcategoryData = onlsearchcategory.list;
         }
 
         // 分页
@@ -186,32 +184,32 @@ export default class SlrSearchCategoryMng extends SimpleMng {
                                 pagination={paginationProps}
                                 onChange={this.handleTableChange}
                                 loading={loading}
-                                dataSource={slrsearchcategoryData}
+                                dataSource={onlsearchcategoryData}
                                 columns={columns}
                             />
                         </div>
                     </Card>
                 </PageHeaderLayout>,
 
-                {editForm === 'SlrSearchCategoryForm' && (
-                    <SlrSearchCategoryForm
+                {editForm === 'OnlSearchCategoryForm' && (
+                    <OnlSearchCategoryForm
                         visible
                         title={editFormTitle}
                         editFormType={editFormType}
                         record={editFormRecord}
                         closeModal={() => this.setState({ editForm: undefined })}
-                        onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'slrsearchcategory', saveMethodName: 'modify' })}
+                        onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'onlsearchcategory', saveMethodName: 'modify' })}
                     />
                 )}
 
                 {editForm === 'searchsonCategory' && (
-                    <SlrSearchCategoryForm
+                    <OnlSearchCategoryForm
                         visible
                         title={editFormTitle}
                         editFormType={editFormType}
                         record={editFormRecord}
                         closeModal={() => this.setState({ editForm: undefined })}
-                        onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'slrsearchcategory', saveMethodName: 'add' })}
+                        onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'onlsearchcategory', saveMethodName: 'add' })}
                     />
                 )}
             </Fragment>

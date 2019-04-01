@@ -48,7 +48,6 @@ export default class SlrSellerMng extends SimpleMng {
     render() {
         const { slrseller: { slrseller }, loading } = this.props;
         const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
-
         const columns = [
             {
                 title: '卖家名称',
