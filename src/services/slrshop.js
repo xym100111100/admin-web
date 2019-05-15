@@ -54,7 +54,7 @@ export async function enable(params) {
 }
 
 /**
- * 查询所有店铺信息
+ * 根据卖家查询所有店铺信息
  * @param {*} params 
  */
 export async function shopList(params) {

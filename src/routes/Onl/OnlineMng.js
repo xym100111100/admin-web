@@ -27,7 +27,10 @@ import OnlOnlineNumberForm from './OnlOnlineNumberForm';
 const FormItem = Form.Item;
 const Option = Select.Option;
 
-@connect(({ onlonline }) => ({ onlonline }))
+@connect(({ onlonline, user, slrshop, loading, }) => ({
+  onlonline, user, slrshop,
+  loading: loading.models.onlonline || loading.models.user || loading.models.slrshop
+}))
 @Form.create()
 export default class OnlineMng extends SimpleMng {
   constructor() {
@@ -37,21 +40,87 @@ export default class OnlineMng extends SimpleMng {
       pageNum: 1,
       pageSize: 5,
     };
+    this.state.shopData = [];
   }
 
-  handleTableChange = pagination => {
-    this.props.form.validateFields((err, values) => {
-      this.handleReload({
-        onlineTitle: values.onlineTitle,
-        pageNum: pagination.current,
-        pageSize: pagination.pageSize,
-      });
-    });
-  };
 
+  handleReload = () => {
+    this.props.dispatch({
+      type: `${this.moduleCode}/list`,
+      payload: {
+        pageNum: 1,
+        pageSize: 5,
+        onlineState: 1,
+        thisOrgId: this.props.user.currentUser.orgId,
+      },
+    })
+  }
+
+  //初始化
+  componentDidMount() {
+    //获取上线信息
+    this.props.dispatch({
+      type: `${this.moduleCode}/list`,
+      payload: {
+        pageNum: 1,
+        pageSize: 5,
+        onlineState: 1,
+        thisOrgId: this.props.user.currentUser.orgId,
+      },
+    })
+    //获取店铺信息
+    this.props.dispatch({
+      type: `onlonline/shopList`,
+      callback: (data) => {
+        if (data.length > 0) {
+          this.setState({
+            shopData: data
+          })
+        }
+      },
+    });
+  }
+
+  handleSearch = (pagination) => {
+    this.props.form.validateFields((err, values) => {
+      this.props.dispatch({
+        type: `${this.moduleCode}/list`,
+        payload: {
+          pageNum: pagination.current === undefined ? 1 : pagination.current,
+          pageSize: pagination.current === undefined ? 5 : pagination.pageSize,
+          onlineState: 1,
+          thisOrgId: this.props.user.currentUser.orgId,
+          shopName: values.shopName === '所有店铺' ? undefined : values.shopName,
+          onlineTitle: values.onlineTitle,
+          onlineState: values.onlineState,
+        },
+      })
+
+    })
+
+  }
+
+  /**
+   * 初始化店铺
+   */
+  initShop = () => {
+    if (this.state.shopData.length !== 0) {
+      let i = 0;
+      const listItems = this.state.shopData.map(items => {
+        return (
+          <Option value={items.shopName} key={items.id.toString()}>
+            {items.shopName}
+          </Option>
+        );
+      });
+      return listItems;
+    }
+
+  }
   // 重置from
   handleFormReset = () => {
     this.props.form.resetFields();
+    this.handleReload();
   };
 
   // 搜索
@@ -61,18 +130,20 @@ export default class OnlineMng extends SimpleMng {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
           <Col md={6} sm={24}>
-            <Button
-              icon="plus"
-              type="primary"
-              onClick={() => this.showAddForm({ editForm: 'onlineForm', editFormTitle: '商品上线' })}
-            >
-              添加
-            </Button>
-            <Divider type="vertical" />
-            <Button icon="reload" onClick={() => this.handleReload()}>
-              刷新
-            </Button>
+            <FormItem label="店铺名称">
+              {getFieldDecorator('shopName', {
+                initialValue: '所有店铺'
+              })(
+                <Select style={{ width: 120 }}>
+                  <Option value="所有店铺" key={0}>
+                    所有店铺
+                  </Option>
+                  {this.initShop()}
+                </Select>
+              )}
+            </FormItem>
           </Col>
+
           <Col md={6} sm={24}>
             <FormItem label="上线标题">{getFieldDecorator('onlineTitle')(<Input placeholder="上线标题" />)}</FormItem>
           </Col>
@@ -97,6 +168,21 @@ export default class OnlineMng extends SimpleMng {
                 重置
               </Button>
             </span>
+          </Col>
+        </Row>
+        <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
+          <Col md={6} sm={24}>
+            <Button
+              icon="plus"
+              type="primary"
+              onClick={() => this.showAddForm({ editForm: 'onlineForm', editFormTitle: '商品上线' })}
+            >
+              添加
+            </Button>
+            <Divider type="vertical" />
+            <Button icon="reload" onClick={() => this.handleReload()}>
+              刷新
+            </Button>
           </Col>
         </Row>
       </Form>
@@ -130,6 +216,66 @@ export default class OnlineMng extends SimpleMng {
     });
   };
 
+  //上线或重新上线
+  commodityOnline = (record) => {
+    console.log('aa',record)
+    if(record.tags=== undefined){
+      record.tags=[];
+    }
+    if(record.onlineSpecs === undefined){
+      record.onlineSpecs=[];
+    }
+    if (record.tags.length > 1) {
+      //整理属性值
+      let attrValues = [];
+      for (let i = 0; i < record.onlineSpecs.length; i++) {
+        let attrValue = [];
+        const onlineSpec = 'record.onlineSpecs[' + i + ']';
+        for (let j = 0; j < record.tags.length; j++) {
+          const index = j + 1;
+          let spce = 'onlineSpec' + index;
+          attrValue[j] = eval(onlineSpec + '.' + spce);
+        }
+        attrValues[i] = attrValue;
+      }
+      record.attrValues = attrValues;
+      record.attrNames = record.tags;
+    } else {
+      if (record.tags.length !== 0) {
+        record.attrNames = record.tags;
+      } else {
+        record.attrNames = ['默认规格'];
+      }
+
+      let attrValues = [];
+      for (let i = 0; i < record.onlineSpecs.length; i++) {
+        attrValues[i] = new Array(1);
+        attrValues[i][0] = record.onlineSpecs[i].onlineSpec1;
+      }
+      record.attrValues = attrValues;
+    }
+    console.log('record', record);
+    if (this.state.editFormTitle !== '重新上线') {
+      this.props.dispatch({
+        type: `onlonline/add`,
+        payload: record,
+        callback: () => {
+          this.handleReload();
+          this.setState({ editForm: undefined });
+        },
+      });
+    } else {
+      this.props.dispatch({
+        type: `onlonline/reOnline`,
+        payload: record,
+        callback: () => {
+          this.handleReload();
+          this.setState({ editForm: undefined });
+        },
+      });
+    }
+  }
+
   render() {
     const { onlonline: { onlonline } } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
@@ -145,21 +291,21 @@ export default class OnlineMng extends SimpleMng {
               </Popconfirm>
             </Menu.Item>
           ) : (
-            <Menu.Item>
-              <a
-                onClick={() =>
-                  this.showAddForm({
-                    id: record.id,
-                    editForm: 'onlOnlinePromotionForm',
-                    editFormRecord: record,
-                    editFormTitle: '商品推广',
-                  })
-                }
-              >
-                商品推广
+              <Menu.Item>
+                <a
+                  onClick={() =>
+                    this.showAddForm({
+                      id: record.id,
+                      editForm: 'onlOnlinePromotionForm',
+                      editFormRecord: record,
+                      editFormTitle: '商品推广',
+                    })
+                  }
+                >
+                  商品推广
               </a>
-            </Menu.Item>
-          )}
+              </Menu.Item>
+            )}
           <Menu.Item>
             <a
               onClick={() =>
@@ -299,31 +445,25 @@ export default class OnlineMng extends SimpleMng {
             <Table
               rowKey="id"
               pagination={paginationProps}
-              onChange={this.handleTableChange}
+              onChange={this.handleSearch}
               dataSource={onlonlineData}
               columns={columns}
               expandRowByClick={true}
-            /> 
+            />
           </div>
         </Card>
         {editForm === 'onlineForm' && (
           <OnlineForm
             visible
             title={editFormTitle}
-            width={1100}
-            height={510}
+            width={'99vw'}
             id={editFormRecord.id}
             editFormType={editFormType}
             record={editFormRecord}
             onFullScreen
+            centered={true}
             closeModal={() => this.setState({ editForm: undefined })}
-            onSubmit={fields =>
-              this.handleSubmit({
-                fields,
-                moduleCode: 'onlonline',
-                saveMethodName: editFormTitle !== '重新上线' ? 'add' : 'reOnline',
-              })
-            }
+            onSubmit={(fields) => this.commodityOnline(fields)}
           />
         )}
         {editForm === 'onlOnlinePromotionForm' && (
@@ -347,8 +487,8 @@ export default class OnlineMng extends SimpleMng {
           <OnlOnlineSpecForm
             visible
             title={editFormTitle}
-            width={1000}
-            height={490}
+            width={'85vw'}
+            height={600}
             id={editFormRecord.id}
             editFormType={editFormType}
             record={editFormRecord}

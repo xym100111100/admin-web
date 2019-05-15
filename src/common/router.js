@@ -236,7 +236,7 @@ export const getRouterData = app => {
       ),
     },
     '/onl/onl-mng': {
-      component: dynamicWrapper(app, ['onlonline', 'BraftEditorUpload', 'onlonlineporomotion', 'prmpartner'], () =>
+      component: dynamicWrapper(app, ['onlonline','slrshop','user','BraftEditorUpload', 'onlonlineporomotion', 'prmpartner'], () =>
         import('../routes/Onl/OnlineMng')
       ),
     },

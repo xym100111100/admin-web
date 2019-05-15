@@ -53,7 +53,7 @@ const EditForm = DivInfo => {
     handleNextStep = () => {
       const { form, onNextStep } = this.props;
       form.validateFieldsAndScroll((err, fields) => {
-        if(onNextStep){
+        if (onNextStep) {
           onNextStep(fields);
         }
       });
@@ -61,7 +61,7 @@ const EditForm = DivInfo => {
     handleLastStep = () => {
       const { form, onLastStep } = this.props;
       form.validateFieldsAndScroll((err, fields) => {
-        if(onLastStep){
+        if (onLastStep) {
           onLastStep(fields);
         }
       });
@@ -81,10 +81,11 @@ const EditForm = DivInfo => {
         closeModal,
         submitting,
         width = 520,
+        centered = false,//是否居中
         ...restProps
       } = this.props;
 
-      
+
 
       return (
         <Modal
@@ -93,6 +94,7 @@ const EditForm = DivInfo => {
           bodyStyle={{ overflow: 'auto' }}
           closable={false}
           width={width}
+          centered={centered}
           footer={[
             <Button key="return" icon="rollback" size="large" onClick={closeModal}>
               返 回

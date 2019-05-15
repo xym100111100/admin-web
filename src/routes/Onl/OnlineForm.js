@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Card, Row, message, Input, Form, Col, Table, Upload, Icon, Modal, Radio, Select, Button } from 'antd';
+import { Card, Row, message, Input, Form, Col, Table, Upload, Icon, Modal, Radio, Select, Tag, Tooltip, Cascader, Button } from 'antd';
 import EditForm from 'components/Rebue/EditForm';
 import EditableTable from 'components/Rebue/EditableTable';
 // 引入编辑器以及EditorState子模块
@@ -12,16 +12,18 @@ const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 const Option = Select.Option;
 
-@connect(({ onlonline, BraftEditorUpload, prmpartner }) => ({
+@connect(({ onlonline, BraftEditorUpload, prmpartner, slrshop }) => ({
   BraftEditorUpload,
   onlonline,
   prmpartner,
+  slrshop,
 }))
 @Form.create()
 @EditForm
 export default class OnlineForm extends React.Component {
   componentWillMount() {
     const { record } = this.props;
+    this.getShopName();
     if (record.id !== undefined) this.getOnlines(record.id);
     this.partnerSearch();
     if (this.props.editFormType === "add") {
@@ -29,7 +31,13 @@ export default class OnlineForm extends React.Component {
         isEditSupplier: 1,
       })
     }
+    this.onlineSpecColumn();
+    let height = document.body.clientHeight * 0.82;
+    this.setState({
+      windowsHeight: height,
+    })
   }
+
 
   state = {
     previewVisible: false,
@@ -49,7 +57,161 @@ export default class OnlineForm extends React.Component {
     isEditSupplier: 0,
     // 上线规格table表格
     columns: [],
+    //是否上线到平台，0为不上线，1为上线
+    isOnlinePlatform: 1,
+    //是否为线下商品,0为否，1为是,2为既是线上也是线下
+    isBelowOnline: 0,
+
+    //标签
+    tags: [],
+    //标签动态生成和删除 ****开始***
+    inputVisiable: false,
+    inputValue: '',
+    //标签动态生成和删除 ****结束***
+
+    //分类信息级联选择禁用
+    classificationDisable: true,
+
+    //选择店铺
+    shopName:[],
   };
+
+  //查询卖家所有店铺
+  getShopName = () => {
+    this.props.dispatch({
+      type: `slrshop/shopList`,
+      callback: record => {
+        console.log('020202',record);
+        let shopName = [];
+        for (let i = 0; i < record.length; i++) {
+          shopName.push({ value: record[i].id, label: record[i].shopName });
+        }
+        this.setState({
+          shop: record,
+          shopName: shopName,
+        })
+        if(shopName.length === 1){
+          this.onChangeShop();
+        }
+      }
+    });
+  }
+
+  //选择店铺并获取分类树
+  onChangeShop = value => {
+    if(this.state.shopName.length === 1){
+      value = [this.state.shopName[0].value];
+    }
+    if(value.length === 0){
+      this.setState({
+        classification:[],
+        classificationDisable:true,
+      });
+      return;
+    }
+      this.props.dispatch({
+        type: `onlonline/getTreeByShopId`,
+        payload: {
+          shopId: value[0],
+        },
+        callback: record => {
+          console.log('232323', record);
+          let classification = [];
+          for (let i = 0; i < record.length; i++) {
+            let subclass = [];
+            const categoryList = record[i].categoryList;
+            for (let j = 0; j < categoryList.length; j++) {
+              subclass.push({ value: categoryList[j].id, label: categoryList[j].name })
+            }
+            classification.push({ value: record[i].id, label: record[i].name, children: subclass });
+          }
+          //console.log('123123', classification);
+          this.setState({
+            classification: classification,
+            classificationDisable: false,
+          })
+        }
+      });
+    
+  }
+
+  //获取分类信息
+  onChangeClassification = value => {
+    //console.log('159951', value);
+    const classificationId = value[value.length - 1];
+    //console.log('555', classificationId);
+    this.setState({
+      classificationId: classificationId
+    });
+
+  }
+  // 上线规格table表格
+  onlineSpecColumn = () => {
+    let { columns, subjectType, tags } = this.state;
+    columns = [
+      {
+        title: '默认规格',
+        dataIndex: 'onlineSpec1',
+        align: 'center',
+        width: '90px',
+      },
+      {
+        title: '上线价格',
+        dataIndex: 'salePrice',
+        align: 'center',
+        width: '90px',
+      },
+      {
+        title: '成本价格',
+        dataIndex: 'costPrice',
+        align: 'center',
+        width: '90px',
+      },
+      {
+        title: '返现金额',
+        dataIndex: 'cashbackAmount',
+        align: 'center',
+        width: '90px',
+      },
+      {
+        title: '本次上线数量',
+        dataIndex: 'currentOnlineCount',
+        align: 'center',
+        width: '90px',
+      },
+      {
+        title: '限购数量',
+        dataIndex: 'limitCount',
+        align: 'center',
+        width: '90px',
+      },
+      {
+        title: '单位',
+        dataIndex: 'saleUnit',
+        align: 'center',
+        width: '90px',
+      },
+    ];
+    // 如果板块类型为全返时，去掉返现金额
+    if (subjectType === 1) {
+      columns.splice(3, 1);
+    }
+    if (tags.length !== 0) {
+      columns.splice(0, 1);
+      for (let i = 0; i < tags.length; i++) {
+        let column = {
+          title: tags[i],
+          dataIndex: 'onlineSpec' + (i + 1),
+          align: 'center',
+          width: '90px',
+        };
+        columns.splice(i, 0, column);
+      }
+    }
+    this.setState({
+      columns: columns
+    });
+  }
 
   // 获取上线信息包括：上线信息、规格信息、图片信息等
   getOnlines = id => {
@@ -59,6 +221,7 @@ export default class OnlineForm extends React.Component {
         id: id,
       },
       callback: onlonline => {
+        console.log('获取', onlonline);
         let fileList = new Array();
         let fileLists = new Array();
         for (let i = 0; i < onlonline.record.onlinePicList.length; i++) {
@@ -79,12 +242,65 @@ export default class OnlineForm extends React.Component {
           }
         }
         let onlineDetail = onlonline.record.onlineDetail + '<p></p>';
+        //整理属性名
+        let attrNames = [];
+        const onlineSpecAttrList = onlonline.record.onlOnlineSpecAttrList;
+        for (let i = 0; i < onlineSpecAttrList.length; i++) {
+          const attrName = onlineSpecAttrList[i].attrName;
+          if (attrNames.indexOf(attrName) == -1) {
+            attrNames.push(attrName);
+          }
+        }
+        //console.log('322333',attrNames);
+        //整理属性值
+        let onlineSpecList = onlonline.record.onlineSpecList;
+        for (let i = 0; i < onlineSpecList.length; i++) {
+          const onlineSpecListId = onlineSpecList[i].id;
+          for (let x = 0; x < onlineSpecAttrList.length; x++) {
+            const attrName = onlineSpecAttrList[x].attrName;
+            const attrValue = onlineSpecAttrList[x].attrValue;
+            if (onlineSpecListId === onlineSpecAttrList[x].onlineSpecId) {
+              for (let j = 0; j < attrNames.length; j++) {
+                if (attrNames[j] === attrName) {
+                  const value = j + 1;
+                  eval('onlineSpecList[' + i + '].onlineSpec' + value + '=attrValue');
+                }
+              }
+            }
+          }
+        }
+
+        //确认商品类型
+        let isBelowOnline;
+        const isBelow = onlonline.record.isBelow;
+        const isOnline = onlonline.record.isOnline;
+        if (isBelow === 0 && isOnline === 1) {
+          isBelowOnline = 0;
+        } else if (isBelow === 1 && isOnline === 0) {
+          isBelowOnline = 1;
+        } else if (isBelow === 1 && isOnline === 1) {
+          isBelowOnline = 2;
+        }
+
+        //删除默认规格标签
+        if (attrNames.length === 1) {
+          if (attrNames[0] === "默认规格") {
+            attrNames = [];
+          }
+        }
+        //console.log('88888', attrNames);
+
+        //确认商品分类
+        const searchCategoryMo = onlonline.record.searchCategoryMo;
+        this.getShopNameById(searchCategoryMo.shopId);
+        this.getClassification(searchCategoryMo.shopId,searchCategoryMo.id);
+
         const { form } = this.props;
         form.setFieldsValue({ onlineName: onlonline.record.onlineTitle });
         this.setState({
           subjectType: onlonline.record.subjectType,
           deliveryType: onlonline.record.deliveryType,
-          onlOnlineSpec: Array.from(onlonline.record.onlineSpecList),
+          onlOnlineSpec: Array.from(onlineSpecList),
           previewVisible: false,
           previewImage: '',
           fileList: fileList,
@@ -92,7 +308,11 @@ export default class OnlineForm extends React.Component {
           previewImages: '',
           fileLists: fileLists,
           onlineDetail: BraftEditor.createEditorState(onlineDetail),
+          isBelowOnline: isBelowOnline,
+          isOnlinePlatform: onlonline.record.isOnlinePlatform,
+          tags: attrNames,
         });
+        this.onlineSpecColumn();
       },
     });
   };
@@ -138,10 +358,24 @@ export default class OnlineForm extends React.Component {
   handleCheck = record => {
     // 验证价格是否大于0
     const reg = /^([1-9]\d*(\.\d*[1-9])?)|(0\.\d*[1-9])$/;
-    if (!record.onlineSpec) {
-      message.error('请输入规格名称');
-      return false;
+
+    const tags = this.state.tags;
+    if (tags.length !== 0) {
+      for (let i = 0; i < tags.length; i++) {
+        let value = i + 1;
+        let onlineSpec = 'onlineSpec' + value;
+        if (!eval('record.' + onlineSpec)) {
+          message.error('请输入' + tags[i] + '的属性值');
+          return false;
+        }
+      }
+    } else {
+      if (!record.onlineSpec1) {
+        message.error('请输入默认规格的属性值');
+        return false;
+      }
     }
+
     if (!record.salePrice) {
       message.error('请输入上线价格');
       return false;
@@ -195,6 +429,160 @@ export default class OnlineForm extends React.Component {
       },
     });
   }
+
+  //******标签的添加与删除，开始******
+  handleClose = (removedTag) => {
+    const tags = this.state.tags.filter(tag => tag !== removedTag);
+    //console.log(tags);
+    this.setState({ tags });
+    setTimeout(() => {
+      this.onlineSpecColumn();
+    }, 1);
+  }
+
+  showInput = () => {
+    this.setState({ inputVisible: true }, () => this.input.focus());
+  }
+
+  handleInputChange = (e) => {
+    this.setState({ inputValue: e.target.value });
+  }
+
+  handleInputConfirm = () => {
+    const { inputValue } = this.state;
+    let { tags } = this.state;
+    if (inputValue && tags.indexOf(inputValue) === -1) {
+      tags = [...tags, inputValue];
+    }
+    //console.log(tags);
+    this.setState({
+      tags,
+      inputVisible: false,
+      inputValue: '',
+    });
+    setTimeout(() => {
+      this.onlineSpecColumn();
+    }, 1);
+  }
+
+  saveInputRef = input => this.input = input
+  //*******标签的添加与删除，结束********
+
+  //查询店铺信息
+  getShopNameById = shopId => {
+    this.props.dispatch({
+      type: `slrshop/getById`,
+      payload: {
+        id: shopId,
+      },
+      callback: record => {
+        let shopName =[];
+        shopName.push(record.id);
+        console.log('111',shopName);
+        this.setState({
+          shopNames:shopName,
+        })
+      }
+    });
+  }
+
+  //查询分类树
+  getClassification = (shopId,id) =>{
+    this.props.dispatch({
+      type: `onlonline/getTreeByShopId`,
+      payload: {
+        shopId: shopId,
+      },
+      callback: record => {
+        let classification = [];
+        for (let i = 0; i < record.length; i++) {
+          const categoryList = record[i].categoryList;
+          for (let j = 0; j < categoryList.length; j++) {
+            if(categoryList[j].id === id ){
+              classification.push(record[i].id);
+              classification.push(categoryList[j].id);
+            }
+          }
+        }
+        console.log('222',classification);
+        this.setState({
+            shopClassification:classification
+          })
+      }
+    });
+  }
+
+
+  showCustomizeAttr = () => {
+    const { tags, inputVisible, inputValue, } = this.state;
+    return (
+      <Col md={23} sm={23}>
+        <p style={{ color: 'black' }}>&nbsp;自定义规格属性名:</p>
+        <div>
+          <span>&emsp;</span>
+          {tags.map((tag, index) => {
+            const isLongTag = tag.length > 20;
+            const tagElem = (
+              <Tag key={tag} closable={true} onClose={() => this.handleClose(tag)} color="blue">
+                {isLongTag ? `${tag.slice(0, 20)}...` : tag}
+              </Tag>
+            );
+            return isLongTag ? <Tooltip title={tag} key={tag}>{tagElem}</Tooltip> : tagElem;
+          })}
+          {inputVisible && (
+            <Input
+              ref={this.saveInputRef}
+              type="text"
+              style={{ width: 78 }}
+              value={inputValue}
+              onChange={this.handleInputChange}
+              onBlur={this.handleInputConfirm}
+              onPressEnter={this.handleInputConfirm}
+            />
+          )}
+          {!inputVisible && (
+            <Tag
+              onClick={this.showInput}
+              style={{ background: '#fff', borderStyle: 'dashed' }}
+            >
+              <Icon type="plus" /> 点击添加属性名
+          </Tag>
+          )}
+        </div>
+      </Col>
+    )
+  }
+
+  //显示分类信息
+  showClassification = () => {
+    const { loading, form, record } = this.props;
+    if (this.state.shopName.length >= 2) {
+      return(
+      <Col md={24} sm={24} >
+        
+        <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="分类信息">
+          <Cascader style={{ width: '250px' }}  options={this.state.shopName} onChange={this.onChangeShop} placeholder="请选择店铺" changeOnSelect />
+          {form.getFieldDecorator('classificationId',{})(
+          <Cascader style={{ width: '500px' }}  options={this.state.classification} onChange={this.onChangeClassification} placeholder="请选择分类信息" disabled={this.state.classificationDisable} changeOnSelect />
+          )}
+          <Button type="primary" href="#/slr/slr-shop-mng">跳转至店铺</Button>
+        </FormItem>
+      </Col>
+      );
+    }else{
+      return(
+      <Col md={24} sm={24} >
+        <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="分类信息">
+          {form.getFieldDecorator('classificationId', {})(
+            <Cascader style={{ width: '500px' }} options={this.state.classification} onChange={this.onChangeClassification}  placeholder="请选择分类信息"  changeOnSelect />
+          )}
+          <Button type="primary" href="#/slr/slr-shop-mng">跳转至店铺</Button>
+        </FormItem>
+      </Col>
+      )
+    }
+  }
+  
   //显示是否修改供应商组件
   showIsEditSupplier = () => {
     const { form } = this.props;
@@ -263,6 +651,20 @@ export default class OnlineForm extends React.Component {
     });
   };
 
+  //选择商品类型事件
+  onChangeBelowOnline = data => {
+    this.setState({
+      isBelowOnline: data.target.value
+    })
+  }
+
+  //选择是否上线到平台
+  onChangeOnlinePlatform = data => {
+    this.setState({
+      isOnlinePlatform: data.target.value
+    })
+  }
+
   // 选择发货类型事件
   onChangeDeliveryTypeRadio = e => {
     this.setState({
@@ -292,72 +694,23 @@ export default class OnlineForm extends React.Component {
 
     // 上线规格table表格
     let { columns, subjectType } = this.state;
-    if (columns.length === 0) {
-      columns = [
-        {
+
+    for (let i = 0; i < columns.length; i++) {
+      const element = columns[i];
+      console.log(element)
+      if (element.dataIndex === 'salePrice') {
+        let column = {
           title: attrName,
-          dataIndex: 'onlineSpec',
-          align: 'center',
-        },
-        {
-          title: '上线价格',
-          dataIndex: 'salePrice',
+          dataIndex: 'onlineSpec' + i - 1,
           align: 'center',
           width: '90px',
-        },
-        {
-          title: '成本价格',
-          dataIndex: 'costPrice',
-          align: 'center',
-          width: '90px',
-        },
-        {
-          title: '返现金额',
-          dataIndex: 'cashbackAmount',
-          align: 'center',
-          width: '90px',
-        },
-        {
-          title: '本次上线数量',
-          dataIndex: 'currentOnlineCount',
-          align: 'center',
-          width: '90px',
-        },
-        {
-          title: '限购数量',
-          dataIndex: 'limitCount',
-          align: 'center',
-          width: '90px',
-        },
-        {
-          title: '单位',
-          dataIndex: 'saleUnit',
-          align: 'center',
-          width: '90px',
-        },
-      ];
+        };
 
-      // 如果板块类型为全返时，去掉返现金额
-      if (subjectType === 1) {
-        columns.splice(3, 1);
-      }
-    } else {
-      for (let i = 0; i < columns.length; i++) {
-        const element = columns[i];
-        console.log(element)
-        if (element.dataIndex === 'salePrice') {
-          let column = {
-            title: attrName,
-            dataIndex: 'onlineSpec' + i - 1,
-            align: 'center',
-            width: '90px',
-          };
-
-          columns.splice(i - 1, 0, column);
-        }
+        columns.splice(i - 1, 0, column);
+        break;
       }
     }
-    console.log(columns)
+
     this.setState({ columns });
   }
 
@@ -378,7 +731,7 @@ export default class OnlineForm extends React.Component {
     if (onlineName === undefined || onlineName === null || onlineName === '') return message.error('请输入商品名称');
     if (supplierId === undefined || supplierId === null || supplierId === '') return message.error('请选择供应商');
 
-    const { fileList, fileLists, onlineDetail, subjectType, deliveryType } = this.state;
+    const { fileList, fileLists, onlineDetail, subjectType, deliveryType, classificationId } = this.state;
     let detailHtml = onlineDetail.toHTML().replace(/<div\/?.+?>/g, '');
     let onlineDetails = detailHtml.replace(/<\/div>/g, '');
 
@@ -399,6 +752,8 @@ export default class OnlineForm extends React.Component {
       return message.error('商品详情不能为空');
     if (onlineDetail.length > 2400) return message.error('商品详情字数不能大于2400个字');
 
+    if(classificationId === undefined || classificationId === '' || classificationId === null) return message.error('请选择商品分类');
+
     let qsmm = fileList[0].response === undefined ? fileList[0].name : fileList[0].response.filePaths[0];
     let slideshows = new Array();
     for (let i = 0; i < fileLists.length; i++) {
@@ -418,6 +773,10 @@ export default class OnlineForm extends React.Component {
     form.getFieldDecorator('onlineId');
     form.getFieldDecorator('supplierId');
     form.getFieldDecorator('deliverOrgId');
+    form.getFieldDecorator('isOnlinePlatform');
+    form.getFieldDecorator('isBelowOnline');
+    form.getFieldDecorator('tags');
+    form.getFieldDecorator('classificationId');
     form.setFieldsValue({
       isEditSupplier: isEditSupplier,
       onlineId: record.id,
@@ -430,6 +789,10 @@ export default class OnlineForm extends React.Component {
       productId: productId,
       supplierId: supplierId,
       deliverOrgId: deliverOrgId,
+      isOnlinePlatform: this.state.isOnlinePlatform,
+      isBelowOnline: this.state.isBelowOnline,
+      tags: this.state.tags,
+      classificationId: this.state.classificationId,
     });
   };
 
@@ -494,156 +857,188 @@ export default class OnlineForm extends React.Component {
       moduleName: 'damaiSlideshow',
     };
 
+    
     return (
-      <Card style={{ width: '1050px', margin: '0 auto' }}>
+      <div style={{ height: this.state.windowsHeight }}>
 
-        <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
-          <Col md={24} sm={24} >
-            <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="商品名称">
-              {form.getFieldDecorator('onlineName', {})(
-                <Input style={{ width: '500px' }} placeholder="请输入商品的名称" />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={24} sm={24} >
-            <Form layout="inline">
-              <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
-                <Col md={10} sm={24} style={{ marginLeft: -13 }}  >
-                  <FormItem label="供应商名称">
-                    {form.getFieldDecorator('supplierId', {
-                      rules: [{ required: true, message: "请选择供应商" }],
-                      initialValue: record.supplierId
-                    })(
-                      <Select
-                        disabled={isEditSupplier === 0 ? true : false}
-                        showSearch
-                        placeholder={record.supplierName === undefined ? "请输入供应商名称" : record.supplierName}
-                        style={{ width: 250 }}
-                        defaultActiveFirstOption={false}
-                        showArrow={false}
-                        filterOption={false}
-                        onSearch={this.partnerSearch}
-                        notFoundContent="没有可选择的供应商"
-                      >
-                        {partnerData.map(d => <Option key={d.orgId}>{d.partnerName}</Option>)}
-                      </Select>
-                    )}
-                  </FormItem>
-                </Col>
-                {this.showIsEditSupplier()}
-              </Row>
-            </Form>
-          </Col>
-          <Col md={24} sm={24} >
-            <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="发货类型">
-              {
-                <RadioGroup onChange={this.onChangeDeliveryTypeRadio} value={this.state.deliveryType}>
-                  <Radio value={0}>自发</Radio>
-                  <Radio value={1}>供应商</Radio>
-                </RadioGroup>
-              }
-            </FormItem>
-          </Col>
-          <Col md={24} sm={24} >
-            <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="上线板块">
-              {
-                <RadioGroup onChange={this.onChangeRadio} value={this.state.subjectType}>
-                  <Radio value={0}>返现</Radio>
-                  <Radio value={1}>全返</Radio>
-                </RadioGroup>
-              }
-            </FormItem>
-          </Col>
-          <Col md={24} sm={24}>
-            <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="规格信息">
-              {
-                <div>
-                  <br />
-                  <div style={{ border: 'solid 1px rgba(0, 0, 0, 0.25)', marginLeft: -70 }}>
-                    {
-                      columns.length === 0 ? <div id="skuDivId"></div> :
-                        <div id="skuDivId">
-                          <EditableTable onCheck={this.handleCheck} ref="editableTable">
-                            <Table
-                              rowKey="id"
-                              pagination={false}
-                              loading={loading}
-                              dataSource={onlOnlineSpec}
-                              columns={columns}
-                            />
-                          </EditableTable>
-                        </div>
-                    }
-                    <div >
-                      &nbsp;<Input id="attrName" placeholder="自定义属性" style={{ width: 180 }} />&nbsp;&nbsp;<Button icon="plus" onClick={this.customizeAttr} />
+        <Card style={{ width: '95vw', margin: '0 auto' }}>
+
+          <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
+            <Col md={24} sm={24} >
+              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="商品名称">
+                {form.getFieldDecorator('onlineName', {})(
+                  <Input style={{ width: '500px' }} placeholder="请输入商品的名称" />
+                )}
+              </FormItem>
+            </Col>
+            {this.showClassification()}
+            
+            <Col md={24} sm={24} >
+              <Form layout="inline">
+                <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
+                  <Col md={1} sm={1}></Col>
+                  <Col md={7} sm={23} style={{ marginLeft: -13 }}>
+                    <FormItem label="供应商名称">
+                      {form.getFieldDecorator('supplierId', {
+                        rules: [{ required: true, message: "请选择供应商" }],
+                        initialValue: record.supplierId
+                      })(
+                        <Select
+                          disabled={isEditSupplier === 0 ? true : false}
+                          showSearch
+                          placeholder={record.supplierName === undefined ? "请输入供应商名称" : record.supplierName}
+                          style={{ width: 250 }}
+                          defaultActiveFirstOption={false}
+                          showArrow={false}
+                          filterOption={false}
+                          onSearch={this.partnerSearch}
+                          notFoundContent="没有可选择的供应商"
+                        >
+                          {partnerData.map(d => <Option key={d.orgId}>{d.partnerName}</Option>)}
+                        </Select>
+                      )}
+                    </FormItem>
+                  </Col>
+                  {this.showIsEditSupplier()}
+                </Row>
+              </Form>
+            </Col>
+            <Col md={24} sm={24} >
+              <br />
+              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="发货类型">
+                {
+                  <RadioGroup onChange={this.onChangeDeliveryTypeRadio} value={this.state.deliveryType}>
+                    <Radio.Button value={0}>自发</Radio.Button>
+                    <Radio.Button value={1}>供应商</Radio.Button>
+                  </RadioGroup>
+                }
+              </FormItem>
+            </Col>
+            <Col md={24} sm={24} >
+              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="上线板块">
+                {
+                  <RadioGroup onChange={this.onChangeRadio} value={this.state.subjectType}>
+                    <Radio.Button value={0}>返现</Radio.Button>
+                    <Radio.Button value={1}>全返</Radio.Button>
+                  </RadioGroup>
+                }
+              </FormItem>
+            </Col>
+            <Col md={24} sm={24} >
+              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="商品类型">
+                {
+                  <RadioGroup onChange={this.onChangeBelowOnline} value={this.state.isBelowOnline} >
+                    <Radio.Button value={0}>线上商品</Radio.Button>
+                    <Radio.Button value={1}>线下商品</Radio.Button>
+                    <Radio.Button value={2}>既是线上也是线下</Radio.Button>
+                  </RadioGroup>
+                }
+              </FormItem>
+            </Col>
+            <Col md={24} sm={24} >
+              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 10 }} label="显示设置" >
+                {
+                  <RadioGroup onChange={this.onChangeOnlinePlatform} value={this.state.isOnlinePlatform}>
+                    <Radio.Button value={1}>上线到平台</Radio.Button>
+                    <Radio.Button value={0}>不上线到平台</Radio.Button>
+                  </RadioGroup>
+                }
+              </FormItem>
+            </Col>
+            <Col md={24} sm={24}>
+              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="规格信息">
+                {
+                  <div>
+                    <br />
+                    <div style={{ border: 'solid 1px rgba(0, 0, 0, 0.25)', marginLeft: -70 }}>
+                      {
+                        columns.length === 0 ? <div id="skuDivId"></div> :
+                          <div id="skuDivId">
+                            <EditableTable onCheck={this.handleCheck} ref="editableTable">
+                              <Table
+                                rowKey="id"
+                                pagination={false}
+                                loading={loading}
+                                dataSource={onlOnlineSpec}
+                                columns={columns}
+                              />
+                            </EditableTable>
+                          </div>
+                      }
                     </div>
                   </div>
-                </div>
-              }
-            </FormItem>
-          </Col>
-          <Col md={24} sm={24}>
-            <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="商品主图">
-              {
-                <div className="clearfix">
-                  <Upload
-                    action="/ise-svr/ise/upload"
-                    // action="http://192.168.1.203:46643/ise/upload"
-                    listType="picture-card"
-                    fileList={fileList}
-                    name="multipartFile"
-                    data={uploadData}
-                    multiple={false}
-                    onPreview={this.handlePreview}
-                    onChange={this.handleChange}
-                    className="damaiQsmm"
-                  >
-                    {fileList.length >= 1 ? null : uploadButton}
-                  </Upload>
-                  <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
-                    <img alt="example" src={previewImage} />
-                  </Modal>
-                </div>
-              }
-            </FormItem>
-          </Col>
-          <Col md={24} sm={24}>
-            <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="商品轮播图">
-              {
-                <div className="clearfix">
-                  <Upload
-                    action="/ise-svr/ise/upload"
-                    // action="http://192.168.1.203:46643/ise/upload"
-                    listType="picture-card"
-                    fileList={fileLists}
-                    name="multipartFile"
-                    data={uploadDatas}
-                    multiple={true}
-                    onPreview={this.handlePreviews}
-                    onChange={this.handleChanges}
-                    className="damaiSlideshow"
-                  >
-                    {fileLists.length >= 5 ? null : uploadButton}
-                  </Upload>
-                  <Modal visible={previewVisibles} footer={null} onCancel={this.handleCancels}>
-                    <img alt="example" src={previewImages} />
-                  </Modal>
-                </div>
-              }
-            </FormItem>
-          </Col>
-          <Col md={24} sm={24}>
-            <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="商品详情">
-              {
-                <div style={{ border: 'solid 1px rgba(0, 0, 0, 0.25)' }}>
-                  <BraftEditor {...editorProps} ref={instance => (this.editorInstance = instance)} />
-                </div>
-              }
-            </FormItem>
-          </Col>
-        </Row>
+                }
+              </FormItem>
+            </Col>
+            <Col md={1} sm={1}></Col>
+            {this.showCustomizeAttr()}
+            <Col md={24} sm={24}>
+              <br />
+              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="商品主图">
+                {
+                  <div className="clearfix">
+                    <Upload
+                      gitaction="/ise-svr/ise/upload"
+                      //action="http://192.168.1.34:20180/ise/upload"
+                      listType="picture-card"
+                      fileList={fileList}
+                      name="multipartFile"
+                      data={uploadData}
+                      multiple={false}
+                      onPreview={this.handlePreview}
+                      onChange={this.handleChange}
+                      className="damaiQsmm"
+                    >
+                      {fileList.length >= 1 ? null : uploadButton}
+                    </Upload>
+                    <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
+                      <img alt="example" src={previewImage} />
+                    </Modal>
+                  </div>
+                }
+              </FormItem>
+            </Col>
+            <Col md={24} sm={24}>
+              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="商品轮播图">
+                {
+                  <div className="clearfix">
+                    <Upload
+                      action="/ise-svr/ise/upload"
+                     // action="http://192.168.1.34:20180/ise/upload"
+                      listType="picture-card"
+                      fileList={fileLists}
+                      name="multipartFile"
+                      data={uploadDatas}
+                      multiple={true}
+                      onPreview={this.handlePreviews}
+                      onChange={this.handleChanges}
+                      className="damaiSlideshow"
+                    >
+                      {fileLists.length >= 5 ? null : uploadButton}
+                    </Upload>
+                    <Modal visible={previewVisibles} footer={null} onCancel={this.handleCancels}>
+                      <img alt="example" src={previewImages} />
+                    </Modal>
+                  </div>
+                }
+              </FormItem>
+            </Col>
+            <Col md={24} sm={24}>
+              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="商品详情">
+                {
+                  <div>
+                    <br />
+                    <div style={{ border: 'solid 1px rgba(0, 0, 0, 0.25)' }}>
+                      <BraftEditor {...editorProps} ref={instance => (this.editorInstance = instance)} />
+                    </div>
+                  </div>
+                }
+              </FormItem>
+            </Col>
+          </Row>
 
-      </Card>
+        </Card>
+      </div>
     );
   }
 }

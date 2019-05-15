@@ -1,14 +1,13 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Button, Form, Card, Switch, Divider, Popconfirm, Table } from 'antd';
+import { Button, Col, Row, Form, Card, Switch, Divider, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DescriptionList from 'components/DescriptionList';
 import SlrShopForm from './SlrShopForm';
 import SlrShopAccountForm from './SlrShopAccountForm';
 import OnlSearchCategoryForm from '../Onl/OnlSearchCategoryForm';
 import styles from './SlrShopMng.less';
-
 const { Description } = DescriptionList;
 
 @Form.create()
@@ -154,11 +153,19 @@ export default class SlrShopMng extends SimpleMng {
                 <PageHeaderLayout>
                     <Card bordered={false}>
                         <div className={styles.tableList}>
-                            <div className={styles.tableListOperator}>
-                                <Button icon="reload" onClick={() => this.handleReload()}>
-                                    刷新
-                                </Button>
-                            </div>
+                            <Row gutter={{ md: 6, lg: 24, xl: 48 }} style={{ marginBottom: 12 }} >
+                                <Col md={2} sm={24}>
+                                    <Button  onClick={() => this.showAddForm({  editForm: 'SlrShopForm', editFormTitle: '添加店铺' })}  type="primary" htmlType="submit">
+                                        添加
+                                     </Button>
+                                </Col>
+                                <Col md={2} sm={24}>
+                                    <Button icon="reload" onClick={() => this.handleReload()}>
+                                        刷新
+                                    </Button>
+                                </Col>
+                            </Row>
+
                             <Table
                                 rowKey="id"
                                 pagination={paginationProps}
@@ -180,8 +187,48 @@ export default class SlrShopMng extends SimpleMng {
                             />
                         </div>
                     </Card>
-                </PageHeaderLayout>,
-                {editForm === 'SlrShopForm' && (
+                </PageHeaderLayout> ,
+            {
+                    editForm === 'SlrShopForm' && (
+                        <SlrShopForm
+                            visible
+                            title={editFormTitle}
+                            editFormType={editFormType}
+                            record={editFormRecord}
+                            closeModal={() => this.setState({ editForm: undefined })}
+                            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'slrshop', saveMethodName: editFormType === 'add' ? 'add' : 'modify' })}
+                        />
+                    )
+                }
+
+                {
+                    editForm === 'slrShopAccountForm' && (
+                        <SlrShopAccountForm
+                            id={editFormRecord.id}
+                            modelName="slrshopaccount" //
+                            visible
+                            title={editFormTitle}
+                            record={editFormRecord}
+                            width={815}
+                            editFormType={editFormType}
+                            closeModal={() => this.setState({ editForm: undefined })}
+                        />
+                    )
+                }
+
+                {
+                    editForm === 'OnlSearchCategoryForm' && (
+                        <OnlSearchCategoryForm
+                            visible
+                            title={editFormTitle}
+                            editFormType={editFormType}
+                            record={editFormRecord}
+                            closeModal={() => this.setState({ editForm: undefined })}
+                            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'onlsearchcategory', saveMethodName: editFormType === 'add' ? 'add' : 'modify' })}
+                        />
+                    )
+                }
+                 {editForm === 'SlrShopForm' && (
                     <SlrShopForm
                         visible
                         title={editFormTitle}
@@ -191,31 +238,7 @@ export default class SlrShopMng extends SimpleMng {
                         onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'slrshop', saveMethodName: editFormType === 'add' ? 'add' : 'modify' })}
                     />
                 )}
-
-                {editForm === 'slrShopAccountForm' && (
-                    <SlrShopAccountForm
-                        id={editFormRecord.id}
-                        modelName="slrshopaccount" //
-                        visible
-                        title={editFormTitle}
-                        record={editFormRecord}
-                        width={815}
-                        editFormType={editFormType}
-                        closeModal={() => this.setState({ editForm: undefined })}
-                    />
-                )}
-
-                {editForm === 'OnlSearchCategoryForm' && (
-                    <OnlSearchCategoryForm
-                        visible
-                        title={editFormTitle}
-                        editFormType={editFormType}
-                        record={editFormRecord}
-                        closeModal={() => this.setState({ editForm: undefined })}
-                        onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'onlsearchcategory', saveMethodName: editFormType === 'add' ? 'add' : 'modify' })}
-                    />
-                )}
-            </Fragment>
+            </Fragment >
         );
     }
 }
