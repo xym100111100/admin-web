@@ -185,7 +185,7 @@ export const getRouterData = app => {
       ),
     },
     '/slr/slr-shop-mng': {
-      component: dynamicWrapper(app, ['slrshop', 'slrshopaccount', 'onlsearchcategory'], () =>
+      component: dynamicWrapper(app, ['slrshop', 'slrshopaccount', 'onlsearchcategory','user'], () =>
         import('../routes/Slr/SlrShopMng')
       ),
     },

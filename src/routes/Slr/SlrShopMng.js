@@ -11,7 +11,7 @@ import styles from './SlrShopMng.less';
 const { Description } = DescriptionList;
 
 @Form.create()
-@connect(({ slrshop, slrshopaccount, loading }) => ({ slrshop, slrshopaccount, loading: loading.models.shpshop }))
+@connect(({ slrshop, slrshopaccount, loading, user }) => ({ slrshop, slrshopaccount, loading: loading.models.shpshop ,user}))
 export default class SlrShopMng extends SimpleMng {
     constructor() {
         super();
@@ -59,8 +59,10 @@ export default class SlrShopMng extends SimpleMng {
     }
 
     render() {
-        const { slrshop: { slrshop }, loading } = this.props;
+        const { slrshop: { slrshop }, loading, user} = this.props;
         const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
+        const sellerId = user.currentUser.orgId;
+        editFormRecord.sellerId = sellerId;
 
         const columns = [
             {
@@ -112,7 +114,7 @@ export default class SlrShopMng extends SimpleMng {
                             用户
                         </a>
                         <Divider type="vertical" />
-                        <a onClick={() => this.showAddForm({ editFormRecord: record, editForm: 'OnlSearchCategoryForm', editFormTitle: '添加分类' })}>
+                        <a onClick={() => this.showAddForm({ editFormRecord:slrshop,editFormRecord: record, editForm: 'OnlSearchCategoryForm', editFormTitle: '添加分类' })}>
                             添加分类
                         </a>
                     </Fragment>
@@ -155,7 +157,7 @@ export default class SlrShopMng extends SimpleMng {
                         <div className={styles.tableList}>
                             <Row gutter={{ md: 6, lg: 24, xl: 48 }} style={{ marginBottom: 12 }} >
                                 <Col md={2} sm={24}>
-                                    <Button  onClick={() => this.showAddForm({  editForm: 'SlrShopForm', editFormTitle: '添加店铺' })}  type="primary" htmlType="submit">
+                                    <Button onClick={() => this.showAddForm({ sellerId: sellerId,editForm: 'SlrShopForm', editFormTitle: '添加店铺' })} type="primary" htmlType="submit">
                                         添加
                                      </Button>
                                 </Col>
@@ -188,19 +190,6 @@ export default class SlrShopMng extends SimpleMng {
                         </div>
                     </Card>
                 </PageHeaderLayout> ,
-            {
-                    editForm === 'SlrShopForm' && (
-                        <SlrShopForm
-                            visible
-                            title={editFormTitle}
-                            editFormType={editFormType}
-                            record={editFormRecord}
-                            closeModal={() => this.setState({ editForm: undefined })}
-                            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'slrshop', saveMethodName: editFormType === 'add' ? 'add' : 'modify' })}
-                        />
-                    )
-                }
-
                 {
                     editForm === 'slrShopAccountForm' && (
                         <SlrShopAccountForm
@@ -228,7 +217,7 @@ export default class SlrShopMng extends SimpleMng {
                         />
                     )
                 }
-                 {editForm === 'SlrShopForm' && (
+                {editForm === 'SlrShopForm' && (
                     <SlrShopForm
                         visible
                         title={editFormTitle}
