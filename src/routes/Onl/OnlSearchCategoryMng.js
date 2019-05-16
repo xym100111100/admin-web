@@ -80,10 +80,19 @@ export default class OnlSearchCategoryMng extends SimpleMng {
         });
     }
 
+    initShop=()=>{
+        const {  slrshop: { slrshop }, loading } = this.props;
+        if(slrshop !==undefined && slrshop.length >0){
+            return(
+                <Tabs onChange={this.switchShop}>{slrshop.map(shop => <TabPane tab={shop.shortName} key={shop.id} />)}</Tabs> 
+            )
+        }
+
+    }
+
     render() {
         const { onlsearchcategory: { onlsearchcategory }, slrshop: { slrshop }, loading } = this.props;
         const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
-        console.log(slrshop);
         const columns = [
             {
                 title: '分类名称',
@@ -175,7 +184,8 @@ export default class OnlSearchCategoryMng extends SimpleMng {
                     <Card bordered={false}>
                         <div className={styles.tableList}>
                             <div className={styles.tableListOperator}>
-                                <Tabs onChange={this.switchShop}>{slrshop.map(shop => <TabPane tab={shop.shortName} key={shop.id} />)}</Tabs> 
+                            {this.initShop()}
+                               
                                 <Button icon="reload" onClick={() => this.handleReload()}>
                                     刷新
                                 </Button>
