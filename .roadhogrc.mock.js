@@ -3,23 +3,16 @@ import { dumaiindexList, dumaiindexGetById, dumaiindexAdd, dumaiindexModify, dum
 import { supaccountList, supaccountGetById, supaccountAdd, supaccountModify, supaccountDel } from './mock/supaccount';
 import { pfmsysList, pfmsysGetById, pfmsysAdd, pfmsysModify, pfmsysDel } from './mock/pfmsys';
 import { xyzareaList, xyzareaGetById, xyzareaAdd, xyzareaModify, xyzareaDel } from './mock/xyzarea';
-import { xyzareasendorgList, xyzareasendorgGetById, xyzareasendorgAdd, xyzareasendorgModify, xyzareasendorgDel } from './mock/xyzareasendorg';
+import {
+  xyzareasendorgList,
+  xyzareasendorgGetById,
+  xyzareasendorgAdd,
+  xyzareasendorgModify,
+  xyzareasendorgDel,
+} from './mock/xyzareasendorg';
 
-import {  
-  studentList, 
-  studentGetById, 
-  studentAdd, 
-  studentModify, 
-  studentDel 
-  } from './mock/student';
-  import {  
-    pntListList, 
-    pntListGetById, 
-    pntListAdd, 
-    pntListModify, 
-    pntListDel,
-    pntListByAccountId 
-    } from './mock/pntList';
+import { studentList, studentGetById, studentAdd, studentModify, studentDel } from './mock/student';
+import { pntListList, pntListGetById, pntListAdd, pntListModify, pntListDel, pntListByAccountId } from './mock/pntList';
 import {
   kdilogisticList,
   kdilogisticGetById,
@@ -35,7 +28,7 @@ import {
   rnarealnameModify,
   rnarealnameDel,
 } from './mock/rnarealname';
-import {order, ordorderList, ordorderGetById, ordorderAdd, ordorderModify, ordorderDel } from './mock/ordorder';
+import { order, ordorderList, ordorderGetById, ordorderAdd, ordorderModify, ordorderDel } from './mock/ordorder';
 import { kdieorderList, kdieorderGetById, kdieorderAdd, kdieorderModify, kdieorderDel } from './mock/kdieorder';
 import { detail } from './mock/ordDetail';
 import {
@@ -67,12 +60,7 @@ import {
   pfmfuncDel,
   pfmfuncEnable,
 } from './mock/pfmfunc';
-import {
-  suporderList,
-  suporderGetById,
-  suporderAdd,
-  suporderModify,
-} from './mock/suporder';
+import { suporderList, suporderGetById, suporderAdd, suporderModify } from './mock/suporder';
 import {
   pfmactiGetById,
   pfmactiAdd,
@@ -120,20 +108,15 @@ import {
   sucUserOrgAdd,
   sucUserOrgModify,
 } from './mock/sucuserorg';
-import {
-  prmPartnerList,
-  prmPartnerGetById,
-  prmPartnerAdd,
-  prmPartnerModify,
-  prmPartnerDel,
-} from './mock/prmpartner'
+import { prmPartnerList, prmPartnerGetById, prmPartnerAdd, prmPartnerModify, prmPartnerDel } from './mock/prmpartner';
+import { getCategoryTree } from './mock/prdcategory';
 import { getActivities, getNotice, getFakeList } from './mock/api';
 import { getFakeChartData } from './mock/chart';
 import { getProfileBasicData } from './mock/profile';
 import { getProfileAdvancedData } from './mock/profile';
 import { getNotices } from './mock/notices';
 import { from } from 'rxjs/observable/from';
-import { chargeForPerson, chargeForPlatForm,tradeList } from './mock/afcflow';
+import { chargeForPerson, chargeForPlatForm, tradeList } from './mock/afcflow';
 
 // 根据环境变量判断是否禁用代理（禁用代理将直接请求真实的服务）
 const noProxy = process.env.NO_PROXY === 'true';
@@ -331,6 +314,7 @@ const proxy = {
       msg: '账号或密码不正确',
     });
   },
+  'GET /prd-svr/prd/productcategory/tree': getCategoryTree,
   // 支持值为 Object 和 Array
   'GET /pfm-svr/user/currentuser': currentUser,
   // GET POST 可省略
@@ -441,21 +425,18 @@ function addProxy(key, value) {
 
 // 禁用代理的时候，配置直接请求服务的映射
 if (noProxy) {
-  addProxy('xyz-svr', 'http://127.0.0.1:9500/');
-  addProxy('suc-svr', 'http://127.0.0.1:9100/');
-  addProxy('pfm-svr', 'http://127.0.0.1:20182/');
-
-//  addProxy('kdi-svr', 'http://127.0.0.1:20080/');
-  //  addProxy('ord-svr', 'http://127.0.0.1:20180/'); 
- // addProxy('slr-svr', 'http://127.0.0.1:20193/'); 
-
+  // addProxy('xyz-svr', 'http://127.0.0.1:9500/');
+  // addProxy('suc-svr', 'http://127.0.0.1:9100/');
+  // addProxy('pfm-svr', 'http://127.0.0.1:20182/');
+  //  addProxy('kdi-svr', 'http://127.0.0.1:20080/');
+  //  addProxy('ord-svr', 'http://127.0.0.1:20180/');
+  // addProxy('slr-svr', 'http://127.0.0.1:20193/');
   //addProxy('hlw-svr', 'http://127.0.0.1:9009/');
-
   // addProxy('suc-svr', 'http://127.0.0.1:9100/');
   // addProxy('pnt-svr', 'http://127.0.0.1:9010/');
-
   // addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr/');
   // addProxy('pfm-svr', 'http://192.168.1.37:20182/');
+  addProxy('prd-svr', 'http://192.168.1.222:20195/');
   /*
 
   addProxy('rna-svr', 'http://127.0.0.1:20088/');
@@ -463,16 +444,13 @@ if (noProxy) {
   addProxy('onl-svr', 'http://127.0.0.1:9100/');
   addProxy('ise-svr', 'http://127.0.0.1:20180/');*/
   /* addProxy('ord-svr', 'http://127.0.0.1:20180/');  */
-  //  addProxy('afc-svr', 'http://127.0.0.1:9400/'); 
- /*  addProxy('prm-svr', 'http://192.168.1.37:20110/'); */
-
+  //  addProxy('afc-svr', 'http://127.0.0.1:9400/');
+  /*  addProxy('prm-svr', 'http://192.168.1.37:20110/'); */
   // addProxy('pfm-svr', 'http://127.0.0.1:8080/pfm-svr');
   // addProxy('suc-svr', 'http://192.168.1.201/suc-svr/');
-
   // addProxy('pfm-svr', 'http://192.168.1.201/pfm-svr/');
- // addProxy('suc-svr', 'http://127.0.0.1:9100/');
+  // addProxy('suc-svr', 'http://127.0.0.1:9100/');
   // addProxy('afc-svr', 'http://192.168.1.201/afc-svr/');
-
   // addProxy('rna-svr', 'https://www.duamai.com/rna-svr/');
   // addProxy('kdi-svr', 'https://www.duamai.com/kdi-svr/');
   // addProxy('ise-svr', 'https://www.duamai.com/ise-svr/');

@@ -240,6 +240,16 @@ export const getRouterData = app => {
         import('../routes/Onl/OnlineMng')
       ),
     },
+    '/prd/prd-category-mng': {
+      component: dynamicWrapper(app, ['onlonline', 'BraftEditorUpload', 'onlonlineporomotion', 'prmpartner'], () =>
+        import('../routes/Prd/PrdCategoryMng')
+      ),
+    },
+    '/prd/prd-product-mng': {
+      component: dynamicWrapper(app, ['onlonline', 'BraftEditorUpload', 'onlonlineporomotion', 'prdproductcategory', 'prdproduct'], () =>
+        import('../routes/Prd/PrdProductMng')
+      ),
+    },
     // ****************** 基础路由 ******************
     '/user': {
       component: dynamicWrapper(app, [], () => import('../layouts/UserLayout')),

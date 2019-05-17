@@ -86,6 +86,9 @@ menuData.push({ id: '1536131597163', sysId: 'damai-admin', code: '0103', title: 
 menuData.push({ id: '1536131597164', sysId: 'damai-admin', code: '21', title: '区域管理', name: '区域管理', path: 'xyz', isEnabled: true, icon: 'shop', remark: '区域管理' });
 menuData.push({ id: '1536131597165', sysId: 'damai-admin', code: '2100', title: '区域列表', name: '区域列表', path: 'area', isEnabled: true, icon: null, remark: '区域列表' });
 menuData.push({ id: '1536131597166', sysId: 'damai-admin', code: '2101', title: '区域组织', name: '区域组织', path: 'areasendorg', isEnabled: true, icon: null, remark: '区域组织' });
+menuData.push({ id: '1536131597170', sysId: 'damai-admin', code: '22', title: '产品管理', name: '产品管理', path: 'prd', isEnabled: true, icon: 'cloud-server', remark: '产品管理' });
+menuData.push({ id: '1536131597171', sysId: 'damai-admin', code: '2200', title: '分类管理', name: '分类管理', path: 'prd-category-mng', isEnabled: true, icon: null, remark: '分类管理' });
+menuData.push({ id: '1536131597172', sysId: 'damai-admin', code: '2201', title: '产品管理', name: '产品管理', path: 'prd-product-mng', isEnabled: true, icon: null, remark: '产品管理' });
 
 
 function sort(list) {
