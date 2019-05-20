@@ -23,7 +23,6 @@ const Option = Select.Option;
 export default class OnlineForm extends React.Component {
   componentWillMount() {
     const { record } = this.props;
-    this.getShopName();
     if (record.id !== undefined) this.getOnlines(record.id);
     this.partnerSearch();
     if (this.props.editFormType === "add") {
@@ -32,6 +31,7 @@ export default class OnlineForm extends React.Component {
       })
     }
     this.onlineSpecColumn();
+    this.getShopName();
     let height = document.body.clientHeight * 0.82;
     this.setState({
       windowsHeight: height,
@@ -73,7 +73,7 @@ export default class OnlineForm extends React.Component {
     classificationDisable: true,
 
     //选择店铺
-    shopName:[],
+    shopName: [],
   };
 
   //查询卖家所有店铺
@@ -81,7 +81,7 @@ export default class OnlineForm extends React.Component {
     this.props.dispatch({
       type: `slrshop/shopList`,
       callback: record => {
-        console.log('020202',record);
+        //console.log('020202', record);
         let shopName = [];
         for (let i = 0; i < record.length; i++) {
           shopName.push({ value: record[i].id, label: record[i].shopName });
@@ -90,7 +90,7 @@ export default class OnlineForm extends React.Component {
           shop: record,
           shopName: shopName,
         })
-        if(shopName.length === 1){
+        if (shopName.length === 1) {
           this.onChangeShop();
         }
       }
@@ -99,49 +99,53 @@ export default class OnlineForm extends React.Component {
 
   //选择店铺并获取分类树
   onChangeShop = value => {
-    if(this.state.shopName.length === 1){
+    if (this.state.shopName.length === 1) {
       value = [this.state.shopName[0].value];
     }
-    if(value.length === 0){
+    this.setState({
+      shopNames: value,
+    })
+    if (value.length === 0) {
       this.setState({
-        classification:[],
-        classificationDisable:true,
+        classification: [],
+        classificationDisable: true,
       });
       return;
     }
-      this.props.dispatch({
-        type: `onlonline/getTreeByShopId`,
-        payload: {
-          shopId: value[0],
-        },
-        callback: record => {
-          console.log('232323', record);
-          let classification = [];
-          for (let i = 0; i < record.length; i++) {
-            let subclass = [];
-            const categoryList = record[i].categoryList;
-            for (let j = 0; j < categoryList.length; j++) {
-              subclass.push({ value: categoryList[j].id, label: categoryList[j].name })
-            }
-            classification.push({ value: record[i].id, label: record[i].name, children: subclass });
+    this.props.dispatch({
+      type: `onlonline/getTreeByShopId`,
+      payload: {
+        shopId: value[0],
+      },
+      callback: record => {
+        //console.log('232323', record);
+        let classification = [];
+        for (let i = 0; i < record.length; i++) {
+          let subclass = [];
+          const categoryList = record[i].categoryList;
+          for (let j = 0; j < categoryList.length; j++) {
+            subclass.push({ value: categoryList[j].id, label: categoryList[j].name })
           }
-          //console.log('123123', classification);
-          this.setState({
-            classification: classification,
-            classificationDisable: false,
-          })
+          classification.push({ value: record[i].id, label: record[i].name, children: subclass });
         }
-      });
-    
+        //console.log('123123', classification);
+        this.setState({
+          classification: classification,
+          classificationDisable: false,
+        })
+      }
+    });
+
   }
 
   //获取分类信息
   onChangeClassification = value => {
-    //console.log('159951', value);
+    console.log('159951', value);
     const classificationId = value[value.length - 1];
     //console.log('555', classificationId);
     this.setState({
-      classificationId: classificationId
+      classificationId: classificationId,
+      classificationArr: value
     });
 
   }
@@ -293,7 +297,7 @@ export default class OnlineForm extends React.Component {
         //确认商品分类
         const searchCategoryMo = onlonline.record.searchCategoryMo;
         this.getShopNameById(searchCategoryMo.shopId);
-        this.getClassification(searchCategoryMo.shopId,searchCategoryMo.id);
+        this.getClassification(searchCategoryMo.shopId, searchCategoryMo.id);
 
         const { form } = this.props;
         form.setFieldsValue({ onlineName: onlonline.record.onlineTitle });
@@ -476,18 +480,18 @@ export default class OnlineForm extends React.Component {
         id: shopId,
       },
       callback: record => {
-        let shopName =[];
+        let shopName = [];
         shopName.push(record.id);
-        console.log('111',shopName);
         this.setState({
-          shopNames:shopName,
+          shopNames: shopName,
         })
+        this.onChangeShop(shopName);
       }
     });
   }
 
   //查询分类树
-  getClassification = (shopId,id) =>{
+  getClassification = (shopId, id) => {
     this.props.dispatch({
       type: `onlonline/getTreeByShopId`,
       payload: {
@@ -498,16 +502,17 @@ export default class OnlineForm extends React.Component {
         for (let i = 0; i < record.length; i++) {
           const categoryList = record[i].categoryList;
           for (let j = 0; j < categoryList.length; j++) {
-            if(categoryList[j].id === id ){
+            if (categoryList[j].id === id) {
               classification.push(record[i].id);
               classification.push(categoryList[j].id);
             }
           }
         }
-        console.log('222',classification);
+        //console.log('222', classification);
         this.setState({
-            shopClassification:classification
-          })
+          classificationDisable: false,
+          shopClassification: classification
+        })
       }
     });
   }
@@ -557,32 +562,37 @@ export default class OnlineForm extends React.Component {
   showClassification = () => {
     const { loading, form, record } = this.props;
     if (this.state.shopName.length >= 2) {
-      return(
-      <Col md={24} sm={24} >
-        
-        <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="分类信息">
-          <Cascader style={{ width: '250px' }}  options={this.state.shopName} onChange={this.onChangeShop} placeholder="请选择店铺" changeOnSelect />
-          {form.getFieldDecorator('classificationId',{})(
-          <Cascader style={{ width: '500px' }}  options={this.state.classification} onChange={this.onChangeClassification} placeholder="请选择分类信息" disabled={this.state.classificationDisable} changeOnSelect />
-          )}
-          <Button type="primary" href="#/slr/slr-shop-mng">跳转至店铺</Button>
-        </FormItem>
-      </Col>
+      return (
+        <Col md={24} sm={24} >
+          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="店铺信息">
+            <Cascader style={{ width: '250px' }} value={this.state.shopNames} options={this.state.shopName} onChange={this.onChangeShop} placeholder="请选择店铺" changeOnSelect />
+          </FormItem>
+          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="分类信息">
+            {form.getFieldDecorator('classificationId', {
+              initialValue: this.state.shopClassification
+            })(
+              <Cascader style={{ width: '500px' }} options={this.state.classification} onChange={this.onChangeClassification} placeholder="请先选择店铺再选择分类信息" disabled={this.state.classificationDisable} changeOnSelect />
+            )}
+            <Button type="primary" onClick={() => this.testMaths()} >跳转至店铺</Button>
+          </FormItem>
+        </Col>
       );
-    }else{
-      return(
-      <Col md={24} sm={24} >
-        <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="分类信息">
-          {form.getFieldDecorator('classificationId', {})(
-            <Cascader style={{ width: '500px' }} options={this.state.classification} onChange={this.onChangeClassification}  placeholder="请选择分类信息"  changeOnSelect />
-          )}
-          <Button type="primary" href="#/slr/slr-shop-mng">跳转至店铺</Button>
-        </FormItem>
-      </Col>
+    } else {
+      return (
+        <Col md={24} sm={24} >
+          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="分类信息">
+            {form.getFieldDecorator('classificationId', {
+              initialValue: this.state.shopClassification
+            })(
+              <Cascader style={{ width: '500px' }} options={this.state.classification} onChange={this.onChangeClassification} placeholder="请选择分类信息" changeOnSelect />
+            )}
+            <Button type="primary" onClick={() => this.testMaths()} >跳转至店铺</Button>
+          </FormItem>
+        </Col>
       )
     }
   }
-  
+
   //显示是否修改供应商组件
   showIsEditSupplier = () => {
     const { form } = this.props;
@@ -731,7 +741,7 @@ export default class OnlineForm extends React.Component {
     if (onlineName === undefined || onlineName === null || onlineName === '') return message.error('请输入商品名称');
     if (supplierId === undefined || supplierId === null || supplierId === '') return message.error('请选择供应商');
 
-    const { fileList, fileLists, onlineDetail, subjectType, deliveryType, classificationId } = this.state;
+    const { fileList, fileLists, onlineDetail, subjectType, deliveryType, classificationId, classificationArr } = this.state;
     let detailHtml = onlineDetail.toHTML().replace(/<div\/?.+?>/g, '');
     let onlineDetails = detailHtml.replace(/<\/div>/g, '');
 
@@ -752,7 +762,9 @@ export default class OnlineForm extends React.Component {
       return message.error('商品详情不能为空');
     if (onlineDetail.length > 2400) return message.error('商品详情字数不能大于2400个字');
 
-    if(classificationId === undefined || classificationId === '' || classificationId === null) return message.error('请选择商品分类');
+    if (classificationId === undefined || classificationId === '' || classificationId === null) return message.error('请选择商品分类');
+
+    if (classificationArr !== 2) return message.error('请选择商品一级分类和二级分类');
 
     let qsmm = fileList[0].response === undefined ? fileList[0].name : fileList[0].response.filePaths[0];
     let slideshows = new Array();
@@ -857,7 +869,7 @@ export default class OnlineForm extends React.Component {
       moduleName: 'damaiSlideshow',
     };
 
-    
+
     return (
       <div style={{ height: this.state.windowsHeight }}>
 
@@ -872,7 +884,7 @@ export default class OnlineForm extends React.Component {
               </FormItem>
             </Col>
             {this.showClassification()}
-            
+
             <Col md={24} sm={24} >
               <Form layout="inline">
                 <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
