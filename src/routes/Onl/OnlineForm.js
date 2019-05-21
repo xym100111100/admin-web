@@ -571,24 +571,26 @@ export default class OnlineForm extends React.Component {
             {form.getFieldDecorator('classificationId', {
               initialValue: this.state.shopClassification
             })(
-              <Cascader style={{ width: '500px' }} options={this.state.classification} onChange={this.onChangeClassification} placeholder="请先选择店铺再选择分类信息" disabled={this.state.classificationDisable} changeOnSelect />
-            )}
-            <Button type="primary" onClick={() => this.testMaths()} >跳转至店铺</Button>
+              <Cascader style={{ width: '384px' }} options={this.state.classification} onChange={this.onChangeClassification} placeholder="请先选择店铺再选择分类信息" disabled={this.state.classificationDisable} changeOnSelect />
+              )}
+              <Button type="ghost" href="#/slr/slr-shop-mng" >添加商品分类</Button>
           </FormItem>
         </Col>
       );
     } else {
       return (
-        <Col md={24} sm={24} >
-          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="分类信息">
-            {form.getFieldDecorator('classificationId', {
-              initialValue: this.state.shopClassification
-            })(
-              <Cascader style={{ width: '500px' }} options={this.state.classification} onChange={this.onChangeClassification} placeholder="请选择分类信息" changeOnSelect />
-            )}
-            <Button type="primary" onClick={() => this.testMaths()} >跳转至店铺</Button>
-          </FormItem>
-        </Col>
+        <div >
+          <Col md={24} sm={24}>
+            <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="分类信息" >
+              {form.getFieldDecorator('classificationId', {
+                initialValue: this.state.shopClassification
+              })(
+                <Cascader style={{ width: '384px' }} options={this.state.classification} onChange={this.onChangeClassification} placeholder="请选择分类信息" changeOnSelect />
+              )}
+              <Button type="ghost" href="#/slr/slr-shop-mng">添加商品分类</Button>
+            </FormItem>
+          </Col>
+        </div>
       )
     }
   }
