@@ -1,14 +1,15 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Button, Card, Divider, Form, Table, Input, Row, Col, Switch, Select } from 'antd';
+import { Button, Card, Divider, Form, Table, Input, Row, Col, Switch, Radio } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './PrdProductMng.less';
 import PrdProductForm from './PrdProductForm';
 import PrdProductDetail from './PrdProductDetail';
 
 const FormItem = Form.Item;
-const Option = Select.Option;
+const RadioButton = Radio.Button;
+const RadioGroup = Radio.Group;
 
 @connect(({ prdproduct, loading }) => ({ prdproduct, loading: loading.models.prdproduct }))
 @Form.create()
@@ -37,6 +38,19 @@ export default class PrdProductMng extends SimpleMng {
     this.props.form.resetFields();
   };
 
+  /**
+   * 选择是否已启用
+   */
+  selectIsEnabled = e => {
+    const { form } = this.props;
+    form.getFieldDecorator('isEnabled');
+    if (e.target.value !== '-1') {
+      form.setFieldsValue({ isEnabled: e.target.value });
+    } else {
+      form.setFieldsValue({ isEnabled: null });
+    }
+  };
+
   // 搜索
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
@@ -60,15 +74,12 @@ export default class PrdProductMng extends SimpleMng {
             <FormItem label="产品名称">{getFieldDecorator('productName')(<Input placeholder="产品名称" />)}</FormItem>
           </Col>
           <Col md={6} sm={24}>
-            <FormItem label="上线状态">
-              {getFieldDecorator('isEnabled', {
-                initialValue: '1',
-              })(
-                <Select style={{ width: 120 }}>
-                  <Option value="1">启用</Option>
-                  <Option value="0">禁用</Option>
-                </Select>
-              )}
+            <FormItem>
+              <RadioGroup onChange={this.selectIsEnabled} defaultValue="-1">
+                <RadioButton value="-1">全部</RadioButton>
+                <RadioButton value="true">启用</RadioButton>
+                <RadioButton value="false">禁用</RadioButton>
+              </RadioGroup>
             </FormItem>
           </Col>
           <Col md={6} sm={24}>

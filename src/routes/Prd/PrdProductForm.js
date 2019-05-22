@@ -87,7 +87,7 @@ export default class PrdProductForm extends React.Component {
         // 产品轮播图
         const fileLists = [];
         record.forEach(result => {
-          const picUrl = `http://192.168.1.222:20180/files${result.picPath}`;
+          const picUrl = `/ise-svr/files${result.picPath}`;
           if (result.picType === 1) {
             fileList.push({
               uid: result.id,
@@ -414,8 +414,8 @@ export default class PrdProductForm extends React.Component {
                 {
                   <div className="clearfix">
                     <Upload
-                      // gitaction="/ise-svr/ise/upload"
-                      action="http://192.168.1.222:20180/ise/upload"
+                      gitaction="/ise-svr/ise/upload"
+                      // action="http://192.168.1.222:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileList}
                       name="multipartFile"
@@ -440,8 +440,8 @@ export default class PrdProductForm extends React.Component {
                 {
                   <div className="clearfix">
                     <Upload
-                      // action="/ise-svr/ise/upload"
-                      action="http://192.168.1.222:20180/ise/upload"
+                      action="/ise-svr/ise/upload"
+                      // action="http://192.168.1.222:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileLists}
                       name="multipartFile"
