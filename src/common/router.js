@@ -246,7 +246,7 @@ export const getRouterData = app => {
       ),
     },
     '/prd/prd-product-mng': {
-      component: dynamicWrapper(app, ['onlonline', 'BraftEditorUpload', 'onlonlineporomotion', 'prdproductcategory', 'prdproduct'], () =>
+      component: dynamicWrapper(app, ['BraftEditorUpload', 'prdproductpic', 'prdproductcategory', 'prdproduct', 'prdproductspec'], () =>
         import('../routes/Prd/PrdProductMng')
       ),
     },

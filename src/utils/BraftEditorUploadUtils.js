@@ -1,10 +1,8 @@
 export default function BraftEditorUploadUtils(param, url, method) {
   const xhr = new XMLHttpRequest();
   const fd = new FormData();
-  console.log("11111")
   const successFn = response => {
     const filePaths = JSON.parse(response.currentTarget.response);
-    console.log("上传成功");
     // 假设服务端直接返回文件上传后的地址
     // 上传成功后调用param.success并传入上传后的文件地址
     param.success({
@@ -13,7 +11,7 @@ export default function BraftEditorUploadUtils(param, url, method) {
   };
 
   const progressFn = event => {
-    console.log("上传中");
+    console.log('上传中');
     // 上传进度发生变化时调用param.progress
     param.progress(event.loaded / event.total * 100);
   };

@@ -1,23 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import {
-  Card,
-  Row,
-  message,
-  Input,
-  Form,
-  Col,
-  Table,
-  Upload,
-  Icon,
-  Modal,
-  Radio,
-  Select,
-  Tag,
-  Tooltip,
-  Cascader,
-  Button,
-} from 'antd';
+import { Card, Row, message, Input, Form, Col, Table, Upload, Icon, Modal, Cascader } from 'antd';
 import EditForm from 'components/Rebue/EditForm';
 import EditableTable from 'components/Rebue/EditableTable';
 // 引入编辑器以及EditorState子模块
@@ -25,15 +8,11 @@ import BraftEditor from 'braft-editor';
 // 引入编辑器样式
 import 'braft-editor/dist/index.css';
 
-const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
-const Option = Select.Option;
 
-@connect(({ onlonline, BraftEditorUpload, prmpartner, slrshop }) => ({
+@connect(({ BraftEditorUpload, prmpartner }) => ({
   BraftEditorUpload,
-  onlonline,
   prmpartner,
-  slrshop,
 }))
 @Form.create()
 @EditForm
@@ -46,17 +25,23 @@ export default class PrdProductForm extends React.Component {
     previewVisibles: false,
     previewImages: '',
     fileLists: [],
-    onlOnlineSpec: [],
+    productSpec: [],
     categorys: [],
     // 创建一个空的editorState作为初始值
     productDetail: BraftEditor.createEditorState(null),
   };
 
   componentWillMount() {
+    const { record, id } = this.props;
     const height = document.body.clientHeight * 0.82;
+    if (id !== undefined) {
+      this.getProductSpec(id);
+      this.getProductPic(id);
+    }
     this.getCategoryTree();
     this.setState({
       windowsHeight: height,
+      productDetail: BraftEditor.createEditorState(record.productDetail),
     });
   }
 
@@ -71,6 +56,59 @@ export default class PrdProductForm extends React.Component {
       },
     });
   }
+
+  /**
+   * 获取产品规格信息
+   */
+  getProductSpec = id => {
+    this.props.dispatch({
+      type: `prdproductspec/list`,
+      payload: {
+        productId: id,
+      },
+      callback: record => {
+        this.setState({ productSpec: record });
+      },
+    });
+  };
+
+  /**
+   * 获取产品图片
+   */
+  getProductPic = id => {
+    this.props.dispatch({
+      type: `prdproductpic/list`,
+      payload: {
+        productId: id,
+      },
+      callback: record => {
+        // 产品主图
+        const fileList = [];
+        // 产品轮播图
+        const fileLists = [];
+        record.forEach(result => {
+          const picUrl = `http://192.168.1.222:20180/files${result.picPath}`;
+          if (result.picType === 1) {
+            fileList.push({
+              uid: result.id,
+              name: result.picPath,
+              status: 'done',
+              url: picUrl,
+            });
+          }
+          if (result.picType === 0) {
+            fileLists.push({
+              uid: result.id,
+              name: result.picPath,
+              status: 'done',
+              url: picUrl,
+            });
+          }
+        });
+        this.setState({ fileList, fileLists });
+      },
+    });
+  };
 
   /**
    * 选择产品分类
@@ -103,8 +141,7 @@ export default class PrdProductForm extends React.Component {
   };
 
   handleChanges = info => {
-    let fileList = info.fileList;
-    fileList = fileList.slice(-5);
+    const fileList = info.fileList.slice(-5);
     this.setState({ fileLists: fileList });
   };
   // 商品轮播图结束
@@ -121,18 +158,18 @@ export default class PrdProductForm extends React.Component {
   };
 
   // 富文本框上传
-  uploadFn = param => {
+  uploadFn = value => {
     this.props.dispatch({
       type: `BraftEditorUpload/upload`,
-      payload: param,
+      payload: {
+        moduleName: 'productDetail',
+        value,
+      },
     });
   };
 
   handleCheck = record => {
-    // 验证价格是否大于0
-    const reg = /^([1-9]\d*(\.\d*[1-9])?)|(0\.\d*[1-9])$/;
-
-    if (!record.productSpecName) {
+    if (!record.name) {
       message.error('请输入规格名称');
       return false;
     }
@@ -142,13 +179,10 @@ export default class PrdProductForm extends React.Component {
       return false;
     }
 
-    if (!record.productSpecCode) {
+    if (!record.code) {
       message.error('请输入规格编码');
       return false;
     }
-
-    // 验证是否为正整数
-    const regs = /^(0|\+?[1-9][0-9]*)$/;
 
     return true;
   };
@@ -160,13 +194,18 @@ export default class PrdProductForm extends React.Component {
 
   // 提交前事件
   beforeSave = () => {
-    const { form } = this.props;
+    const { form, record } = this.props;
+    // 产品ID
+    let productId = null;
+    if (record !== undefined) {
+      productId = record.id;
+    }
     // 品牌名称
-    let brand = undefined;
+    let brand = null;
     // 产品名称
-    let productName = undefined;
+    let productName = null;
     // 生产厂家
-    let manufacturer = undefined;
+    let manufacturer = null;
     form.validateFields((err, values) => {
       brand = values.brand;
       productName = values.productName;
@@ -174,16 +213,22 @@ export default class PrdProductForm extends React.Component {
     });
 
     const { categorys, fileList, fileLists, productDetail } = this.state;
-    if (categorys === undefined || categorys.length === 0) return message.error('请选择产品分类');
+    // 产品分类ID
+    let categoryId = null;
+    if (categorys === undefined || categorys.length === 0) {
+      categoryId = record.categoryId;
+    } else {
+      categoryId = categorys[categorys.length - 1];
+    }
+
+    if (categoryId === undefined || categoryId.length === 0) return message.error('请选择产品分类');
     if (fileList === undefined || fileList.length === 0) return message.error('请上传商品主图');
     if (fileLists === undefined || fileLists.length === 0) return message.error('请上传至少一张商品轮播图');
 
-    // 产品分类ID
-    let categoryId = categorys[categorys.length - 1];
     // 产品规格信息
     const productSpecs = this.refs.editableTable.getRecords();
     // 产品图片
-    let productPic = new Array();
+    const productPic = [];
     productPic.push({
       picType: 1, // 1为主图 0为轮播图
       picPath: fileList[0].response === undefined ? fileList[0].name : fileList[0].response.filePaths[0],
@@ -196,6 +241,7 @@ export default class PrdProductForm extends React.Component {
       });
     }
 
+    form.getFieldDecorator('id');
     form.getFieldDecorator('categoryId');
     form.getFieldDecorator('productName');
     form.getFieldDecorator('manufacturer');
@@ -204,6 +250,7 @@ export default class PrdProductForm extends React.Component {
     form.getFieldDecorator('spec');
     form.getFieldDecorator('pics');
     form.setFieldsValue({
+      id: productId,
       categoryId,
       productName,
       manufacturer,
@@ -211,10 +258,6 @@ export default class PrdProductForm extends React.Component {
       productDetail: productDetail.toHTML(),
       spec: productSpecs,
       pics: productPic,
-    });
-
-    form.validateFields((err, values) => {
-      console.log(values);
     });
   };
 
@@ -228,7 +271,7 @@ export default class PrdProductForm extends React.Component {
       previewVisibles,
       previewImages,
       fileLists,
-      onlOnlineSpec,
+      productSpec,
       productDetail,
       categorys,
     } = this.state;
@@ -242,14 +285,14 @@ export default class PrdProductForm extends React.Component {
     );
 
     const columns = [
-      { title: '规格名称', dataIndex: 'productSpecName', align: 'center' },
+      { title: '规格名称', dataIndex: 'name', align: 'center' },
       { title: '市场价格', dataIndex: 'marketPrice', align: 'center' },
       { title: '单位', dataIndex: 'unit', align: 'center' },
-      { title: '条形码', dataIndex: 'productSpecCode', align: 'center' },
+      { title: '条形码', dataIndex: 'code', align: 'center' },
     ];
 
     // 不在工具栏显示的控件列表
-    const excludeControls = [
+    const excludeControl = [
       'undo',
       'redo',
       'separator',
@@ -292,7 +335,7 @@ export default class PrdProductForm extends React.Component {
     // 富文本框功能配置
     const editorProps = {
       value: productDetail,
-      excludeControls: excludeControls,
+      excludeControls: excludeControl,
       onChange: this.handleEditorChange,
       media: {
         allowPasteImage: false, // 是否允许直接粘贴剪贴板图片（例如QQ截图等）到编辑器
@@ -309,17 +352,24 @@ export default class PrdProductForm extends React.Component {
     };
 
     const uploadData = {
-      moduleName: 'damaiQsmm',
+      moduleName: 'productQsmm',
     };
 
     const uploadDatas = {
-      moduleName: 'damaiSlideshow',
+      moduleName: 'productSlideshow',
     };
 
     return (
       <div style={{ height: this.state.windowsHeight }}>
         <Card>
           <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
+            <Col md={24} sm={24}>
+              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="产品名称">
+                {form.getFieldDecorator('productName', {
+                  initialValue: record.productName,
+                })(<Input style={{ width: '500px' }} placeholder="请输入商品的名称" />)}
+              </FormItem>
+            </Col>
             <Col md={24} sm={24}>
               <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="产品分类">
                 <Cascader
@@ -330,20 +380,6 @@ export default class PrdProductForm extends React.Component {
                   onChange={this.selectCategory}
                   placeholder="请选择产品分类"
                 />
-              </FormItem>
-            </Col>
-            <Col md={24} sm={24}>
-              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="品牌名称">
-                {form.getFieldDecorator('brand', {})(
-                  <Input style={{ width: '500px' }} placeholder="请输入品牌的名称" />
-                )}
-              </FormItem>
-            </Col>
-            <Col md={24} sm={24}>
-              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="商品名称">
-                {form.getFieldDecorator('productName', {})(
-                  <Input style={{ width: '500px' }} placeholder="请输入商品的名称" />
-                )}
               </FormItem>
             </Col>
             <Col md={24} sm={24}>
@@ -361,7 +397,7 @@ export default class PrdProductForm extends React.Component {
                               rowKey="id"
                               pagination={false}
                               loading={loading}
-                              dataSource={onlOnlineSpec}
+                              dataSource={productSpec}
                               columns={columns}
                             />
                           </EditableTable>
@@ -410,7 +446,7 @@ export default class PrdProductForm extends React.Component {
                       fileList={fileLists}
                       name="multipartFile"
                       data={uploadDatas}
-                      multiple={true}
+                      multiple
                       beforeUpload={this.beforeUpload}
                       onPreview={this.handlePreviews}
                       onChange={this.handleChanges}
@@ -426,8 +462,17 @@ export default class PrdProductForm extends React.Component {
               </FormItem>
             </Col>
             <Col md={24} sm={24}>
+              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="品牌名称">
+                {form.getFieldDecorator('brand', {
+                  initialValue: record.brand,
+                })(<Input style={{ width: '500px' }} placeholder="请输入品牌的名称" />)}
+              </FormItem>
+            </Col>
+            <Col md={24} sm={24}>
               <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="生产厂家">
-                {form.getFieldDecorator('manufacturer', {})(<Input placeholder="请输入生产厂家的名称" />)}
+                {form.getFieldDecorator('manufacturer', {
+                  initialValue: record.manufacturer,
+                })(<Input placeholder="请输入生产厂家的名称" />)}
               </FormItem>
             </Col>
             <Col md={24} sm={24}>
@@ -436,7 +481,7 @@ export default class PrdProductForm extends React.Component {
                   <div>
                     <br />
                     <div style={{ border: 'solid 1px rgba(0, 0, 0, 0.25)' }}>
-                      <BraftEditor {...editorProps} ref={instance => (this.editorInstance = instance)} />
+                      <BraftEditor {...editorProps} />
                     </div>
                   </div>
                 }

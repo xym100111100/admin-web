@@ -5,6 +5,7 @@ import { Button, Card, Divider, Form, Table, Input, Row, Col, Switch, Select } f
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './PrdProductMng.less';
 import PrdProductForm from './PrdProductForm';
+import PrdProductDetail from './PrdProductDetail';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -88,7 +89,7 @@ export default class PrdProductMng extends SimpleMng {
   // 启用/禁用产品
   handleEnable(record) {
     this.props.dispatch({
-      type: `sucorg/enable`,
+      type: `prdproduct/enable`,
       payload: { id: record.id, isEnabled: !record.isEnabled },
       callback: () => {
         this.handleReload();
@@ -124,7 +125,7 @@ export default class PrdProductMng extends SimpleMng {
       },
       {
         title: '产品分类',
-        dataIndex: 'productCategory',
+        dataIndex: 'fullName',
       },
       {
         title: '品牌',
@@ -147,13 +148,26 @@ export default class PrdProductMng extends SimpleMng {
                 onClick={() =>
                   this.showAddForm({
                     id: record.id,
-                    editForm: 'onlOnlineSpecForm',
+                    editForm: 'prdProductDetail',
                     editFormRecord: record,
-                    editFormTitle: '规格信息',
+                    editFormTitle: '产品信息',
                   })
                 }
               >
-                查询规格信息
+                查询
+              </a>
+              <Divider type="vertical" />
+              <a
+                onClick={() =>
+                  this.showAddForm({
+                    id: record.id,
+                    editForm: 'prdProductForm',
+                    editFormRecord: record,
+                    editFormTitle: '编辑产品信息',
+                  })
+                }
+              >
+                编辑
               </a>
             </Fragment>
           );
@@ -216,9 +230,22 @@ export default class PrdProductMng extends SimpleMng {
               this.handleSubmit({
                 fields,
                 moduleCode: 'prdproduct',
-                saveMethodName: editFormTitle === '添加产品' ? 'add' : 'reOnline',
+                saveMethodName: editFormTitle === '添加产品' ? 'add' : 'modify',
               })
             }
+          />
+        )},
+        {editForm === 'prdProductDetail' && (
+          <PrdProductDetail
+            visible
+            title={editFormTitle}
+            width={1100}
+            height={510}
+            id={editFormRecord.id}
+            editFormType={editFormType}
+            record={editFormRecord}
+            onFullScreen
+            closeModal={() => this.setState({ editForm: undefined })}
           />
         )}
       </PageHeaderLayout>

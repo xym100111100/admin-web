@@ -26,3 +26,24 @@ export async function add(params) {
     },
   });
 }
+
+/**
+ * 修改产品信息
+ */
+export async function modify(params) {
+  return request('/prd-svr/prd/product', {
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
+}
+
+/**
+ * 禁用或启用产品
+ */
+export async function enable(params) {
+  return request(`/prd-svr/prd/product/enable?${stringify(params)}`, {
+    method: 'PUT',
+  });
+}
