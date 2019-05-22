@@ -99,6 +99,7 @@ export default class OnlineForm extends React.Component {
 
   //选择店铺并获取分类树
   onChangeShop = value => {
+    console.log('2525', value)
     if (this.state.shopName.length === 1) {
       value = [this.state.shopName[0].value];
     }
@@ -508,10 +509,12 @@ export default class OnlineForm extends React.Component {
             }
           }
         }
-        //console.log('222', classification);
+        const classificationId = classification[classification.length - 1];
         this.setState({
           classificationDisable: false,
-          shopClassification: classification
+          shopClassification: classification,
+          classificationId: classificationId,
+          classificationArr: classification
         })
       }
     });
@@ -572,8 +575,8 @@ export default class OnlineForm extends React.Component {
               initialValue: this.state.shopClassification
             })(
               <Cascader style={{ width: '384px' }} options={this.state.classification} onChange={this.onChangeClassification} placeholder="请先选择店铺再选择分类信息" disabled={this.state.classificationDisable} changeOnSelect />
-              )}
-              <Button type="ghost" href="#/slr/slr-shop-mng" >添加商品分类</Button>
+            )}
+            <Button type="ghost" href="#/slr/slr-shop-mng" >添加商品分类</Button>
           </FormItem>
         </Col>
       );
@@ -765,8 +768,8 @@ export default class OnlineForm extends React.Component {
     if (onlineDetail.length > 2400) return message.error('商品详情字数不能大于2400个字');
 
     if (classificationId === undefined || classificationId === '' || classificationId === null) return message.error('请选择商品分类');
-
-    if (classificationArr !== 2) return message.error('请选择商品一级分类和二级分类');
+    console.log('333',classificationArr);
+    if (classificationArr.length !== 2) return message.error('请选择商品一级分类和二级分类');
 
     let qsmm = fileList[0].response === undefined ? fileList[0].name : fileList[0].response.filePaths[0];
     let slideshows = new Array();
@@ -992,8 +995,8 @@ export default class OnlineForm extends React.Component {
                 {
                   <div className="clearfix">
                     <Upload
-                      action="/ise-svr/ise/upload"
-                      //action="http://192.168.1.34:20180/ise/upload"
+                      //action="/ise-svr/ise/upload"
+                      action="http://192.168.1.3:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileList}
                       name="multipartFile"
@@ -1017,8 +1020,8 @@ export default class OnlineForm extends React.Component {
                 {
                   <div className="clearfix">
                     <Upload
-                      action="/ise-svr/ise/upload"
-                      //action="http://192.168.1.34:20180/ise/upload"
+                      // action="/ise-svr/ise/upload"
+                      action="http://192.168.1.3:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileLists}
                       name="multipartFile"
