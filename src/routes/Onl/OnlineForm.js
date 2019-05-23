@@ -155,8 +155,8 @@ export default class OnlineForm extends React.Component {
     let { columns, subjectType, tags } = this.state;
     columns = [
       {
-        title: '默认规格',
-        dataIndex: 'onlineSpec1',
+        title: '规格名称',
+        dataIndex: 'onlineSpec',
         align: 'center',
         width: '90px',
       },
@@ -202,7 +202,6 @@ export default class OnlineForm extends React.Component {
       columns.splice(3, 1);
     }
     if (tags.length !== 0) {
-      columns.splice(0, 1);
       for (let i = 0; i < tags.length; i++) {
         let column = {
           title: tags[i],
@@ -210,7 +209,7 @@ export default class OnlineForm extends React.Component {
           align: 'center',
           width: '90px',
         };
-        columns.splice(i, 0, column);
+        columns.splice(i+1, 0, column);
       }
     }
     this.setState({
@@ -287,12 +286,6 @@ export default class OnlineForm extends React.Component {
           isBelowOnline = 2;
         }
 
-        //删除默认规格标签
-        if (attrNames.length === 1) {
-          if (attrNames[0] === "默认规格") {
-            attrNames = [];
-          }
-        }
         //console.log('88888', attrNames);
 
         //确认商品分类
@@ -364,6 +357,11 @@ export default class OnlineForm extends React.Component {
     // 验证价格是否大于0
     const reg = /^([1-9]\d*(\.\d*[1-9])?)|(0\.\d*[1-9])$/;
 
+    if(!record.onlineSpec){
+      message.error('请输入规格名称');
+      return false;
+    }
+
     const tags = this.state.tags;
     if (tags.length !== 0) {
       for (let i = 0; i < tags.length; i++) {
@@ -373,11 +371,6 @@ export default class OnlineForm extends React.Component {
           message.error('请输入' + tags[i] + '的属性值');
           return false;
         }
-      }
-    } else {
-      if (!record.onlineSpec1) {
-        message.error('请输入默认规格的属性值');
-        return false;
       }
     }
 

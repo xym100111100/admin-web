@@ -187,14 +187,14 @@ export default class OnlOnlineSpecForm extends PureComponent {
       columns.splice(3, 0, { title: '返现金额', dataIndex: 'cashbackAmount', align: 'center', });
     }
 
-    columns.splice(0, 1);
+    //columns.splice(1, 0);
     for (let i = 0; i < attrNames.length; i++) {
       let column = {
         title: attrNames[i],
         dataIndex: 'onlineSpec' + (i + 1),
         align: 'center',
       };
-      columns.splice(i, 0, column);
+      columns.splice(i+1, 0, column);
     }
 
     this.setState({

@@ -243,8 +243,6 @@ export default class OnlineMng extends SimpleMng {
     } else {
       if (record.tags.length !== 0) {
         record.attrNames = record.tags;
-      } else {
-        record.attrNames = ['默认规格'];
       }
 
       let attrValues = [];
@@ -461,7 +459,7 @@ export default class OnlineMng extends SimpleMng {
             editFormType={editFormType}
             record={editFormRecord}
             onFullScreen
-            centered={true}
+            centered={false}
             closeModal={() => this.setState({ editForm: undefined })}
             onSubmit={(fields) => this.commodityOnline(fields)}
           />
