@@ -127,7 +127,7 @@ export default class OnlineMng extends SimpleMng {
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
     return (
-      <Form onSubmit={this.handleSearch} layout="inline">
+      <Form  layout="inline">
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
           <Col md={6} sm={24}>
             <FormItem label="店铺名称">
@@ -161,7 +161,7 @@ export default class OnlineMng extends SimpleMng {
           </Col>
           <Col md={6} sm={24}>
             <span style={{ float: 'left', marginBottom: 24 }}>
-              <Button type="primary" htmlType="submit">
+              <Button  onClick={this.handleSearch}  type="primary" htmlType="submit">
                 查询
               </Button>
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>

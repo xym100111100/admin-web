@@ -148,7 +148,7 @@ export default class supGoods extends SimpleMng {
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
     return (
-      <Form onSubmit={this.list} layout="inline">
+      <Form  layout="inline">
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
             <FormItem   >
@@ -186,7 +186,7 @@ export default class supGoods extends SimpleMng {
           </Col>
           <Col md={5} sm={24}   >
             <span>
-              <Button type="primary" htmlType="submit">
+              <Button onClick={this.list} type="primary" htmlType="submit">
                 查询
               </Button>
               <Button style={{ marginLeft: 20 }} onClick={this.handleFormReset}>

@@ -172,7 +172,7 @@ export default class SupAccount extends SimpleMng {
     const { user } = this.props;
     editFormRecord.orgId = user.currentUser.orgId;
     return (
-      <Form onSubmit={this.list} layout="inline">
+      <Form  layout="inline">
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
           <Col md={10} sm={24}  >
             <FormItem label="">
@@ -186,7 +186,7 @@ export default class SupAccount extends SimpleMng {
           </Col>
           <Col md={6} sm={24}  >
             <span>
-              <Button type="primary" htmlType="submit">
+              <Button onClick={this.list}  type="primary" htmlType="submit">
                 查询
               </Button>
               <Button style={{ marginLeft: 20 }} onClick={this.handleFormReset}>
