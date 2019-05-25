@@ -28,6 +28,7 @@ export default class KdiLogistic extends SimpleMng {
       pageSize: 5,
 
     };
+    iframeHTML: '<div></div>'//用于打印
   }
 
   // 刷新
@@ -195,7 +196,7 @@ export default class KdiLogistic extends SimpleMng {
           </Col>
           <Col md={6} sm={24}>
             <span>
-              <Button onClick={this.list}  type="primary" htmlType="submit">
+              <Button onClick={this.list} type="primary" htmlType="submit">
                 查询
               </Button>
               <Button style={{ marginLeft: 20 }} onClick={this.handleFormReset}>
@@ -235,6 +236,26 @@ export default class KdiLogistic extends SimpleMng {
     });
   }
 
+  /**
+   * 打印快递单
+   */
+  PrintPage=(id)=>{
+    this.props.dispatch({
+      type: `${this.moduleCode}/getById`,
+      payload: { id },
+      callback: (data) => {
+
+          this.setState({
+            iframeHTML: data.record.printPage
+          }, () => {
+            setTimeout(() => {
+              this.refs.myFocusInput.contentWindow.print();
+            }, 1000);
+          })
+      },
+    });
+
+  }
 
 
   render() {
@@ -318,7 +339,7 @@ export default class KdiLogistic extends SimpleMng {
       },
       {
         title: '操作',
-        width: 100,
+        width: 150,
         render: (text, record) => {
           if (record.entryType === 1) {
             if (record.logisticStatus === '-1') {
@@ -329,6 +350,10 @@ export default class KdiLogistic extends SimpleMng {
                   </a>
                   <br />
                   <a style={{ color: '#C0C0C0' }} >已作废</a>
+                  <br />
+                  <a onClick={()=>this.PrintPage(record.id)}>
+                    打印快递单
+                  </a>
                 </Fragment>
               )
             } else {
@@ -341,6 +366,10 @@ export default class KdiLogistic extends SimpleMng {
                   <Popconfirm title="是否要作废此物流单?" onConfirm={() => this.invalid(record)} >
                     <a >作废</a>
                   </Popconfirm>
+                  <br />
+                  <a onClick={()=>this.PrintPage(record.id)}>
+                    打印快递单
+                  </a>
                 </Fragment>
               )
             }
@@ -372,6 +401,8 @@ export default class KdiLogistic extends SimpleMng {
 
     return (
       <PageHeaderLayout title="快递订单管理">
+              <iframe name="print" style={{ display: 'none' }} ref="myFocusInput" srcdoc={this.state.iframeHTML} ></iframe>
+
         <Card bordered={false}>
           <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
           <div className={styles.tableList}>
