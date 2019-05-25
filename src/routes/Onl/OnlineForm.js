@@ -346,10 +346,13 @@ export default class OnlineForm extends React.Component {
   // 商品轮播图结束
 
   // 富文本框上传
-  uploadFn = param => {
+  uploadFn = value => {
     this.props.dispatch({
       type: `BraftEditorUpload/upload`,
-      payload: param,
+      payload: {
+        moduleName: 'productDetail',
+        value,
+      },
     });
   };
 
