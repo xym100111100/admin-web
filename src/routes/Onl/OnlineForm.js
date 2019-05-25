@@ -350,7 +350,7 @@ export default class OnlineForm extends React.Component {
     this.props.dispatch({
       type: `BraftEditorUpload/upload`,
       payload: {
-        moduleName: 'productDetail',
+        moduleName: 'goodsDetail',
         value,
       },
     });
