@@ -219,7 +219,7 @@ export default class OnlineMng extends SimpleMng {
 
   //上线或重新上线
   commodityOnline = (record) => {
-    console.log('aa',record)
+    //console.log('aa',record)
     if(record.tags=== undefined){
       record.tags=[];
     }

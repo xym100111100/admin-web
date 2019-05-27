@@ -142,7 +142,7 @@ export default class OnlineForm extends React.Component {
 
   //获取分类信息
   onChangeClassification = value => {
-    console.log('159951', value);
+    //console.log('159951', value);
     const classificationId = value[value.length - 1];
     //console.log('555', classificationId);
     this.setState({
@@ -226,7 +226,7 @@ export default class OnlineForm extends React.Component {
         id: id,
       },
       callback: onlonline => {
-        console.log('获取', onlonline);
+        //console.log('获取', onlonline);
         let fileList = new Array();
         let fileLists = new Array();
         for (let i = 0; i < onlonline.record.onlinePicList.length; i++) {
@@ -926,7 +926,6 @@ export default class OnlineForm extends React.Component {
       moduleName: 'damaiSlideshow',
     };
 
-      console.log('pp',this.props);
     return (
       <div style={{ height: this.state.windowsHeight }}>
 
