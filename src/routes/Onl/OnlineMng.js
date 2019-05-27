@@ -16,6 +16,7 @@ import {
   Menu,
   Dropdown,
   Icon,
+  message
 } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import OnlineForm from './OnlineForm';
@@ -252,7 +253,10 @@ export default class OnlineMng extends SimpleMng {
       }
       record.attrValues = attrValues;
     }
-    console.log('record', record);
+    if (record.classificationId.length !== 2) return ;
+    let classificationId =record.classificationId;
+    record.classificationId=classificationId[classificationId.length-1];
+
     if (this.state.editFormTitle !== '重新上线') {
       this.props.dispatch({
         type: `onlonline/add`,

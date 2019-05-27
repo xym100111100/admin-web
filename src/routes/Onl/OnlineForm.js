@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Card, Row, message, Input, Form, Col, Table, Upload, Icon, Modal, Radio, Select, Tag, Tooltip, Cascader, Button } from 'antd';
+import { Card, Row, message, Input, Form, Col, Table, Upload, Icon, Modal, Radio, Select, Tag, Tooltip, Cascader, Button, Popconfirm } from 'antd';
 import EditForm from 'components/Rebue/EditForm';
 import EditableTable from 'components/Rebue/EditableTable';
 // 引入编辑器以及EditorState子模块
@@ -12,11 +12,12 @@ const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 const Option = Select.Option;
 
-@connect(({ onlonline, BraftEditorUpload, prmpartner, slrshop }) => ({
+@connect(({ onlonline, BraftEditorUpload, prmpartner, slrshop,user, }) => ({
   BraftEditorUpload,
   onlonline,
   prmpartner,
   slrshop,
+  user,
 }))
 @Form.create()
 @EditForm
@@ -209,7 +210,7 @@ export default class OnlineForm extends React.Component {
           align: 'center',
           width: '90px',
         };
-        columns.splice(i+1, 0, column);
+        columns.splice(i + 1, 0, column);
       }
     }
     this.setState({
@@ -360,7 +361,7 @@ export default class OnlineForm extends React.Component {
     // 验证价格是否大于0
     const reg = /^([1-9]\d*(\.\d*[1-9])?)|(0\.\d*[1-9])$/;
 
-    if(!record.onlineSpec){
+    if (!record.onlineSpec) {
       message.error('请输入规格名称');
       return false;
     }
@@ -549,7 +550,7 @@ export default class OnlineForm extends React.Component {
               onClick={this.showInput}
               style={{ background: '#fff', borderStyle: 'dashed' }}
             >
-              <Icon type="plus" /> 点击添加属性名
+              <Icon type="plus" /> 点击添加属性值
           </Tag>
           )}
         </div>
@@ -572,7 +573,9 @@ export default class OnlineForm extends React.Component {
             })(
               <Cascader style={{ width: '384px' }} options={this.state.classification} onChange={this.onChangeClassification} placeholder="请先选择店铺再选择分类信息" disabled={this.state.classificationDisable} changeOnSelect />
             )}
-            <Button type="ghost" href="#/slr/slr-shop-mng" >添加商品分类</Button>
+            <Popconfirm placement="bottom" title="是否跳转到店铺信息页面添加新的商品分类?" onConfirm={this.jumpShopUrl} >
+              <Button type="ghost" >添加新的商品分类</Button>
+            </Popconfirm>
           </FormItem>
         </Col>
       );
@@ -586,10 +589,58 @@ export default class OnlineForm extends React.Component {
               })(
                 <Cascader style={{ width: '384px' }} options={this.state.classification} onChange={this.onChangeClassification} placeholder="请选择分类信息" changeOnSelect />
               )}
-              <Button type="ghost" href="#/slr/slr-shop-mng">添加商品分类</Button>
+              <Popconfirm placement="bottom" title="是否跳转到店铺信息页面添加新的商品分类?" onConfirm={this.jumpShopUrl} >
+                <Button type="ghost" >添加新的商品分类</Button>
+              </Popconfirm>
             </FormItem>
           </Col>
         </div>
+      )
+    }
+  }
+
+  //跳转到店铺信息页面
+  jumpShopUrl = () => {
+    window.location.href = "#/slr/slr-shop-mng";
+  }
+
+  //是否显示供应商输入框
+  isShowSupplierInput = () => {
+    const { loading, form, record } = this.props;
+    const { deliveryType, isEditSupplier, partnerData } = this.state;
+    if (deliveryType === 1) {
+      return (
+        <Col md={24} sm={24} >
+          <Form layout="inline">
+            <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
+              <Col md={1} sm={1} ></Col>
+              <Col md={23} sm={23} style={{ marginLeft: -12 }}>
+                <FormItem label="供应商名称">
+                  {form.getFieldDecorator('supplierId', {
+                    rules: [{ message: "请选择供应商" }],
+                    initialValue: record.supplierId
+                  })(
+                    <Select
+                      disabled={isEditSupplier === 0 ? true : false}
+                      showSearch
+                      placeholder={record.supplierName === undefined ? "请输入供应商名称" : record.supplierName}
+                      style={{ width: 250 }}
+                      defaultActiveFirstOption={false}
+                      showArrow={false}
+                      filterOption={false}
+                      onSearch={this.partnerSearch}
+                      notFoundContent="没有可选择的供应商"
+                    >
+                      {partnerData.map(d => <Option key={d.orgId}>{d.partnerName}</Option>)}
+                    </Select>
+                  )}
+                </FormItem>
+              </Col>
+              {this.showIsEditSupplier()}
+            </Row>
+          </Form>
+          <br />
+        </Col>
       )
     }
   }
@@ -740,11 +791,16 @@ export default class OnlineForm extends React.Component {
       isEditSupplier = values.isEditSupplier;
     });
     if (onlineName === undefined || onlineName === null || onlineName === '') return message.error('请输入商品名称');
-    if (supplierId === undefined || supplierId === null || supplierId === '') return message.error('请选择供应商');
-
     const { fileList, fileLists, onlineDetail, subjectType, deliveryType, classificationId, classificationArr } = this.state;
     let detailHtml = onlineDetail.toHTML().replace(/<div\/?.+?>/g, '');
     let onlineDetails = detailHtml.replace(/<\/div>/g, '');
+
+    if (deliveryType === 1) {
+      if (supplierId === undefined || supplierId === null || supplierId === '') return message.error('请选择供应商');
+    }else{
+      supplierId=this.props.user.currentUser.orgId;
+
+    }
 
     let deliverOrgId = 0;
     if (deliveryType === 1) {
@@ -763,8 +819,8 @@ export default class OnlineForm extends React.Component {
       return message.error('商品详情不能为空');
     if (onlineDetail.length > 2400) return message.error('商品详情字数不能大于2400个字');
 
-    if (classificationId === undefined || classificationId === '' || classificationId === null) return message.error('请选择商品分类');
-    console.log('333',classificationArr);
+    if (classificationId === undefined || classificationId === '' || classificationId === null) return message.error('请选择商品分类信息');
+
     if (classificationArr.length !== 2) return message.error('请选择商品一级分类和二级分类');
 
     let qsmm = fileList[0].response === undefined ? fileList[0].name : fileList[0].response.filePaths[0];
@@ -805,7 +861,7 @@ export default class OnlineForm extends React.Component {
       isOnlinePlatform: this.state.isOnlinePlatform,
       isBelowOnline: this.state.isBelowOnline,
       tags: this.state.tags,
-      classificationId: this.state.classificationId,
+      classificationId: this.state.classificationArr,
     });
   };
 
@@ -870,7 +926,7 @@ export default class OnlineForm extends React.Component {
       moduleName: 'damaiSlideshow',
     };
 
-
+      console.log('pp',this.props);
     return (
       <div style={{ height: this.state.windowsHeight }}>
 
@@ -885,39 +941,7 @@ export default class OnlineForm extends React.Component {
               </FormItem>
             </Col>
             {this.showClassification()}
-
             <Col md={24} sm={24} >
-              <Form layout="inline">
-                <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
-                  <Col md={1} sm={1}></Col>
-                  <Col md={7} sm={23} style={{ marginLeft: -13 }}>
-                    <FormItem label="供应商名称">
-                      {form.getFieldDecorator('supplierId', {
-                        rules: [{ required: true, message: "请选择供应商" }],
-                        initialValue: record.supplierId
-                      })(
-                        <Select
-                          disabled={isEditSupplier === 0 ? true : false}
-                          showSearch
-                          placeholder={record.supplierName === undefined ? "请输入供应商名称" : record.supplierName}
-                          style={{ width: 250 }}
-                          defaultActiveFirstOption={false}
-                          showArrow={false}
-                          filterOption={false}
-                          onSearch={this.partnerSearch}
-                          notFoundContent="没有可选择的供应商"
-                        >
-                          {partnerData.map(d => <Option key={d.orgId}>{d.partnerName}</Option>)}
-                        </Select>
-                      )}
-                    </FormItem>
-                  </Col>
-                  {this.showIsEditSupplier()}
-                </Row>
-              </Form>
-            </Col>
-            <Col md={24} sm={24} >
-              <br />
               <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="发货类型">
                 {
                   <RadioGroup onChange={this.onChangeDeliveryTypeRadio} value={this.state.deliveryType}>
@@ -927,6 +951,7 @@ export default class OnlineForm extends React.Component {
                 }
               </FormItem>
             </Col>
+            {this.isShowSupplierInput()}
             <Col md={24} sm={24} >
               <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="上线板块">
                 {
