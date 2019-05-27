@@ -35,7 +35,9 @@ export default class EditableTable extends PureComponent {
               defaultValue={text}
               placeholder={item.title}
               onChange={e => this.handleFieldChange(item.dataIndex, e.target.value)}
-              onKeyPress={this.handleKeyPress}
+              onKeyPress={e => {
+                return this.handleKeyPress(e, item);
+              }}
             />
           );
         }
@@ -172,17 +174,17 @@ export default class EditableTable extends PureComponent {
   /**
    * 处理编辑框按键（回车保存）
    */
-  handleKeyPress = e => {
+  handleKeyPress = (e, col) => {
     if (e.key === 'Enter') {
-      this.handleOk();
+      this.handleOk(col);
     }
   };
 
   /**
    * 处理确认事件(由回车键或鼠标点击确认按钮触发的事件)
    */
-  handleOk = () => {
-    if (!this.ok()) return;
+  handleOk = col => {
+    if (!this.ok(col)) return;
     // 继续添加
     this.handleAdd();
   };
@@ -190,14 +192,14 @@ export default class EditableTable extends PureComponent {
   /**
    * 确认
    */
-  ok = () => {
+  ok = col => {
     const { onCheck } = this.props;
     const { editRecord, editRowIndex } = this.state;
     const { children } = this.props;
     const { dataSource: records } = children.props;
 
     // 检查数据是否正确
-    if (!onCheck(editRecord)) return false;
+    if (!onCheck(editRecord, col)) return false;
     // 将编辑的记录赋值改变真正的记录
     records[editRowIndex] = { ...editRecord }; // 深一层复制
 

@@ -168,7 +168,24 @@ export default class PrdProductForm extends React.Component {
     });
   };
 
-  handleCheck = record => {
+  handleCheck = (record, col) => {
+    if (col && col.dataIndex === 'code') {
+      this.props.dispatch({
+        type: `prdproductspec/existSpecCode`,
+        payload: {
+          code: record.code,
+        },
+        callback: results => {
+          if (results.result === -1) {
+            message.error(results.msg);
+          } else {
+            message.success(results.msg);
+          }
+        },
+      });
+      return false;
+    }
+
     if (!record.name) {
       message.error('请输入规格名称');
       return false;

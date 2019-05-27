@@ -232,7 +232,6 @@ export default class PrdProductMng extends SimpleMng {
             title={editFormTitle}
             width={1100}
             height={510}
-            id={editFormRecord.id}
             editFormType={editFormType}
             record={editFormRecord}
             onFullScreen

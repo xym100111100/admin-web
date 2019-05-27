@@ -1,4 +1,5 @@
-import { list } from '../services/prdproductspec';
+import { message } from 'antd';
+import { list, existSpecCode } from '../services/prdproductspec';
 
 export default {
   namespace: 'prdproductspec',
@@ -14,6 +15,11 @@ export default {
         type: 'changeList',
         payload: response,
       });
+      if (callback) callback(response);
+    },
+
+    *existSpecCode({ payload, callback }, { call }) {
+      const response = yield call(existSpecCode, payload);
       if (callback) callback(response);
     },
   },
