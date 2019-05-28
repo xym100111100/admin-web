@@ -14,6 +14,7 @@ export default class SlrSellerForm extends PureComponent {
     return (
       <Fragment>
         {form.getFieldDecorator('id')(<Input type="hidden" />)}
+        {form.getFieldDecorator('accountId')(<Input type="hidden" />)}
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="卖家名称">
           {form.getFieldDecorator('name', {
             rules: [{ required: false, message: '请输入卖家的名称' }],

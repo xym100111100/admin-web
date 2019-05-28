@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, PureComponent } from 'react';
 import { Form, Input } from 'antd';
 import { connect } from 'dva';
 import EditForm from 'components/Rebue/EditForm';
@@ -10,79 +10,18 @@ const FormItem = Form.Item;
     sucorg, loading: loading.models.sucorg
 }))
 @EditForm
-export default class SlrShopForm extends React.Component {
+export default class SlrShopForm extends PureComponent {
 
-    /**
-     * 提交前事件
-     */
-    beforeSave = () => {
-        const { form, record, editFormType } = this.props;
-        // 卖家id/组织id
-        let sellerId = record.sellerId === undefined ? record.id : record.sellerId;
-        // 店铺id
-        let shopId = editFormType === 'edit' ? record.id : undefined;
 
-        // 门店名称
-        let shopName = undefined;
-        // 门店简称
-        let shortName = undefined;
-        // 地址
-        let adderss = undefined;
-        // 经度
-        let latitude = undefined;
-        // 纬度
-        let longitude = undefined;
-        // 联系方式
-        let contact = undefined;
-
-        form.validateFields((err, values) => {
-            // 门店名称
-            shopName = values.shopName;
-            // 门店简称
-            shortName = values.shortName;
-            // 地址
-            adderss = values.adderss;
-            // 经度
-            latitude = values.latitude;
-            // 纬度
-            longitude = values.longitude;
-            // 联系方式
-            contact = values.contact;
-        });
-
-        form.getFieldDecorator('sellerId');
-        form.getFieldDecorator('shopName');
-        form.getFieldDecorator('shortName');
-        form.getFieldDecorator('adderss');
-        form.getFieldDecorator('latitude');
-        form.getFieldDecorator('longitude');
-        form.getFieldDecorator('contact');
-        form.setFieldsValue({
-            // 门店id
-            id: shopId,
-            // 卖家id
-            sellerId: sellerId,
-            // 门店名称
-            shopName: shopName,
-            // 门店简称
-            shortName: shortName,
-            // 地址
-            adderss: adderss,
-            // 经度
-            latitude: latitude,
-            // 纬度
-            longitude: longitude,
-            // 联系方式
-            contact: contact,
-        });
-    }
 
     render() {
         const { form, record } = this.props;
-        console.log(record);
+        console.log(this.props);
         return (
             <Fragment>
                 {form.getFieldDecorator('id')(<Input type="hidden" />)}
+                {form.getFieldDecorator('accountId')(<Input type="hidden" />)}
+                {form.getFieldDecorator('sellerId')(<Input type="hidden" />)}
                 <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="店铺名称">
                     {form.getFieldDecorator('shopName', {
                         rules: [{ required: true, message: '请输入店铺名称' }],

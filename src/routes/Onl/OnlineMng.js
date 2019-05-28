@@ -3,6 +3,7 @@ import React, { Fragment } from 'react';
 import { connect } from 'dva';
 import {
   Button,
+  Radio,
   Card,
   Divider,
   Popconfirm,
@@ -27,6 +28,8 @@ import OnlOnlineNumberForm from './OnlOnlineNumberForm';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
+const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
 
 @connect(({ onlonline, user, slrshop, loading, }) => ({
   onlonline, user, slrshop,
@@ -37,38 +40,14 @@ export default class OnlineMng extends SimpleMng {
   constructor() {
     super();
     this.moduleCode = 'onlonline';
-    this.state.options = {
-      pageNum: 1,
-      pageSize: 5,
-    };
     this.state.shopData = [];
   }
 
 
-  handleReload = () => {
-    this.props.dispatch({
-      type: `${this.moduleCode}/list`,
-      payload: {
-        pageNum: 1,
-        pageSize: 5,
-        onlineState: 1,
-        thisOrgId: this.props.user.currentUser.orgId,
-      },
-    })
-  }
-
   //初始化
   componentDidMount() {
     //获取上线信息
-    this.props.dispatch({
-      type: `${this.moduleCode}/list`,
-      payload: {
-        pageNum: 1,
-        pageSize: 5,
-        onlineState: 1,
-        thisOrgId: this.props.user.currentUser.orgId,
-      },
-    })
+    this.handleReload();
     //获取店铺信息
     this.props.dispatch({
       type: `onlonline/shopList`,
@@ -82,6 +61,18 @@ export default class OnlineMng extends SimpleMng {
     });
   }
 
+  handleReload = () => {
+    this.props.dispatch({
+      type: `${this.moduleCode}/list`,
+      payload: {
+        pageNum: 1,
+        pageSize: 5,
+        onlineState: -1,
+        thisOrgId: this.props.user.currentUser.orgId,
+      },
+    })
+  }
+
   handleSearch = (pagination) => {
     this.props.form.validateFields((err, values) => {
       this.props.dispatch({
@@ -89,7 +80,7 @@ export default class OnlineMng extends SimpleMng {
         payload: {
           pageNum: pagination.current === undefined ? 1 : pagination.current,
           pageSize: pagination.current === undefined ? 5 : pagination.pageSize,
-          onlineState: 1,
+          onlineState: values.onlineState,
           thisOrgId: this.props.user.currentUser.orgId,
           shopName: values.shopName === '所有店铺' ? undefined : values.shopName,
           onlineTitle: values.onlineTitle,
@@ -128,7 +119,7 @@ export default class OnlineMng extends SimpleMng {
   renderSearchForm() {
     const { getFieldDecorator } = this.props.form;
     return (
-      <Form  layout="inline">
+      <Form layout="inline" style={{ marginBottom: 14 }} >
         <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
           <Col md={6} sm={24}>
             <FormItem label="店铺名称">
@@ -149,20 +140,27 @@ export default class OnlineMng extends SimpleMng {
             <FormItem label="上线标题">{getFieldDecorator('onlineTitle')(<Input placeholder="上线标题" />)}</FormItem>
           </Col>
           <Col md={6} sm={24}>
-            <FormItem label="上线状态">
+            <FormItem >
               {getFieldDecorator('onlineState', {
-                initialValue: '1',
+                initialValue: '-1',
               })(
-                <Select style={{ width: 120 }}>
-                  <Option value="1">已上线</Option>
-                  <Option value="0">已下线</Option>
-                </Select>
+                <RadioGroup style={{ width: 280 }} >
+                  <RadioButton value='-1'  >
+                    全部
+                   </RadioButton>
+                  <RadioButton value='1'  >
+                    已上线
+                   </RadioButton>
+                  <RadioButton value='0'  >
+                    已下线
+                  </RadioButton>
+                </RadioGroup>
               )}
             </FormItem>
           </Col>
           <Col md={6} sm={24}>
             <span style={{ float: 'left', marginBottom: 24 }}>
-              <Button  onClick={this.handleSearch}  type="primary" htmlType="submit">
+              <Button onClick={this.handleSearch} type="primary" htmlType="submit">
                 查询
               </Button>
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
@@ -220,11 +218,11 @@ export default class OnlineMng extends SimpleMng {
   //上线或重新上线
   commodityOnline = (record) => {
     //console.log('aa',record)
-    if(record.tags=== undefined){
-      record.tags=[];
+    if (record.tags === undefined) {
+      record.tags = [];
     }
-    if(record.onlineSpecs === undefined){
-      record.onlineSpecs=[];
+    if (record.onlineSpecs === undefined) {
+      record.onlineSpecs = [];
     }
     if (record.tags.length > 1) {
       //整理属性值
@@ -253,9 +251,9 @@ export default class OnlineMng extends SimpleMng {
       }
       record.attrValues = attrValues;
     }
-    if (record.classificationId.length !== 2) return ;
-    let classificationId =record.classificationId;
-    record.classificationId=classificationId[classificationId.length-1];
+    if (record.classificationId.length !== 2) return;
+    let classificationId = record.classificationId;
+    record.classificationId = classificationId[classificationId.length - 1];
 
     if (this.state.editFormTitle !== '重新上线') {
       this.props.dispatch({

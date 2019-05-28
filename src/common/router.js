@@ -190,7 +190,7 @@ export const getRouterData = app => {
       ),
     },
     '/slr/slr-seller-mng': {
-      component: dynamicWrapper(app, ['slrseller', 'slrshop', 'slrshopaccount'], () =>
+      component: dynamicWrapper(app, ['slrseller','user', 'slrshop', 'slrshopaccount'], () =>
         import('../routes/Slr/SlrSellerMng')
       ),
     },

@@ -62,8 +62,10 @@ export default class SlrShopMng extends SimpleMng {
         const { slrshop: { slrshop }, loading, user} = this.props;
         const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
         const sellerId = user.currentUser.orgId;
+        const userId = user.currentUser.userId;
         editFormRecord.sellerId = sellerId;
-
+        editFormRecord.accountId = userId;
+        
         const columns = [
             {
                 title: '店铺名称',
@@ -107,11 +109,11 @@ export default class SlrShopMng extends SimpleMng {
                                     moduleCode: 'slrshopaccount',
                                     getByIdMethodName: 'getShopAccountList',
                                     editForm: 'slrShopAccountForm',
-                                    editFormTitle: '设置店铺的用户',
+                                    editFormTitle: '设置店铺的员工',
                                 })
                             }
                         >
-                            用户
+                            员工
                         </a>
                         <Divider type="vertical" />
                         <a onClick={() => this.showAddForm({ editFormRecord:slrshop,editFormRecord: record, editForm: 'OnlSearchCategoryForm', editFormTitle: '添加分类' })}>
@@ -157,7 +159,7 @@ export default class SlrShopMng extends SimpleMng {
                         <div className={styles.tableList}>
                             <Row gutter={{ md: 6, lg: 24, xl: 48 }} style={{ marginBottom: 12 }} >
                                 <Col md={2} sm={24}>
-                                    <Button onClick={() => this.showAddForm({ sellerId: sellerId,editForm: 'SlrShopForm', editFormTitle: '添加店铺' })} type="primary" htmlType="submit">
+                                    <Button onClick={() => this.showAddForm({accountId:userId, sellerId: sellerId,editForm: 'SlrShopForm', editFormTitle: '添加店铺' })} type="primary" htmlType="submit">
                                         添加
                                      </Button>
                                 </Col>

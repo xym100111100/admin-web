@@ -9,7 +9,7 @@ import SlrShopForm from './SlrShopForm';
 
 
 @Form.create()
-@connect(({ slrseller, slrshop, slrshopaccount, loading }) => ({ slrseller, slrshop, slrshopaccount, loading: loading.models.slrseller }))
+@connect(({ slrseller, slrshop,user, slrshopaccount, loading }) => ({ slrseller, slrshop, user,slrshopaccount, loading: loading.models.slrseller,user }))
 export default class SlrSellerMng extends SimpleMng {
     constructor() {
         super();
@@ -46,8 +46,10 @@ export default class SlrSellerMng extends SimpleMng {
     };
 
     render() {
-        const { slrseller: { slrseller }, loading } = this.props;
+        const {user, slrseller: { slrseller }, loading } = this.props;
         const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
+        const userId = user.currentUser.userId;
+        editFormRecord.accountId = userId;
         const columns = [
             {
                 title: '卖家名称',
