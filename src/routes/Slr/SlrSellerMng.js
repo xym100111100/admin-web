@@ -96,7 +96,7 @@ export default class SlrSellerMng extends SimpleMng {
                             编辑
                         </a>
                         <Divider type="vertical" />
-                        <a onClick={() => this.showAddForm({ editFormRecord: record, editForm: 'SlrShopForm', editFormTitle: '添加店铺' })}>
+                        <a onClick={() => this.showAddForm({ editFormRecord: {'sellerId':record.id}, editForm: 'SlrShopForm', editFormTitle: '添加店铺' })}>
                             添加店铺
                         </a>
                     </Fragment>

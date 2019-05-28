@@ -6,9 +6,7 @@ import EditForm from 'components/Rebue/EditForm';
 const FormItem = Form.Item;
 
 // 添加与编辑的表单
-@connect(({ sucorg, loading }) => ({
-    sucorg, loading: loading.models.sucorg
-}))
+@connect(({ slrseller, slrshop, user, slrshopaccount, loading }) => ({ slrseller, slrshop, user, slrshopaccount, loading: loading.models.slrseller, user }))
 @EditForm
 export default class SlrShopForm extends PureComponent {
 
@@ -16,7 +14,7 @@ export default class SlrShopForm extends PureComponent {
 
     render() {
         const { form, record } = this.props;
-        console.log(this.props);
+
         return (
             <Fragment>
                 {form.getFieldDecorator('id')(<Input type="hidden" />)}
