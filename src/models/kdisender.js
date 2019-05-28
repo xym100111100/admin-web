@@ -82,6 +82,10 @@ export default {
       payload.senderProvince = payload.senderaddr[0];
       payload.senderCity = payload.senderaddr[1];
       payload.senderExpArea = payload.senderaddr[2];
+      if(payload.orgId===undefined){
+        message.error("您未加入任何组织不能添加发件人，请联系管理员为您添加。");
+        return ;
+      }
       const response = yield call(add, payload);
       if (response.result === 1) {
         message.success(response.msg);

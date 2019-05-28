@@ -41,6 +41,10 @@ export default {
       }
     },
     *add({ payload, callback }, { call }) {
+      if(payload.orgId===undefined){
+        message.error("您未加入任何组织不能添加快递公司，请联系管理员为您添加。");
+        return ;
+      }
       const response = yield call(add, payload);
       if (response.result === 1) {
         message.success(response.msg);
