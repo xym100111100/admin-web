@@ -1,5 +1,6 @@
 import { message } from 'antd';
 import { list, getById, add, modify, del, setDefaultCompany } from '../services/kdicompany';
+import { shopList } from '../services/slrshop';
 
 export default {
   namespace: 'kdicompany',
@@ -15,6 +16,10 @@ export default {
         type: 'changeList',
         payload: response,
       });
+      if (callback) callback(response);
+    },
+    *shopList({ payload, callback }, { call, put }) {
+      const response = yield call(shopList, payload);
       if (callback) callback(response);
     },
     *getById({ payload, callback }, { call }) {

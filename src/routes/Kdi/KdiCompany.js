@@ -1,20 +1,21 @@
 import SimpleMng from 'components/Rebue/SimpleMng';
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Button,message, Card, Divider, Popconfirm, Table } from 'antd';
+import { Button, message, Card, Divider, Popconfirm, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import CompanyForm from './CompanyForm';
 import styles from './KdiCompany.less';
 import KdiTemplateImgForm from './KdiTemplateImgForm';
 import TemplateForm from './TemplateForm';
+import CompanyShopForm from './CompanyShopForm';
 
-@connect(({ kdicompany,kditemplate, companydic, user, login, loading }) => ({
+@connect(({ kdicompany, kditemplate, companydic, user, login, loading }) => ({
   kdicompany,
   companydic,
   kditemplate,
   user,
   login,
-  loading: loading.models.kdicompany ||loading.models.kditemplate || loading.models.user || loading.models.companydic || loading.models.login,
+  loading: loading.models.kdicompany || loading.models.kditemplate || loading.models.user || loading.models.companydic || loading.models.login,
 }))
 export default class KdiCompany extends SimpleMng {
   constructor() {
@@ -69,13 +70,13 @@ export default class KdiCompany extends SimpleMng {
   /**
    * 添加电子面单
    */
-  addTemplate=(record)=>{
-    if(record.templateDicId ===0){
+  addTemplate = (record) => {
+    if (record.templateDicId === 0) {
       message.error('未选择任何模板，不能添加');
-      return ;
+      return;
     }
-    record.companyId=record.id;
-    record.id=undefined;
+    record.companyId = record.id;
+    record.id = undefined;
     this.props.dispatch({
       type: `kditemplate/add`,
       payload: record,
@@ -89,13 +90,34 @@ export default class KdiCompany extends SimpleMng {
   /**
    * 修改电子面单
    */
-  editTemplate=(record)=>{
-    record.companyId=record.id;
-    record.id=record.templateId;
-    record.templateId=undefined;
+  editTemplate = (record) => {
+    record.companyId = record.id;
+    record.id = record.templateId;
+    record.templateId = undefined;
     this.props.dispatch({
       type: `kditemplate/modify`,
       payload: record,
+      callback: () => {
+        this.setState({ editForm: undefined })
+        this.handleReload();
+      },
+    });
+  }
+
+    /**
+   * 修改电子面单
+   */
+  editShop = (record) => {
+    let shopInfo=record.shopId.split('/')
+    
+    let fields={
+       id:record.id,
+       shopId:shopInfo[0],
+       shopName:shopInfo[1]
+    }
+    this.props.dispatch({
+      type: `${this.moduleCode}/modify`,
+      payload: fields,
       callback: () => {
         this.setState({ editForm: undefined })
         this.handleReload();
@@ -113,6 +135,14 @@ export default class KdiCompany extends SimpleMng {
       {
         title: '名称',
         dataIndex: 'companyName',
+        render: (text, record) => {
+          if (record.anotherName === undefined) {
+            return record.companyName;
+          } else {
+            return record.anotherName;
+          }
+
+        },
       },
       {
         title: '帐号',
@@ -129,6 +159,13 @@ export default class KdiCompany extends SimpleMng {
         },
       },
       {
+        title: '默认使用的店铺',
+        dataIndex: 'shopName',
+        render: (text, record) => {
+          return record.shopName;
+        }
+      },
+      {
         title: '电子面单',
         dataIndex: 'templateName',
         render: (text, record) => {
@@ -139,10 +176,6 @@ export default class KdiCompany extends SimpleMng {
             >{record.templateName}</a>
           )
         }
-      },
-      {
-        title: '录入时间',
-        dataIndex: 'entryTime',
       },
       {
         title: '操作',
@@ -163,9 +196,12 @@ export default class KdiCompany extends SimpleMng {
                 </Popconfirm>
                 <Divider type="vertical" />
                 <a onClick={() => this.setDefuteCompany(record)}>设为默认</a>
-                <Divider type="vertical" />
                 <br />
-                {this.isShowAddTempLate(record,editFormRecord)}
+                {this.isShowAddTempLate(record, editFormRecord)}
+                <br />
+                <a onClick={()=>this.showAddForm({editFormRecord: record,editForm: 'CompanyShopForm', editFormTitle: '添加默认使用该快递的店铺'})} >
+                  设置默认使用的店铺
+                </a>
               </Fragment>
             );
           } else {
@@ -184,9 +220,12 @@ export default class KdiCompany extends SimpleMng {
                 </Popconfirm>
                 <Divider type="vertical" />
                 <a>默认</a>
-                <Divider type="vertical" />
                 <br />
-                {this.isShowAddTempLate(record,editFormRecord)}
+                {this.isShowAddTempLate(record, editFormRecord)}
+                <br />
+                <a onClick={()=>this.showEditForm({editFormRecord: record,editForm: 'CompanyShopForm', editFormTitle: '添加默认使用该快递的店铺'})} >
+                  设置默认使用的店铺
+                </a>
               </Fragment>
             );
           }
@@ -255,6 +294,16 @@ export default class KdiCompany extends SimpleMng {
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
             onSubmit={fields => this.editTemplate(fields)}
+          />
+        )}
+       {editForm === 'CompanyShopForm' && (
+          <CompanyShopForm
+            visible
+            title={editFormTitle}
+            editFormType={editFormType}
+            record={editFormRecord}
+            closeModal={() => this.setState({ editForm: undefined })}
+            onSubmit={fields => this.editShop(fields)}
           />
         )}
       </PageHeaderLayout>
