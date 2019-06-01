@@ -10,19 +10,19 @@ const { Option } = Select;
 @connect(({ slrshop, kdicompany, loading }) => ({ slrshop, kdicompany, loading: loading.models.slrshop || loading.models.kdicompany }))
 @EditForm
 export default class CompanyShopForm extends PureComponent {
-
   state = {
     shopList: [],
   };
 
   componentDidMount() {
+    console.log(this.props);
     //获取店铺集合
     this.props.dispatch({
       type: `kdicompany/shopList`,
       callback: data => {
         if (data !== undefined && data.length !== 0) {
           this.setState({
-            shopList: data
+            shopList: data,
           })
         }
       },
@@ -34,12 +34,17 @@ export default class CompanyShopForm extends PureComponent {
 
   render() {
     const { form } = this.props;
-
+    
     let listItems = '';
+    //默认值
+    let defaultItems;
     if (this.state.shopList.length !== 0) {
       listItems = this.state.shopList.map(items => {
+        if(items.id===this.props.record.initShopId){
+          defaultItems=items.id + '/' + items.shopName;
+        }
         return (
-          <Option value={items.id+'/'+items.shopName}
+          <Option value={items.id + '/' + items.shopName}
             key={items.id.toString()}>
             {items.shopName}
           </Option>
@@ -50,7 +55,7 @@ export default class CompanyShopForm extends PureComponent {
     return (
       <Fragment>
         <Form layout="inline">
-        {form.getFieldDecorator('id')(<Input type="hidden" />)}
+          {form.getFieldDecorator('id')(<Input type="hidden" />)}
           <Row gutter={{ md: 6, lg: 24, xl: 48 }} style={{ textAlign: 'center' }}   >
             <Col md={24} sm={24} style={{ marginBottom: 5 }}  >
               温馨提示：每个快递公司只能默认一个店铺，提交后原先设置该快递的店铺将没有默认快递公司，如需每个店铺都设置默认快递公司请添加多个快递公司，同名快递公司使用备注名称区别。
@@ -64,6 +69,7 @@ export default class CompanyShopForm extends PureComponent {
                       message: '请选择默认使用的店铺',
                     },
                   ],
+                  initialValue: defaultItems,
                 })(
                   <Select placeholder="请选择默认使用的店铺" style={{ width: 250 }} >
                     {listItems}

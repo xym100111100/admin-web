@@ -199,7 +199,7 @@ export default class KdiCompany extends SimpleMng {
                 <br />
                 {this.isShowAddTempLate(record, editFormRecord)}
                 <br />
-                <a onClick={()=>this.showAddForm({editFormRecord: record,editForm: 'CompanyShopForm', editFormTitle: '添加默认使用该快递的店铺'})} >
+                <a onClick={()=>this.showAddForm({editFormRecord: {'id':record.id,'initShopId':record.shopId},editForm: 'CompanyShopForm', editFormTitle: '添加默认使用该快递的店铺'})} >
                   设置默认使用的店铺
                 </a>
               </Fragment>
@@ -223,7 +223,7 @@ export default class KdiCompany extends SimpleMng {
                 <br />
                 {this.isShowAddTempLate(record, editFormRecord)}
                 <br />
-                <a onClick={()=>this.showEditForm({editFormRecord: record,editForm: 'CompanyShopForm', editFormTitle: '添加默认使用该快递的店铺'})} >
+                <a onClick={()=>this.showEditForm({editFormRecord: {'id':record.id,'initShopId':record.shopId},editForm: 'CompanyShopForm', editFormTitle: '添加默认使用该快递的店铺'})} >
                   设置默认使用的店铺
                 </a>
               </Fragment>
