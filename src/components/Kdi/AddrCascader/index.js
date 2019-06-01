@@ -1926,6 +1926,8 @@ const options = [
         label: '南昌市',
         children: [
           { value: '东湖区', label: '东湖区' },
+          { value: '高新技术开发区', label: '高新技术开发区' },
+          { value: '红谷滩新区', label: '红谷滩新区' },
           { value: '西湖区', label: '西湖区' },
           { value: '青云谱区', label: '青云谱区' },
           { value: '湾里区', label: '湾里区' },
@@ -1941,6 +1943,7 @@ const options = [
         label: '景德镇市',
         children: [
           { value: '昌江区', label: '昌江区' },
+          { value: '东城区', label: '东城区' },
           { value: '珠山区', label: '珠山区' },
           { value: '浮梁县', label: '浮梁县' },
           { value: '乐平市', label: '乐平市' },
@@ -1962,6 +1965,7 @@ const options = [
         label: '九江市',
         children: [
           { value: '濂溪区', label: '濂溪区' },
+          { value: '经济技术开发区', label: '经济技术开发区' },
           { value: '浔阳区', label: '浔阳区' },
           { value: '九江县', label: '九江县' },
           { value: '武宁县', label: '武宁县' },
@@ -1979,7 +1983,11 @@ const options = [
       {
         value: '新余市',
         label: '新余市',
-        children: [{ value: '渝水区', label: '渝水区' }, { value: '分宜县', label: '分宜县' }],
+        children: [
+          { value: '渝水区', label: '渝水区' },
+          { value: '分宜县', label: '分宜县' },
+          { value: '高新区', label: '高新区' }
+          ],
       },
       {
         value: '鹰潭市',
@@ -1995,6 +2003,7 @@ const options = [
         label: '赣州市',
         children: [
           { value: '章贡区', label: '章贡区' },
+          { value: '经济开发区', label: '经济开发区' },
           { value: '南康区', label: '南康区' },
           { value: '赣县', label: '赣县' },
           { value: '信丰县', label: '信丰县' },
@@ -2038,6 +2047,7 @@ const options = [
         label: '宜春市',
         children: [
           { value: '袁州区', label: '袁州区' },
+          { value: '中心城区', label: '中心城区' },
           { value: '奉新县', label: '奉新县' },
           { value: '万载县', label: '万载县' },
           { value: '上高县', label: '上高县' },
@@ -3043,6 +3053,7 @@ const options = [
         label: '深圳市',
         children: [
           { value: '罗湖区', label: '罗湖区' },
+          { value: '龙华新区', label: '龙华新区' },
           { value: '福田区', label: '福田区' },
           { value: '南山区', label: '南山区' },
           { value: '宝安区', label: '宝安区' },
