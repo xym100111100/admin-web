@@ -2,6 +2,8 @@ import { message } from 'antd';
 import {updateOrg,listOrderdetaildeliver,detailList, buyrelation,list,getTraceAndDeliver, getById,detail, add, modify, del,cancel,canceldelivery ,modifyOrderRealMoney,deliver, modifyOrderShippingAddress,getUnshipmentsByDeliverOrgId } from '../services/ordorder';
 import { printpage ,logisticList} from '../services/kdilogistic';
 import { listAll } from '../services/sucorg';
+import { getone} from '../services/slrshopaccount';
+
 export default {
   namespace: 'ordorder',
 
@@ -18,6 +20,11 @@ export default {
         type: 'changeList',
         payload: response,
       });
+      if (callback) callback(response);
+    },
+    *getone({ payload, callback }, { call, put }) {
+      console.log("-------")
+      const response = yield call(getone, payload);
       if (callback) callback(response);
     },
     *detailList({ payload, callback }, { call, put }) {

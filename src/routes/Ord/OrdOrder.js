@@ -15,9 +15,9 @@ const { RangePicker } = DatePicker;
 
 const { Option } = Select;
 const FormItem = Form.Item;
-@connect(({ ordorder, user, kdicompany, sucorg, kdisender, loading, suporder }) => ({
-  ordorder, user, kdicompany, kdisender, sucorg, suporder,
-  loading: loading.models.ordorder || loading.models.sucorg || loading.models.user || loading.models.kdicompany || loading.models.kdisender || loading.models.suporder
+@connect(({slrshopaccount, ordorder, user, kdicompany, sucorg, kdisender, loading, suporder }) => ({
+  ordorder, user, kdicompany,slrshopaccount, kdisender, sucorg, suporder,
+  loading: loading.models.ordorder || loading.models.sucorg|| loading.models.slrshopaccount || loading.models.user || loading.models.kdicompany || loading.models.kdisender || loading.models.suporder
 }))
 @Form.create()
 export default class OrdOrder extends SimpleMng {

@@ -8,9 +8,9 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const Panel = Collapse.Panel;
 // 添加与编辑的表单
-@connect(({ kdisender, kdicompany, ordorder, user, loading }) => ({
-    kdisender, user, ordorder, kdicompany,
-    loading: loading.models.kdisender || loading.models.user || loading.models.ordorder || loading.models.kdicompany
+@connect(({ kdisender, slrshopaccount,kdicompany, ordorder, user, loading }) => ({
+    kdisender, user, ordorder, kdicompany,slrshopaccount,
+    loading: loading.models.kdisender || loading.models.user|| loading.models.slrshopaccount || loading.models.ordorder || loading.models.kdicompany
 }))
 @EditForm
 export default class OrdSendForm extends PureComponent {
@@ -316,7 +316,7 @@ export default class OrdSendForm extends PureComponent {
             payload: { orgId: orgId },
             callback: data => {
                 for (let i = 0; i < data.length; i++) {
-                    //设置默认发件人id和默认选中发件人以便后面修改
+                    //设置默认发件人以便后面修改
                     if (data[i].isDefault) {
                         this.setState({
                             selectSend: data[i],
@@ -334,22 +334,25 @@ export default class OrdSendForm extends PureComponent {
             payload: { orgId: orgId },
             callback: data => {
                 for (let i = 0; i < data.length; i++) {
-                    //设置默认快递公司id以便后面修改
+                    //设置(组织)默认快递公司以便后面修改,设置后去查询(用户)默认店铺看是否要优先设置用户默认快递公司
                     if (data[i].isDefault) {
                         this.setState({
                             selectCompany: data[i],
-                        })
+                        },()=>this.getDefaultShop())
                     }
                 }
+                //设置快递公司后
                 this.setState({
                     kdicompany: data,
                 })
+
             }
         });
         //获取订单详情
         this.getOrderDetaile(record);
         //获取包裹
         this.getPackage(record);
+       
     }
 
     /**
@@ -363,6 +366,23 @@ export default class OrdSendForm extends PureComponent {
                 this.setState({
                     PackageData: data
                 })
+            }
+        })
+    }
+
+    /**
+     * 获取用户的默认店铺看是否有某个快递公司属于该店铺，
+     * 如果有的话就设置该快递公司为默认已经选择的快递公司。
+     */
+    getDefaultShop=()=>{
+        console.log("获取默认店铺")
+        const { user } = this.props;
+        const userId = user.currentUser.userId;
+        this.props.dispatch({
+            type: `ordorder/getone`,
+            payload: { 'accountId': userId,'isDefault':true },
+            callback: data => {
+                console.log(data);
             }
         })
     }

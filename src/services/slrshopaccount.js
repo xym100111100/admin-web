@@ -49,3 +49,17 @@ export async function addAccounts(params) {
     },
   });
 }
+
+
+/**
+ * 获取单个店铺帐号信息
+ * @param {*} params 
+ */
+export async function getone(params) {
+  return request(`/slr-svr/slr/shopaccount/getone`, {
+    method: 'GET',
+    body: {
+      ...params,
+    },
+  });
+}
