@@ -8,9 +8,9 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const Panel = Collapse.Panel;
 // 添加与编辑的表单
-@connect(({ kdisender, kdicompany, ordorder, user, loading }) => ({
-    kdisender, user, ordorder, kdicompany,
-    loading: loading.models.kdisender || loading.models.user || loading.models.ordorder || loading.models.kdicompany
+@connect(({ kdisender, slrshopaccount, kdicompany, ordorder, user, loading }) => ({
+    kdisender, user, ordorder, kdicompany, slrshopaccount,
+    loading: loading.models.kdisender || loading.models.user || loading.models.slrshopaccount || loading.models.ordorder || loading.models.kdicompany
 }))
 @EditForm
 export default class SupSendForm extends PureComponent {
@@ -215,7 +215,7 @@ export default class SupSendForm extends PureComponent {
             if (this.state.selectCompany.companyPwd !== undefined && this.state.selectCompany.companyPwd !== null && this.state.selectCompany.companyPwd !== '') {
                 return (
                     <div>
-                        <p style={{ marginBottom: -1,fontSize:18,color:'#1890ff' }} >发货备注:</p>
+                        <p style={{ marginBottom: -1, fontSize: 18, color: '#1890ff' }} >发货备注:</p>
                         <textarea onChange={(value) => this.textChange(value)} style={{ width: '100%', }} rows="6" value={orderDetail} >
                         </textarea>
                     </div>
@@ -225,7 +225,7 @@ export default class SupSendForm extends PureComponent {
             if (this.state.selectCompany.companyPwd !== undefined && this.state.selectCompany.companyPwd !== null && this.state.selectCompany.companyPwd !== '') {
                 return (
                     <div>
-                        <p style={{ marginBottom: -1,fontSize:18,color:'#1890ff' }} >发货备注:</p>
+                        <p style={{ marginBottom: -1, fontSize: 18, color: '#1890ff' }} >发货备注:</p>
                         <textarea onChange={(value) => this.textChange(value)} style={{ width: '100%', }} rows="6" value={orderDetail} >
                         </textarea>
                     </div>
@@ -332,23 +332,51 @@ export default class SupSendForm extends PureComponent {
             type: `kdicompany/list`,
             payload: { orgId: orgId },
             callback: data => {
+                this.setState({
+                    kdicompany: data,
+                })
                 for (let i = 0; i < data.length; i++) {
                     //设置默认快递公司id以便后面修改
                     if (data[i].isDefault) {
                         this.setState({
                             selectCompany: data[i],
-                        })
+                        }, () => this.getDefaultShop())
                     }
                 }
-                this.setState({
-                    kdicompany: data,
-                })
+
             }
         });
         //获取订单详情
         this.getOrderDetaile(record);
         //获取包裹
         this.getPackage(record);
+    }
+
+    /**
+     * 获取用户的默认店铺看是否有某个快递公司属于该店铺，
+     * 如果有的话就设置该快递公司为默认已经选择的快递公司。
+     */
+    getDefaultShop = () => {
+        const { user } = this.props;
+        const userId = user.currentUser.userId;
+        const orgId = user.currentUser.orgId;
+        this.props.dispatch({
+            type: `ordorder/getone`,
+            payload: { 'accountId': userId, 'isDefault': true, 'sellerId': orgId },
+            callback: data => {
+                if (data !== undefined && this.state.kdicompany.length > 0) {
+                    for (let i = 0; i < this.state.kdicompany.length; i++) {
+                        if (this.state.kdicompany[i].shopId === data.shopId) {
+                            this.setState({
+                                selectCompany: this.state.kdicompany[i],
+                            })
+                        }
+                    }
+                }
+
+
+            }
+        })
     }
 
     /**
@@ -609,7 +637,7 @@ export default class SupSendForm extends PureComponent {
             if (this.state.selectCompany.companyPwd === undefined || this.state.selectCompany.companyPwd === null || this.state.selectCompany.companyPwd === '') {
                 return (
                     <div>
-                        <p style={{ marginBottom: -1,fontSize:18,color:'#1890ff' }} >物流单号:</p>
+                        <p style={{ marginBottom: -1, fontSize: 18, color: '#1890ff' }} >物流单号:</p>
                         <textarea placeholder="请输入物流单号，多个单号请换行区分，注意删除多余空格，且单号的数量要与要发的包裹相等。" onChange={(value) => this.logisticCodeChange(value)} style={{ width: '100%', }} rows="6"  >
 
                         </textarea>
@@ -620,7 +648,7 @@ export default class SupSendForm extends PureComponent {
             if (this.state.selectCompany.companyPwd === undefined || this.state.selectCompany.companyPwd === null || this.state.selectCompany.companyPwd === '') {
                 return (
                     <div>
-                        <p style={{ marginBottom: -1,fontSize:18,color:'#1890ff' }} >物流单号:</p>
+                        <p style={{ marginBottom: -1, fontSize: 18, color: '#1890ff' }} >物流单号:</p>
                         <textarea placeholder="请输入物流单号，多个单号请换行区分，注意删除多余空格，且单号的数量要与要发的包裹相等。" onChange={(value) => this.logisticCodeChange(value)} style={{ width: '100%', }} rows="6"  >
 
                         </textarea>

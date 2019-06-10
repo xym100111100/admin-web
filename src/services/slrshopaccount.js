@@ -56,10 +56,5 @@ export async function addAccounts(params) {
  * @param {*} params 
  */
 export async function getone(params) {
-  return request(`/slr-svr/slr/shopaccount/getone`, {
-    method: 'GET',
-    body: {
-      ...params,
-    },
-  });
+  return request(`/slr-svr/slr/shopaccount/getOneShopAccount?${stringify(params)}`);
 }

@@ -23,7 +23,6 @@ export default {
       if (callback) callback(response);
     },
     *getone({ payload, callback }, { call, put }) {
-      console.log("-------")
       const response = yield call(getone, payload);
       if (callback) callback(response);
     },

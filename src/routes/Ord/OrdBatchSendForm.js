@@ -5,9 +5,9 @@ import InfiniteScroll from 'react-infinite-scroller';
 import styles from './OrdOrder.less';
 import { connect } from 'dva';
 // 添加与编辑的表单
-@connect(({ kdisender, kdicompany, ordorder, user, loading }) => ({
-    kdisender, user, ordorder, kdicompany,
-    loading: loading.models.kdisender || loading.models.user || loading.models.ordorder || loading.models.kdicompany
+@connect(({ kdisender, slrshopaccount, kdicompany, ordorder, user, loading }) => ({
+    kdisender, user, ordorder, kdicompany, slrshopaccount,
+    loading: loading.models.kdisender || loading.models.user || loading.models.slrshopaccount || loading.models.ordorder || loading.models.kdicompany
 }))
 @EditForm
 export default class OrdBatchSendForm extends PureComponent {
@@ -82,22 +82,48 @@ export default class OrdBatchSendForm extends PureComponent {
             type: `kdicompany/list`,
             payload: { orgId: orgId },
             callback: data => {
+                this.setState({
+                    kdicompany: data,
+                })
                 for (let i = 0; i < data.length; i++) {
                     //设置默认快递公司id以便后面修改
                     if (data[i].isDefault) {
                         this.setState({
                             selectCompany: data[i],
-                        })
+                        }, () => this.getDefaultShop())
                     }
                 }
-                this.setState({
-                    kdicompany: data,
-                })
+
             }
         });
     }
 
-    
+    /**
+     * 获取用户的默认店铺看是否有某个快递公司属于该店铺，
+     * 如果有的话就设置该快递公司为默认已经选择的快递公司。
+     */
+    getDefaultShop = () => {
+        const { user } = this.props;
+        const userId = user.currentUser.userId;
+        const orgId = user.currentUser.orgId;
+        this.props.dispatch({
+            type: `ordorder/getone`,
+            payload: { 'accountId': userId, 'isDefault': true, 'sellerId': orgId },
+            callback: data => {
+                if (data !== undefined && this.state.kdicompany.length > 0) {
+                    for (let i = 0; i < this.state.kdicompany.length; i++) {
+                        if (this.state.kdicompany[i].shopId === data.shopId) {
+                            this.setState({
+                                selectCompany: this.state.kdicompany[i],
+                            })
+                        }
+                    }
+                }
+
+
+            }
+        })
+    }
 
 
     /**
@@ -118,7 +144,7 @@ export default class OrdBatchSendForm extends PureComponent {
     render() {
         const data = this.state.kdicompany;
         const data2 = this.state.sendData;
-        
+
         return (
             <Fragment>
                 <Form layout="inline">

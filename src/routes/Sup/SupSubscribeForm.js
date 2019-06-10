@@ -85,22 +85,48 @@ export default class SupSubscribeForm extends PureComponent {
             type: `kdicompany/list`,
             payload: { orgId: orgId },
             callback: data => {
+                this.setState({
+                    kdicompany: data,
+                })
                 for (let i = 0; i < data.length; i++) {
                     //设置默认快递公司id以便后面修改
                     if (data[i].isDefault) {
                         this.setState({
                             selectCompany: data[i],
-                        })
+                        }, () => this.getDefaultShop())
                     }
                 }
-                this.setState({
-                    kdicompany: data,
-                })
+
             }
         });
     }
 
-    
+    /**
+     * 获取用户的默认店铺看是否有某个快递公司属于该店铺，
+     * 如果有的话就设置该快递公司为默认已经选择的快递公司。
+     */
+    getDefaultShop = () => {
+        const { user } = this.props;
+        const userId = user.currentUser.userId;
+        const orgId = user.currentUser.orgId;
+        this.props.dispatch({
+            type: `ordorder/getone`,
+            payload: { 'accountId': userId, 'isDefault': true, 'sellerId': orgId },
+            callback: data => {
+                if (data !== undefined && this.state.kdicompany.length > 0) {
+                    for (let i = 0; i < this.state.kdicompany.length; i++) {
+                        if (this.state.kdicompany[i].shopId === data.shopId) {
+                            this.setState({
+                                selectCompany: this.state.kdicompany[i],
+                            })
+                        }
+                    }
+                }
+
+
+            }
+        })
+    }
 
 
     /**
@@ -127,7 +153,7 @@ export default class SupSubscribeForm extends PureComponent {
             <Fragment>
                 <Form layout="vertical">
                     <Row gutter={{ md: 6, lg: 24, xl: 48 }}>
-                    <Col >
+                        <Col >
                             <FormItem label="快递单号">
                                 {form.getFieldDecorator('expressNumber', {
                                     rules: [{ required: true, message: '请输入快递单号' }, { pattern: /^[0-9]*$/, message: '请输入正确的快递单号' }],
