@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { list, getById, add, modify, del, setDefaultCompany } from '../services/kdicompany';
+import { list, getById, add, modify, del, setDefaultCompany ,modifyshopinfo} from '../services/kdicompany';
 import { shopList } from '../services/slrshop';
 
 export default {
@@ -8,7 +8,7 @@ export default {
   state: {
     kdicompany: [],
   },
-
+  
   effects: {
     *list({ payload, callback }, { call, put }) {
       const response = yield call(list, payload);
@@ -74,6 +74,16 @@ export default {
           break;
       }
       const response = yield call(modify, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *modifyshopinfo({ payload, callback }, { call }) {
+
+      const response = yield call(modifyshopinfo, payload);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);

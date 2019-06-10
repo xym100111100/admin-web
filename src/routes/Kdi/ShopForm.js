@@ -7,9 +7,9 @@ const FormItem = Form.Item;
 const { Option } = Select;
 
 // 添加与编辑的表单
-@connect(({ slrshop, kdicompany, loading }) => ({ slrshop, kdicompany, loading: loading.models.slrshop || loading.models.kdicompany }))
+@connect(({ slrshop,kdisender, kdicompany, loading }) => ({ kdisender,slrshop, kdicompany, loading: loading.models.kdisender || loading.models.slrshop || loading.models.kdicompany }))
 @EditForm
-export default class CompanyShopForm extends PureComponent {
+export default class ShopForm extends PureComponent {
   state = {
     shopList: [],
   };
@@ -18,7 +18,7 @@ export default class CompanyShopForm extends PureComponent {
     console.log(this.props);
     //获取店铺集合
     this.props.dispatch({
-      type: `kdicompany/shopList`,
+      type: this.props.moduleCode+`/shopList`,
       callback: data => {
         if (data !== undefined && data.length !== 0) {
           this.setState({

@@ -120,6 +120,16 @@ export default class OrdBatchSendForm extends PureComponent {
                     }
                 }
 
+                if(data !==undefined && this.state.sendData.length >0 ){
+                    for (let i = 0; i < this.state.sendData.length; i++) {
+                        if(this.state.sendData[i].shopId===data.shopId){
+                            this.setState({
+                                selectSend:this.state.sendData[i],
+                            })
+                        }
+                    }
+                }
+
 
             }
         })

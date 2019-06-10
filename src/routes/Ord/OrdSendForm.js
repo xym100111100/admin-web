@@ -375,6 +375,8 @@ export default class OrdSendForm extends PureComponent {
     /**
      * 获取用户的默认店铺看是否有某个快递公司属于该店铺，
      * 如果有的话就设置该快递公司为默认已经选择的快递公司。
+     * 
+     * 发件人也是同样的判断与设置
      */
     getDefaultShop = () => {
         const { user } = this.props;
@@ -393,8 +395,15 @@ export default class OrdSendForm extends PureComponent {
                         }
                     }
                 }
-                
-                
+                if(data !==undefined && this.state.sendData.length >0 ){
+                    for (let i = 0; i < this.state.sendData.length; i++) {
+                        if(this.state.sendData[i].shopId===data.shopId){
+                            this.setState({
+                                selectSend:this.state.sendData[i],
+                            })
+                        }
+                    }
+                }
             }
         })
     }

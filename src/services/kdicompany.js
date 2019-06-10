@@ -32,6 +32,15 @@ export async function modify(params) {
   });
 }
 
+export async function modifyshopinfo(params) {
+  return request('/kdi-svr/kdi/company/modifyshopinfo', {
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
+}
+
 export async function del(params) {
   return request(`/kdi-svr/kdi/company?${stringify(params)}`, {
     method: 'DELETE',

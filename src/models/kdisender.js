@@ -10,7 +10,9 @@ import {
   getDefaultSender,
   addSender,
   listSenderByOrgId,
+  modifyshopinfo,
 } from '../services/kdisender';
+import { shopList } from '../services/slrshop';
 
 export default {
   namespace: 'kdisender',
@@ -35,7 +37,20 @@ export default {
       });
       if (callback) callback(response);
     },
+    *modifyshopinfo({ payload, callback }, { call }) {
 
+      const response = yield call(modifyshopinfo, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
+    *shopList({ payload, callback }, { call, put }) {
+      const response = yield call(shopList, payload);
+      if (callback) callback(response);
+    },
     *getDefaultSender({ payload, callback }, { call, put }) {
       const response = yield call(getDefaultSender, payload);
       if (response != undefined) {

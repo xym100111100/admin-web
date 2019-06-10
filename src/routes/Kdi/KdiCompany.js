@@ -7,7 +7,7 @@ import CompanyForm from './CompanyForm';
 import styles from './KdiCompany.less';
 import KdiTemplateImgForm from './KdiTemplateImgForm';
 import TemplateForm from './TemplateForm';
-import CompanyShopForm from './CompanyShopForm';
+import ShopForm from './ShopForm';
 
 @connect(({ kdicompany, kditemplate, companydic, user, login, loading }) => ({
   kdicompany,
@@ -105,7 +105,7 @@ export default class KdiCompany extends SimpleMng {
   }
 
     /**
-   * 修改电子面单
+   * 修改店铺信息
    */
   editShop = (record) => {
     let shopInfo=record.shopId.split('/')
@@ -116,7 +116,7 @@ export default class KdiCompany extends SimpleMng {
        shopName:shopInfo[1]
     }
     this.props.dispatch({
-      type: `${this.moduleCode}/modify`,
+      type: `${this.moduleCode}/modifyshopinfo`,
       payload: fields,
       callback: () => {
         this.setState({ editForm: undefined })
@@ -199,7 +199,7 @@ export default class KdiCompany extends SimpleMng {
                 <br />
                 {this.isShowAddTempLate(record, editFormRecord)}
                 <br />
-                <a onClick={()=>this.showAddForm({editFormRecord: {'id':record.id,'initShopId':record.shopId},editForm: 'CompanyShopForm', editFormTitle: '添加默认使用该快递的店铺'})} >
+                <a onClick={()=>this.showAddForm({editFormRecord: {'id':record.id,'initShopId':record.shopId},editForm: 'ShopForm', editFormTitle: '添加默认使用该快递的店铺'})} >
                   设置默认使用的店铺
                 </a>
               </Fragment>
@@ -223,7 +223,7 @@ export default class KdiCompany extends SimpleMng {
                 <br />
                 {this.isShowAddTempLate(record, editFormRecord)}
                 <br />
-                <a onClick={()=>this.showEditForm({editFormRecord: {'id':record.id,'initShopId':record.shopId},editForm: 'CompanyShopForm', editFormTitle: '添加默认使用该快递的店铺'})} >
+                <a onClick={()=>this.showEditForm({editFormRecord: {'id':record.id,'initShopId':record.shopId},editForm: 'ShopForm', editFormTitle: '添加默认使用该快递的店铺'})} >
                   设置默认使用的店铺
                 </a>
               </Fragment>
@@ -296,14 +296,15 @@ export default class KdiCompany extends SimpleMng {
             onSubmit={fields => this.editTemplate(fields)}
           />
         )}
-       {editForm === 'CompanyShopForm' && (
-          <CompanyShopForm
+       {editForm === 'ShopForm' && (
+          <ShopForm
             visible
             title={editFormTitle}
             editFormType={editFormType}
             record={editFormRecord}
             closeModal={() => this.setState({ editForm: undefined })}
             onSubmit={fields => this.editShop(fields)}
+            moduleCode='kdicompany'
           />
         )}
       </PageHeaderLayout>

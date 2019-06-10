@@ -110,7 +110,7 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['kdieorder','kdicompany', 'kditemplate', 'kdicompanydic', 'user','kdisender'], () => import('../routes/Kdi/KdiBatch')),
     },
     '/kdi/kdi-cfg/kdi-sender-cfg': {
-      component: dynamicWrapper(app, ['kdisender'], () => import('../routes/Kdi/KdiSenderCfg')),
+      component: dynamicWrapper(app, ['kdisender','slrshop','user'], () => import('../routes/Kdi/KdiSenderCfg')),
     },
     '/ord/ord-order': {
       component: dynamicWrapper(app, ['ordorder', 'slrshopaccount','kdicompany', 'user', 'kdisender', 'suporder'], () =>
