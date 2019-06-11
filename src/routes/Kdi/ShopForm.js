@@ -58,7 +58,7 @@ export default class ShopForm extends PureComponent {
           {form.getFieldDecorator('id')(<Input type="hidden" />)}
           <Row gutter={{ md: 6, lg: 24, xl: 48 }} style={{ textAlign: 'center' }}   >
             <Col md={24} sm={24} style={{ marginBottom: 5 }}  >
-              温馨提示：每个快递公司只能默认一个店铺，提交后原先设置该快递的店铺将没有默认快递公司，如需每个店铺都设置默认快递公司请添加多个快递公司，同名快递公司使用备注名称区别。
+              温馨提示：每个{this.props.remarks}只能默认一个店铺，如需每个{this.props.remarks}都设置默认使用的店铺请添加多个{this.props.remarks}。
           </Col>
             <Col md={24} sm={24}   >
               <FormItem label="名称" >

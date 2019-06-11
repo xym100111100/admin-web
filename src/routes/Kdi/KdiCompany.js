@@ -305,6 +305,7 @@ export default class KdiCompany extends SimpleMng {
             closeModal={() => this.setState({ editForm: undefined })}
             onSubmit={fields => this.editShop(fields)}
             moduleCode='kdicompany'
+            remarks='快递公司'
           />
         )}
       </PageHeaderLayout>

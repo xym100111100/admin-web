@@ -199,6 +199,7 @@ export default class KdiSenderCfg extends SimpleMng {
             closeModal={() => this.setState({ editForm: undefined })}
             onSubmit={fields => this.editShop(fields)}
             moduleCode='kdisender'
+            remarks='发件人'
           />
         )}
       </PageHeaderLayout>
