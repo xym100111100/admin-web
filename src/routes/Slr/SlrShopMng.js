@@ -6,7 +6,6 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DescriptionList from 'components/DescriptionList';
 import SlrShopForm from './SlrShopForm';
 import SlrShopAccountForm from './SlrShopAccountForm';
-import OnlSearchCategoryForm from '../Onl/OnlSearchCategoryForm';
 import styles from './SlrShopMng.less';
 const { Description } = DescriptionList;
 
@@ -115,10 +114,7 @@ export default class SlrShopMng extends SimpleMng {
                         >
                             员工
                         </a>
-                        <Divider type="vertical" />
-                        <a onClick={() => this.showAddForm({ editFormRecord:slrshop,editFormRecord: record, editForm: 'OnlSearchCategoryForm', editFormTitle: '添加分类' })}>
-                            添加分类
-                        </a>
+
                     </Fragment>
                 ),
             },
@@ -207,18 +203,7 @@ export default class SlrShopMng extends SimpleMng {
                     )
                 }
 
-                {
-                    editForm === 'OnlSearchCategoryForm' && (
-                        <OnlSearchCategoryForm
-                            visible
-                            title={editFormTitle}
-                            editFormType={editFormType}
-                            record={editFormRecord}
-                            closeModal={() => this.setState({ editForm: undefined })}
-                            onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'onlsearchcategory', saveMethodName: editFormType === 'add' ? 'add' : 'modify' })}
-                        />
-                    )
-                }
+
                 {editForm === 'SlrShopForm' && (
                     <SlrShopForm
                         visible

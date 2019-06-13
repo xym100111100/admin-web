@@ -3,14 +3,14 @@ import React, { Fragment } from 'react';
 import { connect } from 'dva';
 import { Button, Form, Card, Switch, Divider, Table, Tabs } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import styles from './OnlSearchCategoryMng.less';
-import OnlSearchCategoryForm from './OnlSearchCategoryForm';
+import styles from './SlrOnlSearchCategoryMng.less';
+import SlrOnlSearchCategoryForm from './SlrOnlSearchCategoryForm';
 
 const { TabPane } = Tabs;
 
 @Form.create()
-@connect(({ onlsearchcategory, slrshop, loading }) => ({ onlsearchcategory, slrshop, loading: loading.models.onlsearchcategory }))
-export default class OnlSearchCategoryMng extends SimpleMng {
+@connect(({ onlsearchcategory, user, slrshop, loading }) => ({ user, onlsearchcategory, slrshop, loading: loading.models.onlsearchcategory || loading.models.user }))
+export default class SlrOnlSearchCategoryMng extends SimpleMng {
     constructor() {
         super();
         this.moduleCode = 'onlsearchcategory';
@@ -18,6 +18,7 @@ export default class OnlSearchCategoryMng extends SimpleMng {
             pageNum: 1,
             pageSize: 5,
         };
+        this.state.activeShopId = undefined;
     }
 
     componentDidMount() {
@@ -27,13 +28,16 @@ export default class OnlSearchCategoryMng extends SimpleMng {
             callback: () => {
                 const { slrshop: { slrshop } } = this.props;
                 this.handleReload({ shopId: slrshop[0].id });
+                this.setState({
+                    activeShopId:slrshop[0].id
+                })
             },
         });
     }
 
-    // 刷新用户列表
-    handleUserReload(selectedRows) {
-        // 加载用户信息
+    // 刷新搜索分类列表
+    handleSearchReload(selectedRows) {
+        // 加载搜索分类信息
         this.props.dispatch({
             type: 'onlsearchcategory/list',
             payload: {
@@ -53,15 +57,40 @@ export default class OnlSearchCategoryMng extends SimpleMng {
             this.handleReload({
                 pageNum: pagination.current,
                 pageSize: pagination.pageSize,
+                shopId:this.state.activeShopId,
             });
         });
     };
 
     /**
+     * 添加分类
+     */
+    addSearchCategory=(fields,editFormType)=>{
+        let mathod ='add'
+        if(editFormType !== mathod){
+            mathod='modify'
+        }
+        this.props.dispatch({
+            type: 'onlsearchcategory/'+mathod,
+            payload:fields,
+            callback: () => {
+                this.handleReload({ shopId: this.state.activeShopId });
+                this.setState({
+                    editForm:undefined
+                })
+            },
+        });
+    }
+
+    /**
      * 切换店铺
      */
     switchShop = activeKey => {
-        this.handleUserReload({ shopId: activeKey });
+        //设置选中的店铺id在添加分类的时候将该店铺id传过去
+        this.setState({
+            activeShopId: activeKey,
+        })
+        this.handleSearchReload({ shopId: activeKey });
     }
 
     // 启用/禁用搜索分类
@@ -75,24 +104,30 @@ export default class OnlSearchCategoryMng extends SimpleMng {
                 isEnabled: !record.isEnabled
             },
             callback: () => {
-                this.handleReload({ shopId: record.shopId });
+                this.handleReload({
+                    pageNum: pagination.current,
+                    pageSize: pagination.pageSize,
+                    shopId:this.state.activeShopId,
+                });
             },
         });
     }
 
-    initShop=()=>{
-        const {  slrshop: { slrshop }, loading } = this.props;
-        if(slrshop !==undefined && slrshop.length >0){
-            return(
-                <Tabs onChange={this.switchShop}>{slrshop.map(shop => <TabPane tab={shop.shortName} key={shop.id} />)}</Tabs> 
+    initShop = () => {
+        const { slrshop: { slrshop }, loading } = this.props;
+        if (slrshop !== undefined && slrshop.length > 0) {
+            return (
+                <Tabs onChange={this.switchShop}>{slrshop.map(shop => <TabPane tab={shop.shortName} key={shop.id} />)}</Tabs>
             )
         }
 
     }
 
     render() {
-        const { onlsearchcategory: { onlsearchcategory }, slrshop: { slrshop }, loading } = this.props;
+        const { user, onlsearchcategory: { onlsearchcategory }, slrshop: { slrshop }, loading } = this.props;
         const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
+        editFormRecord.sellerId = user.currentUser.orgId;
+        editFormRecord.shopId = this.state.activeShopId;
         const columns = [
             {
                 title: '分类名称',
@@ -108,7 +143,7 @@ export default class OnlSearchCategoryMng extends SimpleMng {
                 width: '7%',
                 render: (text, record) => {
                     if (text !== undefined) {
-                        return (<img alt="example" style={{ width: '100%' }} src={'/ise-svr/files' + text} />);
+                        return (<img alt="图片" style={{ width: '100%' }} src={'/ise-svr/files' + text} />);
                     }
                 }
             },
@@ -184,8 +219,10 @@ export default class OnlSearchCategoryMng extends SimpleMng {
                     <Card bordered={false}>
                         <div className={styles.tableList}>
                             <div className={styles.tableListOperator}>
-                            {this.initShop()}
-                               
+                                {this.initShop()}
+                                <Button type="primary" htmlType="submit" onClick={() => this.showAddForm({  editForm: 'OnlSearchCategoryForm', editFormTitle: '添加分类' })}>
+                                    添加分类
+                                </Button>
                                 <Button icon="reload" onClick={() => this.handleReload()}>
                                     刷新
                                 </Button>
@@ -200,21 +237,21 @@ export default class OnlSearchCategoryMng extends SimpleMng {
                             />
                         </div>
                     </Card>
-                </PageHeaderLayout>,
+                </PageHeaderLayout>
 
                 {editForm === 'OnlSearchCategoryForm' && (
-                    <OnlSearchCategoryForm
+                    <SlrOnlSearchCategoryForm
                         visible
                         title={editFormTitle}
                         editFormType={editFormType}
                         record={editFormRecord}
                         closeModal={() => this.setState({ editForm: undefined })}
-                        onSubmit={fields => this.handleSubmit({ fields, moduleCode: 'onlsearchcategory', saveMethodName: 'modify' })}
+                        onSubmit={fields =>this.addSearchCategory(fields,editFormType)}
                     />
                 )}
 
                 {editForm === 'searchsonCategory' && (
-                    <OnlSearchCategoryForm
+                    <SlrOnlSearchCategoryForm
                         visible
                         title={editFormTitle}
                         editFormType={editFormType}

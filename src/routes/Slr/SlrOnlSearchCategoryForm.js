@@ -7,7 +7,7 @@ const FormItem = Form.Item;
 
 // 添加与编辑的表单
 @EditForm
-export default class SlrSearchCategoryForm extends React.Component {
+export default class SlrOnlSearchCategoryForm extends React.Component {
 
     componentWillMount() {
         const { record, editFormType } = this.props;
@@ -107,7 +107,7 @@ export default class SlrSearchCategoryForm extends React.Component {
                         <div className="clearfix">
                             <Upload
                                 action="/ise-svr/ise/upload"
-                                // action="http://192.168.1.203:36697/ise/upload"
+                               //  action="http://127.0.0.1:20180/ise/upload"
                                 listType="picture-card"
                                 fileList={fileList}
                                 name="multipartFile"

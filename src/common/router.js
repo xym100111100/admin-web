@@ -194,11 +194,12 @@ export const getRouterData = app => {
         import('../routes/Slr/SlrSellerMng')
       ),
     },
-    '/onl/onl-search-category-mng': {
-      component: dynamicWrapper(app, ['onlsearchcategory', 'slrshop'], () =>
-        import('../routes/Onl/OnlSearchCategoryMng')
+    '/slr/slr-onl-search-category-mng': {
+      component: dynamicWrapper(app, ['onlsearchcategory', 'user','slrshop'], () =>
+        import('../routes/Slr/SlrOnlSearchCategoryMng')
       ),
     },
+
     '/pfm/script-mng': {
       component: dynamicWrapper(
         app,
