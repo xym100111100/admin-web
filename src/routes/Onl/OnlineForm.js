@@ -12,7 +12,7 @@ const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 const Option = Select.Option;
 
-@connect(({ onlonline, BraftEditorUpload, prmpartner, slrshop,user, }) => ({
+@connect(({ onlonline, BraftEditorUpload, prmpartner, slrshop, user, }) => ({
   BraftEditorUpload,
   onlonline,
   prmpartner,
@@ -70,11 +70,16 @@ export default class OnlineForm extends React.Component {
     inputValue: '',
     //标签动态生成和删除 ****结束***
 
-    //分类信息级联选择禁用
-    classificationDisable: true,
-
     //选择店铺
     shopName: [],
+    //
+    classifications: [],
+    //
+    classificationArr: [],
+    //
+    classificationMessage:[],
+    //
+
   };
 
   //查询卖家所有店铺
@@ -85,7 +90,7 @@ export default class OnlineForm extends React.Component {
         //console.log('020202', record);
         let shopName = [];
         for (let i = 0; i < record.length; i++) {
-          shopName.push({ value: record[i].id, label: record[i].shopName });
+          shopName.push({ value: record[i].id, label: record[i].shopName, isLeaf: false });
         }
         this.setState({
           shop: record,
@@ -98,59 +103,40 @@ export default class OnlineForm extends React.Component {
     });
   }
 
-  //选择店铺并获取分类树
-  onChangeShop = value => {
+  //添加商品分类信息
+  onChangeShop = (value, selectedOptions) => {
     console.log('2525', value)
-    if (this.state.shopName.length === 1) {
-      value = [this.state.shopName[0].value];
-    }
+    console.log('2626', selectedOptions)
     this.setState({
-      shopNames: value,
-    })
-    if (value.length === 0) {
-      this.setState({
-        classification: [],
-        classificationDisable: true,
-      });
-      return;
-    }
-    this.props.dispatch({
-      type: `onlonline/getTreeByShopId`,
-      payload: {
-        shopId: value[0],
-      },
-      callback: record => {
-        //console.log('232323', record);
-        let classification = [];
-        for (let i = 0; i < record.length; i++) {
-          let subclass = [];
-          const categoryList = record[i].categoryList;
-          for (let j = 0; j < categoryList.length; j++) {
-            subclass.push({ value: categoryList[j].id, label: categoryList[j].name })
-          }
-          classification.push({ value: record[i].id, label: record[i].name, children: subclass });
-        }
-        //console.log('123123', classification);
-        this.setState({
-          classification: classification,
-          classificationDisable: false,
-        })
+      classificationId: value,
+      classificationArr: selectedOptions
+    });
+  }
+
+  //添加商品分类
+  addClassification = () => {
+    const { classificationArr } = this.state;
+    console.log('classificationArr', classificationArr);
+    if (classificationArr === undefined || classificationArr.length === 0) return message.error('请选择店铺信息');
+    let shopAndClassification = '';
+    shopAndClassification += classificationArr[0].label + '|';
+    for (let i = 1; i < classificationArr.length; i++) {
+      if (i !== 1) {
+        shopAndClassification += '/';
       }
-    });
-
-  }
-
-  //获取分类信息
-  onChangeClassification = value => {
-    //console.log('159951', value);
-    const classificationId = value[value.length - 1];
-    //console.log('555', classificationId);
+      shopAndClassification += classificationArr[i].label;
+    }
+    let classifications = this.state.classifications;
+    classifications.push({ key: classificationArr[classificationArr.length - 1].value, label: shopAndClassification });
+    console.log('classifications', classifications);
     this.setState({
-      classificationId: classificationId,
-      classificationArr: value
-    });
-
+      classifications: classifications,
+    })
+    this.props.form.setFieldsValue({
+      'classificationId': ''
+    })
   }
+
   // 上线规格table表格
   onlineSpecColumn = () => {
     let { columns, subjectType, tags } = this.state;
@@ -226,7 +212,7 @@ export default class OnlineForm extends React.Component {
         id: id,
       },
       callback: onlonline => {
-        //console.log('获取', onlonline);
+        console.log('获取', onlonline);
         let fileList = new Array();
         let fileLists = new Array();
         for (let i = 0; i < onlonline.record.onlinePicList.length; i++) {
@@ -291,9 +277,9 @@ export default class OnlineForm extends React.Component {
 
         //确认商品分类
         const searchCategoryMo = onlonline.record.searchCategoryMo;
-        this.getShopNameById(searchCategoryMo.shopId);
-        this.getClassification(searchCategoryMo.shopId, searchCategoryMo.id);
-
+        for (let i = 0; i < searchCategoryMo.length; i++) {
+          this.getShopNames(searchCategoryMo[i]);
+        }
         const { form } = this.props;
         form.setFieldsValue({ onlineName: onlonline.record.onlineTitle });
         this.setState({
@@ -470,53 +456,85 @@ export default class OnlineForm extends React.Component {
   saveInputRef = input => this.input = input
   //*******标签的添加与删除，结束********
 
-  //查询店铺信息
-  getShopNameById = shopId => {
+  getShopNames = shopMessage => {
+    //console.log('shopMessage', shopMessage);
     this.props.dispatch({
-      type: `slrshop/getById`,
+      type: 'slrshop/getById',
       payload: {
-        id: shopId,
+        id: shopMessage.shopId
       },
       callback: record => {
-        let shopName = [];
-        shopName.push(record.id);
-        this.setState({
-          shopNames: shopName,
-        })
-        this.onChangeShop(shopName);
+        //console.log('messageRecord', record);
+        let classificationArr = { value: record.id, label: record.shopName };
+        this.getClassifications(shopMessage,classificationArr);
       }
     });
   }
-
-  //查询分类树
-  getClassification = (shopId, id) => {
+  getClassifications = (classification,classificationArr) => {
+    //console.log("classification", classification);
     this.props.dispatch({
-      type: `onlonline/getTreeByShopId`,
+      type: 'onlonline/getTreeByShopId',
       payload: {
-        shopId: shopId,
+        shopId: classification.shopId
       },
       callback: record => {
-        let classification = [];
+        //console.log('record', record);
+        let classificationNode = [];
         for (let i = 0; i < record.length; i++) {
-          const categoryList = record[i].categoryList;
-          for (let j = 0; j < categoryList.length; j++) {
-            if (categoryList[j].id === id) {
-              classification.push(record[i].id);
-              classification.push(categoryList[j].id);
-            }
+          if (record[i].id === classification.id) {
+            classificationNode.push(classificationArr);
+            classificationNode.push({ value: record[i].id, label: record[i].name });
+            break;
+          }
+          const rootNode = record[i].categoryList;
+          let child = [];
+          if (rootNode !== undefined) {
+            child = this.checkChildNodes(rootNode, classification.id);
+          }
+          console.log('child',child);
+          if (child !== undefined ) {
+            classificationNode.push(classificationArr);
+            classificationNode.push({ value: record[i].id, label: record[i].name });
+            classificationNode=classificationNode.concat(child);
           }
         }
-        const classificationId = classification[classification.length - 1];
+        console.log("classificationArr02", [...classificationNode]);
         this.setState({
-          classificationDisable: false,
-          shopClassification: classification,
-          classificationId: classificationId,
-          classificationArr: classification
-        })
+          classificationArr:classificationNode
+        });
+        this.addClassification();
       }
     });
   }
 
+  checkChildNodes = (node, nodeId) => {
+    //父节点下所有的子节点
+    const children = node;
+    let childrenNode = [];
+    if (children !== undefined) {
+      for (let i = 0; i < children.length; i++) {
+        let childNode = { value: children[i].id, label: children[i].name };
+        //console.log('childNode', childNode);
+        const child = children[i].categoryList;
+        if (children[i].id === nodeId) {
+          childrenNode=childNode;
+          //console.log('childrenNode', childrenNode);
+          return childrenNode;
+        }
+        let childenNode = [];
+        if (child !== undefined) {
+          childenNode = this.checkChildNodes(child, nodeId);
+        }
+        if (childenNode !== undefined && childenNode.length !==0) {
+          //console.log('childenNode1', childenNode);
+          childrenNode.push(childNode);
+          childrenNode=childrenNode.concat(childenNode);
+          //console.log('childrenNode2', childrenNode);
+          return childrenNode;
+        }
+      }
+    }
+  }
 
   showCustomizeAttr = () => {
     const { tags, inputVisible, inputValue, } = this.state;
@@ -558,50 +576,121 @@ export default class OnlineForm extends React.Component {
     )
   }
 
+  //选择店铺并获取分类树
+  loadData = selectedOptions => {
+    const targetOption = selectedOptions[selectedOptions.length - 1];
+    //console.log('BB', targetOption)
+    targetOption.loading = true;
+
+    this.props.dispatch({
+      type: `onlonline/getTreeByShopId`,
+      payload: {
+        shopId: targetOption.value,
+      },
+      callback: record => {
+        //console.log('232323', record);
+        let classification = [];
+        for (let i = 0; i < record.length; i++) {
+          const rootNode = record[i].categoryList;
+          let child = [];
+          if (rootNode !== undefined) {
+            child = this.buildChildNodes(rootNode);
+            // console.log("ss", child);
+          }
+          classification.push({ value: record[i].id, label: record[i].name, children: child });
+        }
+        // console.log('0101', classification);
+        targetOption.children = classification;
+        targetOption.loading = false;
+        if (targetOption.children.length === 0) {
+          targetOption.children = [{
+            value: '',
+            label: '该店铺下没有分类，请添加分类',
+            disabled: true
+          }]
+        }
+        this.setState({
+          options: [...this.state.shopName],
+        });
+      }
+    });
+  };
+
+  //递归子节点
+  buildChildNodes = node => {
+    //父节点下所有的子节点
+    const children = node;
+    //console.log('children', children);
+    let childrenNode = [];
+    if (children !== undefined) {
+      for (let i = 0; i < children.length; i++) {
+        let childNode = { value: children[i].id, label: children[i].name };
+        const child = children[i].categoryList;
+        //console.log('child', child);
+        if (child !== undefined) {
+          childNode.children = this.buildChildNodes(child);
+        }
+        //console.log('childNode', childNode);
+        childrenNode.push(childNode);
+      }
+    }
+    //console.log('childrenNode', childrenNode);
+    return childrenNode;
+  }
+
   //显示分类信息
   showClassification = () => {
     const { loading, form, record } = this.props;
-    if (this.state.shopName.length >= 2) {
-      return (
-        <Col md={24} sm={24} >
-          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="店铺信息">
-            <Cascader style={{ width: '250px' }} value={this.state.shopNames} options={this.state.shopName} onChange={this.onChangeShop} placeholder="请选择店铺" changeOnSelect />
+    return (
+      <div>
+        <Col md={12} sm={12} >
+          <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 18 }} label="店铺与分类">
+            <Row>
+              <Col md={24} sm={24}>
+                {form.getFieldDecorator('classificationId', {
+                })(
+                  <Cascader style={{ width: "500px" }} placeholder="请选择店铺和分类"
+                    options={this.state.shopName}
+                    onChange={this.onChangeShop}
+                    loadData={this.loadData}
+                  />
+                )}
+
+                <Button type="primary" icon='plus-circle' onClick={this.addClassification} />
+              </Col>
+              <Col md={24} sm={24}>
+                <Popconfirm placement="right" title="是否跳转到店铺信息页面添加新的商品分类?" onConfirm={this.jumpShopUrl} >
+                  <Button type="ghost" >添加新的商品分类</Button>
+                </Popconfirm>
+              </Col>
+            </Row>
           </FormItem>
-          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="分类信息">
-            {form.getFieldDecorator('classificationId', {
-              initialValue: this.state.shopClassification
-            })(
-              <Cascader style={{ width: '384px' }} options={this.state.classification} onChange={this.onChangeClassification} placeholder="请先选择店铺再选择分类信息" disabled={this.state.classificationDisable} changeOnSelect />
-            )}
-            <Popconfirm placement="bottom" title="是否跳转到店铺信息页面添加新的商品分类?" onConfirm={this.jumpShopUrl} >
-              <Button type="ghost" >添加新的商品分类</Button>
-            </Popconfirm>
-          </FormItem>
-        </Col>
-      );
-    } else {
-      return (
-        <div >
           <Col md={24} sm={24}>
-            <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="分类信息" >
-              {form.getFieldDecorator('classificationId', {
-                initialValue: this.state.shopClassification
-              })(
-                <Cascader style={{ width: '384px' }} options={this.state.classification} onChange={this.onChangeClassification} placeholder="请选择分类信息" changeOnSelect />
-              )}
-              <Popconfirm placement="bottom" title="是否跳转到店铺信息页面添加新的商品分类?" onConfirm={this.jumpShopUrl} >
-                <Button type="ghost" >添加新的商品分类</Button>
-              </Popconfirm>
+            <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 18 }} label="已添加的分类">
+              <Select size="large" mode="multiple" style={{ width: '88%' }}
+                labelInValue={true}
+                open={false}
+                allowClear={true}
+                value={this.state.classifications}
+                onChange={this.deleteChange}
+              />
             </FormItem>
           </Col>
-        </div>
-      )
-    }
+        </Col>
+      </div>
+    );
   }
 
+  //删除已添加的分类
+  deleteChange = value => {
+    console.log('value', value);
+    this.setState({
+      classifications: value
+    })
+  }
   //跳转到店铺信息页面
   jumpShopUrl = () => {
-    window.location.href = "#/slr/slr-shop-mng";
+    window.location.href = "#/slr/slr-onl-search-category-mng";
   }
 
   //是否显示供应商输入框
@@ -746,8 +835,10 @@ export default class OnlineForm extends React.Component {
     });
   }
 
+
+
   customizeAttr = () => {
-    console.log(111);
+    //console.log(111);
     let attrName = document.getElementById("attrName").value.trim();
     if (attrName === null || attrName === undefined || attrName === '') {
       message.error("请输入属性名");
@@ -797,8 +888,8 @@ export default class OnlineForm extends React.Component {
 
     if (deliveryType === 1) {
       if (supplierId === undefined || supplierId === null || supplierId === '') return message.error('请选择供应商');
-    }else{
-      supplierId=this.props.user.currentUser.orgId;
+    } else {
+      supplierId = this.props.user.currentUser.orgId;
 
     }
 
@@ -818,10 +909,6 @@ export default class OnlineForm extends React.Component {
     if (onlineDetail === undefined || onlineDetail === '' || onlineDetail === null)
       return message.error('商品详情不能为空');
     if (onlineDetail.length > 2400) return message.error('商品详情字数不能大于2400个字');
-
-    if (classificationId === undefined || classificationId === '' || classificationId === null) return message.error('请选择商品分类信息');
-
-    if (classificationArr.length !== 2) return message.error('请选择商品一级分类和二级分类');
 
     let qsmm = fileList[0].response === undefined ? fileList[0].name : fileList[0].response.filePaths[0];
     let slideshows = new Array();
@@ -845,7 +932,7 @@ export default class OnlineForm extends React.Component {
     form.getFieldDecorator('isOnlinePlatform');
     form.getFieldDecorator('isBelowOnline');
     form.getFieldDecorator('tags');
-    form.getFieldDecorator('classificationId');
+    form.getFieldDecorator('classifications');
     form.setFieldsValue({
       isEditSupplier: isEditSupplier,
       onlineId: record.id,
@@ -861,7 +948,7 @@ export default class OnlineForm extends React.Component {
       isOnlinePlatform: this.state.isOnlinePlatform,
       isBelowOnline: this.state.isBelowOnline,
       tags: this.state.tags,
-      classificationId: this.state.classificationArr,
+      classifications: this.state.classifications,
     });
   };
 
@@ -1015,8 +1102,8 @@ export default class OnlineForm extends React.Component {
                 {
                   <div className="clearfix">
                     <Upload
-                      action="/ise-svr/ise/upload"
-                      // action="http://192.168.1.3:20180/ise/upload"
+                      //action="/ise-svr/ise/upload"
+                      action="http://192.168.1.36:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileList}
                       name="multipartFile"
@@ -1040,8 +1127,8 @@ export default class OnlineForm extends React.Component {
                 {
                   <div className="clearfix">
                     <Upload
-                      action="/ise-svr/ise/upload"
-                      // action="http://192.168.1.3:20180/ise/upload"
+                      //action="/ise-svr/ise/upload"
+                      action="http://192.168.1.36:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileLists}
                       name="multipartFile"

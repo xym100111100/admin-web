@@ -25,6 +25,7 @@ import styles from './OnlineMng.less';
 import OnlOnlinePromotionForm from './OnlOnlinePromotionForm';
 import OnlOnlineSpecForm from './OnlOnlineSpecForm';
 import OnlOnlineNumberForm from './OnlOnlineNumberForm';
+import { push } from 'react-router-redux';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -217,7 +218,7 @@ export default class OnlineMng extends SimpleMng {
 
   //上线或重新上线
   commodityOnline = (record) => {
-    //console.log('aa',record)
+    console.log('aa',record)
     if (record.tags === undefined) {
       record.tags = [];
     }
@@ -251,10 +252,12 @@ export default class OnlineMng extends SimpleMng {
       }
       record.attrValues = attrValues;
     }
-    if (record.classificationId.length !== 2) return;
-    let classificationId = record.classificationId;
-    record.classificationId = classificationId[classificationId.length - 1];
-
+    let classificationId = [];
+    for(let i=0;i<record.classifications.length;i++){
+      classificationId.push(record.classifications[i].key);
+    }
+    record.classificationId=classificationId;
+    console.log('record',record);
     if (this.state.editFormTitle !== '重新上线') {
       this.props.dispatch({
         type: `onlonline/add`,

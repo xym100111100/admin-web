@@ -22,6 +22,7 @@ export default class OnlOnlineSpecForm extends PureComponent {
     fileLists: [], // 轮播图
     // 创建一个空的editorState作为初始值
     editorState: BraftEditor.createEditorState(null),
+    classification: '',
   };
 
   componentWillMount() {
@@ -84,8 +85,9 @@ export default class OnlOnlineSpecForm extends PureComponent {
         }
         //确认商品分类
         const searchCategoryMo = onlonline.record.searchCategoryMo;
-        this.getShopName(searchCategoryMo.shopId);
-        this.getClassification(searchCategoryMo.shopId,searchCategoryMo.id);
+        for (let i = 0; i < searchCategoryMo.length; i++) {
+          this.getShopNames(searchCategoryMo[i]);
+        }
         
         const { form, record } = this.props;
         //console.log(record.onlineDetail)
@@ -104,47 +106,107 @@ export default class OnlOnlineSpecForm extends PureComponent {
     });
   }
 
-
-  //查询店铺信息
-  getShopName = shopId => {
+  getShopNames = shopMessage => {
+    //console.log('shopMessage', shopMessage);
     this.props.dispatch({
-      type: `slrshop/getById`,
+      type: 'slrshop/getById',
       payload: {
-        id: shopId,
+        id: shopMessage.shopId
       },
       callback: record => {
-        //console.log('111',record)
-        this.setState({
-          shopName:record.shopName,
-        })
+        //console.log('messageRecord', record);
+        let classificationArr = { value: record.id, label: record.shopName };
+        this.getClassifications(shopMessage,classificationArr);
       }
     });
   }
 
-  //查询分类树
-  getClassification = (shopId,id) =>{
+  getClassifications = (classification,classificationArr) => {
+    //console.log("classification", classification);
     this.props.dispatch({
-      type: `onlonline/getTreeByShopId`,
+      type: 'onlonline/getTreeByShopId',
       payload: {
-        shopId: shopId,
+        shopId: classification.shopId
       },
       callback: record => {
-        console.log('222',record)
-        let classification ;
-          for (let i = 0; i < record.length; i++) {
-            const categoryList = record[i].categoryList;
-            for (let j = 0; j < categoryList.length; j++) {
-              if(categoryList[j].id === id ){
-                classification =record[i].name+"/"+categoryList[j].name;
-              }
-            }
+        //console.log('record', record);
+        let classificationNode = [];
+        for (let i = 0; i < record.length; i++) {
+          if (record[i].id === classification.id) {
+            classificationNode.push(classificationArr);
+            classificationNode.push({ value: record[i].id, label: record[i].name });
+            break;
           }
-          this.setState({
-            classification:classification
-          })
+          const rootNode = record[i].categoryList;
+          let child = [];
+          if (rootNode !== undefined) {
+            child = this.checkChildNodes(rootNode, classification.id);
+          }
+          if (child !== undefined ) {
+            classificationNode.push(classificationArr);
+            classificationNode.push({ value: record[i].id, label: record[i].name });
+            classificationNode=classificationNode.concat(child);
+          }
+        }
+        //console.log("classificationArr02", classificationNode);
+        this.setState({
+          classificationArr:classificationNode
+        });
+        this.addClassification();
       }
     });
   }
+
+  checkChildNodes = (node, nodeId) => {
+    //父节点下所有的子节点
+    const children = node;
+    //console.log('children', children);
+    //console.log('nodeId', nodeId);
+    let childrenNode = [];
+    if (children !== undefined) {
+      for (let i = 0; i < children.length; i++) {
+        let childNode = { value: children[i].id, label: children[i].name };
+        //console.log('childNode', childNode);
+        const child = children[i].categoryList;
+        if (children[i].id === nodeId) {
+          childrenNode=childNode;
+          //console.log('childrenNode', childrenNode);
+          return childrenNode;
+        }
+        let childenNode = [];
+        if (child !== undefined) {
+          childenNode = this.checkChildNodes(child, nodeId);
+        }
+        if (childenNode !== undefined && childenNode.length !==0) {
+          //console.log('childenNode1', childenNode);
+          childrenNode.push(childNode);
+          childrenNode=childrenNode.concat(childenNode);
+          //console.log('childrenNode2', childrenNode);
+          return childrenNode;
+        }
+      }
+    }
+  }
+
+  addClassification = () => {
+    const { classificationArr } = this.state;
+    console.log('aa',classificationArr);
+    let shopAndClassification = '';
+    shopAndClassification = '店铺:'+classificationArr[0].label + '|分类:';
+    for (let i = 1; i < classificationArr.length; i++) {
+      if (i !== 1) {
+        shopAndClassification += '/';
+      }
+      shopAndClassification += classificationArr[i].label;
+    }
+    let classifications = this.state.classification;
+    classifications +=shopAndClassification+';';
+    console.log('classifications', classifications);
+    this.setState({
+      classification: classifications,
+    })
+  }
+
 
   //上线规格table表格
   onlineSpecColumn = () => {
@@ -227,7 +289,7 @@ export default class OnlOnlineSpecForm extends PureComponent {
           {<span>{record.subjectType === 0 ? '返现' : '全返'}</span>}
         </FormItem>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="商品分类">
-          {<span>店铺:{shopName}|分类:{classification}</span>}
+          {<span>{classification}</span>}
         </FormItem>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="商品类型">
           {<span>{isBelowOnline }</span>}
