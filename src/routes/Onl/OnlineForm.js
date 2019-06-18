@@ -62,7 +62,6 @@ export default class OnlineForm extends React.Component {
     isOnlinePlatform: 1,
     //是否为线下商品,0为否，1为是,2为既是线上也是线下
     isBelowOnline: 0,
-
     //标签
     tags: [],
     //标签动态生成和删除 ****开始***
@@ -72,14 +71,10 @@ export default class OnlineForm extends React.Component {
 
     //选择店铺
     shopName: [],
-    //
+    //添加后经过整理的搜索分类
     classifications: [],
-    //
+    //添加的搜索分类
     classificationArr: [],
-    //
-    classificationMessage:[],
-    //
-
   };
 
   //查询卖家所有店铺
@@ -105,8 +100,8 @@ export default class OnlineForm extends React.Component {
 
   //添加商品分类信息
   onChangeShop = (value, selectedOptions) => {
-    console.log('2525', value)
-    console.log('2626', selectedOptions)
+    //console.log('2525', value)
+    //console.log('2626', selectedOptions)
     this.setState({
       classificationId: value,
       classificationArr: selectedOptions
@@ -115,8 +110,17 @@ export default class OnlineForm extends React.Component {
 
   //添加商品分类
   addClassification = () => {
-    const { classificationArr } = this.state;
-    console.log('classificationArr', classificationArr);
+    const { classificationArr, classifications } = this.state;
+    //console.log('classificationArr', classificationArr);
+    if (classificationArr.length === 0) return message.error('未选择商品分类');
+    const newClassification = classificationArr[classificationArr.length - 1].value;
+    //console.log('newClassification', newClassification);
+    for (let i = 0; i < classifications.length; i++) {
+      const key = classifications[i].key;
+      if (key === newClassification) {
+        return message.error('商品分类已存在！');
+      }
+    }
     if (classificationArr === undefined || classificationArr.length === 0) return message.error('请选择店铺信息');
     let shopAndClassification = '';
     shopAndClassification += classificationArr[0].label + '|';
@@ -126,9 +130,8 @@ export default class OnlineForm extends React.Component {
       }
       shopAndClassification += classificationArr[i].label;
     }
-    let classifications = this.state.classifications;
     classifications.push({ key: classificationArr[classificationArr.length - 1].value, label: shopAndClassification });
-    console.log('classifications', classifications);
+    //console.log('classifications', classifications);
     this.setState({
       classifications: classifications,
     })
@@ -212,7 +215,7 @@ export default class OnlineForm extends React.Component {
         id: id,
       },
       callback: onlonline => {
-        console.log('获取', onlonline);
+        //console.log('获取', onlonline);
         let fileList = new Array();
         let fileLists = new Array();
         for (let i = 0; i < onlonline.record.onlinePicList.length; i++) {
@@ -456,6 +459,7 @@ export default class OnlineForm extends React.Component {
   saveInputRef = input => this.input = input
   //*******标签的添加与删除，结束********
 
+  //查询店铺
   getShopNames = shopMessage => {
     //console.log('shopMessage', shopMessage);
     this.props.dispatch({
@@ -466,11 +470,13 @@ export default class OnlineForm extends React.Component {
       callback: record => {
         //console.log('messageRecord', record);
         let classificationArr = { value: record.id, label: record.shopName };
-        this.getClassifications(shopMessage,classificationArr);
+        this.getClassifications(shopMessage, classificationArr);
       }
     });
   }
-  getClassifications = (classification,classificationArr) => {
+
+  //查询店铺分类树
+  getClassifications = (classification, classificationArr) => {
     //console.log("classification", classification);
     this.props.dispatch({
       type: 'onlonline/getTreeByShopId',
@@ -491,22 +497,23 @@ export default class OnlineForm extends React.Component {
           if (rootNode !== undefined) {
             child = this.checkChildNodes(rootNode, classification.id);
           }
-          console.log('child',child);
-          if (child !== undefined ) {
+          //console.log('child',child);
+          if (child !== undefined) {
             classificationNode.push(classificationArr);
             classificationNode.push({ value: record[i].id, label: record[i].name });
-            classificationNode=classificationNode.concat(child);
+            classificationNode = classificationNode.concat(child);
           }
         }
-        console.log("classificationArr02", [...classificationNode]);
+        //console.log("classificationArr02", classificationNode);
         this.setState({
-          classificationArr:classificationNode
+          classificationArr: classificationNode
         });
         this.addClassification();
       }
     });
   }
 
+  //递归分类树找出分类信息
   checkChildNodes = (node, nodeId) => {
     //父节点下所有的子节点
     const children = node;
@@ -517,7 +524,7 @@ export default class OnlineForm extends React.Component {
         //console.log('childNode', childNode);
         const child = children[i].categoryList;
         if (children[i].id === nodeId) {
-          childrenNode=childNode;
+          childrenNode = childNode;
           //console.log('childrenNode', childrenNode);
           return childrenNode;
         }
@@ -525,10 +532,10 @@ export default class OnlineForm extends React.Component {
         if (child !== undefined) {
           childenNode = this.checkChildNodes(child, nodeId);
         }
-        if (childenNode !== undefined && childenNode.length !==0) {
+        if (childenNode !== undefined && childenNode.length !== 0) {
           //console.log('childenNode1', childenNode);
           childrenNode.push(childNode);
-          childrenNode=childrenNode.concat(childenNode);
+          childrenNode = childrenNode.concat(childenNode);
           //console.log('childrenNode2', childrenNode);
           return childrenNode;
         }
@@ -673,6 +680,7 @@ export default class OnlineForm extends React.Component {
                 allowClear={true}
                 value={this.state.classifications}
                 onChange={this.deleteChange}
+                placeholder='请在上方店铺与分类选择框中选择并添加分类'
               />
             </FormItem>
           </Col>
@@ -683,7 +691,7 @@ export default class OnlineForm extends React.Component {
 
   //删除已添加的分类
   deleteChange = value => {
-    console.log('value', value);
+    //console.log('value', value);
     this.setState({
       classifications: value
     })
@@ -850,7 +858,7 @@ export default class OnlineForm extends React.Component {
 
     for (let i = 0; i < columns.length; i++) {
       const element = columns[i];
-      console.log(element)
+      //console.log(element)
       if (element.dataIndex === 'salePrice') {
         let column = {
           title: attrName,
@@ -882,7 +890,7 @@ export default class OnlineForm extends React.Component {
       isEditSupplier = values.isEditSupplier;
     });
     if (onlineName === undefined || onlineName === null || onlineName === '') return message.error('请输入商品名称');
-    const { fileList, fileLists, onlineDetail, subjectType, deliveryType, classificationId, classificationArr } = this.state;
+    const { fileList, fileLists, onlineDetail, subjectType, deliveryType, classifications } = this.state;
     let detailHtml = onlineDetail.toHTML().replace(/<div\/?.+?>/g, '');
     let onlineDetails = detailHtml.replace(/<\/div>/g, '');
 
@@ -900,6 +908,9 @@ export default class OnlineForm extends React.Component {
 
     // 上线规格信息
     const onlineSpecs = this.refs.editableTable.getRecords();
+
+    if (classifications === undefined || classifications.length === 0) return message.error('请添加商品分类');
+
     if (onlineSpecs === undefined || onlineSpecs.length === 0) return message.error('请输入商品规格信息');
 
     if (fileList === undefined || fileList.length === 0) return message.error('请上传商品主图');

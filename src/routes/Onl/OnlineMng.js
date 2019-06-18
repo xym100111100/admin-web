@@ -218,7 +218,7 @@ export default class OnlineMng extends SimpleMng {
 
   //上线或重新上线
   commodityOnline = (record) => {
-    console.log('aa',record)
+    //console.log('aa',record)
     if (record.tags === undefined) {
       record.tags = [];
     }
@@ -257,7 +257,7 @@ export default class OnlineMng extends SimpleMng {
       classificationId.push(record.classifications[i].key);
     }
     record.classificationId=classificationId;
-    console.log('record',record);
+    //console.log('record',record);
     if (this.state.editFormTitle !== '重新上线') {
       this.props.dispatch({
         type: `onlonline/add`,
