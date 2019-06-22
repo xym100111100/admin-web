@@ -3,22 +3,22 @@ import React, { Fragment } from 'react';
 import { connect } from 'dva';
 import { Button, Card, Divider, Popconfirm, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import SysForm from './SysForm';
-import styles from './SysMng.less';
+import DomainForm from './DomainForm';
+import styles from './DomainMng.less';
 
-@connect(({ pfmsys, loading }) => ({ pfmsys, loading: loading.models.pfmsys }))
-export default class SysMng extends SimpleMng {
+@connect(({ sucdomain, loading }) => ({ sucdomain, loading: loading.models.sucdomain }))
+export default class DomainMng extends SimpleMng {
   constructor() {
     super();
-    this.moduleCode = 'pfmsys';
+    this.moduleCode = 'sucdomain';
   }
   render() {
-    const { pfmsys: { pfmsys }, loading } = this.props;
+    const { sucdomain: { sucdomain }, loading } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
 
     const columns = [
       {
-        title: '代号id',
+        title: '领域id',
         dataIndex: 'id',
       },
       {
@@ -33,7 +33,7 @@ export default class SysMng extends SimpleMng {
         title: '操作',
         render: (text, record) => (
           <Fragment>
-            <a onClick={() => this.showEditForm({ id: record.id, editForm: 'sysForm', editFormTitle: '编辑系统信息' })}>
+            <a onClick={() => this.showEditForm({ id: record.id, editForm: 'DomainForm', editFormTitle: '编辑领域信息' })}>
               编辑
             </a>
             <Divider type="vertical" />
@@ -51,24 +51,24 @@ export default class SysMng extends SimpleMng {
           <Card bordered={false}>
             <div className={styles.tableList}>
               <div className={styles.tableListOperator}>
-                <Button
+                {/* <Button
                   icon="plus"
                   type="primary"
-                  onClick={() => this.showAddForm({ editForm: 'sysForm', editFormTitle: '添加新系统' })}
+                  onClick={() => this.showAddForm({ editForm: 'DomainForm', editFormTitle: '添加新系统' })}
                 >
                   添加
                 </Button>
-                <Divider type="vertical" />
+                <Divider type="vertical" /> */}
                 <Button icon="reload" onClick={() => this.handleReload()}>
                   刷新
                 </Button>
               </div>
-              <Table rowKey="id" pagination={false} loading={loading} dataSource={pfmsys} columns={columns} />
+              <Table rowKey="id" pagination={false} loading={loading} dataSource={sucdomain} columns={columns} />
             </div>
           </Card>
         </PageHeaderLayout>,
-        {editForm === 'sysForm' && (
-          <SysForm
+        {editForm === 'DomainForm' && (
+          <DomainForm
             visible
             title={editFormTitle}
             editFormType={editFormType}
