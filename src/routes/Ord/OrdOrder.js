@@ -15,9 +15,9 @@ const { RangePicker } = DatePicker;
 
 const { Option } = Select;
 const FormItem = Form.Item;
-@connect(({slrshopaccount, ordorder, user, kdicompany, sucorg, kdisender, loading, suporder }) => ({
-  ordorder, user, kdicompany,slrshopaccount, kdisender, sucorg, suporder,
-  loading: loading.models.ordorder || loading.models.sucorg|| loading.models.slrshopaccount || loading.models.user || loading.models.kdicompany || loading.models.kdisender || loading.models.suporder
+@connect(({ slrshopaccount, ordorder, user, kdicompany, sucorg, kdisender, loading, suporder }) => ({
+  ordorder, user, kdicompany, slrshopaccount, kdisender, sucorg, suporder,
+  loading: loading.models.ordorder || loading.models.sucorg || loading.models.slrshopaccount || loading.models.user || loading.models.kdicompany || loading.models.kdisender || loading.models.suporder
 }))
 @Form.create()
 export default class OrdOrder extends SimpleMng {
@@ -309,7 +309,6 @@ export default class OrdOrder extends SimpleMng {
     fields.senderExpArea = selectSend.senderExpArea;
     fields.senderPostCode = selectSend.senderPostCode;
     fields.senderAddress = selectSend.senderAddress;
-    //console.log(fields);
 
     this.props.dispatch({
       type: `suporder/bulkSubscription`,
@@ -342,8 +341,6 @@ export default class OrdOrder extends SimpleMng {
       if (items.returnState === 3) items.returnState = '部分已退';
       if (items.subjectType === 0) items.subjectType = '普通';
       if (items.subjectType === 1) items.subjectType = '全返';
-
-
       return (
         <div key={items.id.toString()} >
           <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
@@ -372,47 +369,7 @@ export default class OrdOrder extends SimpleMng {
               <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>类型 :</span>{items.subjectType !== undefined && (items.subjectType)}
             </Col>
           </Row>
-          <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
-            <Col md={6} sm={24}>
-              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>上家 :</span>{items.uplineUserName !== undefined && (items.uplineUserName + '(' + items.uplineRelationSource + ')')}
-            </Col>
-            <Col md={6} sm={24}>
-              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>订单编号 :</span>{items.uplineOrderCode !== undefined && (items.uplineOrderCode)}            </Col>
-            <Col md={4} sm={24}>
-              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>是否签收 :</span>{items.uplineIsSignIn !== undefined && (items.uplineIsSignIn)}
-            </Col>
-            <Col md={8} sm={24}>
-              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>签收时间 :</span>{items.uplineReceivedTime !== undefined && (items.uplineReceivedTime)}
-            </Col>
-          </Row>
-          <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
-            <Col md={6} sm={24}>
-              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>下家1 :</span>{items.downlineUserName1 !== undefined && (items.downlineUserName1 + '(' + items.downlineRelationSource1 + ')')}
-            </Col>
-            <Col md={6} sm={24}>
-              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>订单编号 :</span>{items.downlineOrderCode1 !== undefined && (items.downlineOrderCode1)}
-            </Col>
-            <Col md={4} sm={24}>
-              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>是否签收 :</span>{items.downlineIsSignIn1 !== undefined && (items.downlineIsSignIn1)}
-            </Col>
-            <Col md={8} sm={24}>
-              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>签收时间 :</span>{items.downlineReceivedTime1 !== undefined && (items.downlineReceivedTime1)}
-            </Col>
-          </Row>
-          <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
-            <Col md={6} sm={24}>
-              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>下家2 :</span>{items.downlineUserName2 !== undefined && (items.downlineUserName2 + '(' + items.downlineRelationSource2 + ')')}
-            </Col>
-            <Col md={6} sm={24}>
-              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>订单编号 :</span>{items.downlineOrderCode2 !== undefined && (items.downlineOrderCode2)}
-            </Col>
-            <Col md={4} sm={24}>
-              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>是否签收 :</span>{items.downlineIsSignIn2 !== undefined && (items.downlineIsSignIn2)}
-            </Col>
-            <Col md={8} sm={24}>
-              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>签收时间 :</span>{items.downlineReceivedTime2 !== undefined && (items.downlineReceivedTime2)}
-            </Col>
-          </Row>
+          {this.showRelationInfo(items.relationInfo)}
           <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
 
             <Divider />
@@ -420,6 +377,76 @@ export default class OrdOrder extends SimpleMng {
         </div>
       )
     });
+    return listItems;
+  }
+
+  /**
+   * 显示上下家关系
+   */
+  showRelationInfo = (record) => {
+    if (record.length === undefined) {
+      return;
+    }
+    for (let i = 0; i < record.length; i++) {
+      if (record[i].relationSource === '0') record[i].relationSource = '未知来源';
+      if (record[i].relationSource === '1') record[i].relationSource = '自己匹配自己';
+      if (record[i].relationSource === '2') record[i].relationSource = '购买关系';
+      if (record[i].relationSource === '3') record[i].relationSource = '邀请关系';
+      if (record[i].relationSource === '4') record[i].relationSource = '差一人且邀请一人';
+      if (record[i].relationSource === '5') record[i].relationSource = '差两人';
+      if (record[i].relationSource === '6') record[i].relationSource = '差一人';
+      if (record[i].relationSource === '7') record[i].relationSource = '自由匹配';
+      if (record[i].orderState === '-1') record[i].orderState = '作废';
+      if (record[i].orderState === '1') record[i].orderState = '已下单';
+      if (record[i].orderState === '2') record[i].orderState = '已支付';
+      if (record[i].orderState === '3') record[i].orderState = '已发货';
+      if (record[i].orderState === '4') record[i].orderState = '已签收';
+      if (record[i].orderState === '5') record[i].orderState = '已结算';
+      if (record[i].orderState === '6') record[i].orderState = '已开始结算';
+
+    }
+    const listItems = record.map(items => {
+      if (items.relation === "downLine") {
+        return (
+          <Row gutter={{ md: 6, lg: 24, xl: 48 }} key={items.id.toString()}  >
+            <Col md={6} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>下家 :</span>
+              {items.userName !== undefined && (items.userName + '(' + items.relationSource + ')')}
+            </Col>
+            <Col md={6} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>订单编号 :</span>
+              {items.orderCode !== undefined && (items.orderCode)}
+            </Col>
+            <Col md={4} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>订单状态 :</span>{items.returnState  === '2' ? '已退货' : items.orderState}
+            </Col>
+            <Col md={8} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>签收时间 :</span>{items.receivedTime !== undefined && (items.receivedTime)}
+            </Col>
+          </Row>
+        )
+      } else {
+        return (
+          <Row gutter={{ md: 6, lg: 24, xl: 48 }}  >
+            <Col md={6} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>上家 :</span>
+              {items.userName !== undefined && (items.userName + '(' + items.relationSource + ')')}
+            </Col>
+            <Col md={6} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>订单编号 :</span>
+              {items.orderCode !== undefined && (items.orderCode)}
+            </Col>
+            <Col md={4} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>订单状态 :</span>{items.returnState === '2' ? '已退货' : items.orderState}
+            </Col>
+            <Col md={8} sm={24}>
+              <span style={{ paddingRight: 8, color: 'rgba(0, 0, 0, 0.85)' }}>签收时间 :</span>{items.receivedTime !== undefined && (items.receivedTime)}
+            </Col>
+          </Row>
+        )
+      }
+
+    })
     return listItems;
   }
 
@@ -607,7 +634,7 @@ export default class OrdOrder extends SimpleMng {
           </Col>
           <Col md={6} sm={24}>
             <span>
-              <Button onClick={this.list}  type="primary" htmlType="submit">
+              <Button onClick={this.list} type="primary" htmlType="submit">
                 查询
               </Button>
               <Button style={{ marginLeft: 20 }} onClick={this.handleFormReset}>
