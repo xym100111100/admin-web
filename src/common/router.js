@@ -143,6 +143,9 @@ export const getRouterData = app => {
     '/suc/domain-mng': {
       component: dynamicWrapper(app, ['sucdomain'], () => import('../routes/Suc/DomainMng')),
     },
+    '/suc/user-domain-mng': {
+      component: dynamicWrapper(app, ['sucdomain', 'sucuserdomain'], () => import('../routes/Suc/UserDomainMng')),
+    },
     '/xyz/area': {
       component: dynamicWrapper(app, ['xyzarea'], () => import('../routes/Xyz/XyzArea')),
     },

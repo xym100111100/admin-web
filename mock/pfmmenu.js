@@ -93,6 +93,7 @@ menuData.push({ id: '1536131597170', sysId: 'damai-admin', code: '22', title: '�
 menuData.push({ id: '1536131597171', sysId: 'damai-admin', code: '2200', title: '分类管理', name: '分类管理', path: 'prd-category-mng', isEnabled: true, icon: null, remark: '分类管理' });
 menuData.push({ id: '1536131597172', sysId: 'damai-admin', code: '2201', title: '产品管理', name: '产品管理', path: 'prd-product-mng', isEnabled: true, icon: null, remark: '产品管理' });
 menuData.push({ id: '1536131597173', sysId: 'damai-admin', code: '0603', title: '领域信息', name: '领域信息', path: 'domain-mng', isEnabled: true, icon: null, remark: '领域信息' });
+menuData.push({ id: '1536131597174', sysId: 'damai-admin', code: '0604', title: '用户领域管理', name: '用户领域管理', path: 'user-domain-mng', isEnabled: true, icon: null, remark: '用户领域管理' });
 
 
 function sort(list) {
