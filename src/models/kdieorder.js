@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { getByCondition, list, getById, eorder, modify, del,batchOrder } from '../services/kdieorder';
+import { getByCondition, list, getById, eorder, modify, del,batchOrder,batchEnter } from '../services/kdieorder';
 
 export default {
   namespace: 'kdieorder',
@@ -64,6 +64,16 @@ export default {
     },
     *batchOrder({ payload, callback }, { call }) {
       const response = yield call(batchOrder, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+        if (callback) callback(response);
+      }
+    },
+    *batchEnter({ payload, callback }, { call }) {
+      const response = yield call(batchEnter, payload);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);

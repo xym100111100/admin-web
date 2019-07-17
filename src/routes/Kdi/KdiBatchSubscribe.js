@@ -172,7 +172,7 @@ export default class KdiBatchSubscribe extends SimpleMng {
     commit = (fields) => {
         this.setState({ editForm: undefined });
         this.props.dispatch({
-            type: `kdieorder/batchOrder`,
+            type: `kdieorder/batchEnter`,
             payload: fields,
             callback: data => {
                 if (data.result === 1) {

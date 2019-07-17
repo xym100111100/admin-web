@@ -27,6 +27,15 @@ export async function batchOrder(params) {
   });
 }
 
+export async function batchEnter(params) {
+  return request('/kdi-svr/kdi/logistic/batch-enter', {
+    method: 'POST',
+    body: {
+      ...params,
+    },
+  });
+}
+
 export async function modify(params) {
   return request('/kdi-svr/kdi/eorder', {
     method: 'PUT',
