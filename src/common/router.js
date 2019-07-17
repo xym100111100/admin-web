@@ -109,6 +109,9 @@ export const getRouterData = app => {
     '/kdi/kdi-batch': {
       component: dynamicWrapper(app, ['kdieorder','kdicompany', 'kditemplate', 'kdicompanydic', 'user','kdisender'], () => import('../routes/Kdi/KdiBatch')),
     },
+    '/kdi/kdi-batch-sub': {
+      component: dynamicWrapper(app, ['kdieorder','kdicompany', 'kditemplate', 'kdicompanydic', 'user','kdisender'], () => import('../routes/Kdi/KdiBatchSubscribe')),
+    },
     '/kdi/kdi-cfg/kdi-sender-cfg': {
       component: dynamicWrapper(app, ['kdisender','slrshop','user'], () => import('../routes/Kdi/KdiSenderCfg')),
     },
