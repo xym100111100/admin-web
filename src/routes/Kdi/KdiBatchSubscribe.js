@@ -114,14 +114,14 @@ export default class KdiBatchSubscribe extends SimpleMng {
                     for (let i = 0; i < str.length; i++) {
                         receivingInformation.push({
                             id: i + 1,
-                            trackingNumber: str[i].运单号,
-                            receivePeople: str[i].收件人姓名,
-                            receivePhone: str[i].收件电话,
-                            receiveTitle: str[i].商品信息,
-                            receiveProvince: str[i].收件省份,
-                            receiveCity: str[i].收件城市,
-                            receiveCounty: str[i].收件区县,
-                            receiveAddress: str[i].收件人详细地址,
+                            logisticCode: str[i].运单号,
+                            receiverName: str[i].收件人姓名,
+                            receiverTel: str[i].收件电话,
+                            orderTitle: str[i].商品信息,
+                            receiverProvince: str[i].收件省份,
+                            receiverCity: str[i].收件城市,
+                            receiverExpArea: str[i].收件区县,
+                            receiverAddress: str[i].收件人详细地址,
                         })
                     }
                     console.log("receivingInformation", receivingInformation);
@@ -231,9 +231,9 @@ export default class KdiBatchSubscribe extends SimpleMng {
         const rowSelection = {
             selectedRowKeys, onChange: this.onSelectChange,
             getCheckboxProps: record => ({
-                disabled: record.trackingNumber === null || record.receivePeople === null ||
-                record.receivePhone === null || record.receiveTitle === undefined || record.receiveProvince === undefined || 
-                record.receiveCity === undefined || record.receiveCounty === undefined || record.receiveAddress === null,
+                disabled: record.receiverName === null || record.logisticCode === null ||
+                record.receiverTel === null || record.orderTitle === undefined || record.receiverProvince === undefined || 
+                record.receiverCity === undefined || record.receiverExpArea === undefined || record.receiverAddress === null,
 
             })
         };
@@ -241,50 +241,50 @@ export default class KdiBatchSubscribe extends SimpleMng {
         const columns = [
             {
                 title: '运单号',
-                dataIndex: 'trackingNumber',
-                key: 'trackingNumber',
+                dataIndex: 'logisticCode',
+                key: 'logisticCode',
                 width: 150
             },
             {
                 title: '收件人姓名',
-                dataIndex: 'receivePeople',
-                key: 'receivePeople',
+                dataIndex: 'receiverName',
+                key: 'receiverName',
                 width: 150
             },
             {
                 title: '收件电话',
-                dataIndex: 'receivePhone',
-                key: 'receivePhone',
+                dataIndex: 'receiverTel',
+                key: 'receiverTel',
                 width: 100
             },
             {
                 title: '订单标题',
-                dataIndex: 'receiveTitle',
-                key: 'receiveTitle',
+                dataIndex: 'orderTitle',
+                key: 'orderTitle',
                 width: 150
             },
             {
                 title: '收件省份',
-                dataIndex: 'receiveProvince',
-                key: 'receiveProvince',
+                dataIndex: 'receiverProvince',
+                key: 'receiverProvince',
                 width: 150
             },
             {
                 title: '收件城市',
-                dataIndex: 'receiveCity',
-                key: 'receiveCity',
+                dataIndex: 'receiverCity',
+                key: 'receiverCity',
                 width: 150
             },
             {
                 title: '收件区县',
-                dataIndex: 'receiveCounty',
-                key: 'receiveCounty',
+                dataIndex: 'receiverExpArea',
+                key: 'receiverExpArea',
                 width: 150
             },
             {
                 title: '收件人详细地址',
-                dataIndex: 'receiveAddress',
-                key: 'receiveAddress',
+                dataIndex: 'receiverAddress',
+                key: 'receiverAddress',
                 width: 150
             },
         ];
