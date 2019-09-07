@@ -250,6 +250,11 @@ export const getRouterData = app => {
         import('../routes/Onl/OnlineMng')
       ),
     },
+    '/onl/onl-import-product': {
+      component: dynamicWrapper(app, ['importproduct',], () =>
+        import('../routes/Onl/ImportProduct')
+      ),
+    },
     '/prd/prd-category-mng': {
       component: dynamicWrapper(app, ['onlonline', 'BraftEditorUpload', 'onlonlineporomotion', 'prmpartner'], () =>
         import('../routes/Prd/PrdCategoryMng')

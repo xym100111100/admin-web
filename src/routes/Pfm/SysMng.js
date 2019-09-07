@@ -11,7 +11,12 @@ export default class SysMng extends SimpleMng {
   constructor() {
     super();
     this.moduleCode = 'pfmsys';
+
+   
   }
+
+
+
   render() {
     const { pfmsys: { pfmsys }, loading } = this.props;
     const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
