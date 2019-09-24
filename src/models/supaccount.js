@@ -1,11 +1,13 @@
 import { message } from 'antd';
 import { list, getById, add, modify, del, } from '../services/supaccount';
-import { orgTrade} from '../services/afcflow';
+import { orgTrade } from '../services/afcflow';
 import { getOneAccount } from '../services/afcapplywithdrawaccount';
 import { getSettleTotal } from '../services/ordorder';
-import { detail} from '../services/suporder';
+import { detail } from '../services/suporder';
 
-import {orgWithdrawTotal,  apply } from '../services/afcwithdraw';
+import { orgWithdrawTotal } from '../services/afcwithdraw';
+import { apply } from '../services/damai';
+
 
 export default {
   namespace: 'supaccount',

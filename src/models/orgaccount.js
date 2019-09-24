@@ -1,7 +1,8 @@
 import { message } from 'antd';
 
 import { list, getById, getByName, add, modify, del } from '../services/orgaccount';
-import { listOrgAccount } from '../services/sucorg';
+// import { listOrgAccount } from '../services/sucorg';
+import { listOrgAccount } from '../services/damai';
 
 export default {
   namespace: 'orgaccount',
@@ -20,6 +21,7 @@ export default {
       if (callback) callback(response);
     },
     *listOrgAccount({ payload, callback }, { call, put }) {
+     
       const response = yield call(listOrgAccount, payload);
       yield put({
         type: 'changeList',
