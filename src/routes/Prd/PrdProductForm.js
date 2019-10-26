@@ -239,25 +239,29 @@ export default class PrdProductForm extends React.Component {
     }
 
     if (categoryId === undefined || categoryId.length === 0) return message.error('请选择产品分类');
-    if (fileList === undefined || fileList.length === 0) return message.error('请上传商品主图');
-    if (fileLists === undefined || fileLists.length === 0) return message.error('请上传至少一张商品轮播图');
+    // if (fileList === undefined || fileList.length === 0) return message.error('请上传商品主图');
+    // if (fileLists === undefined || fileLists.length === 0) return message.error('请上传至少一张商品轮播图');
 
     // 产品规格信息
     const productSpecs = this.refs.editableTable.getRecords();
     // 产品图片
     const productPic = [];
-    productPic.push({
-      picType: 1, // 1为主图 0为轮播图
-      picPath: fileList[0].response === undefined ? fileList[0].name : fileList[0].response.filePaths[0],
-    });
-
-    for (let i = 0; i < fileLists.length; i++) {
+    if (fileList !== undefined && fileList.length !== 0) {
       productPic.push({
-        picType: 0, // 1为主图 0为轮播图
-        picPath: fileLists[i].response === undefined ? fileLists[i].name : fileLists[i].response.filePaths[0],
+        picType: 1, // 1为主图 0为轮播图
+        picPath: fileList[0].response === undefined ? fileList[0].name : fileList[0].response.filePaths[0],
       });
     }
-
+    
+    if (fileLists !== undefined || fileLists.length !== 0){
+      for (let i = 0; i < fileLists.length; i++) {
+        productPic.push({
+          picType: 0, // 1为主图 0为轮播图
+          picPath: fileLists[i].response === undefined ? fileLists[i].name : fileLists[i].response.filePaths[0],
+        });
+      }
+    }
+      
     form.getFieldDecorator('id');
     form.getFieldDecorator('categoryId');
     form.getFieldDecorator('productName');
@@ -431,8 +435,8 @@ export default class PrdProductForm extends React.Component {
                 {
                   <div className="clearfix">
                     <Upload
-                      gitaction="/ise-svr/ise/upload"
-                      // action="http://192.168.1.222:20180/ise/upload"
+                      // gitaction="/ise-svr/ise/upload"
+                      action="http://192.168.1.33:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileList}
                       name="multipartFile"
@@ -457,8 +461,8 @@ export default class PrdProductForm extends React.Component {
                 {
                   <div className="clearfix">
                     <Upload
-                      action="/ise-svr/ise/upload"
-                      // action="http://192.168.1.222:20180/ise/upload"
+                      // action="/ise-svr/ise/upload"
+                      action="http://192.168.1.33:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileLists}
                       name="multipartFile"

@@ -180,6 +180,19 @@ export default class PrdProductMng extends SimpleMng {
               >
                 编辑
               </a>
+              <Divider type="vertical" />
+              <a
+                onClick={() =>
+                  this.showAddForm({
+                    id: record.id,
+                    editForm: 'prdProductForm',
+                    editFormRecord: record,
+                    editFormTitle: '编辑产品信息',
+                  })
+                }
+              >
+                上线
+              </a>
             </Fragment>
           );
         },
@@ -225,7 +238,7 @@ export default class PrdProductMng extends SimpleMng {
               columns={columns}
             />
           </div>
-        </Card>，
+        </Card>
         {editForm === 'prdProductForm' && (
           <PrdProductForm
             visible
@@ -244,7 +257,7 @@ export default class PrdProductMng extends SimpleMng {
               })
             }
           />
-        )},
+        )}
         {editForm === 'prdProductDetail' && (
           <PrdProductDetail
             visible
