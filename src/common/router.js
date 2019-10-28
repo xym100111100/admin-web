@@ -104,19 +104,19 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['kditemplate', 'kdicompany', 'user'], () => import('../routes/Kdi/KdiTemplate')),
     },
     '/kdi/kdi-cfg/kdi-company-cfg': {
-      component: dynamicWrapper(app, ['kdicompany','slrshop', 'kditemplate', 'kdicompanydic', 'user'], () => import('../routes/Kdi/KdiCompany')),
+      component: dynamicWrapper(app, ['kdicompany', 'slrshop', 'kditemplate', 'kdicompanydic', 'user'], () => import('../routes/Kdi/KdiCompany')),
     },
     '/kdi/kdi-batch': {
-      component: dynamicWrapper(app, ['kdieorder','kdicompany', 'kditemplate', 'kdicompanydic', 'user','kdisender'], () => import('../routes/Kdi/KdiBatch')),
+      component: dynamicWrapper(app, ['kdieorder', 'kdicompany', 'kditemplate', 'kdicompanydic', 'user', 'kdisender'], () => import('../routes/Kdi/KdiBatch')),
     },
     '/kdi/kdi-batch-sub': {
-      component: dynamicWrapper(app, ['kdieorder','kdicompany', 'kditemplate', 'kdicompanydic', 'user','kdisender'], () => import('../routes/Kdi/KdiBatchSubscribe')),
+      component: dynamicWrapper(app, ['kdieorder', 'kdicompany', 'kditemplate', 'kdicompanydic', 'user', 'kdisender'], () => import('../routes/Kdi/KdiBatchSubscribe')),
     },
     '/kdi/kdi-cfg/kdi-sender-cfg': {
-      component: dynamicWrapper(app, ['kdisender','slrshop','user'], () => import('../routes/Kdi/KdiSenderCfg')),
+      component: dynamicWrapper(app, ['kdisender', 'slrshop', 'user'], () => import('../routes/Kdi/KdiSenderCfg')),
     },
     '/ord/ord-order': {
-      component: dynamicWrapper(app, ['ordorder', 'slrshopaccount','kdicompany', 'user', 'kdisender', 'suporder'], () =>
+      component: dynamicWrapper(app, ['ordorder', 'slrshopaccount', 'kdicompany', 'user', 'kdisender', 'suporder'], () =>
         import('../routes/Ord/OrdOrder')
       ),
     },
@@ -153,7 +153,7 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['xyzarea'], () => import('../routes/Xyz/XyzArea')),
     },
     '/xyz/areasendorg': {
-      component: dynamicWrapper(app, ['xyzareasendorg','sucorg'], () => import('../routes/Xyz/XyzAreaSendOrg')),
+      component: dynamicWrapper(app, ['xyzareasendorg', 'sucorg'], () => import('../routes/Xyz/XyzAreaSendOrg')),
     },
     '/pfm/menu-mng': {
       component: dynamicWrapper(app, ['pfmsys', 'pfmmenu'], () => import('../routes/Pfm/MenuMng')),
@@ -194,17 +194,17 @@ export const getRouterData = app => {
       ),
     },
     '/slr/slr-shop-mng': {
-      component: dynamicWrapper(app, ['slrshop', 'slrshopaccount', 'onlsearchcategory','user'], () =>
+      component: dynamicWrapper(app, ['slrshop', 'slrshopaccount', 'onlsearchcategory', 'user'], () =>
         import('../routes/Slr/SlrShopMng')
       ),
     },
     '/slr/slr-seller-mng': {
-      component: dynamicWrapper(app, ['slrseller','user', 'slrshop', 'slrshopaccount'], () =>
+      component: dynamicWrapper(app, ['slrseller', 'user', 'slrshop', 'slrshopaccount'], () =>
         import('../routes/Slr/SlrSellerMng')
       ),
     },
     '/slr/slr-onl-search-category-mng': {
-      component: dynamicWrapper(app, ['onlsearchcategory', 'user','slrshop'], () =>
+      component: dynamicWrapper(app, ['onlsearchcategory', 'user', 'slrshop'], () =>
         import('../routes/Slr/SlrOnlSearchCategoryMng')
       ),
     },
@@ -246,7 +246,7 @@ export const getRouterData = app => {
       ),
     },
     '/onl/onl-mng': {
-      component: dynamicWrapper(app, ['onlonline','slrshop','user','BraftEditorUpload', 'onlonlineporomotion', 'prmpartner'], () =>
+      component: dynamicWrapper(app, ['onlonline', 'slrshop', 'user', 'BraftEditorUpload', 'onlonlineporomotion', 'prmpartner'], () =>
         import('../routes/Onl/OnlineMng')
       ),
     },
@@ -256,7 +256,7 @@ export const getRouterData = app => {
       ),
     },
     '/prd/prd-category-mng': {
-      component: dynamicWrapper(app, ['onlonline', 'BraftEditorUpload', 'onlonlineporomotion', 'prmpartner'], () =>
+      component: dynamicWrapper(app, ['prdproductcategory', 'slrshop', 'onlonline', 'BraftEditorUpload', 'onlonlineporomotion', 'prmpartner'], () =>
         import('../routes/Prd/PrdCategoryMng')
       ),
     },
