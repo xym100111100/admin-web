@@ -1,7 +1,7 @@
 import { message } from 'antd';
 
-import { list, getById, reject, review } from '../services/afcapplywithdrawaccount';
-
+import { list, getById, reject } from '../services/afcapplywithdrawaccount';
+import {  review } from '../services/damai';
 export default {
   namespace: 'afcapplywithdrawaccount',
 

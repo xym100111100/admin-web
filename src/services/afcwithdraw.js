@@ -18,14 +18,14 @@ export async function cancel(params) {
   });
 }
 
-export async function review(params) {
-  return request('/afc-svr/withdraw/ok', {
-    method: 'PUT',
-    body: {
-      ...params,
-    },
-  });
-}
+// export async function review(params) {
+//   return request('/afc-svr/withdraw/ok', {
+//     method: 'PUT',
+//     body: {
+//       ...params,
+//     },
+//   });
+// }
 
 export async function deal(params) {
   return request(`/afc-svr/withdraw/deal?${stringify(params)}`, {

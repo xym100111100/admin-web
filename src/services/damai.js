@@ -13,3 +13,13 @@ export async function apply(params) {
     },
   });
 }
+
+
+export async function review(params) {
+  return request('/damai-svr/withdraw/ok', {
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
+}

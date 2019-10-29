@@ -1,6 +1,7 @@
 import { message } from 'antd';
 
-import { list, getById, cancel, review, deal } from '../services/afcwithdraw';
+import { list, getById, cancel, deal } from '../services/afcwithdraw';
+import {  review } from '../services/damai';
 
 export default {
   namespace: 'withdraw',
