@@ -256,7 +256,7 @@ export const getRouterData = app => {
       ),
     },
     '/onl/onl-good-from-product': {
-      component: dynamicWrapper(app, ['goodfromproduct',], () =>
+      component: dynamicWrapper(app, ['goodfromproduct','prdproduct'], () =>
         import('../routes/Onl/GoodFromProduct')
       ),
     },
