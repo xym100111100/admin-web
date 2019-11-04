@@ -255,6 +255,11 @@ export const getRouterData = app => {
         import('../routes/Onl/ImportProduct')
       ),
     },
+    '/onl/onl-good-from-product': {
+      component: dynamicWrapper(app, ['goodfromproduct',], () =>
+        import('../routes/Onl/GoodFromProduct')
+      ),
+    },
     '/prd/prd-category-mng': {
       component: dynamicWrapper(app, ['prdproductcategory', 'slrshop', 'onlonline', 'BraftEditorUpload', 'onlonlineporomotion', 'prmpartner'], () =>
         import('../routes/Prd/PrdCategoryMng')
