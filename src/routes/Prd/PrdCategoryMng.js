@@ -57,13 +57,12 @@ export default class PrdCategoryMng extends SimpleMng {
      * 添加分类
      */
     addSearchCategory = (fields, editFormType) => {
-        const {user} =this.props;
+        const { user } = this.props;
         let mathod = 'add'
         if (editFormType !== mathod) {
             mathod = 'modify'
         }
-        console.log('xx',user);
-        fields.opId=user.currentUser.userId;
+        fields.opId = user.currentUser.userId;
         this.props.dispatch({
             type: 'prdproductcategory/' + mathod,
             payload: fields,
@@ -86,7 +85,7 @@ export default class PrdCategoryMng extends SimpleMng {
                 isEnabled: !record.isEnabled
             },
             callback: () => {
-                const { pageNum,pageSize } = this.state;
+                const { pageNum, pageSize } = this.state;
                 this.handleReload({
                     pageNum: pageNum,
                     pageSize: pageSize,
@@ -96,7 +95,7 @@ export default class PrdCategoryMng extends SimpleMng {
     }
 
     render() {
-        const { prdproductcategory: { prdproductcategory }, loading,user } = this.props;
+        const { prdproductcategory: { prdproductcategory }, loading, user } = this.props;
         const { editForm, editFormType, editFormTitle, editFormRecord } = this.state;
         const columns = [
             {
@@ -137,7 +136,7 @@ export default class PrdCategoryMng extends SimpleMng {
                             编辑
                         </a>
                         <Divider type="vertical" />
-                        <a onClick={() => this.showAddForm({ editFormRecord: { code: record.code,opId:user.currentUser.userId }, editForm: 'searchsonCategory', editFormTitle: '添加子分类' })}>
+                        <a onClick={() => this.showAddForm({ editFormRecord: { code: record.code, opId: user.currentUser.userId }, editForm: 'searchsonCategory', editFormTitle: '添加子分类' })}>
                             添加子分类
                         </a>
                     </Fragment>
@@ -159,7 +158,7 @@ export default class PrdCategoryMng extends SimpleMng {
         }
         let prdproductcategoryData;
         if (prdproductcategory === undefined) {
-            onlsearchcategoryData = [];
+            prdproductcategoryData = [];
         } else {
             prdproductcategoryData = prdproductcategory.list;
         }
@@ -216,7 +215,7 @@ export default class PrdCategoryMng extends SimpleMng {
                         editFormType={editFormType}
                         record={editFormRecord}
                         closeModal={() => this.setState({ editForm: undefined })}
-                        onSubmit={fields => {this.handleSubmit({ fields, moduleCode: 'prdproductcategory', saveMethodName: 'add' })}}
+                        onSubmit={fields => { this.handleSubmit({ fields, moduleCode: 'prdproductcategory', saveMethodName: 'add' }) }}
                     />
                 )}
             </Fragment>

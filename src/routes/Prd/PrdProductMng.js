@@ -155,7 +155,7 @@ export default class PrdProductMng extends SimpleMng {
         render: (text, record) => {
           return (
             <Fragment>
-              <a
+              {/* <a
                 onClick={() =>
                   this.showAddForm({
                     id: record.id,
@@ -167,7 +167,7 @@ export default class PrdProductMng extends SimpleMng {
               >
                 查询
               </a>
-              <Divider type="vertical" />
+              <Divider type="vertical" /> */}
               <a
                 onClick={() =>
                   this.showAddForm({
