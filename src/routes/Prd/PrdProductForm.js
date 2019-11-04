@@ -1,14 +1,16 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Card, Row, message, Input, Form, Col, Table, Upload, Icon, Modal, Cascader } from 'antd';
+import { Card, Row, message, Input, Form, Col, Select, Table, Upload, Icon, Modal, Cascader } from 'antd';
 import EditForm from 'components/Rebue/EditForm';
 import EditableTable from 'components/Rebue/EditableTable';
+
 // 引入编辑器以及EditorState子模块
 import BraftEditor from 'braft-editor';
 // 引入编辑器样式
 import 'braft-editor/dist/index.css';
 
 const FormItem = Form.Item;
+
 
 @connect(({ BraftEditorUpload, prmpartner }) => ({
   BraftEditorUpload,
@@ -27,16 +29,18 @@ export default class PrdProductForm extends React.Component {
     fileLists: [],
     productSpec: [],
     categorys: [],
+    //添加后经过整理的搜索分类
+    classifications: [],
     // 创建一个空的editorState作为初始值
     productDetail: BraftEditor.createEditorState(null),
   };
 
   componentWillMount() {
-    const { record, id } = this.props;
+    const { record } = this.props;
     const height = document.body.clientHeight * 0.82;
-    if (id !== undefined) {
-      this.getProductSpec(id);
-      this.getProductPic(id);
+    if (record.id !== undefined) {
+      this.getProductSpec(record.id);
+      this.getProductPic(record.id);
     }
     this.getCategoryTree();
     this.setState({
@@ -49,12 +53,48 @@ export default class PrdProductForm extends React.Component {
    * 获取产品分类树
    */
   getCategoryTree() {
+    const { record } = this.props;
     this.props.dispatch({
       type: `prdproductcategory/getCategoryTree`,
-      callback: record => {
-        this.setState({ categoryTree: record });
+      callback: result => {
+
+        this.setState({
+          categoryTree: result,
+        });
+        let find = [];
+        for (let i = 0; i < result.length; i++) {
+          if (this.findCode(record.categoryId, result[i], find)) {
+            find.unshift(result[i].id);
+            this.setState({
+              categorys: find
+            })
+            break;
+          }
+        }
       },
     });
+  }
+
+  /**
+   * 获取分类
+   */
+  findCode = (categoryId, item, find) => {
+    if (categoryId === item.id) {
+      return true;
+    }
+    if (item.categoryList === undefined && categoryId !== item.id) {
+      return false;
+    }
+    if (categoryId !== item.id && item.categoryList !== undefined) {
+      for (let i = 0; i < item.categoryList.length; i++) {
+        if (this.findCode(categoryId, item.categoryList[i], find)) {
+          find.unshift(item.categoryList[i].id);
+          return true;
+        }
+      }
+      return false;
+    }
+
   }
 
   /**
@@ -117,7 +157,7 @@ export default class PrdProductForm extends React.Component {
     this.setState({ categorys: value });
   };
 
-  // 商品主图开始
+  // 产品主图开始
   handleCancel = () => this.setState({ previewVisible: false });
 
   handlePreview = file => {
@@ -128,9 +168,9 @@ export default class PrdProductForm extends React.Component {
   };
 
   handleChange = ({ fileList }) => this.setState({ fileList });
-  // 商品图片结束
+  // 产品图片结束
 
-  // 商品轮播图开始
+  // 产品轮播图开始
   handleCancels = () => this.setState({ previewVisibles: false });
 
   handlePreviews = file => {
@@ -144,7 +184,7 @@ export default class PrdProductForm extends React.Component {
     const fileList = info.fileList.slice(-5);
     this.setState({ fileLists: fileList });
   };
-  // 商品轮播图结束
+  // 产品轮播图结束
 
   /**
    * 校验上传图片大小
@@ -239,8 +279,8 @@ export default class PrdProductForm extends React.Component {
     }
 
     if (categoryId === undefined || categoryId.length === 0) return message.error('请选择产品分类');
-    // if (fileList === undefined || fileList.length === 0) return message.error('请上传商品主图');
-    // if (fileLists === undefined || fileLists.length === 0) return message.error('请上传至少一张商品轮播图');
+    // if (fileList === undefined || fileList.length === 0) return message.error('请上传产品主图');
+    // if (fileLists === undefined || fileLists.length === 0) return message.error('请上传至少一张产品轮播图');
 
     // 产品规格信息
     const productSpecs = this.refs.editableTable.getRecords();
@@ -252,8 +292,8 @@ export default class PrdProductForm extends React.Component {
         picPath: fileList[0].response === undefined ? fileList[0].name : fileList[0].response.filePaths[0],
       });
     }
-    
-    if (fileLists !== undefined || fileLists.length !== 0){
+
+    if (fileLists !== undefined || fileLists.length !== 0) {
       for (let i = 0; i < fileLists.length; i++) {
         productPic.push({
           picType: 0, // 1为主图 0为轮播图
@@ -261,7 +301,7 @@ export default class PrdProductForm extends React.Component {
         });
       }
     }
-      
+
     form.getFieldDecorator('id');
     form.getFieldDecorator('categoryId');
     form.getFieldDecorator('productName');
@@ -270,6 +310,8 @@ export default class PrdProductForm extends React.Component {
     form.getFieldDecorator('productDetail');
     form.getFieldDecorator('spec');
     form.getFieldDecorator('pics');
+  
+    productName
     form.setFieldsValue({
       id: productId,
       categoryId,
@@ -281,6 +323,10 @@ export default class PrdProductForm extends React.Component {
       pics: productPic,
     });
   };
+
+
+
+
 
   render() {
     const { loading, form, record } = this.props;
@@ -297,7 +343,8 @@ export default class PrdProductForm extends React.Component {
       categorys,
     } = this.state;
 
-    // 商品主图、轮播图上传图标
+
+    // 产品主图、轮播图上传图标
     const uploadButton = (
       <div>
         <Icon type="plus" />
@@ -306,11 +353,14 @@ export default class PrdProductForm extends React.Component {
     );
 
     const columns = [
+      { title: '条形码', dataIndex: 'code', align: 'center' },
+      { title: '单位', dataIndex: 'unit', align: 'center' },
       { title: '规格名称', dataIndex: 'name', align: 'center' },
       { title: '市场价格', dataIndex: 'marketPrice', align: 'center' },
-      { title: '单位', dataIndex: 'unit', align: 'center' },
-      { title: '条形码', dataIndex: 'code', align: 'center' },
+
     ];
+
+
 
     // 不在工具栏显示的控件列表
     const excludeControl = [
@@ -388,7 +438,7 @@ export default class PrdProductForm extends React.Component {
               <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="产品名称">
                 {form.getFieldDecorator('productName', {
                   initialValue: record.productName,
-                })(<Input style={{ width: '500px' }} placeholder="请输入商品的名称" />)}
+                })(<Input style={{ width: '500px' }} placeholder="请输入产品的名称" />)}
               </FormItem>
             </Col>
             <Col md={24} sm={24}>
@@ -397,12 +447,27 @@ export default class PrdProductForm extends React.Component {
                   style={{ width: '500px' }}
                   fieldNames={{ label: 'name', value: 'id', children: 'categoryList' }}
                   options={categoryTree}
-                  defaultValue={categorys}
+                  value={categorys}
                   onChange={this.selectCategory}
                   placeholder="请选择产品分类"
                 />
               </FormItem>
             </Col>
+            <Col md={24} sm={24}>
+              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="品牌名称">
+                {form.getFieldDecorator('brand', {
+                  initialValue: record.brand,
+                })(<Input style={{ width: '500px' }} placeholder="请输入品牌的名称" />)}
+              </FormItem>
+            </Col>
+            <Col md={24} sm={24}>
+              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="生产厂家">
+                {form.getFieldDecorator('manufacturer', {
+                  initialValue: record.manufacturer,
+                })(<Input placeholder="请输入生产厂家的名称" />)}
+              </FormItem>
+            </Col>
+
             <Col md={24} sm={24}>
               <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="规格信息">
                 {
@@ -412,18 +477,18 @@ export default class PrdProductForm extends React.Component {
                       {columns.length === 0 ? (
                         <div id="skuDivId" />
                       ) : (
-                        <div id="skuDivId">
-                          <EditableTable onCheck={this.handleCheck} ref="editableTable">
-                            <Table
-                              rowKey="id"
-                              pagination={false}
-                              loading={loading}
-                              dataSource={productSpec}
-                              columns={columns}
-                            />
-                          </EditableTable>
-                        </div>
-                      )}
+                          <div id="skuDivId">
+                            <EditableTable onCheck={this.handleCheck} ref="editableTable">
+                              <Table
+                                rowKey="id"
+                                pagination={false}
+                                loading={loading}
+                                dataSource={productSpec}
+                                columns={columns}
+                              />
+                            </EditableTable>
+                          </div>
+                        )}
                     </div>
                   </div>
                 }
@@ -431,12 +496,12 @@ export default class PrdProductForm extends React.Component {
             </Col>
             <Col md={24} sm={24}>
               <br />
-              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="商品主图">
+              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="产品主图">
                 {
                   <div className="clearfix">
                     <Upload
                       // gitaction="/ise-svr/ise/upload"
-                      action="http://192.168.1.33:20180/ise/upload"
+                      action="http://192.168.1.16:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileList}
                       name="multipartFile"
@@ -457,12 +522,12 @@ export default class PrdProductForm extends React.Component {
               </FormItem>
             </Col>
             <Col md={24} sm={24}>
-              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="商品轮播图">
+              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="产品轮播图">
                 {
                   <div className="clearfix">
                     <Upload
                       // action="/ise-svr/ise/upload"
-                      action="http://192.168.1.33:20180/ise/upload"
+                      action="http://192.168.1.16:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileLists}
                       name="multipartFile"
@@ -482,22 +547,9 @@ export default class PrdProductForm extends React.Component {
                 }
               </FormItem>
             </Col>
+
             <Col md={24} sm={24}>
-              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="品牌名称">
-                {form.getFieldDecorator('brand', {
-                  initialValue: record.brand,
-                })(<Input style={{ width: '500px' }} placeholder="请输入品牌的名称" />)}
-              </FormItem>
-            </Col>
-            <Col md={24} sm={24}>
-              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="生产厂家">
-                {form.getFieldDecorator('manufacturer', {
-                  initialValue: record.manufacturer,
-                })(<Input placeholder="请输入生产厂家的名称" />)}
-              </FormItem>
-            </Col>
-            <Col md={24} sm={24}>
-              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="商品详情">
+              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="产品详情">
                 {
                   <div>
                     <br />

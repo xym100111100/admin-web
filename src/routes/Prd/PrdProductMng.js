@@ -183,8 +183,7 @@ export default class PrdProductMng extends SimpleMng {
               <Divider type="vertical" />
               <a
                 onClick={() =>
-                  this.showAddForm({
-                    id: record.id,
+                  this.showEditForm({
                     editForm: 'prdProductForm',
                     editFormRecord: record,
                     editFormTitle: '编辑产品信息',
