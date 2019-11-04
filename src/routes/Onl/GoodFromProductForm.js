@@ -650,40 +650,29 @@ export default class GoodFromProductForm extends React.Component {
     const { loading, form, record } = this.props;
     return (
       <div>
-        <Col md={12} sm={12} >
-          <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 18 }} label="店铺与分类">
-            <Row>
-              <Col md={24} sm={24}>
-                {form.getFieldDecorator('classificationId', {
-                })(
-                  <Cascader style={{ width: "500px" }} placeholder="请选择店铺和分类"
-                    options={this.state.shopName}
-                    onChange={this.onChangeShop}
-                    loadData={this.loadData}
-                  />
-                )}
-
-                <Button type="primary" icon='plus-circle' onClick={this.addClassification} />
-              </Col>
-              <Col md={24} sm={24}>
-                <Popconfirm placement="right" title="是否跳转到店铺信息页面添加新的商品分类?" onConfirm={this.jumpShopUrl} >
-                  <Button type="ghost" >添加新的商品分类</Button>
-                </Popconfirm>
-              </Col>
-            </Row>
-          </FormItem>
-          <Col md={24} sm={24}>
-            <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 18 }} label="已添加的分类">
-              <Select size="large" mode="multiple" style={{ width: '88%' }}
-                labelInValue={true}
-                open={false}
-                allowClear={true}
-                value={this.state.classifications}
-                onChange={this.deleteChange}
-                placeholder='请在上方店铺与分类选择框中选择并添加分类'
+        <Col md={24} sm={24}  >
+          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="店铺与分类">
+            {form.getFieldDecorator('classificationId', {
+            })(
+              <Cascader style={{  width: '44%' }} placeholder="请选择店铺和添加分类"
+                options={this.state.shopName}
+                onChange={this.onChangeShop}
+                loadData={this.loadData}
               />
-            </FormItem>
-          </Col>
+            )}
+            <Button type="primary" icon='plus-circle' onClick={this.addClassification}>添加分类</Button>
+          </FormItem>
+          <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="已添加的分类">
+            <Select size="large" mode="multiple" style={{ width: '44%' }}
+              labelInValue={true}
+              open={false}
+              allowClear={true}
+              value={this.state.classifications}
+              onChange={this.deleteChange}
+              placeholder='请在上方店铺与分类选择框中选择并添加分类'
+            />
+          </FormItem>
+
         </Col>
       </div>
     );
@@ -695,10 +684,6 @@ export default class GoodFromProductForm extends React.Component {
     this.setState({
       classifications: value
     })
-  }
-  //跳转到店铺信息页面
-  jumpShopUrl = () => {
-    window.location.href = "#/slr/slr-onl-search-category-mng";
   }
 
   //是否显示供应商输入框
