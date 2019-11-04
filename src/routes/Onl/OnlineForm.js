@@ -656,19 +656,13 @@ export default class OnlineForm extends React.Component {
               <Col md={24} sm={24}>
                 {form.getFieldDecorator('classificationId', {
                 })(
-                  <Cascader style={{ width: "500px" }} placeholder="请选择店铺和分类"
+                  <Cascader style={{ width: "500px" }} placeholder="请选择店铺和添加分类"
                     options={this.state.shopName}
                     onChange={this.onChangeShop}
                     loadData={this.loadData}
                   />
                 )}
-
-                <Button type="primary" icon='plus-circle' onClick={this.addClassification} />
-              </Col>
-              <Col md={24} sm={24}>
-                <Popconfirm placement="right" title="是否跳转到店铺信息页面添加新的商品分类?" onConfirm={this.jumpShopUrl} >
-                  <Button type="ghost" >添加新的商品分类</Button>
-                </Popconfirm>
+                <Button type="primary" icon='plus-circle' onClick={this.addClassification}>添加分类</Button>
               </Col>
             </Row>
           </FormItem>
@@ -695,10 +689,6 @@ export default class OnlineForm extends React.Component {
     this.setState({
       classifications: value
     })
-  }
-  //跳转到店铺信息页面
-  jumpShopUrl = () => {
-    window.location.href = "#/slr/slr-onl-search-category-mng";
   }
 
   //是否显示供应商输入框
