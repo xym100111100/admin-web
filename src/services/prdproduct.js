@@ -7,7 +7,6 @@ import request from '../utils/request';
 export async function list(params) {
   return request(`/prd-svr/prd/product?${stringify(params)}`);
 }
-
 /**
  * 查询单个产品信息
  */
@@ -15,11 +14,31 @@ export async function getById(params) {
   return request(`/prd-svr/prd/product/getbyid?${stringify(params)}`);
 }
 
+
+/**
+ * 查询单个产品信息
+ */
+export async function getProductById(params) {
+  return request(`/prd-svr/prd/product/get-product-by-id?${stringify(params)}`);
+}
+
 /**
  * 添加产品
  */
 export async function add(params) {
   return request('/prd-svr/prd/product', {
+    method: 'POST',
+    body: {
+      ...params,
+    },
+  });
+}
+
+/**
+ * 添加产品
+ */
+export async function onlineFormProduct(params) {
+  return request('/prd-svr/prd/product/online', {
     method: 'POST',
     body: {
       ...params,

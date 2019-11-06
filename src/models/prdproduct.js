@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { list, getById, add, enable, modify } from '../services/prdproduct';
+import { list, getById, add, enable, modify, getProductById, onlineFormProduct } from '../services/prdproduct';
 
 export default {
   namespace: 'prdproduct',
@@ -30,10 +30,31 @@ export default {
     },
 
     /**
+     * 查询单个产品信息
+     */
+    *getProductById({ payload, callback }, { call }) {
+      const response = yield call(getProductById, payload);
+      if (callback) callback(response);
+    },
+
+    /**
      * 添加产品信息
      */
     *add({ payload, callback }, { call }) {
       const response = yield call(add, payload);
+      if (response.result === 1) {
+        message.success(response.msg);
+        if (callback) callback(response);
+      } else {
+        message.error(response.msg);
+      }
+    },
+
+    /**
+     * 添加产品信息
+     */
+    *onlineFormProduct({ payload, callback }, { call }) {
+      const response = yield call(onlineFormProduct, payload);
       if (response.result === 1) {
         message.success(response.msg);
         if (callback) callback(response);

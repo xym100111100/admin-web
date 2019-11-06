@@ -239,6 +239,7 @@ export default class GoodFromProductForm extends React.Component {
         //整理属性名
         let attrNames = [];
         const onlineSpecAttrList = onlonline.record.onlOnlineSpecAttrList;
+        console.log(onlonline.record.onlOnlineSpecAttrList)
         for (let i = 0; i < onlineSpecAttrList.length; i++) {
           const attrName = onlineSpecAttrList[i].attrName;
           if (attrNames.indexOf(attrName) == -1) {
@@ -248,6 +249,7 @@ export default class GoodFromProductForm extends React.Component {
         //console.log('322333',attrNames);
         //整理属性值
         let onlineSpecList = onlonline.record.onlineSpecList;
+        console.log(onlineSpecList)
         for (let i = 0; i < onlineSpecList.length; i++) {
           const onlineSpecListId = onlineSpecList[i].id;
           for (let x = 0; x < onlineSpecAttrList.length; x++) {
@@ -1098,8 +1100,8 @@ export default class GoodFromProductForm extends React.Component {
                 {
                   <div className="clearfix">
                     <Upload
-                      action="/ise-svr/ise/upload"
-                      //action="http://192.168.1.36:20180/ise/upload"
+                      //action="/ise-svr/ise/upload"
+                      action="http://192.168.1.16:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileList}
                       name="multipartFile"
@@ -1123,8 +1125,8 @@ export default class GoodFromProductForm extends React.Component {
                 {
                   <div className="clearfix">
                     <Upload
-                      action="/ise-svr/ise/upload"
-                      //action="http://192.168.1.36:20180/ise/upload"
+                      //action="/ise-svr/ise/upload"
+                      action="http://192.168.1.16:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileLists}
                       name="multipartFile"

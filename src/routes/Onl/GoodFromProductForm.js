@@ -12,12 +12,15 @@ const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 const Option = Select.Option;
 
-@connect(({ onlonline, BraftEditorUpload, prmpartner, slrshop, user, }) => ({
+@connect(({ onlonline, prdproduct, prdproductspec, prdproductpic, BraftEditorUpload, prmpartner, slrshop, user, }) => ({
   BraftEditorUpload,
   onlonline,
   prmpartner,
   slrshop,
+  prdproductspec,
+  prdproductpic,
   user,
+  prdproduct
 }))
 @Form.create()
 @EditForm
@@ -26,17 +29,14 @@ export default class GoodFromProductForm extends React.Component {
     const { record } = this.props;
     if (record.id !== undefined) this.getOnlines(record.id);
     this.partnerSearch();
-    if (this.props.editFormType === "add") {
-      this.setState({
-        isEditSupplier: 1,
-      })
-    }
     this.onlineSpecColumn();
     this.getShopName();
     let height = document.body.clientHeight * 0.82;
     this.setState({
       windowsHeight: height,
     })
+    this.getProductSpec(record.id);
+    this.getProductPic(record.id);
   }
 
 
@@ -55,7 +55,7 @@ export default class GoodFromProductForm extends React.Component {
     // 创建一个空的editorState作为初始值
     editorState: BraftEditor.createEditorState(null),
     //是否能修改供应商,0：否,1：是,2：是，并修改该商品未结算的订单的供应商。
-    isEditSupplier: 0,
+    isEditSupplier: 1,
     // 上线规格table表格
     columns: [],
     //是否上线到平台，0为不上线，1为上线
@@ -75,14 +75,90 @@ export default class GoodFromProductForm extends React.Component {
     classifications: [],
     //添加的搜索分类
     classificationArr: [],
+    onlineDetail: ''
   };
+
+
+
+
+  /**
+ * 获取产品规格信息
+ */
+  getProductSpec = id => {
+    this.props.dispatch({
+      type: `prdproductspec/list`,
+      payload: {
+        productId: id,
+      },
+      callback: record => {
+        let onlOnlineSpec = []
+
+        record.map((item) => {
+          let obj = {
+            costPrice: null,
+            firstBuyPoint: null,
+            id: item.id,
+            limitCount: null,
+            onlineSpec: item.name,
+            salePrice: null,
+            saleUnit: item.unit,
+            seqNo: null,
+          }
+          onlOnlineSpec.push(obj)
+
+        })
+        this.setState({
+          onlOnlineSpec: Array.from(onlOnlineSpec),
+        })
+
+      },
+    });
+  };
+
+  /**
+ * 获取产品图片
+ */
+  getProductPic = id => {
+    this.props.dispatch({
+      type: `prdproductpic/list`,
+      payload: {
+        productId: id,
+      },
+      callback: record => {
+        // 产品主图
+        const fileList = [];
+        // 产品轮播图
+        const fileLists = [];
+        record.forEach(result => {
+          const picUrl = `/ise-svr/files${result.picPath}`;
+          if (result.picType === 1) {
+            fileList.push({
+              uid: result.id,
+              name: result.picPath,
+              status: 'done',
+              url: picUrl,
+            });
+          }
+          if (result.picType === 0) {
+            fileLists.push({
+              uid: result.id,
+              name: result.picPath,
+              status: 'done',
+              url: picUrl,
+            });
+          }
+        });
+        this.setState({ fileList, fileLists });
+      },
+    });
+  };
+
 
   //查询卖家所有店铺
   getShopName = () => {
     this.props.dispatch({
       type: `slrshop/shopList`,
       callback: record => {
-        //console.log('020202', record);
         let shopName = [];
         for (let i = 0; i < record.length; i++) {
           shopName.push({ value: record[i].id, label: record[i].shopName, isLeaf: false });
@@ -100,8 +176,6 @@ export default class GoodFromProductForm extends React.Component {
 
   //添加商品分类信息
   onChangeShop = (value, selectedOptions) => {
-    //console.log('2525', value)
-    //console.log('2626', selectedOptions)
     this.setState({
       classificationId: value,
       classificationArr: selectedOptions
@@ -111,10 +185,8 @@ export default class GoodFromProductForm extends React.Component {
   //添加商品分类
   addClassification = () => {
     const { classificationArr, classifications } = this.state;
-    //console.log('classificationArr', classificationArr);
     if (classificationArr.length === 0) return message.error('未选择商品分类');
     const newClassification = classificationArr[classificationArr.length - 1].value;
-    //console.log('newClassification', newClassification);
     for (let i = 0; i < classifications.length; i++) {
       const key = classifications[i].key;
       if (key === newClassification) {
@@ -131,7 +203,6 @@ export default class GoodFromProductForm extends React.Component {
       shopAndClassification += classificationArr[i].label;
     }
     classifications.push({ key: classificationArr[classificationArr.length - 1].value, label: shopAndClassification });
-    //console.log('classifications', classifications);
     this.setState({
       classifications: classifications,
     })
@@ -209,98 +280,21 @@ export default class GoodFromProductForm extends React.Component {
 
   // 获取上线信息包括：上线信息、规格信息、图片信息等
   getOnlines = id => {
+    const { form } = this.props;
+
     this.props.dispatch({
-      type: `onlonline/getById`,
+      type: `prdproduct/getProductById`,
       payload: {
         id: id,
       },
-      callback: onlonline => {
-        //console.log('获取', onlonline);
-        let fileList = new Array();
-        let fileLists = new Array();
-        for (let i = 0; i < onlonline.record.onlinePicList.length; i++) {
-          if (onlonline.record.onlinePicList[i].picType === 1) {
-            fileList.push({
-              uid: onlonline.record.onlinePicList[i].id,
-              name: onlonline.record.onlinePicList[i].picPath,
-              status: 'done',
-              url: '/ise-svr/files' + onlonline.record.onlinePicList[i].picPath,
-            });
-          } else {
-            fileLists.push({
-              uid: onlonline.record.onlinePicList[i].id,
-              name: onlonline.record.onlinePicList[i].picPath,
-              status: 'done',
-              url: '/ise-svr/files' + onlonline.record.onlinePicList[i].picPath,
-            });
-          }
-        }
-        let onlineDetail = onlonline.record.onlineDetail + '<p></p>';
-        //整理属性名
-        let attrNames = [];
-        const onlineSpecAttrList = onlonline.record.onlOnlineSpecAttrList;
-        for (let i = 0; i < onlineSpecAttrList.length; i++) {
-          const attrName = onlineSpecAttrList[i].attrName;
-          if (attrNames.indexOf(attrName) == -1) {
-            attrNames.push(attrName);
-          }
-        }
-        //console.log('322333',attrNames);
-        //整理属性值
-        let onlineSpecList = onlonline.record.onlineSpecList;
-        for (let i = 0; i < onlineSpecList.length; i++) {
-          const onlineSpecListId = onlineSpecList[i].id;
-          for (let x = 0; x < onlineSpecAttrList.length; x++) {
-            const attrName = onlineSpecAttrList[x].attrName;
-            const attrValue = onlineSpecAttrList[x].attrValue;
-            if (onlineSpecListId === onlineSpecAttrList[x].onlineSpecId) {
-              for (let j = 0; j < attrNames.length; j++) {
-                if (attrNames[j] === attrName) {
-                  const value = j + 1;
-                  eval('onlineSpecList[' + i + '].onlineSpec' + value + '=attrValue');
-                }
-              }
-            }
-          }
-        }
+      callback: data => {
+        form.setFieldsValue({
+          onlineName: data.productName,
 
-        //确认商品类型
-        let isBelowOnline;
-        const isBelow = onlonline.record.isBelow;
-        const isOnline = onlonline.record.isOnline;
-        if (isBelow === 0 && isOnline === 1) {
-          isBelowOnline = 0;
-        } else if (isBelow === 1 && isOnline === 0) {
-          isBelowOnline = 1;
-        } else if (isBelow === 1 && isOnline === 1) {
-          isBelowOnline = 2;
-        }
-
-        //console.log('88888', attrNames);
-
-        //确认商品分类
-        const searchCategoryMo = onlonline.record.searchCategoryMo;
-        for (let i = 0; i < searchCategoryMo.length; i++) {
-          this.getShopNames(searchCategoryMo[i]);
-        }
-        const { form } = this.props;
-        form.setFieldsValue({ onlineName: onlonline.record.onlineTitle });
-        this.setState({
-          subjectType: onlonline.record.subjectType,
-          deliveryType: onlonline.record.deliveryType,
-          onlOnlineSpec: Array.from(onlineSpecList),
-          previewVisible: false,
-          previewImage: '',
-          fileList: fileList,
-          previewVisibles: false,
-          previewImages: '',
-          fileLists: fileLists,
-          onlineDetail: BraftEditor.createEditorState(onlineDetail),
-          isBelowOnline: isBelowOnline,
-          isOnlinePlatform: onlonline.record.isOnlinePlatform,
-          tags: attrNames,
         });
-        this.onlineSpecColumn();
+        this.setState({
+          onlineDetail: BraftEditor.createEditorState(data.productDetail)
+        })
       },
     });
   };
@@ -424,7 +418,6 @@ export default class GoodFromProductForm extends React.Component {
   //******标签的添加与删除，开始******
   handleClose = (removedTag) => {
     const tags = this.state.tags.filter(tag => tag !== removedTag);
-    //console.log(tags);
     this.setState({ tags });
     setTimeout(() => {
       this.onlineSpecColumn();
@@ -445,7 +438,6 @@ export default class GoodFromProductForm extends React.Component {
     if (inputValue && tags.indexOf(inputValue) === -1) {
       tags = [...tags, inputValue];
     }
-    //console.log(tags);
     this.setState({
       tags,
       inputVisible: false,
@@ -461,14 +453,12 @@ export default class GoodFromProductForm extends React.Component {
 
   //查询店铺
   getShopNames = shopMessage => {
-    //console.log('shopMessage', shopMessage);
     this.props.dispatch({
       type: 'slrshop/getById',
       payload: {
         id: shopMessage.shopId
       },
       callback: record => {
-        //console.log('messageRecord', record);
         let classificationArr = { value: record.id, label: record.shopName };
         this.getClassifications(shopMessage, classificationArr);
       }
@@ -477,14 +467,12 @@ export default class GoodFromProductForm extends React.Component {
 
   //查询店铺分类树
   getClassifications = (classification, classificationArr) => {
-    //console.log("classification", classification);
     this.props.dispatch({
       type: 'onlonline/getTreeByShopId',
       payload: {
         shopId: classification.shopId
       },
       callback: record => {
-        //console.log('record', record);
         let classificationNode = [];
         for (let i = 0; i < record.length; i++) {
           if (record[i].id === classification.id) {
@@ -497,14 +485,12 @@ export default class GoodFromProductForm extends React.Component {
           if (rootNode !== undefined) {
             child = this.checkChildNodes(rootNode, classification.id);
           }
-          //console.log('child',child);
           if (child !== undefined) {
             classificationNode.push(classificationArr);
             classificationNode.push({ value: record[i].id, label: record[i].name });
             classificationNode = classificationNode.concat(child);
           }
         }
-        //console.log("classificationArr02", classificationNode);
         this.setState({
           classificationArr: classificationNode
         });
@@ -521,11 +507,9 @@ export default class GoodFromProductForm extends React.Component {
     if (children !== undefined) {
       for (let i = 0; i < children.length; i++) {
         let childNode = { value: children[i].id, label: children[i].name };
-        //console.log('childNode', childNode);
         const child = children[i].categoryList;
         if (children[i].id === nodeId) {
           childrenNode = childNode;
-          //console.log('childrenNode', childrenNode);
           return childrenNode;
         }
         let childenNode = [];
@@ -533,10 +517,8 @@ export default class GoodFromProductForm extends React.Component {
           childenNode = this.checkChildNodes(child, nodeId);
         }
         if (childenNode !== undefined && childenNode.length !== 0) {
-          //console.log('childenNode1', childenNode);
           childrenNode.push(childNode);
           childrenNode = childrenNode.concat(childenNode);
-          //console.log('childrenNode2', childrenNode);
           return childrenNode;
         }
       }
@@ -586,7 +568,6 @@ export default class GoodFromProductForm extends React.Component {
   //选择店铺并获取分类树
   loadData = selectedOptions => {
     const targetOption = selectedOptions[selectedOptions.length - 1];
-    //console.log('BB', targetOption)
     targetOption.loading = true;
 
     this.props.dispatch({
@@ -595,18 +576,15 @@ export default class GoodFromProductForm extends React.Component {
         shopId: targetOption.value,
       },
       callback: record => {
-        //console.log('232323', record);
         let classification = [];
         for (let i = 0; i < record.length; i++) {
           const rootNode = record[i].categoryList;
           let child = [];
           if (rootNode !== undefined) {
             child = this.buildChildNodes(rootNode);
-            // console.log("ss", child);
           }
           classification.push({ value: record[i].id, label: record[i].name, children: child });
         }
-        // console.log('0101', classification);
         targetOption.children = classification;
         targetOption.loading = false;
         if (targetOption.children.length === 0) {
@@ -627,21 +605,17 @@ export default class GoodFromProductForm extends React.Component {
   buildChildNodes = node => {
     //父节点下所有的子节点
     const children = node;
-    //console.log('children', children);
     let childrenNode = [];
     if (children !== undefined) {
       for (let i = 0; i < children.length; i++) {
         let childNode = { value: children[i].id, label: children[i].name };
         const child = children[i].categoryList;
-        //console.log('child', child);
         if (child !== undefined) {
           childNode.children = this.buildChildNodes(child);
         }
-        //console.log('childNode', childNode);
         childrenNode.push(childNode);
       }
     }
-    //console.log('childrenNode', childrenNode);
     return childrenNode;
   }
 
@@ -654,7 +628,7 @@ export default class GoodFromProductForm extends React.Component {
           <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="店铺与分类">
             {form.getFieldDecorator('classificationId', {
             })(
-              <Cascader style={{  width: '44%' }} placeholder="请选择店铺和添加分类"
+              <Cascader style={{ width: '44%' }} placeholder="请选择店铺和添加分类"
                 options={this.state.shopName}
                 onChange={this.onChangeShop}
                 loadData={this.loadData}
@@ -680,7 +654,6 @@ export default class GoodFromProductForm extends React.Component {
 
   //删除已添加的分类
   deleteChange = value => {
-    //console.log('value', value);
     this.setState({
       classifications: value
     })
@@ -831,7 +804,6 @@ export default class GoodFromProductForm extends React.Component {
 
 
   customizeAttr = () => {
-    //console.log(111);
     let attrName = document.getElementById("attrName").value.trim();
     if (attrName === null || attrName === undefined || attrName === '') {
       message.error("请输入属性名");
@@ -843,7 +815,6 @@ export default class GoodFromProductForm extends React.Component {
 
     for (let i = 0; i < columns.length; i++) {
       const element = columns[i];
-      //console.log(element)
       if (element.dataIndex === 'salePrice') {
         let column = {
           title: attrName,
@@ -1098,8 +1069,8 @@ export default class GoodFromProductForm extends React.Component {
                 {
                   <div className="clearfix">
                     <Upload
-                      action="/ise-svr/ise/upload"
-                      //action="http://192.168.1.36:20180/ise/upload"
+                      //action="/ise-svr/ise/upload"
+                      action="http://192.168.1.16:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileList}
                       name="multipartFile"
@@ -1123,8 +1094,8 @@ export default class GoodFromProductForm extends React.Component {
                 {
                   <div className="clearfix">
                     <Upload
-                      action="/ise-svr/ise/upload"
-                      //action="http://192.168.1.36:20180/ise/upload"
+                      //action="/ise-svr/ise/upload"
+                      action="http://192.168.1.16:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileLists}
                       name="multipartFile"

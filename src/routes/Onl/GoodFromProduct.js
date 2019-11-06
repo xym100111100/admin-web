@@ -9,7 +9,11 @@ import GoodFromProductForm from './GoodFromProductForm';
 const FormItem = Form.Item;
 
 
-@connect(({ goodFromProduct, prdproduct, loading }) => ({ goodFromProduct, prdproduct, loading: loading.models.goodFromProduct || loading.models.prdproduct }))
+@connect(({ onlonline, user, slrshop, prdproductspec, prdproductpic, goodFromProduct, prdproduct, loading, }) => ({
+  onlonline, user, slrshop, goodFromProduct, prdproduct, prdproductspec, prdproductpic,
+  loading: loading.models.prdproductspec || loading.models.prdproductpic || loading.models.onlonline || loading.models.user || loading.models.slrshop || loading.models.goodFromProduct || loading.models.prdproduct
+}))
+
 @Form.create()
 export default class GoodFromProduct extends SimpleMng {
   constructor() {
@@ -152,12 +156,65 @@ export default class GoodFromProduct extends SimpleMng {
   };
 
 
+  //从产品中提交上线
+  commodityOnline = (record) => {
+    // 分类
+    let classificationId = [];
+    for (let i = 0; i < record.classifications.length; i++) {
+      classificationId.push(record.classifications[i].key);
+    }
+    record.classificationId = classificationId;
+    // 设置上线组织id
+    record.onlineOrgId = this.props.user.currentUser.orgId,
+      // 遍历规格id来设置产品规格id，因为规格id就是产品id
+      record.onlineSpecs.map((item) => {
+        item.productSpecId = item.id
+      })
+
+    //整理属性值
+    if (record.tags.length > 1) {
+      let attrValues = [];
+      for (let i = 0; i < record.onlineSpecs.length; i++) {
+        let attrValue = [];
+        const onlineSpec = 'record.onlineSpecs[' + i + ']';
+        for (let j = 0; j < record.tags.length; j++) {
+          const index = j + 1;
+          let spce = 'onlineSpec' + index;
+          attrValue[j] = eval(onlineSpec + '.' + spce);
+        }
+        attrValues[i] = attrValue;
+      }
+      record.attrValues = attrValues;
+      record.attrNames = record.tags;
+    } else {
+      if (record.tags.length !== 0) {
+        record.attrNames = record.tags;
+      }
+
+      let attrValues = [];
+      for (let i = 0; i < record.onlineSpecs.length; i++) {
+        attrValues[i] = new Array(1);
+        attrValues[i][0] = record.onlineSpecs[i].onlineSpec1;
+      }
+      record.attrValues = attrValues;
+    }
+
+    this.props.dispatch({
+      type: `prdproduct/onlineFormProduct`,
+      payload: record,
+      callback: (data) => {
+        this.setState({ editForm: undefined });
+      },
+    });
+
+  }
+
 
 
   render() {
 
     const { goodFromProduct: { goodFromProduct }, loading } = this.props;
-    const {productData, editForm, editFormType, editFormTitle, editFormRecord } = this.state;
+    const { productData, editForm, editFormType, editFormTitle, editFormRecord } = this.state;
 
 
     let ps;
@@ -240,19 +297,19 @@ export default class GoodFromProduct extends SimpleMng {
             </div>
           </Card>
           {editForm === 'GoodFromProductForm' && (
-          <GoodFromProductForm
-            visible
-            title={editFormTitle}
-            width={'99vw'}
-            id={editFormRecord.id}
-            editFormType={editFormType}
-            record={editFormRecord}
-            onFullScreen
-            centered={false}
-            closeModal={() => this.setState({ editForm: undefined })}
-            onSubmit={(fields) => this.commodityOnline(fields)}
-          />
-        )}
+            <GoodFromProductForm
+              visible
+              title={editFormTitle}
+              width={'99vw'}
+              id={editFormRecord.id}
+              editFormType={editFormType}
+              record={editFormRecord}
+              onFullScreen
+              centered={false}
+              closeModal={() => this.setState({ editForm: undefined })}
+              onSubmit={(fields) => this.commodityOnline(fields)}
+            />
+          )}
         </PageHeaderLayout>,
 
       </Fragment>
