@@ -70,8 +70,8 @@ export default class PrdProductMng extends SimpleMng {
               刷新
             </Button>
           </Col>
-          <Col md={6} sm={24}>
-            <FormItem label="产品名称">{getFieldDecorator('productName')(<Input placeholder="产品名称" />)}</FormItem>
+          <Col  md={7} sm={24}>
+            <FormItem label="产品名称">{getFieldDecorator('productName')(<Input style={{width:150}}  placeholder="产品名称" />)}</FormItem>
           </Col>
           <Col md={6} sm={24}>
             <FormItem>
@@ -82,7 +82,7 @@ export default class PrdProductMng extends SimpleMng {
               </RadioGroup>
             </FormItem>
           </Col>
-          <Col md={6} sm={24}>
+          <Col   md={5} sm={24}>
             <span style={{ float: 'left', marginBottom: 24 }}>
               <Button type="primary" htmlType="submit">
                 查询
@@ -180,7 +180,7 @@ export default class PrdProductMng extends SimpleMng {
               >
                 编辑
               </a>
-              <Divider type="vertical" />
+              {/* <Divider type="vertical" />
               <a
                 onClick={() =>
                   this.showEditForm({
@@ -191,7 +191,7 @@ export default class PrdProductMng extends SimpleMng {
                 }
               >
                 上线
-              </a>
+              </a> */}
             </Fragment>
           );
         },

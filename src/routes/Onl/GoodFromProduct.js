@@ -217,21 +217,25 @@ export default class GoodFromProduct extends SimpleMng {
     let data = {
       productId: record.id,
       onlineOrgId: this.props.user.currentUser.orgId,
-      onlineState:1,
     }
     this.props.dispatch({
       type: `onlonline/getOne`,
       payload: data,
       callback: (result) => {
         console.log(result)
+        if (result > 0) {
+          message.success("该产品已经上过线,请在上线菜单重新上线即可");
+          return
+        } else {
+          this.showEditForm({
+            editForm: 'GoodFromProductForm',
+            editFormRecord: record,
+            editFormTitle: '上线产品',
+          })
+        }
       },
     });
 
-    this.showEditForm({
-      editForm: 'GoodFromProductForm',
-      editFormRecord: record,
-      editFormTitle: '上线产品',
-    })
   }
 
 
