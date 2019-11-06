@@ -59,9 +59,9 @@ export default class GoodFromProductForm extends React.Component {
     // 上线规格table表格
     columns: [],
     //是否上线到平台，0为不上线，1为上线
-    isOnlinePlatform: 1,
+    isOnlinePlatform: 0,
     //是否为线下商品,0为否，1为是,2为既是线上也是线下
-    isBelowOnline: 0,
+    isBelowOnline: 1,
     //标签
     tags: [],
     //标签动态生成和删除 ****开始***
@@ -1011,27 +1011,6 @@ export default class GoodFromProductForm extends React.Component {
                   <RadioGroup onChange={this.onChangeRadio} value={this.state.subjectType}>
                     <Radio.Button value={0}>返现</Radio.Button>
                     <Radio.Button value={1}>全返</Radio.Button>
-                  </RadioGroup>
-                }
-              </FormItem>
-            </Col>
-            <Col md={24} sm={24} >
-              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 18 }} label="商品类型">
-                {
-                  <RadioGroup onChange={this.onChangeBelowOnline} value={this.state.isBelowOnline} >
-                    <Radio.Button value={0}>线上商品</Radio.Button>
-                    <Radio.Button value={1}>线下商品</Radio.Button>
-                    <Radio.Button value={2}>既是线上也是线下</Radio.Button>
-                  </RadioGroup>
-                }
-              </FormItem>
-            </Col>
-            <Col md={24} sm={24} >
-              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 10 }} label="显示设置" >
-                {
-                  <RadioGroup onChange={this.onChangeOnlinePlatform} value={this.state.isOnlinePlatform}>
-                    <Radio.Button value={1}>上线到平台</Radio.Button>
-                    <Radio.Button value={0}>不上线到平台</Radio.Button>
                   </RadioGroup>
                 }
               </FormItem>
