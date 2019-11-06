@@ -56,3 +56,8 @@ export async function getTreeByShopId(params) {
 export async function supplierGoods(params) {
   return request(`/onl-svr/onl/online/supplierGoods?${stringify(params)}`);
 }
+
+
+export async function getOne(params) {
+  return request(`/onl-svr/onl/online/get-one?${stringify(params)}`);
+}

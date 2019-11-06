@@ -835,7 +835,7 @@ export default class GoodFromProductForm extends React.Component {
   beforeSave = () => {
     const { form, record } = this.props;
     // 产品id
-    let productId = record.productId === undefined ? 0 : record.productId;
+    let productId = record.id ;
     // 上线商品名称
     let onlineName = undefined;
     let supplierId = undefined;

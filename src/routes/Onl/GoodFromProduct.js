@@ -209,6 +209,31 @@ export default class GoodFromProduct extends SimpleMng {
 
   }
 
+  /**
+   * 上线
+   */
+  onlineFromProduct = (record) => {
+    // 先去查询该商品是否已经上过线
+    let data = {
+      productId: record.id,
+      onlineOrgId: this.props.user.currentUser.orgId,
+      onlineState:1,
+    }
+    this.props.dispatch({
+      type: `onlonline/getOne`,
+      payload: data,
+      callback: (result) => {
+        console.log(result)
+      },
+    });
+
+    this.showEditForm({
+      editForm: 'GoodFromProductForm',
+      editFormRecord: record,
+      editFormTitle: '上线产品',
+    })
+  }
+
 
 
   render() {
@@ -263,12 +288,10 @@ export default class GoodFromProduct extends SimpleMng {
           return (
             <Fragment>
               <a
-                onClick={() =>
-                  this.showEditForm({
-                    editForm: 'GoodFromProductForm',
-                    editFormRecord: record,
-                    editFormTitle: '上线产品',
-                  })
+                onClick={
+                  () => {
+                    this.onlineFromProduct(record)
+                  }
                 }
               >
                 上线
