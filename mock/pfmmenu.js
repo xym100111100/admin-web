@@ -100,6 +100,10 @@ menuData.push({ id: '1536131597176', sysId: 'damai-admin', code: '0301', title: 
 
 menuData.push({ id: '1536131597177', sysId: 'damai-admin', code: '0302', title: '从产品上线', name: '从产品上线', path: 'onl-good-from-product', isEnabled: true, icon: null, remark: '从产品中上线' });
 
+menuData.push({ id: '1536131597178', sysId: 'damai-admin', code: '0501', title: '营收报表', name: '营收报表', path: 'rep-revenue', isEnabled: true, icon: null, remark: '营收报表相关业务' });
+
+
+
 function sort(list) {
   return list.sort((item1, item2) => {
     const code1 = item1.code;
