@@ -1,54 +1,40 @@
 // 引入时间处理插件
-import moment from 'moment';
-import MomentUtils from '../utils/MomentUtils';
-import ArrayUtils from '../utils/ArrayUtils';
-import { reportOrderCountInPeriod } from '../services/kdilogistic';
+
+import { listRevenueOfDay, listRevenueOfWeek, listRevenueOfYear, listRevenueOfMonth } from '../services/reprevenue';
 
 export default {
   namespace: 'reprevenue',
 
   state: {
-    reprevenue: {
-      dateArr: ['00-00', '00-00', '00-00', '00-00', '00-00', '00-00', '00-00'],
-      dataArr: [0, 0, 0, 0, 0, 0, 0],
-    },
+    reprevenue: [],
   },
 
   effects: {
-    /**
-     * 统计本组织一段时间内的下单量
-     */
-    *reportOrderCountInPeriod({ payload, callback }, { call, put }) {
-      const { orderTimeStartDate, orderTimeEndDate } = payload;
-      const response = yield call(reportOrderCountInPeriod, payload);
 
-      // 初始化数组
-      const dateArr = [];
-      const dataArr = [];
-      const days = MomentUtils.getDaysInPeriod(moment(orderTimeStartDate), moment(orderTimeEndDate));
-      for (const day of days) {
-        dateArr.push(day.format('MM-DD'));
-        dataArr.push(0);
-      }
+    *listRevenueOfDay({ payload, callback }, { call, put }) {
+      const response = yield call(listRevenueOfDay, payload);
+      if (callback) callback(response);
+    },
 
-      // 将响应回来的数据转化成报表需要的数据
-      for (const item of response) {
-        console.log(item.updateTime.substr(5));
-        
-        const index = ArrayUtils.find(dateArr, item.updateTime.substr(5));
-        dataArr[index] = item.total;
-      }
+    *listRevenueOfWeek({ payload, callback }, { call, put }) {
+      const response = yield call(listRevenueOfWeek, payload);
+      if (callback) callback(response);
+    },
 
-      yield put({
-        type: 'changOrderCountInPeriodReport',
-        payload: { dateArr, dataArr },
-      });
+
+    *listRevenueOfYear({ payload, callback }, { call, put }) {
+      const response = yield call(listRevenueOfYear, payload);
+      if (callback) callback(response);
+    },
+
+    *listRevenueOfMonth({ payload, callback }, { call, put }) {
+      const response = yield call(listRevenueOfMonth, payload);
       if (callback) callback(response);
     },
   },
 
   reducers: {
-    changOrderCountInPeriodReport(state, action) {
+    changeList(state, action) {
       return {
         reprevenue: action.payload,
       };
