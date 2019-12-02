@@ -75,6 +75,8 @@ export default class GoodFromProductForm extends React.Component {
     classifications: [],
     //添加的搜索分类
     classificationArr: [],
+    //是否称重
+    isWeighGoods: 0,
   };
 
   //查询卖家所有店铺
@@ -656,7 +658,7 @@ export default class GoodFromProductForm extends React.Component {
           <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="店铺与分类">
             {form.getFieldDecorator('classificationId', {
             })(
-              <Cascader style={{  width: '44%' }} placeholder="请选择店铺和添加分类"
+              <Cascader style={{ width: '44%' }} placeholder="请选择店铺和添加分类"
                 options={this.state.shopName}
                 onChange={this.onChangeShop}
                 loadData={this.loadData}
@@ -818,6 +820,13 @@ export default class GoodFromProductForm extends React.Component {
     });
   }
 
+  // 选择商品类型
+  onChangeWeigh = e => {
+    this.setState({
+      isWeighGoods: e.target.value,
+    });
+  }
+
   // 富文本框编辑事件
   handleEditorChange = editorState => {
     this.setState({ onlineDetail: editorState });
@@ -931,6 +940,7 @@ export default class GoodFromProductForm extends React.Component {
     form.getFieldDecorator('isBelowOnline');
     form.getFieldDecorator('tags');
     form.getFieldDecorator('classifications');
+    form.getFieldDecorator('isWeighGoods');
     form.setFieldsValue({
       isEditSupplier: isEditSupplier,
       onlineId: record.id,
@@ -947,6 +957,7 @@ export default class GoodFromProductForm extends React.Component {
       isBelowOnline: this.state.isBelowOnline,
       tags: this.state.tags,
       classifications: this.state.classifications,
+      isWeighGoods: this.state.isWeighGoods,
     });
   };
 
@@ -1067,6 +1078,16 @@ export default class GoodFromProductForm extends React.Component {
                 }
               </FormItem>
             </Col>
+            <Col md={24} sm={24} >
+              <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="商品类型">
+                {
+                  <RadioGroup onChange={this.onChangeWeigh} value={this.state.isWeighGoods}>
+                    <Radio.Button value={0}>普通</Radio.Button>
+                    <Radio.Button value={1}>称重</Radio.Button>
+                  </RadioGroup>
+                }
+              </FormItem>
+            </Col>
             <Col md={24} sm={24}>
               <FormItem labelCol={{ span: 2 }} wrapperCol={{ span: 22 }} label="规格信息">
                 {
@@ -1101,7 +1122,7 @@ export default class GoodFromProductForm extends React.Component {
                   <div className="clearfix">
                     <Upload
                       action="/ise-svr/ise/upload"
-                      //action="http://192.168.1.16:20180/ise/upload"
+                      // action="http://192.168.1.9:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileList}
                       name="multipartFile"
@@ -1126,7 +1147,7 @@ export default class GoodFromProductForm extends React.Component {
                   <div className="clearfix">
                     <Upload
                       action="/ise-svr/ise/upload"
-                      //action="http://192.168.1.16:20180/ise/upload"
+                      // action="http://192.168.1.9:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileLists}
                       name="multipartFile"

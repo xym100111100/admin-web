@@ -99,7 +99,8 @@ export default class OnlOnlineSpecForm extends PureComponent {
           editorState: BraftEditor.createEditorState(record.onlineDetail),
           isBelowOnline: isBelowOnline,
           isOnlinePlatform: onlonline.record.isOnlinePlatform,
-          attrNames: attrNames
+          attrNames: attrNames,
+          isWeighGoods: onlonline.record.isWeighGoods,
         });
         this.onlineSpecColumn();
       },
@@ -266,8 +267,8 @@ export default class OnlOnlineSpecForm extends PureComponent {
 
   render() {
     const { record } = this.props;
-    const { onlOnlineSpec, mainImageUrl, fileLists, editorState, isBelowOnline, isOnlinePlatform, columns ,shopName,classification} = this.state;
-
+    const { onlOnlineSpec, mainImageUrl, fileLists, editorState, isBelowOnline, isOnlinePlatform, columns ,shopName,classification,isWeighGoods} = this.state;
+    console.log('aaa',isWeighGoods);
     // 不在工具栏显示的控件列表
     const excludeControls = [
       'undo', 'redo', 'separator',
@@ -296,6 +297,9 @@ export default class OnlOnlineSpecForm extends PureComponent {
         </FormItem>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="是否上线到平台">
           {<span>{isOnlinePlatform === 0 ? '不上线' : '上线'}</span>}
+        </FormItem>
+        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="商品类型">
+          {<span>{isWeighGoods === 0?'普通' : '称重'}</span>}
         </FormItem>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="规格信息">
           {
