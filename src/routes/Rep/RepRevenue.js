@@ -2,7 +2,7 @@ import SimpleMng from 'components/Rebue/SimpleMng';
 
 import React from 'react';
 import { connect } from 'dva';
-import { Row, Col, Form, DatePicker, Card, Select, Radio } from 'antd';
+import { Row, Col, message, Form, DatePicker, Card, Select, Radio } from 'antd';
 // 引入 ECharts 主模块,报错需要使用命令来安装echarts
 import echarts from 'echarts/lib/echarts';
 
@@ -41,12 +41,13 @@ export default class RepRevenue extends SimpleMng {
         // 查询报表的model名称
         this.moduleCode = 'reprevenue';
         this.state.selectRevenuePattern = 1;// 1:是日报2：周报3：月报4：年报
-        this.state.dateValue = moment();
-        this.state.isopen = false;
+        this.state.isOpen = false;
         this.state.currentShop = {};
         this.state.shopData = [];
         this.state.revenueDate = [];
         this.state.revenueData = [];
+        this.state.baseRevenueDate = [moment(), moment()];
+        this.state.baseWeekRevenueDate = moment();
     }
 
     componentDidMount() {
@@ -68,13 +69,12 @@ export default class RepRevenue extends SimpleMng {
             type: 'slrshop/shopList',
             payload: {},
             callback: (data) => {
-                console.log(data)
                 if (data.length > 0) {
                     this.setState({
                         currentShop: data[0],
                         shopData: data
                     }, () => {
-                        this.handleChangeOfDay(new moment());
+                        this.onDayOk([new moment().subtract(10, 'days'), new moment()]);
                     })
 
                 }
@@ -125,60 +125,168 @@ export default class RepRevenue extends SimpleMng {
     }
 
     setSelectRevenuePattern = (value) => {
-        this.setState({
-            dateValue: new moment()
-        })
-        this.setState({
-            selectRevenuePattern: value
-        })
+        if (value === 2) {
+            this.setState({
+                baseWeekRevenueDate: new moment(),
+                selectRevenuePattern: value
+            })
+        } else {
+            if (value === 1) {
+                this.setState({
+                    baseRevenueDate: [new moment().subtract(10, 'days'), new moment()],
+                    selectRevenuePattern: value
+                }, () => {
+                    this.onDayOk([new moment().subtract(10, 'days'), new moment()])
+                })
+            } else if (value === 3) {
+                this.setState({
+                    baseRevenueDate: [new moment().subtract(10, 'month'), new moment()],
+                    selectRevenuePattern: value
+                }, () => {
+                    this.onMonthOk([new moment().subtract(10, 'month'), new moment()])
+                })
+            } else if (value === 4) {
+                this.setState({
+                    baseRevenueDate: [new moment(), new moment()],  // 这里不减是因为前面的年是没有数据的
+                    selectRevenuePattern: value
+                }, () => {
+                    this.onYearOk([new moment(), new moment()])  // 这里不减是因为前面的年是没有数据的
+                })
+            }
+
+
+
+        }
+
     }
+
+
 
     // -------------------这里是控制年报的方法------------------------------------
 
     handleChangeOfYear = value => {
-        console.log(value.format('YYYY-MM-DD'))
+        if (value[0].format('YYYY') > value[1].format('YYYY')) {
+            message.error('开始年份不能大于结束年');
+            return;
+        }
         this.setState({
-            dateValue: value,
-            isopen: false   // 注意这里的区别，是因为ant里面的问题，这个类型为年的组件还没完善。
+            baseRevenueDate: value,
         });
     };
+
+    onYearOk = (value) => {
+
+        if (value[0].format('YYYY') > value[1].format('YYYY')) {
+            message.error('开始年份不能大于结束年');
+            return;
+        }
+        if (value[0].format('YYYY') < 2019 || value[1].format('YYYY') < 2019) {
+            message.error('不能选择查询2019年之前的数据');
+            return;
+        }
+        this.setState({
+            isOpen: false,
+        })
+
+        this.props.dispatch({
+            type: 'reprevenue/listRevenueOfYear',
+            payload: {
+                shopId: '583124897568522240',
+                revenueStartTime: value[0].format('YYYY-MM-DD'),
+                revenueEndTime: value[1].format('YYYY-MM-DD')
+            },
+            callback: (result) => {
+                const revenueDate = [];
+                const revenueData = [];
+                result.map((item) => {
+                    revenueDate.push(item.revenueTime.substr(0, 4))
+                    revenueData.push(item.total);
+                })
+                this.setState({
+                    revenueDate,
+                    revenueData
+                })
+            },
+        });
+
+
+    }
+
+
 
     // -------------------这里是控制月报的方法------------------------------------
 
     handleChangeOfMonth = value => {
-        console.log(value.format('YYYY-MM-DD'))
         this.setState({
-            dateValue: value
+            baseRevenueDate: value
         });
     };
+
+    onMonthOk = (value) => {
+        const { currentShop } = this.state;
+        if (value[0].format('YYYY') < 2019 || value[1].format('YYYY') < 2019) {
+            message.error('不能选择查询2019年之前的数据');
+            return;
+        }
+        this.setState({
+            isOpen: false,
+        });
+        this.props.dispatch({
+            type: 'reprevenue/listRevenueOfMonth',
+            payload: {
+                shopId: '583124897568522240',
+                revenueStartTime: value[0].format('YYYY-MM-DD'),
+                revenueEndTime: value[1].format('YYYY-MM-DD')
+            },
+            callback: (result) => {
+                const revenueDate = [];
+                const revenueData = [];
+                result.map((item) => {
+                    revenueDate.push(item.revenueTime.substr(0, 7))
+                    revenueData.push(item.total);
+                })
+                this.setState({
+                    revenueDate,
+                    revenueData
+                })
+            },
+        });
+    }
 
     // -------------------这里是控制周报的方法------------------------------------
 
     handleChangeOfWeek = value => {
-        console.log(value.format('YYYY-MM-DD'))
         this.setState({
-            dateValue: value
+            baseRevenueDate: value
         });
     };
 
     // -------------------这里是控制日报的方法------------------------------------
 
     handleChangeOfDay = value => {
-        const { currentShop } = this.state;
-        console.log(value.format('YYYY-MM-DD'))
-        console.log(currentShop)
         this.setState({
-            dateValue: value
+            baseRevenueDate: value
         });
+    };
 
+
+    onDayOk = (value) => {
+        const { currentShop } = this.state;
+        if (value[0].format('YYYY') < 2019 || value[1].format('YYYY') < 2019) {
+            message.error('不能选择查询2019年之前的数据');
+            return;
+        }
+        this.setState({
+            baseRevenueDate: value
+        });
         this.props.dispatch({
             type: 'reprevenue/listRevenueOfDay',
             payload: {
                 shopId: '583124897568522240',
-                revenueTime: value.format('YYYY-MM-DD')
+                revenueStartTime: value[0].format('YYYY-MM-DD'),
+                revenueEndTime: value[1].format('YYYY-MM-DD')
             },
             callback: (result) => {
-                console.log(result)
                 const revenueDate = [];
                 const revenueData = [];
                 result.map((item) => {
@@ -191,7 +299,8 @@ export default class RepRevenue extends SimpleMng {
                 })
             },
         });
-    };
+    }
+
 
     /**
      * 渲染搜索表单
@@ -262,14 +371,13 @@ export default class RepRevenue extends SimpleMng {
      */
     selectShop = (value) => {
         const { shopData } = this.state;
-        console.log(value)
         shopData.map((item) => {
             if (item.id === value) {
                 this.setState({
                     currentShop: item,
                     selectRevenuePattern: 1
                 }, () => {
-                    this.handleChangeOfDay(new moment());
+                    this.onDayOk([new moment().subtract(10, 'days'), new moment()]);
                 })
             }
         })
@@ -278,17 +386,24 @@ export default class RepRevenue extends SimpleMng {
     }
 
     revenuePattern = () => {
-        const { dateValue, isopen } = this.state;
+        const { baseRevenueDate, baseWeekRevenueDate, isOpen } = this.state;
 
         if (this.state.selectRevenuePattern === 3) {
             return (
                 <Row gutter={{ md: 6, lg: 24, xl: 0 }}>
-                    <Col push={10} md={12} sm={24}>
-                        <MonthPicker
+                    <Col push={7} md={12} sm={24}>
+                        <RangePicker
                             placeholder={"选择月份"}
-                            value={dateValue}
+                            value={baseRevenueDate}
                             allowClear={false}
-                            onChange={this.handleChangeOfMonth}
+                            mode={['month', 'month']}
+                            onPanelChange={this.handleChangeOfMonth}
+                            format="YYYY-MM"
+                            showTime={{ format: 'YYYY-MM' }}
+                            onOk={this.onMonthOk}
+                            open={isOpen}
+                            onFocus={() => this.setState({ isOpen: true })}
+                            onBlur={() => this.setState({ isOpen: false })}
                         />
                     </Col>
                 </Row>
@@ -296,17 +411,19 @@ export default class RepRevenue extends SimpleMng {
         } else if (this.state.selectRevenuePattern === 4) {
             return (
                 <Row gutter={{ md: 6, lg: 24, xl: 0 }}>
-                    <Col push={10} md={12} sm={24}>
-                        <DatePicker
+                    <Col push={7} md={12} sm={24}>
+                        <RangePicker
                             placeholder="请选择年份"
-                            mode="year"
+                            mode={['year', 'year']}
                             onPanelChange={this.handleChangeOfYear}
-                            value={dateValue}
+                            value={baseRevenueDate}
                             format="YYYY"
                             allowClear={false}
-                            open={isopen}
-                            onFocus={() => { this.setState({ isopen: true }) }}
-
+                            open={isOpen}
+                            onFocus={() => this.setState({ isOpen: true })}
+                            onBlur={() => this.setState({ isOpen: false })}
+                            onOk={this.onYearOk}
+                            showTime={{ format: 'YYYY' }}
                         />
                     </Col>
                 </Row>
@@ -314,12 +431,17 @@ export default class RepRevenue extends SimpleMng {
         } else if (this.state.selectRevenuePattern === 1) {
             return (
                 <Row gutter={{ md: 6, lg: 24, xl: 0 }}>
-                    <Col push={10} md={12} sm={24}>
-                        <DatePicker
+                    <Col push={7} md={12} sm={24}>
+                        <RangePicker
                             placeholder={'选择天'}
-                            value={dateValue}
+                            value={baseRevenueDate}
                             allowClear={false}
-                            onChange={this.handleChangeOfDay} />
+                            format="YYYY-MM-DD"
+                            showTime={{ format: 'YYYY-MM-DD' }}
+                            onOk={this.onDayOk}
+                            onChange={this.handleChangeOfDay}
+                        />
+
 
                     </Col>
                 </Row>
@@ -330,7 +452,7 @@ export default class RepRevenue extends SimpleMng {
                 <Row gutter={{ md: 6, lg: 24, xl: 0 }}>
                     <Col push={10} md={12} sm={24}>
                         <WeekPicker
-                            value={dateValue}
+                            value={baseWeekRevenueDate}
                             placeholder={'选择周'}
                             allowClear={false}
                             onChange={this.handleChangeOfWeek}

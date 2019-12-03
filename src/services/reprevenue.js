@@ -12,12 +12,12 @@ export async function listRevenueOfWeek(params) {
 
 
 export async function listRevenueOfYear(params) {
-    return request(`/rep-svr/rep/list-revenue-of-Year?${stringify(params)}`);
+    return request(`/rep-svr/rep/revenue-annual/list-revenue-of-year?${stringify(params)}`);
 }
 
 
 export async function listRevenueOfMonth(params) {
-    return request(`/rep-svr/rep/list-revenue-of-month?${stringify(params)}`);
+    return request(`/rep-svr/rep/revenue-monthly/list-revenue-of-month?${stringify(params)}`);
 }
 
 
