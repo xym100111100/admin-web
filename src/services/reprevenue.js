@@ -7,7 +7,7 @@ export async function listRevenueOfDay(params) {
 
 
 export async function listRevenueOfWeek(params) {
-    return request(`/rep-svr/rep/list-revenue-of-Week?${stringify(params)}`);
+    return request(`/rep-svr/rep/revenue-weekly/list-revenue-of-week?${stringify(params)}`);
 }
 
 
