@@ -43,8 +43,11 @@ export default class OrgUserForm extends PureComponent {
   };
 
   onChange = e => {
+    console.log("sss")
     const { form } = this.props;
-    form.setFieldsValue(e.target.value);
+    form.setFieldsValue({
+      'orgId': e.target.value.id
+    });
     this.setState({
       value: e.target.value,
     });
@@ -92,19 +95,24 @@ export default class OrgUserForm extends PureComponent {
 
   render() {
     const { form, sucorg: { sucorg } } = this.props;
+    let data = [];
+    if (sucorg != undefined) {
+      data = sucorg
+    }
     return (
       <div className={styles.tableList}>
+        {form.getFieldDecorator('id')(<Input type="hidden" />)}
+        {form.getFieldDecorator('orgId')(<Input type="hidden" />)}
         <div className={styles.tableListOperator}>
           <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
           <List
             itemLayout="horizontal"
-            dataSource={sucorg}
+            dataSource={data}
             renderItem={item => (
               <List.Item>
-                {form.getFieldDecorator('id')(<Input type="hidden" />)}
                 <List.Item.Meta
                   title={
-                    <RadioGroup onChange={this.onChange} value={this.state.value}>
+                    <RadioGroup value={this.state.value} onChange={this.onChange} >
                       <Radio value={item}>{item.name}</Radio>
                     </RadioGroup>
                   }

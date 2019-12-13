@@ -565,7 +565,7 @@ export default class UserMng extends SimpleMng {
               this.handleSubmit({
                 fields: {
                   id: editFormRecord.id,
-                  orgId: fields.id,
+                  orgId: fields.orgId, 
                 },
                 moduleCode: 'sucuserorg',
               })

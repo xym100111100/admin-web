@@ -129,7 +129,10 @@ export default class RepRevenue extends SimpleMng {
             this.setState({
                 baseWeekRevenueDate: new moment(),
                 selectRevenuePattern: value
+            }, () => {
+                this.handleChangeOfWeek(new moment());
             })
+
         } else {
             if (value === 1) {
                 this.setState({
@@ -175,7 +178,7 @@ export default class RepRevenue extends SimpleMng {
     };
 
     onYearOk = (value) => {
-
+        const { currentShop } = this.state;
         if (value[0].format('YYYY') > value[1].format('YYYY')) {
             message.error('开始年份不能大于结束年');
             return;
@@ -191,7 +194,7 @@ export default class RepRevenue extends SimpleMng {
         this.props.dispatch({
             type: 'reprevenue/listRevenueOfYear',
             payload: {
-                shopId: '583124897568522240',
+                shopId: currentShop.id,
                 revenueStartTime: value[0].format('YYYY-MM-DD'),
                 revenueEndTime: value[1].format('YYYY-MM-DD')
             },
@@ -234,7 +237,7 @@ export default class RepRevenue extends SimpleMng {
         this.props.dispatch({
             type: 'reprevenue/listRevenueOfMonth',
             payload: {
-                shopId: '583124897568522240',
+                shopId: currentShop.id,
                 revenueStartTime: value[0].format('YYYY-MM-DD'),
                 revenueEndTime: value[1].format('YYYY-MM-DD')
             },
@@ -256,9 +259,37 @@ export default class RepRevenue extends SimpleMng {
     // -------------------这里是控制周报的方法------------------------------------
 
     handleChangeOfWeek = value => {
+        const { currentShop } = this.state;
+        console.log(value.format('YYYY-MM-DD'))
+        if (value.format('YYYY') < 2019) {
+            message.error('不能选择查询2019年之前的数据');
+            return;
+        }
         this.setState({
-            baseRevenueDate: value
+            baseWeekRevenueDate: value
         });
+
+        this.props.dispatch({
+            type: 'reprevenue/listRevenueOfWeek',
+            payload: {
+                shopId: currentShop.id,
+                revenueTime: value.format('YYYY-MM-DD'),
+            },
+            callback: (result) => {
+                const revenueDate = [];
+                const revenueData = [];
+                result.map((item) => {
+                    revenueDate.push(item.revenueTime)
+                    revenueData.push(item.total);
+                })
+                this.setState({
+                    revenueDate,
+                    revenueData
+                })
+            },
+        });
+
+
     };
 
     // -------------------这里是控制日报的方法------------------------------------
@@ -282,7 +313,7 @@ export default class RepRevenue extends SimpleMng {
         this.props.dispatch({
             type: 'reprevenue/listRevenueOfDay',
             payload: {
-                shopId: '583124897568522240',
+                shopId: currentShop.id,
                 revenueStartTime: value[0].format('YYYY-MM-DD'),
                 revenueEndTime: value[1].format('YYYY-MM-DD')
             },
@@ -475,7 +506,7 @@ export default class RepRevenue extends SimpleMng {
                     <div style={{ background: 'white' }}>
                         <Row gutter={{ md: 1, lg: 4, xl: 2 }}>
                             <Col md={24} sm={24}>
-                                <div style={{ width: 700, height: 500, margin: '0 auto', }} ref="revenueDom" >
+                                <div style={{ width: 900, height: 500, margin: '0 auto', }} ref="revenueDom" >
 
                                 </div>
 
