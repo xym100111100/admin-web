@@ -287,7 +287,7 @@ export default class OnlOnlineSpecForm extends PureComponent {
           {<span>{record.onlineTitle}</span>}
         </FormItem>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="上线板块">
-          {<span>{record.subjectType === 0 ? '返现' : '全返'}</span>}
+          {<span>{record.subjectType === 0 ? '返现' : record.subjectType === 1 ?'全返':'返积分'}</span>}
         </FormItem>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="商品分类">
           {<span>{classification}</span>}

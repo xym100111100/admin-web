@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Card, Row, message, Input, Form, Col, Table, Upload, Icon, Modal, Radio, Select, Tag, Tooltip, Cascader, Button, Popconfirm } from 'antd';
+import { Card, Row, message, Input, Form, Col, Table, Upload, Icon, Modal, Radio, Select, Tag, Tooltip, Cascader, Button, Popover } from 'antd';
 import EditForm from 'components/Rebue/EditForm';
 import EditableTable from 'components/Rebue/EditableTable';
 // 引入编辑器以及EditorState子模块
@@ -260,10 +260,56 @@ export default class GoodFromProductForm extends React.Component {
         width: '90px',
       },
     ];
-    // 如果板块类型为全返时，去掉返现金额
-    if (subjectType === 1) {
-      columns.splice(3, 1);
+    for (let i = 0; i < columns.length; i++) {
+      let column = columns[i];
+      // 如果板块类型为全返和上线规格的table表格里面有返现金额时，则删除该字段
+      if (column.dataIndex === 'cashbackAmount') {
+        if (subjectType === 1) {
+          columns.splice(i, 1);
+        } else if (subjectType === 2) {
+          let cashbackAmount = {
+            title: '返积分金额',
+            dataIndex: 'cashbackAmount',
+            align: 'center',
+            width: '90px',
+          };
+          columns.splice(i, 1, cashbackAmount);
+        } else if (subjectType === 0) {
+          let cashbackAmount = {
+            title: '返现金额',
+            dataIndex: 'cashbackAmount',
+            align: 'center',
+            width: '90px',
+          };
+          columns.splice(i, 1, cashbackAmount);
+        }
+
+      }
+      // 判断板块类型为普通返现时，判断成本价格下一个是否为返现金额，如果不是则加上
+      if (column.dataIndex === 'costPrice') {
+        if (columns[i + 1].dataIndex !== 'cashbackAmount' && subjectType === 0) {
+          let cashbackAmount = {
+            title: '返现金额',
+            dataIndex: 'cashbackAmount',
+            align: 'center',
+            width: '90px',
+          };
+          columns.splice(i + 1, 0, cashbackAmount);
+        } else if (columns[i + 1].dataIndex !== 'cashbackAmount' && subjectType === 2) {
+          let cashbackAmount = {
+            title: '返积分金额',
+            dataIndex: 'cashbackAmount',
+            align: 'center',
+            width: '90px',
+          };
+          columns.splice(i + 1, 0, cashbackAmount);
+        }
+      }
     }
+    // // 如果板块类型为全返时，去掉返现金额
+    // if (subjectType === 1) {
+    //   columns.splice(3, 1);
+    // }
     if (tags.length !== 0) {
       for (let i = 0; i < tags.length; i++) {
         let column = {
@@ -275,6 +321,15 @@ export default class GoodFromProductForm extends React.Component {
         columns.splice(i + 1, 0, column);
       }
     }
+    // if (subjectType === 2) {
+    //   let column={
+    //     title: '返积分金额',
+    //     dataIndex: 'cashbackAmount',
+    //     align: 'center',
+    //     width: '90px',
+    //   }
+    //   columns.splice(3, 1,column);
+    // }
     this.setState({
       columns: columns
     });
@@ -367,14 +422,23 @@ export default class GoodFromProductForm extends React.Component {
       message.error('请输入上线价格');
       return false;
     }
-    if (this.state.subjectType === 0) {
+    if (this.state.subjectType === 0 || this.state.subjectType === 2) {
       if (!record.cashbackAmount) {
-        message.error('请输入返现金额');
+        message.error('请输入金额');
         return false;
       }
       if (!reg.test(record.cashbackAmount)) {
         message.error('返现金额只能输入大于0的整数或者小数');
         return false;
+      }
+      if (eval(record.costPrice + '+' + record.cashbackAmount) > record.salePrice) {
+        if (this.state.subjectType === 0) {
+          message.error('返现金额与成本价格之和大于上线价格');
+          return false;
+        } else if (this.state.subjectType === 2) {
+          message.error('返积分金额与成本价格之和大于上线价格');
+          return false;
+        }
       }
     }
 
@@ -743,31 +807,14 @@ export default class GoodFromProductForm extends React.Component {
 
   // 选择板块类型事件
   onChangeRadio = e => {
-    let { columns } = this.state;
-    for (let i = 0; i < columns.length; i++) {
-      let column = columns[i];
-      // 如果板块类型为全返和上线规格的table表格里面有返现金额时，则删除该字段
-      if (column.dataIndex === 'cashbackAmount' && e.target.value === 1) {
-        columns.splice(i, 1);
-      }
-      // 判断板块类型为普通返现时，判断成本价格下一个是否为返现金额，如果不是则加上
-      if (column.dataIndex === 'costPrice' && e.target.value === 0) {
-        if (columns[i + 1].dataIndex !== 'cashbackAmount') {
-          let cashbackAmount = {
-            title: '返现金额',
-            dataIndex: 'cashbackAmount',
-            align: 'center',
-            width: '90px',
-          };
-          columns.splice(i + 1, 0, cashbackAmount);
-        }
-      }
-    }
 
     this.setState({
       subjectType: e.target.value,
-      columns
     });
+
+    setTimeout(() => {
+      this.onlineSpecColumn();
+    }, 1);
   };
 
   //选择商品类型事件
@@ -1022,8 +1069,13 @@ export default class GoodFromProductForm extends React.Component {
                   <RadioGroup onChange={this.onChangeRadio} value={this.state.subjectType}>
                     <Radio.Button value={0}>返现</Radio.Button>
                     <Radio.Button value={1}>全返</Radio.Button>
+                    <Radio.Button value={2}>返积分</Radio.Button>
                   </RadioGroup>
                 }
+                <b>              </b>
+                <Popover placement="right" content={'1元=10积分'} trigger="hover" arrowPointAtCenter>
+                  <Icon type="question-circle" />
+                </Popover>
               </FormItem>
             </Col>
             <Col md={24} sm={24} >
