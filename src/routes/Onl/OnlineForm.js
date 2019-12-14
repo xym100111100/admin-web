@@ -1184,8 +1184,8 @@ export default class GoodFromProductForm extends React.Component {
                 {
                   <div className="clearfix">
                     <Upload
-                      // action="/ise-svr/ise/upload"
-                      action="http://192.168.1.20:20180/ise/upload"
+                      action="/ise-svr/ise/upload"
+                      // action="http://192.168.1.20:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileList}
                       name="multipartFile"
@@ -1209,8 +1209,8 @@ export default class GoodFromProductForm extends React.Component {
                 {
                   <div className="clearfix">
                     <Upload
-                      // action="/ise-svr/ise/upload"
-                      action="http://192.168.1.20:20180/ise/upload"
+                      action="/ise-svr/ise/upload"
+                      // action="http://192.168.1.20:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileLists}
                       name="multipartFile"
