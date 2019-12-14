@@ -70,8 +70,14 @@ export default class OnlOnlineSpecForm extends PureComponent {
             }
           }
         }
-        console.log('1111', onlineSpecList);
+        // console.log('1111', onlineSpecList);
         
+        if (onlonline.record.subjectType === 2) {
+          for (let i = 0; i < onlineSpecList.length; i++) {
+            let buyPoint = onlineSpecList[i].buyPoint / 10;
+            onlineSpecList[i].cashbackAmount = buyPoint;
+          }
+        }
         //确认商品类型
         let isBelowOnline ;
         const isBelow = onlonline.record.isBelow;

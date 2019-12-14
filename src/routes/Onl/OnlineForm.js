@@ -273,7 +273,7 @@ export default class GoodFromProductForm extends React.Component {
         id: id,
       },
       callback: onlonline => {
-        //console.log('获取', onlonline);
+        // console.log('获取', onlonline);
         let fileList = new Array();
         let fileLists = new Array();
         for (let i = 0; i < onlonline.record.onlinePicList.length; i++) {
@@ -292,6 +292,7 @@ export default class GoodFromProductForm extends React.Component {
               url: '/ise-svr/files' + onlonline.record.onlinePicList[i].picPath,
             });
           }
+
         }
         let onlineDetail = onlonline.record.onlineDetail + '<p></p>';
         //整理属性名
@@ -303,6 +304,9 @@ export default class GoodFromProductForm extends React.Component {
           if (attrNames.indexOf(attrName) == -1) {
             attrNames.push(attrName);
           }
+        }
+        if (onlonline.record.subjectType === 2) {
+
         }
         //console.log('322333',attrNames);
         //整理属性值
@@ -321,6 +325,12 @@ export default class GoodFromProductForm extends React.Component {
                 }
               }
             }
+          }
+        }
+        if (onlonline.record.subjectType === 2) {
+          for (let i = 0; i < onlineSpecList.length; i++) {
+            let buyPoint = onlineSpecList[i].buyPoint / 10;
+            onlineSpecList[i].cashbackAmount = buyPoint;
           }
         }
 
@@ -1174,8 +1184,8 @@ export default class GoodFromProductForm extends React.Component {
                 {
                   <div className="clearfix">
                     <Upload
-                      action="/ise-svr/ise/upload"
-                      // action="http://192.168.1.20:20180/ise/upload"
+                      // action="/ise-svr/ise/upload"
+                      action="http://192.168.1.20:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileList}
                       name="multipartFile"
@@ -1199,8 +1209,8 @@ export default class GoodFromProductForm extends React.Component {
                 {
                   <div className="clearfix">
                     <Upload
-                      action="/ise-svr/ise/upload"
-                      // action="http://192.168.1.20:20180/ise/upload"
+                      // action="/ise-svr/ise/upload"
+                      action="http://192.168.1.20:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileLists}
                       name="multipartFile"
