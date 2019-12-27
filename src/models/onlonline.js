@@ -84,7 +84,7 @@ export default {
       if (callback) callback(response);
     },
     *selectCategoryByShopId({ payload, callback }, { call }) {
-      const response = yield call(getTreeByShopId, payload);
+      const response = yield call(selectCategoryByShopId, payload);
       if (callback) callback(response);
     },
   },
