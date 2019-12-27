@@ -534,7 +534,7 @@ export default class GoodFromProductForm extends React.Component {
   //查询店铺分类树
   getClassifications = (classification, classificationArr) => {
     this.props.dispatch({
-      type: 'onlonline/getTreeByShopId',
+      type: 'onlonline/selectCategoryByShopId',
       payload: {
         shopId: classification.shopId
       },

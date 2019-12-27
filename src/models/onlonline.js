@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { list, getById, add, cancelPromotion, getOne, tapeOut, append, reOnline, getTreeByShopId } from '../services/onlonline';
+import { list, getById, add, cancelPromotion, getOne, tapeOut, append, reOnline, getTreeByShopId,selectCategoryByShopId } from '../services/onlonline';
 import { shopList } from '../services/slrshop';
 export default {
   namespace: 'onlonline',
@@ -80,6 +80,10 @@ export default {
       }
     },
     *getTreeByShopId({ payload, callback }, { call }) {
+      const response = yield call(getTreeByShopId, payload);
+      if (callback) callback(response);
+    },
+    *selectCategoryByShopId({ payload, callback }, { call }) {
       const response = yield call(getTreeByShopId, payload);
       if (callback) callback(response);
     },

@@ -559,9 +559,9 @@ export default class GoodFromProductForm extends React.Component {
   getClassifications = (classification, classificationArr) => {
     //console.log("classification", classification);
     this.props.dispatch({
-      type: 'onlonline/getTreeByShopId',
+      type: 'onlonline/selectCategoryByShopId',
       payload: {
-        shopId: classification.shopId
+        shopId: classification.shopId,
       },
       callback: record => {
         //console.log('record', record);
