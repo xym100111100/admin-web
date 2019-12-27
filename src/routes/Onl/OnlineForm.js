@@ -670,7 +670,7 @@ export default class GoodFromProductForm extends React.Component {
     targetOption.loading = true;
 
     this.props.dispatch({
-      type: `onlonline/getTreeByShopId`,
+      type: `onlonline/selectCategoryByShopId`,
       payload: {
         shopId: targetOption.value,
       },
