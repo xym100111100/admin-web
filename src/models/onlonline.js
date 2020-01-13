@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { list, getById, add, cancelPromotion, getOne, tapeOut, append, reOnline, getTreeByShopId,selectCategoryByShopId } from '../services/onlonline';
+import { list, getById, add, cancelPromotion, getOne, tapeOut, append, reOnline, getTreeByShopId,selectCategoryByShopId,getCategoryByOnlineId } from '../services/onlonline';
 import { shopList } from '../services/slrshop';
 export default {
   namespace: 'onlonline',
@@ -85,6 +85,10 @@ export default {
     },
     *selectCategoryByShopId({ payload, callback }, { call }) {
       const response = yield call(selectCategoryByShopId, payload);
+      if (callback) callback(response);
+    },
+    *getCategoryByOnlineId({ payload, callback }, { call }) {
+      const response = yield call(getCategoryByOnlineId, payload);
       if (callback) callback(response);
     },
   },

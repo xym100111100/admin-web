@@ -65,3 +65,7 @@ export async function getOne(params) {
 export async function selectCategoryByShopId(params) {
   return request(`/onl-svr/onl/searchcategory/select-category-tree?${stringify(params)}`);
 }
+
+export async function getCategoryByOnlineId(params) {
+  return request(`/onl-svr/onl/searchcategory/get-category-by-online?${stringify(params)}`);
+}

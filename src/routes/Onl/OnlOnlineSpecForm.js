@@ -71,7 +71,7 @@ export default class OnlOnlineSpecForm extends PureComponent {
           }
         }
         // console.log('1111', onlineSpecList);
-        
+
         if (onlonline.record.subjectType === 2) {
           for (let i = 0; i < onlineSpecList.length; i++) {
             let buyPoint = onlineSpecList[i].buyPoint / 10;
@@ -79,14 +79,14 @@ export default class OnlOnlineSpecForm extends PureComponent {
           }
         }
         //确认商品类型
-        let isBelowOnline ;
+        let isBelowOnline;
         const isBelow = onlonline.record.isBelow;
         const isOnline = onlonline.record.isOnline;
-        if( isBelow ===0 && isOnline ===1){
+        if (isBelow === 0 && isOnline === 1) {
           isBelowOnline = '线上';
-        }else if(isBelow ===1 && isOnline ===0){
+        } else if (isBelow === 1 && isOnline === 0) {
           isBelowOnline = '线下';
-        }else if(isBelow ===1 && isOnline ===1){
+        } else if (isBelow === 1 && isOnline === 1) {
           isBelowOnline = '既是线下也是线上'
         }
         //确认商品分类
@@ -94,7 +94,7 @@ export default class OnlOnlineSpecForm extends PureComponent {
         for (let i = 0; i < searchCategoryMo.length; i++) {
           this.getShopNames(searchCategoryMo[i]);
         }
-        
+
         const { form, record } = this.props;
         //console.log(record.onlineDetail)
         form.setFieldsValue({ onlineName: onlonline.record.onlineTitle });
@@ -123,20 +123,22 @@ export default class OnlOnlineSpecForm extends PureComponent {
       callback: record => {
         //console.log('messageRecord', record);
         let classificationArr = { value: record.id, label: record.shopName };
-        this.getClassifications(shopMessage,classificationArr);
+        this.getClassifications(shopMessage, classificationArr);
       }
     });
   }
 
-  getClassifications = (classification,classificationArr) => {
-    //console.log("classification", classification);
+  getClassifications = (classification, classificationArr) => {
+    // console.log("onlineId", this.props.id);
+    // console.log("shopId", classification.shopId);
     this.props.dispatch({
-      type: 'onlonline/getTreeByShopId',
+      type: 'onlonline/getCategoryByOnlineId',
       payload: {
+        onlineId: this.props.id,
         shopId: classification.shopId
       },
       callback: record => {
-        //console.log('record', record);
+        console.log('record', record);
         let classificationNode = [];
         for (let i = 0; i < record.length; i++) {
           if (record[i].id === classification.id) {
@@ -149,15 +151,15 @@ export default class OnlOnlineSpecForm extends PureComponent {
           if (rootNode !== undefined) {
             child = this.checkChildNodes(rootNode, classification.id);
           }
-          if (child !== undefined ) {
+          if (child !== undefined) {
             classificationNode.push(classificationArr);
             classificationNode.push({ value: record[i].id, label: record[i].name });
-            classificationNode=classificationNode.concat(child);
+            classificationNode = classificationNode.concat(child);
           }
         }
         //console.log("classificationArr02", classificationNode);
         this.setState({
-          classificationArr:classificationNode
+          classificationArr: classificationNode
         });
         this.addClassification();
       }
@@ -176,7 +178,7 @@ export default class OnlOnlineSpecForm extends PureComponent {
         //console.log('childNode', childNode);
         const child = children[i].categoryList;
         if (children[i].id === nodeId) {
-          childrenNode=childNode;
+          childrenNode = childNode;
           //console.log('childrenNode', childrenNode);
           return childrenNode;
         }
@@ -184,10 +186,10 @@ export default class OnlOnlineSpecForm extends PureComponent {
         if (child !== undefined) {
           childenNode = this.checkChildNodes(child, nodeId);
         }
-        if (childenNode !== undefined && childenNode.length !==0) {
+        if (childenNode !== undefined && childenNode.length !== 0) {
           //console.log('childenNode1', childenNode);
           childrenNode.push(childNode);
-          childrenNode=childrenNode.concat(childenNode);
+          childrenNode = childrenNode.concat(childenNode);
           //console.log('childrenNode2', childrenNode);
           return childrenNode;
         }
@@ -197,9 +199,9 @@ export default class OnlOnlineSpecForm extends PureComponent {
 
   addClassification = () => {
     const { classificationArr } = this.state;
-    console.log('aa',classificationArr);
+    console.log('aa', classificationArr);
     let shopAndClassification = '';
-    shopAndClassification = '店铺:'+classificationArr[0].label + '|分类:';
+    shopAndClassification = '店铺:' + classificationArr[0].label + '|分类:';
     for (let i = 1; i < classificationArr.length; i++) {
       if (i !== 1) {
         shopAndClassification += '/';
@@ -207,7 +209,7 @@ export default class OnlOnlineSpecForm extends PureComponent {
       shopAndClassification += classificationArr[i].label;
     }
     let classifications = this.state.classification;
-    classifications +=shopAndClassification+';';
+    classifications += shopAndClassification + ';';
     console.log('classifications', classifications);
     this.setState({
       classification: classifications,
@@ -263,7 +265,7 @@ export default class OnlOnlineSpecForm extends PureComponent {
         dataIndex: 'onlineSpec' + (i + 1),
         align: 'center',
       };
-      columns.splice(i+1, 0, column);
+      columns.splice(i + 1, 0, column);
     }
 
     this.setState({
@@ -273,8 +275,7 @@ export default class OnlOnlineSpecForm extends PureComponent {
 
   render() {
     const { record } = this.props;
-    const { onlOnlineSpec, mainImageUrl, fileLists, editorState, isBelowOnline, isOnlinePlatform, columns ,shopName,classification,isWeighGoods} = this.state;
-    console.log('aaa',isWeighGoods);
+    const { onlOnlineSpec, mainImageUrl, fileLists, editorState, isBelowOnline, isOnlinePlatform, columns, shopName, classification, isWeighGoods } = this.state;
     // 不在工具栏显示的控件列表
     const excludeControls = [
       'undo', 'redo', 'separator',
@@ -293,19 +294,19 @@ export default class OnlOnlineSpecForm extends PureComponent {
           {<span>{record.onlineTitle}</span>}
         </FormItem>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="上线板块">
-          {<span>{record.subjectType === 0 ? '返现' : record.subjectType === 1 ?'全返':'返积分'}</span>}
+          {<span>{record.subjectType === 0 ? '返现' : record.subjectType === 1 ? '全返' : '返积分'}</span>}
         </FormItem>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="商品分类">
           {<span>{classification}</span>}
         </FormItem>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="商品类型">
-          {<span>{isBelowOnline }</span>}
+          {<span>{isBelowOnline}</span>}
         </FormItem>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="是否上线到平台">
           {<span>{isOnlinePlatform === 0 ? '不上线' : '上线'}</span>}
         </FormItem>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="商品类型">
-          {<span>{isWeighGoods === 0?'普通' : '称重'}</span>}
+          {<span>{isWeighGoods === 0 ? '普通' : '称重'}</span>}
         </FormItem>
         <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="规格信息">
           {

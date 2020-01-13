@@ -68,7 +68,7 @@ export default class GoodFromProductForm extends React.Component {
     inputVisiable: false,
     inputValue: '',
     //标签动态生成和删除 ****结束***
-
+    
     //选择店铺
     shopName: [],
     //添加后经过整理的搜索分类
@@ -557,11 +557,13 @@ export default class GoodFromProductForm extends React.Component {
 
   //查询店铺分类树
   getClassifications = (classification, classificationArr) => {
-    //console.log("classification", classification);
+    // console.log("onlineId", this.props.id);
+    // console.log("shopId", classification.shopId);
     this.props.dispatch({
-      type: 'onlonline/selectCategoryByShopId',
+      type: 'onlonline/getCategoryByOnlineId',
       payload: {
-        shopId: classification.shopId,
+        onlineId: this.props.id,
+        shopId: classification.shopId
       },
       callback: record => {
         //console.log('record', record);
