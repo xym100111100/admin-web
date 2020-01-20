@@ -178,13 +178,13 @@ export default class KdiBatchSubscribe extends SimpleMng {
                 if (data.result === 1) {
                     this.undisplay(fields.receiver);
                     //设置打印页面
-                    this.setState({
-                        iframeHTML: data.printPage
-                    }, () => {
-                        setTimeout(() => {
-                            this.refs.myFocusInput.contentWindow.print();
-                        }, 1000);
-                    })
+                    // this.setState({
+                    //     iframeHTML: data.printPage
+                    // }, () => {
+                    //     setTimeout(() => {
+                    //         this.refs.myFocusInput.contentWindow.print();
+                    //     }, 1000);
+                    // })
                 }
             }
         })
