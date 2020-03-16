@@ -164,8 +164,37 @@ export default class KdiBatchSubscribe extends SimpleMng {
             message.error('未选择快递公司，不能提交');
             return;
         }
+        //判断快递地址是否正确
+        for(let i=0;i<fields.receiver.length;i++){
+            let order = fields.receiver[i];
+            let logisticCode =  order.logisticCode;
+            let receiverName = order.receiverName;
+            let receiverTel = order.receiverTel;
+            let orderTitle = order.orderTitle;
+            let receiverProvince = order.receiverProvince;
+            let receiverCity = order.receiverCity;
+            let receiverExpArea = order.receiverExpArea;
+            let receiverAddress = order.receiverAddress;
+            if(!logisticCode){
+             message.error('有快递运单号没有导入，不能提交');
+            }else if(!receiverName){
+             message.error('运单号:['+logisticCode+']没有收件人姓名，不能提交');
+            }else if(!receiverTel){
+             message.error('运单号:['+logisticCode+']没有收件电话，不能提交');
+            }else if(!orderTitle){
+             message.error('运单号:['+logisticCode+']没有订单标题，不能提交');
+            }else if(!receiverProvince){
+             message.error('运单号:['+logisticCode+']没有收件省份，不能提交');
+            }else if(!receiverCity){
+             message.error('运单号:['+logisticCode+']没有收件城市，不能提交');
+            }else if(!receiverExpArea){
+             message.error('运单号:['+logisticCode+']没有收件区县，不能提交');
+            }else if(!receiverAddress){
+             message.error('运单号:['+logisticCode+']没有收件人详细地址，不能提交');
+            }
+        }
         console.log("fields",fields);
-        this.commit(fields);
+        // this.commit(fields);
     }
 
     //提交到后台
