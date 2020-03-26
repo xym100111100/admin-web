@@ -641,6 +641,8 @@ const options = [
             { value: '科尔沁右翼中旗', label: '科尔沁右翼中旗' },
             { value: '扎赉特旗', label: '扎赉特旗' },
             { value: '突泉县', label: '突泉县' },
+            { value: '扎赉特旗音德尔镇', label: '扎赉特旗音德尔镇' },
+
           ],
         },
         {
