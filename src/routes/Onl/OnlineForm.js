@@ -113,8 +113,8 @@ export default class GoodFromProductForm extends React.Component {
   //添加商品分类
   addClassification = () => {
     const { classificationArr, classifications } = this.state;
-    //console.log('classificationArr', classificationArr);
-    if (classificationArr.length === 0) return message.error('未选择商品分类');
+    console.log('classificationArr', classificationArr);
+    if (classificationArr === undefined || classificationArr.length === 0) return message.error('未选择商品分类');
     const newClassification = classificationArr[classificationArr.length - 1].value;
     //console.log('newClassification', newClassification);
     for (let i = 0; i < classifications.length; i++) {
@@ -986,6 +986,9 @@ export default class GoodFromProductForm extends React.Component {
       });
     }
 
+    　let shopClass = [{shop:123456,classId:123456}]
+
+
     form.getFieldDecorator('isEditSupplier');
     form.getFieldDecorator('subjectType');
     form.getFieldDecorator('onlineSpecs');
@@ -1186,8 +1189,8 @@ export default class GoodFromProductForm extends React.Component {
                 {
                   <div className="clearfix">
                     <Upload
-                      action="/ise-svr/ise/upload"
-                      // action="http://192.168.1.20:20180/ise/upload"
+                      //action="/ise-svr/ise/upload"
+                       action="http://192.168.1.16:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileList}
                       name="multipartFile"
@@ -1211,8 +1214,8 @@ export default class GoodFromProductForm extends React.Component {
                 {
                   <div className="clearfix">
                     <Upload
-                      action="/ise-svr/ise/upload"
-                      // action="http://192.168.1.20:20180/ise/upload"
+                      //action="/ise-svr/ise/upload"
+                       action="http://192.168.1.16:20180/ise/upload"
                       listType="picture-card"
                       fileList={fileLists}
                       name="multipartFile"
